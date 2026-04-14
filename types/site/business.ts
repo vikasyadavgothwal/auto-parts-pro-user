@@ -1,9 +1,9 @@
-import type { LucideIcon } from "lucide-react"
+import type { AppIconComponent } from "@/types/icons"
 
 export type BusinessFeature = {
   title: string
   description: string
-  icon: LucideIcon
+  icon: AppIconComponent
 }
 
 export type BusinessPlan = {

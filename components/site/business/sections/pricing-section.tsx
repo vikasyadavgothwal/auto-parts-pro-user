@@ -1,4 +1,4 @@
-import { Check, Wrench } from "lucide-react"
+import { CheckIcon, WrenchIcon } from "@/components/icons/site-icons"
 
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Badge } from "@/components/ui/badge"
@@ -64,7 +64,7 @@ export function PricingSection() {
             variant="secondary"
             className="mb-4 rounded-full border-border bg-brand-panel px-4 py-2 text-sm font-medium text-brand-muted"
           >
-            <Wrench className="h-4 w-4 text-primary" />
+            <WrenchIcon className="h-4 w-4 text-primary" />
             <span>For Repair Shops</span>
           </Badge>
 
@@ -103,7 +103,7 @@ export function PricingSection() {
               <ul className="mb-8 space-y-4">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
-                    <Check className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                    <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                     <span className="text-brand-muted">{feature}</span>
                   </li>
                 ))}

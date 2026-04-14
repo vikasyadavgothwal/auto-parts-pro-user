@@ -1,5 +1,9 @@
 import Link from "next/link"
-import { ArrowRight, Package, Wrench } from "lucide-react"
+import {
+  ArrowRightIcon,
+  PackageIcon,
+  WrenchIcon,
+} from "@/components/icons/site-icons"
 
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
@@ -10,13 +14,13 @@ const solutions: Solution[] = [
     title: "For Repair Shops",
     description:
       "Volume pricing, dedicated account manager, priority support, and integrated shop management tools.",
-    icon: Wrench,
+    icon: WrenchIcon,
   },
   {
     title: "For Fleet Managers",
     description:
       "Bulk ordering, custom integrations, procurement dashboards, and fleet-specific inventory management.",
-    icon: Package,
+    icon: PackageIcon,
   },
 ]
 
@@ -57,7 +61,7 @@ export function BusinessSolutionsSection() {
                   className="inline-flex items-center gap-2 font-medium text-primary hover:underline"
                 >
                   Learn more
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRightIcon className="h-4 w-4" />
                 </Link>
               </Card>
             )

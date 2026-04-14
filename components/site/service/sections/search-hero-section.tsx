@@ -1,4 +1,8 @@
-import { MapPin, Search, Wrench } from "lucide-react"
+import {
+  MapPinIcon,
+  SearchIcon,
+  WrenchIcon,
+} from "@/components/icons/site-icons"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -20,7 +24,7 @@ export function SearchHeroSection() {
         <div className="mx-auto max-w-4xl">
           <Card className="flex flex-col gap-2 p-2 md:flex-row">
             <div className="flex flex-1 items-center gap-3 px-4">
-              <Wrench className="h-5 w-5 text-brand-muted" />
+              <WrenchIcon className="h-5 w-5 text-brand-muted" />
               <Input
                 type="text"
                 placeholder="What service do you need?"
@@ -29,7 +33,7 @@ export function SearchHeroSection() {
             </div>
 
             <div className="flex flex-1 items-center gap-3 border-t border-border px-4 pt-2 md:border-l md:border-t-0 md:pt-0">
-              <MapPin className="h-5 w-5 text-brand-muted" />
+              <MapPinIcon className="h-5 w-5 text-brand-muted" />
               <Input
                 type="text"
                 placeholder="Enter ZIP code or city"
@@ -38,7 +42,7 @@ export function SearchHeroSection() {
             </div>
 
             <Button className="h-auto rounded-lg px-8 py-3 font-medium hover:bg-brand-primary-hover">
-              <Search className="h-4 w-4" />
+              <SearchIcon className="h-4 w-4" />
               Search
             </Button>
           </Card>

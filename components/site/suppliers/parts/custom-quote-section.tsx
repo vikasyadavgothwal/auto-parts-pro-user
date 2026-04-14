@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { FileText, MessageSquare } from "lucide-react"
+import { FileTextIcon, MessageIcon } from "@/components/icons/site-icons"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -10,7 +10,7 @@ export function SupplierCustomQuoteSection() {
       <Card className="rounded-2xl border-primary/30 bg-gradient-to-br from-brand-panel to-brand-surface p-6 text-center sm:p-8">
         <div className="mx-auto max-w-2xl">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-            <FileText className="h-8 w-8 text-primary" />
+            <FileTextIcon className="h-8 w-8 text-primary" />
           </div>
 
           <h3 className="mb-2 text-2xl font-bold text-white">
@@ -27,7 +27,7 @@ export function SupplierCustomQuoteSection() {
             className="h-auto rounded-lg px-8 py-3 font-medium hover:bg-brand-primary-hover"
           >
             <Link href="/rfq">
-              <MessageSquare className="h-5 w-5" />
+              <MessageIcon className="h-5 w-5" />
               Request Custom Quote
             </Link>
           </Button>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShoppingCart, User } from "lucide-react";
+import { ShoppingCartIcon, UserIcon } from "@/components/icons/site-icons";
 import { BrandLogo } from "@/components/site/shared/brand-logo"
 import { Button } from "@/components/ui/button";
 
@@ -38,7 +38,7 @@ export function UserHeader() {
               className="h-auto rounded-lg p-2.5 text-white hover:bg-brand-primary-hover"
               aria-label="Profile"
             >
-              <User className="size-5" />
+              <UserIcon className="size-5" />
             </Button>
 
             <Button
@@ -46,7 +46,7 @@ export function UserHeader() {
               className="h-auto rounded-lg p-2.5 text-white hover:bg-brand-primary-hover"
               aria-label="Shopping cart"
             >
-              <ShoppingCart className="size-5" />
+              <ShoppingCartIcon className="size-5" />
             </Button>
           </div>
         </div>

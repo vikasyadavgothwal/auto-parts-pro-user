@@ -1,12 +1,16 @@
 import Image from "next/image"
-import { Clock3, ShieldCheck, Zap } from "lucide-react"
+import {
+  Clock3Icon,
+  ShieldCheckIcon,
+  ZapIcon,
+} from "@/components/icons/site-icons"
 
 import { Badge } from "@/components/ui/badge"
 
 const features = [
-  { title: "Verified OEM Parts", icon: ShieldCheck },
-  { title: "Same-Day Shipping", icon: Zap },
-  { title: "24/7 Support", icon: Clock3 },
+  { title: "Verified OEM Parts", icon: ShieldCheckIcon },
+  { title: "Same-Day Shipping", icon: ZapIcon },
+  { title: "24/7 Support", icon: Clock3Icon },
 ]
 
 export function HeroSection() {

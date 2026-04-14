@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Sparkles } from "lucide-react"
+import { SparklesIcon } from "@/components/icons/site-icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -12,7 +12,7 @@ export function BusinessHeroSection() {
       <div className="site-container relative py-24">
         <div className="mx-auto max-w-4xl text-center">
           <Badge className="mb-6 rounded-full px-4 py-2 text-sm font-medium">
-            <Sparkles className="h-4 w-4" />
+            <SparklesIcon className="h-4 w-4" />
             <span>Trusted by 5,000+ businesses</span>
           </Badge>
 

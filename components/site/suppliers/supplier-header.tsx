@@ -1,5 +1,9 @@
 import Link from "next/link"
-import { Search, ShoppingCart, User } from "lucide-react"
+import {
+  SearchIcon,
+  ShoppingCartIcon,
+  UserIcon,
+} from "@/components/icons/site-icons"
 
 import { BrandLogo } from "@/components/site/shared/brand-logo"
 import { Button } from "@/components/ui/button"
@@ -38,7 +42,7 @@ export function SupplierHeader() {
               className="text-brand-muted hover:text-white"
               aria-label="Search"
             >
-              <Search className="size-5" />
+              <SearchIcon className="size-5" />
             </Button>
 
             <Button
@@ -48,7 +52,7 @@ export function SupplierHeader() {
               className="text-brand-muted hover:text-white"
             >
               <Link href="/checkout" aria-label="Cart">
-                <ShoppingCart className="size-5" />
+                <ShoppingCartIcon className="size-5" />
               </Link>
             </Button>
 
@@ -59,7 +63,7 @@ export function SupplierHeader() {
               className="text-brand-muted hover:text-white"
             >
               <Link href="/dashboard/buyer" aria-label="Profile">
-                <User className="size-5" />
+                <UserIcon className="size-5" />
               </Link>
             </Button>
           </div>

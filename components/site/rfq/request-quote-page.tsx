@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react"
+import { PlusIcon } from "@/components/icons/site-icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -87,7 +87,7 @@ export function RequestQuotePage() {
                 variant="outline"
                 className="rounded-xl border-primary/20 px-4 py-2 text-primary hover:bg-primary/10"
               >
-                <Plus className="h-4 w-4" />
+                <PlusIcon className="h-4 w-4" />
                 Add Part
               </Button>
             </div>

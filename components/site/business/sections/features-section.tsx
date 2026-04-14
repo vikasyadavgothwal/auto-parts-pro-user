@@ -1,14 +1,14 @@
 import {
-  BarChart3,
-  CreditCard,
-  Headphones,
-  ShieldCheck,
-  Sparkles,
-  Timer,
-  TrendingUp,
-  Users,
-  Zap,
-} from "lucide-react"
+  AnalyticsIcon,
+  CreditCardIcon,
+  SupportIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  TimerIcon,
+  TrendingIcon,
+  UsersIcon,
+  ZapIcon,
+} from "@/components/icons/site-icons"
 
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
@@ -18,47 +18,47 @@ const features: BusinessFeature[] = [
   {
     title: "Volume Pricing",
     description: "Scale discounts that grow with your business",
-    icon: TrendingUp,
+    icon: TrendingIcon,
   },
   {
     title: "Dedicated Account Manager",
     description: "Personal support for your team",
-    icon: Users,
+    icon: UsersIcon,
   },
   {
     title: "Priority Processing",
     description: "Fast-track order fulfillment",
-    icon: Timer,
+    icon: TimerIcon,
   },
   {
     title: "Extended Warranty",
     description: "Business-grade protection plans",
-    icon: ShieldCheck,
+    icon: ShieldCheckIcon,
   },
   {
     title: "API Integration",
     description: "Connect directly to your systems",
-    icon: Zap,
+    icon: ZapIcon,
   },
   {
     title: "Analytics Dashboard",
     description: "Track spending and optimize costs",
-    icon: BarChart3,
+    icon: AnalyticsIcon,
   },
   {
     title: "24/7 Business Support",
     description: "Always available when you need us",
-    icon: Headphones,
+    icon: SupportIcon,
   },
   {
     title: "Custom Invoicing",
     description: "Flexible billing and NET terms",
-    icon: Sparkles,
+    icon: SparklesIcon,
   },
   {
     title: "Fleet Cards Accepted",
     description: "WEX, Voyager, and more",
-    icon: CreditCard,
+    icon: CreditCardIcon,
   },
 ]
 

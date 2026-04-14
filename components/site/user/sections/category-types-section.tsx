@@ -1,24 +1,24 @@
 import Link from "next/link"
 import {
-  Battery,
-  CarFront,
-  Cog,
-  Gauge,
-  Package,
-  Wrench,
-} from "lucide-react"
+  BatteryIcon,
+  CarFrontIcon,
+  CogIcon,
+  GaugeIcon,
+  PackageIcon,
+  WrenchIcon,
+} from "@/components/icons/site-icons"
 
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
 import type { Category } from "@/types/site/user"
 
 const categories: Category[] = [
-  { name: "Engine Parts", count: "12,450 parts", icon: Cog },
-  { name: "Suspension", count: "8,320 parts", icon: Wrench },
-  { name: "Electrical", count: "15,680 parts", icon: Battery },
-  { name: "Brakes", count: "9,870 parts", icon: Package },
-  { name: "Transmission", count: "6,540 parts", icon: Gauge },
-  { name: "Body Parts", count: "22,100 parts", icon: CarFront },
+  { name: "Engine Parts", count: "12,450 parts", icon: CogIcon },
+  { name: "Suspension", count: "8,320 parts", icon: WrenchIcon },
+  { name: "Electrical", count: "15,680 parts", icon: BatteryIcon },
+  { name: "Brakes", count: "9,870 parts", icon: PackageIcon },
+  { name: "Transmission", count: "6,540 parts", icon: GaugeIcon },
+  { name: "Body Parts", count: "22,100 parts", icon: CarFrontIcon },
 ]
 
 export function CategoryTypesSection() {

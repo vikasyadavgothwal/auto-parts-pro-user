@@ -3,14 +3,14 @@
 import Image from "next/image"
 import Link from "next/link"
 import {
-  Award,
-  CircleCheck,
-  Clock,
-  MapPin,
-  Search,
-  Shield,
-  Star,
-} from "lucide-react"
+  AwardIcon,
+  CircleCheckIcon,
+  ClockIcon,
+  MapPinIcon,
+  RatingStarIcon,
+  SearchIcon,
+  ShieldIcon,
+} from "@/components/icons/site-icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -146,7 +146,7 @@ export function SuppliersSection() {
           <div className="flex flex-col gap-4 xl:flex-row xl:flex-wrap">
             <div className="min-w-0 flex-1 xl:min-w-[300px]">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
+                <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
                 <Input
                   type="text"
                   placeholder="Search suppliers by name or specialty..."
@@ -227,14 +227,14 @@ export function SuppliersSection() {
 
                           {supplier.verified ? (
                             <Badge variant="success" className="px-1.5 py-0.5 text-xs">
-                              <CircleCheck className="h-3 w-3" />
+                              <CircleCheckIcon className="h-3 w-3" />
                               <span>Verified</span>
                             </Badge>
                           ) : null}
 
                           {supplier.topRated ? (
                             <Badge variant="warning" className="px-1.5 py-0.5 text-xs">
-                              <Star className="h-3 w-3" />
+                              <RatingStarIcon filled className="h-3 w-3" />
                               <span>Top Rated</span>
                             </Badge>
                           ) : null}
@@ -242,17 +242,17 @@ export function SuppliersSection() {
 
                         <div className="mb-3 flex flex-col gap-2 text-sm text-brand-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-6">
                           <div className="flex items-center gap-2">
-                            <MapPin className="h-4 w-4" />
+                            <MapPinIcon className="h-4 w-4" />
                             <span>{supplier.location}</span>
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4" />
+                            <ClockIcon className="h-4 w-4" />
                             <span>Responds in {supplier.responseTime}</span>
                           </div>
 
                           <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-primary text-primary" />
+                            <RatingStarIcon filled className="h-4 w-4 text-primary" />
                             <span className="font-medium text-white">
                               {supplier.rating}
                             </span>
@@ -275,7 +275,7 @@ export function SuppliersSection() {
 
                       <div className="text-left xl:w-[110px] xl:flex-shrink-0 xl:text-center">
                         <div className="inline-flex items-center gap-1.5">
-                          <Shield
+                          <ShieldIcon
                             className={`h-4 w-4 ${
                               isHighTrust ? "text-brand-success" : "text-brand-warning"
                             }`}
@@ -295,7 +295,7 @@ export function SuppliersSection() {
                     <div className="flex flex-col gap-4 border-t border-border pt-4 sm:flex-row sm:items-center sm:gap-6">
                       <div className="flex items-center gap-2 text-sm">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                          <Award className="h-4 w-4 text-primary" />
+                          <AwardIcon className="h-4 w-4 text-primary" />
                         </div>
                         <div>
                           <div className="font-semibold text-white">

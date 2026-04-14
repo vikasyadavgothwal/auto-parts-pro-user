@@ -1,5 +1,8 @@
 import Link from "next/link"
-import { ShieldCheck, Truck } from "lucide-react"
+import {
+  ShieldCheckIcon,
+  TruckIcon,
+} from "@/components/icons/site-icons"
 
 import { BrandLogo } from "@/components/site/shared/brand-logo"
 
@@ -45,12 +48,12 @@ export function SupplierFooter() {
 
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-sm text-brand-muted">
-                <ShieldCheck className="h-4 w-4 text-primary" />
+                <ShieldCheckIcon className="h-4 w-4 text-primary" />
                 <span>Verified Sellers</span>
               </div>
 
               <div className="flex items-center gap-2 text-sm text-brand-muted">
-                <Truck className="h-4 w-4 text-primary" />
+                <TruckIcon className="h-4 w-4 text-primary" />
                 <span>Fast Delivery</span>
               </div>
             </div>

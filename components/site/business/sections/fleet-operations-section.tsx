@@ -1,4 +1,4 @@
-import { BarChart3, Boxes, Check, Package } from "lucide-react"
+import { AnalyticsIcon, BoxesIcon, CheckIcon, SellerPackageIcon } from "@/components/icons/site-icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -20,17 +20,17 @@ const metrics = [
     label: "Monthly Savings",
     value: "$12,450",
     caption: "↑ 23% vs last month",
-    icon: BarChart3,
+    icon: AnalyticsIcon,
   },
   {
     label: "Active Vehicles",
     value: "247",
-    icon: Boxes,
+    icon: BoxesIcon,
   },
   {
     label: "Parts in Stock",
     value: "1,234",
-    icon: Package,
+    icon: SellerPackageIcon,
   },
 ]
 
@@ -41,7 +41,7 @@ export function FleetOperationsSection() {
         <div className="grid items-center gap-16 md:grid-cols-2">
           <div>
             <Badge className="mb-6 rounded-full px-4 py-2 text-sm font-medium">
-              <Package className="h-4 w-4" />
+              <SellerPackageIcon className="h-4 w-4" />
               <span>For Fleet Managers</span>
             </Badge>
 
@@ -57,7 +57,7 @@ export function FleetOperationsSection() {
             <ul className="mb-8 space-y-4">
               {features.map((feature) => (
                 <li key={feature} className="flex items-start gap-3">
-                  <Check className="mt-0.5 h-6 w-6 shrink-0 text-primary" />
+                  <CheckIcon className="mt-0.5 h-6 w-6 shrink-0 text-primary" />
                   <span className="text-lg text-brand-muted">{feature}</span>
                 </li>
               ))}

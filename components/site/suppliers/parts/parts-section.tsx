@@ -3,15 +3,15 @@
 import Image from "next/image"
 import Link from "next/link"
 import {
-  CircleCheck,
-  Clock,
-  MapPin,
-  Package,
-  Search,
-  Shield,
-  Star,
-  TrendingUp,
-} from "lucide-react"
+  CircleCheckIcon,
+  ClockIcon,
+  MapPinIcon,
+  PackageIcon,
+  RatingStarIcon,
+  SearchIcon,
+  ShieldIcon,
+  TrendingIcon,
+} from "@/components/icons/site-icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -111,23 +111,23 @@ export function PartsSection() {
                     </h1>
 
                     <Badge variant="success">
-                      <CircleCheck className="h-4 w-4" />
+                      <CircleCheckIcon className="h-4 w-4" />
                       <span>Verified</span>
                     </Badge>
 
                     <Badge variant="warning">
-                      <Star className="h-4 w-4" />
+                      <RatingStarIcon filled className="h-4 w-4" />
                       <span>Top Rated</span>
                     </Badge>
                   </div>
 
                   <div className="flex flex-col gap-2 text-sm text-brand-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-6">
                     <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4" />
+                      <MapPinIcon className="h-4 w-4" />
                       <span>Detroit, MI</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
+                      <ClockIcon className="h-4 w-4" />
                       <span>Avg. response: 1.8 hrs</span>
                     </div>
                   </div>
@@ -135,7 +135,7 @@ export function PartsSection() {
 
                 <div className="text-left lg:text-center">
                   <div className="inline-flex items-center gap-1.5">
-                    <Shield className="h-4 w-4 text-brand-success" />
+                    <ShieldIcon className="h-4 w-4 text-brand-success" />
                     <span className="text-lg font-bold text-brand-success">92</span>
                   </div>
                   <p className="mt-2 text-xs text-brand-muted">Trust Score</p>
@@ -160,31 +160,35 @@ export function PartsSection() {
 
         <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           <MetricCard
-            icon={<Star className="h-5 w-5 text-primary" />}
+            icon={<RatingStarIcon filled className="h-5 w-5 text-primary" />}
             value="4.8"
             label="Average Rating"
             detail={
               <div className="flex items-center gap-1">
                 {Array.from({ length: 4 }).map((_, index) => (
-                  <Star key={index} className="h-4 w-4 fill-primary text-primary" />
+                  <RatingStarIcon
+                    key={index}
+                    filled
+                    className="h-4 w-4 text-primary"
+                  />
                 ))}
-                <Star className="h-4 w-4 text-border" />
+                <RatingStarIcon className="h-4 w-4 text-border" />
                 <span className="ml-2 text-xs text-brand-muted">(1,234)</span>
               </div>
             }
           />
           <MetricCard
-            icon={<Package className="h-5 w-5 text-primary" />}
+            icon={<PackageIcon className="h-5 w-5 text-primary" />}
             value="2,847"
             label="Orders Completed"
           />
           <MetricCard
-            icon={<TrendingUp className="h-5 w-5 text-primary" />}
+            icon={<TrendingIcon className="h-5 w-5 text-primary" />}
             value="98%"
             label="Fulfillment Rate"
           />
           <MetricCard
-            icon={<Clock className="h-5 w-5 text-primary" />}
+            icon={<ClockIcon className="h-5 w-5 text-primary" />}
             value="1.8 hrs"
             label="Response Time"
           />
@@ -193,7 +197,7 @@ export function PartsSection() {
         <div className="mb-8 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5 p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-3">
-              <CircleCheck className="mt-0.5 h-5 w-5 text-primary" />
+              <CircleCheckIcon className="mt-0.5 h-5 w-5 text-primary" />
               <div>
                 <p className="text-sm font-medium text-white">
                   Showing parts for <span className="text-primary">2019 Toyota Camry SE</span>
@@ -235,7 +239,7 @@ export function PartsSection() {
             <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center">
               <div className="min-w-0 flex-1 lg:min-w-[200px]">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-muted" />
+                  <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-muted" />
                   <Input
                     type="text"
                     placeholder="Search products..."
@@ -276,7 +280,7 @@ export function PartsSection() {
                     {product.confirmedFit ? (
                       <div className="mb-3">
                         <Badge variant="success" className="rounded-md px-2.5 py-1">
-                          <CircleCheck className="h-3.5 w-3.5" />
+                          <CircleCheckIcon className="h-3.5 w-3.5" />
                           <span>Confirmed Fit</span>
                         </Badge>
                       </div>

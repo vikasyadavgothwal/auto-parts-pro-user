@@ -1,7 +1,7 @@
-import type { LucideIcon } from "lucide-react"
+import type { AppIconComponent } from "@/types/icons"
 
 export type ProductHighlight = {
-  icon: LucideIcon
+  icon: AppIconComponent
   label: string
 }
 

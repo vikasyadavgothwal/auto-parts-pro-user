@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Search } from "lucide-react"
+import { SearchIcon } from "@/components/icons/site-icons"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,7 +27,7 @@ export function SearchSection() {
               className="h-14 w-full rounded-lg px-8 text-base font-medium hover:bg-brand-primary-hover md:w-auto"
             >
               <Link href="/search">
-                <Search className="size-5 text-white" />
+                <SearchIcon className="size-5 text-white" />
                 <span>Search Parts</span>
               </Link>
             </Button>

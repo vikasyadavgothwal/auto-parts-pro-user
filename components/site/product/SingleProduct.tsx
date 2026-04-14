@@ -4,21 +4,21 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ChevronLeft,
-  Shield,
-  Star,
-  CircleCheckBig,
-  Package,
-  Truck,
-  Heart,
-  Share2,
-  CheckCircle2,
-} from "lucide-react";
-import { Wrench, CheckCircle } from "lucide-react";
+  ChevronLeftIcon,
+  CheckCircleIcon,
+  CircleCheckIcon,
+  HeartIcon,
+  MessageIcon,
+  RatingStarIcon,
+  ShieldIcon,
+  ShareIcon,
+  TruckIcon,
+  WrenchIcon,
+  FitmentConfirmedIcon,
+} from "@/components/icons/site-icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MessageSquare } from "lucide-react";
 import type {
   ProductHighlight,
   ProductOffer,
@@ -40,9 +40,9 @@ const keyFeatures = [
 ];
 
 const highlights: ProductHighlight[] = [
-  { icon: Package, label: "OEM Quality" },
-  { icon: Truck, label: "Fast Shipping" },
-  { icon: Shield, label: "Warranty" },
+  { icon: CheckCircleIcon, label: "OEM Quality" },
+  { icon: TruckIcon, label: "Fast Shipping" },
+  { icon: ShieldIcon, label: "Warranty" },
 ];
 
 const offers: ProductOffer[] = [
@@ -107,8 +107,9 @@ function RatingStars({
       {Array.from({ length: 5 }).map((_, index) => {
         const filled = index < fullStars;
         return (
-          <Star
+          <RatingStarIcon
             key={index}
+            filled={filled}
             className={`${size} ${filled ? "fill-[#F59E0B] text-[#F59E0B]" : "text-[#2A2A2A]"}`}
           />
         );
@@ -129,7 +130,7 @@ export function AutoPartsMarketplacePage() {
           className="h-auto px-0 text-[#9CA3AF] hover:bg-transparent hover:text-white"
         >
           <Link href="/search" className="inline-flex items-center gap-2">
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeftIcon className="h-4 w-4" />
             <span className="text-sm">Back to search results</span>
           </Link>
         </Button>
@@ -185,7 +186,7 @@ export function AutoPartsMarketplacePage() {
                   OEM Quality
                 </Badge>
                 <span className="inline-flex items-center gap-1 text-sm text-[#9CA3AF]">
-                  <Shield className="h-4 w-4" />
+                  <ShieldIcon className="h-4 w-4" />
                   Verified Seller
                 </span>
               </div>
@@ -216,7 +217,7 @@ export function AutoPartsMarketplacePage() {
                 <ul className="space-y-3">
                   {keyFeatures.map((feature) => (
                     <li key={feature} className="flex items-start gap-3">
-                      <CircleCheckBig className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#DC2626]" />
+                      <CircleCheckIcon className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#DC2626]" />
                       <span className="text-[#9CA3AF]">{feature}</span>
                     </li>
                   ))}
@@ -246,14 +247,14 @@ export function AutoPartsMarketplacePage() {
                 variant="outline"
                 className="h-12 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
               >
-                <Heart className="mr-2 h-5 w-5" />
+                <HeartIcon className="mr-2 h-5 w-5" />
                 Save
               </Button>
               <Button
                 variant="outline"
                 className="h-12 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
               >
-                <Share2 className="mr-2 h-5 w-5" />
+                <ShareIcon className="mr-2 h-5 w-5" />
                 Share
               </Button>
             </div>
@@ -283,7 +284,7 @@ export function AutoPartsMarketplacePage() {
                 {offer.recommended && (
                   <div className="flex h-10 items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 px-4 text-center">
                     <span className="flex items-center gap-2 text-sm font-semibold text-white">
-                      <CheckCircle2 className="h-4 w-4" />
+                      <FitmentConfirmedIcon className="h-4 w-4" />
                       BEST VALUE - Recommended Offer
                     </span>
                   </div>
@@ -310,7 +311,7 @@ export function AutoPartsMarketplacePage() {
 
                         <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
                           <div className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-0.5 text-xs text-green-600">
-                            <Shield className="h-3 w-3" />
+                            <ShieldIcon className="h-3 w-3" />
                             <span>Verified</span>
                           </div>
                         </div>
@@ -343,7 +344,7 @@ export function AutoPartsMarketplacePage() {
                     </div>
 
                     <div className="flex items-center gap-2 text-[#0F172A]">
-                      <Truck className="h-4 w-4 text-[#64748B]" />
+                      <TruckIcon className="h-4 w-4 text-[#64748B]" />
                       <div>
                         <div className="font-medium">{offer.shipping}</div>
                         <div className="text-xs text-[#64748B]">
@@ -399,7 +400,7 @@ export function AutoPartsMarketplacePage() {
           <Card className="mt-8 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] shadow-none">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
-                <MessageSquare className="mt-1 h-6 w-6 shrink-0 text-[#DC2626]" />
+                <MessageIcon className="mt-1 h-6 w-6 shrink-0 text-[#DC2626]" />
 
                 <div className="flex-1">
                   <h3 className="mb-2 text-lg font-semibold text-white">
@@ -428,7 +429,7 @@ export function AutoPartsMarketplacePage() {
               {/* Header */}
               <div className="mb-6 flex items-start gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#DC2626]/20 bg-[#DC2626]/10">
-                  <Wrench className="h-6 w-6 text-[#DC2626]" />
+                  <WrenchIcon className="h-6 w-6 text-[#DC2626]" />
                 </div>
 
                 <div>
@@ -447,7 +448,7 @@ export function AutoPartsMarketplacePage() {
               <div className="mb-6 grid gap-4 md:grid-cols-2">
                 <div className="rounded-xl border border-[#2A2A2A] bg-[#0A0A0A] p-5">
                   <div className="mb-3 flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 text-[#10B981]" />
+                    <CheckCircleIcon className="h-5 w-5 text-[#10B981]" />
                     <span className="font-semibold text-white">
                       Expert Installation
                     </span>
@@ -460,7 +461,7 @@ export function AutoPartsMarketplacePage() {
 
                 <div className="rounded-xl border border-[#2A2A2A] bg-[#0A0A0A] p-5">
                   <div className="mb-3 flex items-center gap-3">
-                    <CheckCircle className="h-5 w-5 text-[#10B981]" />
+                    <CheckCircleIcon className="h-5 w-5 text-[#10B981]" />
                     <span className="font-semibold text-white">
                       Same-Day Service
                     </span>
@@ -478,7 +479,7 @@ export function AutoPartsMarketplacePage() {
                 className="bg-[#DC2626] p-6 font-medium text-white hover:bg-[#B91C1C]"
               >
                 <Link href="/services" className="flex items-center gap-2">
-                  <Wrench className="h-5 w-5" />
+                  <WrenchIcon className="h-5 w-5" />
                   Find Installation Services
                 </Link>
               </Button>

@@ -1,7 +1,8 @@
-import type { LucideProps } from "lucide-react"
+import type { ComponentProps, ComponentType } from "react"
 
-export type AppIconProps = LucideProps
+export type AppIconProps = ComponentProps<"svg">
+export type AppIconComponent = ComponentType<AppIconProps>
 
-export type RatingStarIconProps = LucideProps & {
+export type RatingStarIconProps = AppIconProps & {
   filled?: boolean
 }

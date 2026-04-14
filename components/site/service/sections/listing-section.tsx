@@ -1,6 +1,10 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Filter, MapPin, Star } from "lucide-react"
+import {
+  FilterIcon,
+  MapPinIcon,
+  RatingStarIcon,
+} from "@/components/icons/site-icons"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -121,7 +125,7 @@ export function ServicesListingSection() {
                 variant="outline"
                 className="rounded-lg border-border bg-card text-white hover:border-primary"
               >
-                <Filter className="h-4 w-4" />
+                <FilterIcon className="h-4 w-4" />
                 Filters
               </Button>
 
@@ -232,7 +236,7 @@ function GarageCard({
               </Link>
 
               <div className="mt-2 flex items-center gap-2 text-sm text-brand-muted">
-                <Star className="h-4 w-4 fill-primary text-primary" />
+                <RatingStarIcon filled className="h-4 w-4 text-primary" />
                 {rating} ({reviews})
               </div>
             </div>
@@ -244,7 +248,7 @@ function GarageCard({
           </div>
 
           <div className="mb-4 flex items-center gap-2 text-sm text-brand-muted">
-            <MapPin className="h-4 w-4" />
+            <MapPinIcon className="h-4 w-4" />
             <span>
               {distance} • {address}
             </span>
