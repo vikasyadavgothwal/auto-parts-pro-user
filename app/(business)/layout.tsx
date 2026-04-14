@@ -1,7 +1,5 @@
-
 import {BusinessHeader}  from "@/components/site/business/business-header";
-import {Business_Footer} from "@/components/site/business/business-footer";
-
+import {BusinessFooter} from "@/components/site/business/business-footer";
 
 export default function BusinessLayout({
   children,
@@ -13,7 +11,7 @@ export default function BusinessLayout({
         <BusinessHeader
       />
       <div className="flex-1">{children}</div>
-      <Business_Footer />
+      <BusinessFooter />
     </div>
   );
 }

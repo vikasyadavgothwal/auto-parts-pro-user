@@ -1,16 +1,14 @@
-
-
 import Link from "next/link";
 
 export const SiteFooter = () => {
   return (
-    <footer className="border-t border-[#2A2A2A] bg-[#0A0A0A] py-16 text-white">
-      <div className="mx-auto max-w-[1200px] px-8">
+    <footer className="border-t border-border bg-brand-surface py-16 text-white">
+      <div className="site-container">
         <div className="mb-12 grid grid-cols-2 gap-8 md:grid-cols-4">
           {/* Products */}
           <div>
             <h4 className="mb-4 font-semibold text-white">Products</h4>
-            <ul className="space-y-2 text-[#9CA3AF]">
+            <ul className="space-y-2 text-brand-muted">
               <li>
                 <Link
                   href="/search"
@@ -41,7 +39,7 @@ export const SiteFooter = () => {
           {/* Company */}
           <div>
             <h4 className="mb-4 font-semibold text-white">Company</h4>
-            <ul className="space-y-2 text-[#9CA3AF]">
+            <ul className="space-y-2 text-brand-muted">
               <li>
                 <a href="#" className="transition-colors hover:text-white">
                   About Us
@@ -63,7 +61,7 @@ export const SiteFooter = () => {
           {/* Support */}
           <div>
             <h4 className="mb-4 font-semibold text-white">Support</h4>
-            <ul className="space-y-2 text-[#9CA3AF]">
+            <ul className="space-y-2 text-brand-muted">
               <li>
                 <a href="#" className="transition-colors hover:text-white">
                   Help Center
@@ -85,7 +83,7 @@ export const SiteFooter = () => {
           {/* Legal */}
           <div>
             <h4 className="mb-4 font-semibold text-white">Legal</h4>
-            <ul className="space-y-2 text-[#9CA3AF]">
+            <ul className="space-y-2 text-brand-muted">
               <li>
                 <a href="#" className="transition-colors hover:text-white">
                   Privacy
@@ -101,21 +99,21 @@ export const SiteFooter = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-[#2A2A2A] pt-8 md:flex-row">
-          <p className="text-[#9CA3AF]">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row">
+          <p className="text-brand-muted">
             © 2026 AutoPartsPro. All rights reserved.
           </p>
 
           <div className="flex items-center gap-6">
             <a
               href="#"
-              className="text-[#9CA3AF] transition-colors hover:text-white"
+              className="text-brand-muted transition-colors hover:text-white"
             >
               Privacy Policy
             </a>
             <a
               href="#"
-              className="text-[#9CA3AF] transition-colors hover:text-white"
+              className="text-brand-muted transition-colors hover:text-white"
             >
               Terms of Service
             </a>
@@ -123,5 +121,5 @@ export const SiteFooter = () => {
         </div>
       </div>
     </footer>
-  );
+  )
 };

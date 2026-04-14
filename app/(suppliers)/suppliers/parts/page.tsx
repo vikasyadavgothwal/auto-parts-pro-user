@@ -1,9 +1,9 @@
-import {Parts} from "@/components/site/suppliers/parts/parts";
-import {SupplierCustomQuoteSection} from "@/components/site/suppliers/parts/Custom_quote";
+import { PartsSection } from "@/components/site/suppliers/parts/parts-section";
+import { SupplierCustomQuoteSection } from "@/components/site/suppliers/parts/custom-quote-section";
 export default function SupplierPartsPage() {
   return (
     <>
-      <Parts />
+      <PartsSection />
       <SupplierCustomQuoteSection />
     </>
   )

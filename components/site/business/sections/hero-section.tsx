@@ -1,0 +1,48 @@
+import Link from "next/link"
+import { Sparkles } from "lucide-react"
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+
+export function BusinessHeroSection() {
+  return (
+    <section className="relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
+
+      <div className="site-container relative py-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <Badge className="mb-6 rounded-full px-4 py-2 text-sm font-medium">
+            <Sparkles className="h-4 w-4" />
+            <span>Trusted by 5,000+ businesses</span>
+          </Badge>
+
+          <h1 className="mb-6 text-6xl font-bold leading-tight text-white">
+            Enterprise Solutions for
+            <br />
+            <span className="text-primary">Repair Shops &amp; Fleets</span>
+          </h1>
+
+          <p className="mb-12 text-xl leading-relaxed text-brand-muted">
+            Streamline procurement, reduce costs, and keep your operations
+            running smoothly with our B2B platform built for automotive
+            professionals.
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            <Button className="h-auto rounded-lg px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover">
+              Schedule a Demo
+            </Button>
+
+            <Button
+              asChild
+              variant="outline"
+              className="h-auto rounded-lg border-border bg-brand-panel px-8 py-4 text-lg font-medium text-white hover:border-primary hover:bg-transparent"
+            >
+              <Link href="#pricing">View Pricing</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

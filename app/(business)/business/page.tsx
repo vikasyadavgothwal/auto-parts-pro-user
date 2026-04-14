@@ -1,16 +1,17 @@
-import { BusinessHero } from "@/components/site/business/main/hero";
-import {BusinessFeatures} from "@/components/site/business/main/business";
-import {PricingSection} from "@/components/site/business/main/plans";
-import {FleetOperationsSection} from "@/components/site/business/main/fleet_manager";
-import {BusinessCTASection} from "@/components/site/business/main/cta";
+import { BusinessCTASection } from "@/components/site/business/sections/cta-section"
+import { BusinessFeaturesSection } from "@/components/site/business/sections/features-section"
+import { FleetOperationsSection } from "@/components/site/business/sections/fleet-operations-section"
+import { BusinessHeroSection } from "@/components/site/business/sections/hero-section"
+import { PricingSection } from "@/components/site/business/sections/pricing-section"
+
 export default function BusinessPage() {
   return (
     <>
-    <BusinessHero />
-    <BusinessFeatures />
-    <PricingSection />
-    <FleetOperationsSection />
-    <BusinessCTASection />
+      <BusinessHeroSection />
+      <BusinessFeaturesSection />
+      <PricingSection />
+      <FleetOperationsSection />
+      <BusinessCTASection />
     </>
-  );
+  )
 }

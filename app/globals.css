@@ -18,6 +18,14 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-brand-primary-hover: var(--brand-primary-hover);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-panel: var(--brand-panel);
+  --color-brand-surface-strong: var(--brand-surface-strong);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-placeholder: var(--brand-placeholder);
+  --color-brand-success: var(--brand-success);
+  --color-brand-warning: var(--brand-warning);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -51,6 +59,14 @@
 :root {
   --font-sans: Arial, Helvetica, sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  --brand-primary-hover: #b91c1c;
+  --brand-surface: #0a0a0a;
+  --brand-panel: #1a1a1a;
+  --brand-surface-strong: #1f1f1f;
+  --brand-muted: #9ca3af;
+  --brand-placeholder: #4b5563;
+  --brand-success: #22c55e;
+  --brand-warning: #eab308;
   --background: #0a0a0a;
   --foreground: #fafafa;
   --card: #1a1a1a;
@@ -86,6 +102,14 @@
 }
 
 .dark {
+  --brand-primary-hover: #b91c1c;
+  --brand-surface: #0a0a0a;
+  --brand-panel: #1a1a1a;
+  --brand-surface-strong: #1f1f1f;
+  --brand-muted: #9ca3af;
+  --brand-placeholder: #4b5563;
+  --brand-success: #22c55e;
+  --brand-warning: #eab308;
   --background: #0a0a0a;
   --foreground: #fafafa;
   --card: #1a1a1a;
@@ -123,11 +147,50 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
     color-scheme: dark;
+  }
+}
+
+@layer components {
+  .site-container {
+    @apply mx-auto w-full max-w-[1200px] px-8;
+  }
+
+  .site-container-wide {
+    @apply mx-auto w-full max-w-[1440px] px-8;
+  }
+
+  .surface-card {
+    @apply rounded-xl border border-border bg-card text-card-foreground;
+  }
+
+  .surface-card-strong {
+    @apply rounded-xl border border-border bg-brand-surface text-foreground;
+  }
+
+  .surface-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary;
+  }
+
+  .status-pill-success {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-brand-success/20 bg-brand-success/10 px-2 py-1 text-sm font-medium text-brand-success;
+  }
+
+  .status-pill-warning {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-brand-warning/20 bg-brand-warning/10 px-2 py-1 text-sm font-medium text-brand-warning;
+  }
+
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.08) 1px, transparent 1px);
+    background-size: 28px 28px;
   }
 }

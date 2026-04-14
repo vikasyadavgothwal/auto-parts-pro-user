@@ -1,6 +1,5 @@
-
-import {Supplier_Header} from "@/components/site/suppliers/suppliers-header";
-import {Footer_Suppllier} from "@/components/site/suppliers/suppliers-footer";
+import { SupplierFooter } from "@/components/site/suppliers/supplier-footer";
+import { SupplierHeader } from "@/components/site/suppliers/supplier-header";
 
 export default function SuppliersLayout({
   children,
@@ -9,9 +8,9 @@ export default function SuppliersLayout({
 }>) {
   return (
     <div className="flex min-h-screen flex-col">
-      <Supplier_Header />
+      <SupplierHeader />
       <div className="flex-1">{children}</div>
-      <Footer_Suppllier />
+      <SupplierFooter />
     </div>
   );
 }

@@ -1,23 +1,23 @@
+import { BusinessSolutionsSection } from "@/components/site/user/sections/business-solutions-section"
+import { BenefitsSection } from "@/components/site/user/sections/benefits-section"
+import { CategoryTypesSection } from "@/components/site/user/sections/category-types-section"
+import { CTASection } from "@/components/site/user/sections/cta-section"
+import { FeaturedPartsSection } from "@/components/site/user/sections/featured-parts-section"
+import { HeroSection } from "@/components/site/user/sections/hero-section"
+import { ProcessSection } from "@/components/site/user/sections/process-section"
+import { SearchSection } from "@/components/site/user/sections/search-section"
 
-import {Hero} from "@/components/site/user/main/hero";
-import Search from "@/components/site/user/main/Search";
-import {Benefit} from "@/components/site/user/main/benifit";
-import {CategoryType} from "@/components/site/user/main/category_type";
-import {Featured} from "@/components/site/user/main/featured";
-import {Process} from "@/components/site/user/main/process";
-import {Business} from "@/components/site/user/main/business";
-import {CTASection} from "@/components/site/user/main/cta";
 export default function UserPage() {
   return (
     <>
-    <Hero />
-    <Search />
-    <Benefit />
-    <CategoryType />
-    <Featured />
-    <Process />
-    <Business />
-    <CTASection />
+      <HeroSection />
+      <SearchSection />
+      <BenefitsSection />
+      <CategoryTypesSection />
+      <FeaturedPartsSection />
+      <ProcessSection />
+      <BusinessSolutionsSection />
+      <CTASection />
     </>
-  );
+  )
 }

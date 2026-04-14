@@ -1,4 +1,4 @@
-import { ServicesHeader } from "@/components/site/service/servce-header";
+import { ServiceHeader } from "@/components/site/service/service-header";
 
 export default function BusinessLayout({
   children,
@@ -7,7 +7,7 @@ export default function BusinessLayout({
 }>) {
   return (
     <div className="flex min-h-screen flex-col">
-        <ServicesHeader
+        <ServiceHeader
       />
       <div className="flex-1">{children}</div>
     </div>

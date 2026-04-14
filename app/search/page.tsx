@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { MainHeader } from "@/components/site/header";
+import { VehicleChangeSection } from "@/components/site/user/sections/veicle-change-section";
 
 const products = [
   {
@@ -101,7 +103,6 @@ const products = [
     highlight: false,
   },
 ];
-
 const brands = [
   "ACDelco",
   "Bosch",
@@ -112,43 +113,6 @@ const brands = [
 ];
 
 const prices = ["Under $50", "$50 - $100", "$100 - $150", "Over $150"];
-
-function SearchIcon({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
-
-function CartIcon({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="8" cy="21" r="1" />
-      <circle cx="19" cy="21" r="1" />
-      <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
-    </svg>
-  );
-}
 
 function CheckCircleIcon({ className = "h-4 w-4" }: { className?: string }) {
   return (
@@ -294,65 +258,8 @@ function StarIcon({
 export default function SearchPage() {
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
-      <header className="sticky top-0 z-50 border-b border-[#2A2A2A] bg-[#0A0A0A]">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-          <div className="flex min-h-20 flex-col gap-4 py-4 lg:h-20 lg:flex-row lg:items-center lg:justify-between lg:py-0">
-            <div className="flex min-w-0 flex-1 flex-col gap-4 lg:flex-row lg:items-center lg:gap-8 xl:gap-12">
-              <Link href="/" className="shrink-0 text-2xl font-bold text-white">
-                AutoParts<span className="text-[#DC2626]">Pro</span>
-              </Link>
-
-              <div className="flex w-full items-center md:flex lg:max-w-2xl">
-                <div className="relative w-full">
-                  <SearchIcon className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[#9CA3AF]" />
-                  <input
-                    type="text"
-                    placeholder="Search by part name or number..."
-                    className="h-12 w-full rounded-lg border border-[#2A2A2A] bg-[#1A1A1A] pr-4 pl-12 text-white transition-all placeholder:text-[#4B5563] focus:border-[#DC2626] focus:outline-none focus:ring-2 focus:ring-[#DC2626]/50"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-4">
-              <button className="flex items-center gap-2 px-4 py-2.5 text-[#9CA3AF] transition-colors hover:text-white sm:px-5">
-                <CartIcon className="h-5 w-5" />
-                <span>Cart (0)</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="border-b border-[#2A2A2A] bg-gradient-to-r from-[#10B981]/10 to-emerald-500/10 backdrop-blur-xl">
-        <div className="mx-auto max-w-[1440px] px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
-          <div className="flex flex-col gap-4 rounded-xl border-2 border-[#10B981]/30 bg-[#1A1A1A]/80 p-4 shadow-lg shadow-[#10B981]/20 backdrop-blur-sm sm:p-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#10B981]/30 bg-[#0A0A0A] shadow-lg shadow-[#10B981]/20">
-                <CheckCircleIcon className="h-8 w-8 text-[#10B981]" />
-              </div>
-
-              <div>
-                <h3 className="mb-1 text-lg font-semibold text-[#10B981]">
-                  Confirmed Fitment
-                </h3>
-                <p className="mb-2 text-sm text-[#9CA3AF]">
-                  This part is guaranteed to fit your vehicle
-                </p>
-                <div className="flex flex-wrap items-center gap-2 text-sm">
-                  <span className="font-medium text-white">2018 Honda Accord</span>
-                  <span className="text-[#4B5563]">•</span>
-                  <span className="text-[#9CA3AF]">VIN: 1HGBH41JXMN109186</span>
-                </div>
-              </div>
-            </div>
-
-            <button className="rounded-lg bg-[#DC2626] px-6 py-2.5 font-medium text-white transition-colors hover:bg-[#B91C1C]">
-              Change Vehicle
-            </button>
-          </div>
-        </div>
-      </div>
+      <MainHeader />
+      <VehicleChangeSection />
 
       <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="flex flex-col gap-8 xl:flex-row">
@@ -366,7 +273,9 @@ export default function SearchPage() {
               </div>
 
               <div className="mb-6">
-                <h4 className="mb-3 text-sm font-medium text-white">Fitment Status</h4>
+                <h4 className="mb-3 text-sm font-medium text-white">
+                  Fitment Status
+                </h4>
                 <div className="space-y-2">
                   <label className="group flex cursor-pointer items-center gap-3">
                     <input
@@ -403,7 +312,10 @@ export default function SearchPage() {
                 <h4 className="mb-3 text-sm font-medium text-white">Brand</h4>
                 <div className="space-y-2">
                   {brands.map((brand) => (
-                    <label key={brand} className="group flex cursor-pointer items-center gap-3">
+                    <label
+                      key={brand}
+                      className="group flex cursor-pointer items-center gap-3"
+                    >
                       <input
                         type="checkbox"
                         className="h-4 w-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
@@ -419,10 +331,15 @@ export default function SearchPage() {
               <div className="my-6 border-t border-[#2A2A2A]" />
 
               <div className="mb-6">
-                <h4 className="mb-3 text-sm font-medium text-white">Price Range</h4>
+                <h4 className="mb-3 text-sm font-medium text-white">
+                  Price Range
+                </h4>
                 <div className="space-y-2">
                   {prices.map((price) => (
-                    <label key={price} className="group flex cursor-pointer items-center gap-3">
+                    <label
+                      key={price}
+                      className="group flex cursor-pointer items-center gap-3"
+                    >
                       <input
                         type="checkbox"
                         className="h-4 w-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
@@ -438,7 +355,9 @@ export default function SearchPage() {
               <div className="my-6 border-t border-[#2A2A2A]" />
 
               <div>
-                <h4 className="mb-3 text-sm font-medium text-white">Availability</h4>
+                <h4 className="mb-3 text-sm font-medium text-white">
+                  Availability
+                </h4>
                 <label className="group flex cursor-pointer items-center gap-3">
                   <input
                     type="checkbox"
@@ -462,7 +381,8 @@ export default function SearchPage() {
                 </button>
 
                 <p className="text-sm text-[#9CA3AF]">
-                  Showing <span className="font-medium text-white">6</span> results for
+                  Showing <span className="font-medium text-white">6</span>{" "}
+                  results for
                   <span className="font-medium text-white"> Brake Pads</span>
                 </p>
               </div>
@@ -510,8 +430,8 @@ export default function SearchPage() {
                             isFit
                               ? "border-[#10B981]/30 bg-[#10B981]/10 text-[#10B981]"
                               : isLikely
-                              ? "border-[#F59E0B]/30 bg-[#F59E0B]/10 text-[#F59E0B]"
-                              : "border-[#DC2626]/30 bg-[#DC2626]/10 text-[#DC2626]"
+                                ? "border-[#F59E0B]/30 bg-[#F59E0B]/10 text-[#F59E0B]"
+                                : "border-[#DC2626]/30 bg-[#DC2626]/10 text-[#DC2626]"
                           }`}
                         >
                           {isFit ? (
@@ -521,7 +441,9 @@ export default function SearchPage() {
                           ) : (
                             <XCircleIcon className="h-4 w-4" />
                           )}
-                          <span className="text-xs font-medium">{product.badge}</span>
+                          <span className="text-xs font-medium">
+                            {product.badge}
+                          </span>
                         </div>
 
                         {product.stockLabel && (
@@ -535,7 +457,9 @@ export default function SearchPage() {
                         <div className="mb-3 flex flex-wrap items-center gap-2">
                           <div className="flex items-center gap-2">
                             <PackageIcon className="h-4 w-4 text-[#9CA3AF]" />
-                            <span className="text-sm text-[#9CA3AF]">{product.seller}</span>
+                            <span className="text-sm text-[#9CA3AF]">
+                              {product.seller}
+                            </span>
                           </div>
                         </div>
 
@@ -543,24 +467,46 @@ export default function SearchPage() {
                           {product.title}
                         </h3>
 
-                        <p className="mb-4 text-sm text-[#9CA3AF]">Part #: {product.partNo}</p>
+                        <p className="mb-4 text-sm text-[#9CA3AF]">
+                          Part #: {product.partNo}
+                        </p>
 
                         <div className="mb-4 flex items-center gap-2">
                           <div className="flex">
-                            <StarIcon filled className="h-4 w-4 text-[#F59E0B]" />
-                            <StarIcon filled className="h-4 w-4 text-[#F59E0B]" />
-                            <StarIcon filled className="h-4 w-4 text-[#F59E0B]" />
-                            <StarIcon filled className="h-4 w-4 text-[#F59E0B]" />
+                            <StarIcon
+                              filled
+                              className="h-4 w-4 text-[#F59E0B]"
+                            />
+                            <StarIcon
+                              filled
+                              className="h-4 w-4 text-[#F59E0B]"
+                            />
+                            <StarIcon
+                              filled
+                              className="h-4 w-4 text-[#F59E0B]"
+                            />
+                            <StarIcon
+                              filled
+                              className="h-4 w-4 text-[#F59E0B]"
+                            />
                             <StarIcon className="h-4 w-4 text-[#2A2A2A]" />
                           </div>
-                          <span className="text-sm font-medium text-white">{product.rating}</span>
-                          <span className="text-sm text-[#9CA3AF]">{product.reviews}</span>
+                          <span className="text-sm font-medium text-white">
+                            {product.rating}
+                          </span>
+                          <span className="text-sm text-[#9CA3AF]">
+                            {product.reviews}
+                          </span>
                         </div>
 
                         <div className="flex items-center justify-between border-t border-[#2A2A2A] pt-4">
                           <div>
-                            <p className="text-2xl font-bold text-white">{product.price}</p>
-                            <p className="text-xs text-[#9CA3AF]">{product.shipping}</p>
+                            <p className="text-2xl font-bold text-white">
+                              {product.price}
+                            </p>
+                            <p className="text-xs text-[#9CA3AF]">
+                              {product.shipping}
+                            </p>
                           </div>
 
                           <button className="rounded-lg bg-[#DC2626] px-6 py-2.5 font-medium text-white transition-all hover:bg-[#B91C1C]">
