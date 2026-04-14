@@ -47,7 +47,7 @@ import {
   Calendar,
   Phone,
   Mail,
-  ChevronRight
+  ChevronRight , X, Eye, Lock  , Building2
 } from "lucide-react"
 
 
@@ -141,3 +141,9 @@ export const FileTextIcon = (props: AppIconProps) => <FileText {...props} />
 export const ShoppingCartIcon = (props: AppIconProps) => <ShoppingCart {...props} />
 export const UserIcon = (props: AppIconProps) => <User {...props} />
 export const ChevronRightIcon = (props: AppIconProps) => <ChevronRight {...props} />;
+
+/* Authentication */
+export const CloseIcon = (props: AppIconProps) => <X {...props} />;
+export const EyeIcon = (props: AppIconProps) => <Eye {...props} />;
+export const LockIcon = (props: AppIconProps) => <Lock {...props} />;
+export const BuildingIcon = (props: AppIconProps) => <Building2 {...props} />;
