@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -19,6 +19,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageSquare } from "lucide-react";
+import type {
+  ProductHighlight,
+  ProductOffer,
+  RatingStarsProps,
+} from "@/types/site/product";
 
 const productImages = [
   "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=1200&h=1200&fit=crop",
@@ -34,13 +39,13 @@ const keyFeatures = [
   "Backed by Bosch Limited Lifetime Warranty",
 ];
 
-const highlights = [
+const highlights: ProductHighlight[] = [
   { icon: Package, label: "OEM Quality" },
   { icon: Truck, label: "Fast Shipping" },
   { icon: Shield, label: "Warranty" },
 ];
 
-const offers = [
+const offers: ProductOffer[] = [
   {
     seller: "Bosch Direct",
     logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=200&fit=crop",
@@ -94,10 +99,7 @@ const offers = [
 function RatingStars({
   rating,
   size = "h-5 w-5",
-}: {
-  rating: number;
-  size?: string;
-}) {
+}: RatingStarsProps) {
   const fullStars = Math.floor(rating);
 
   return (

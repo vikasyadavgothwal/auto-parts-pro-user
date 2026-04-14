@@ -1,4 +1,3 @@
-import type { LucideIcon } from "lucide-react"
 import {
   BarChart3,
   CreditCard,
@@ -13,14 +12,9 @@ import {
 
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
+import type { BusinessFeature } from "@/types/site/business"
 
-type Feature = {
-  title: string
-  description: string
-  icon: LucideIcon
-}
-
-const features: Feature[] = [
+const features: BusinessFeature[] = [
   {
     title: "Volume Pricing",
     description: "Scale discounts that grow with your business",

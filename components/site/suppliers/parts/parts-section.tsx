@@ -24,20 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import type { SupplierProduct } from "@/types/site/suppliers"
 
-type Product = {
-  id: number
-  name: string
-  partNumber: string
-  condition: string
-  price: string
-  offers?: string
-  image: string
-  href: string
-  confirmedFit?: boolean
-}
-
-const products: Product[] = [
+const products: SupplierProduct[] = [
   {
     id: 1,
     name: "Front Brake Pad Set - Ceramic",

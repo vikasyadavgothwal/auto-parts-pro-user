@@ -1,11 +1,5 @@
-import type { LucideIcon } from "lucide-react"
 import { BadgeDollarSign, ShieldCheck, TrendingUp } from "lucide-react"
-
-type BenefitItem = {
-  title: string
-  description: string
-  icon: LucideIcon
-}
+import type { BenefitItem } from "@/types/site/user"
 
 const benefits: BenefitItem[] = [
   {

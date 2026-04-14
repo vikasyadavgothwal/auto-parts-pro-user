@@ -1,6 +1,6 @@
 import { MainHeader } from "@/components/site/header";
 import { AutoPartsMarketplacePage } from "@/components/site/product/SingleProduct";
-import { VehicleChangeSection } from "@/components/site/user/sections/veicle-change-section";
+import { VehicleChangeSection } from "@/components/site/user/sections/vehicle-change-section";
 
 export default function ProductPage() {
   return (

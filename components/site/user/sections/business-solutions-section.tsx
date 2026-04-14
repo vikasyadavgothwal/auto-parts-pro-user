@@ -1,15 +1,9 @@
 import Link from "next/link"
-import type { LucideIcon } from "lucide-react"
 import { ArrowRight, Package, Wrench } from "lucide-react"
 
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
-
-type Solution = {
-  title: string
-  description: string
-  icon: LucideIcon
-}
+import type { Solution } from "@/types/site/user"
 
 const solutions: Solution[] = [
   {

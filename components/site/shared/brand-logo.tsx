@@ -1,15 +1,7 @@
 import Link from "next/link"
 
 import { cn } from "@/lib/utils"
-
-type BrandLogoProps = {
-  href?: string
-  className?: string
-  textClassName?: string
-  accentClassName?: string
-  markClassName?: string
-  showMark?: boolean
-}
+import type { BrandLogoProps } from "@/types/site/shared"
 
 export function BrandLogo({
   href = "/",

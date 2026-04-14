@@ -4,18 +4,9 @@ import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import type { BusinessPlan } from "@/types/site/business"
 
-type Plan = {
-  name: string
-  description: string
-  price: string
-  suffix?: string
-  buttonText: string
-  popular?: boolean
-  features: string[]
-}
-
-const plans: Plan[] = [
+const plans: BusinessPlan[] = [
   {
     name: "Starter",
     description: "Perfect for independent mechanics",

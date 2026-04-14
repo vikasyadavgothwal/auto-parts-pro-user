@@ -1,5 +1,4 @@
 import Link from "next/link"
-import type { LucideIcon } from "lucide-react"
 import {
   Battery,
   CarFront,
@@ -11,12 +10,7 @@ import {
 
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
-
-type Category = {
-  name: string
-  count: string
-  icon: LucideIcon
-}
+import type { Category } from "@/types/site/user"
 
 const categories: Category[] = [
   { name: "Engine Parts", count: "12,450 parts", icon: Cog },

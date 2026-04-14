@@ -23,22 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
-type Supplier = {
-  id: number
-  name: string
-  image: string
-  location: string
-  responseTime: string
-  rating: number
-  reviews: string
-  specialties: string[]
-  trustScore: number
-  ordersCompleted: string
-  verified: boolean
-  topRated: boolean
-  href: string
-}
+import type { Supplier } from "@/types/site/suppliers"
 
 const suppliers: Supplier[] = [
   {
