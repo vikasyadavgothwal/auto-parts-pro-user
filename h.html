@@ -1,757 +1,1252 @@
-<html>
 
-<head>
-    <style id="reset-css">
-        @layer figreset, figoverridable, reset, theme, base, figutils, components, utilities;
-
-        @layer figoverridable {
-            :root {
-                font-synthesis: none
-            }
-        }
-
-        @layer figutils {
-            :root {
-                --banner-height: 48px;
-                --banner-height-v2: 40px;
-                --full-height-with-banner: calc(100dvh - var(--banner-height))
-            }
-
-            @media (max-width:600px) {
-                .banner-v2-container {
-                    left: 0 !important;
-                    right: 0 !important;
-                    margin: 0 auto !important
-                }
-            }
-
-            .wrapper-with-banner .min-h-screen {
-                min-height: var(--full-height-with-banner)
-            }
-
-            .wrapper-with-banner .h-screen {
-                height: var(--full-height-with-banner)
-            }
-        }
-    </style>
-    <meta name="color-scheme" content="light dark">
-    <style>
-        html,
-        body,
-        #container,
-        #container>div {
-            height: 100%;
-        }
-    </style>
-    <link rel="stylesheet"
-        href="https://s3-figma-foundry-cached-previews-production-sig.figma.com/2e254a5a-1584-4b2f-be61-0490fe1cd7a1/index.css?Expires=1777248000&amp;Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&amp;Signature=U79cKtzpPdSMBI71heXsGbgUY3va2vrU8~YvQz9nG25BZ1YgiQNllOj3IlhJecya-zHnOL6A7FQFE3XKH7F3gIT47BGW5hpXL2Ka6RRBx~ovP61RnlpdQOsUCUPHceUkx8VYTkaj6rOCrHOfNdBLpisAuKzWiY3NB~i~tSomv~n4foTORwQFrDI~nJspQWme3stON1jl-KGCDTph-npDuN~nCGW4lfany303gRxSciytzZtQXdiaMxt6vx1XfkLGwCqPfXssG1HjewkckbF1gIFxvtZjUowyqF99O5OR7q2NRWiEH0e--l8qjjvQusYWaqGAbcfEMCpLLZw6gDvMfg__">
-</head>
-
-<body>
-    <script>
-        window.messagePort = null
-
-        const allowedOrigins = [
-            'https://figma-gov.com',
-            'https://www.figma.com',
-            'https://staging.figma.com',
-            'https://devenv01.figma.engineering',
-            'https://local.figma.engineering:8443',
-            'http://localhost:9000',
-        ]
-
-        const allowedOriginPatterns = [
-            /^https:\/\/[a-z0-9-]+\.figdev\.systems:8443$/,
-            /^https:\/\/[a-z0-9-]+\.figdev\.systems$/,
-        ]
-
-        function isAllowedOrigin(origin) {
-            return allowedOrigins.includes(origin) || allowedOriginPatterns.some(p => p.test(origin))
-        }
-
-        window.addEventListener('message', (e) => {
-            function sendMessage(data) {
-                if (window.messagePort) {
-                    window.messagePort.postMessage({ data })
-                }
-            }
-
-            if (isAllowedOrigin(e.origin)) {
-                if (e.data.type === 'iframe-init') {
-                    window.messagePort = e.ports[0]
-                    window.__PREVIEW_IFRAME_INITIAL_OPTIONS__ = e.data.previewIframeInitialOptions
-
-                    sendMessage({
-                        method: 'status',
-                        state: 'init-received',
-                        isReady: false
-                    })
-
-                    if (e.data.initScriptBlob) {
-                        import(URL.createObjectURL(e.data.initScriptBlob))
-                    } else {
-                        const script = document.createElement('script')
-
-                        script.onload = async () => {
-                            function sendReady() {
-                                sendMessage({
-                                    method: 'status',
-                                    state: 'ready',
-                                    isReady: true
-                                })
-                            }
-
-                            if (window.__iframeScriptExecuted__) {
-                                sendReady()
-                                return
-                            }
-
-                            let executeInterval = null
-                            let timeout = null
-
-                            const timeoutPromise = new Promise((resolve) => {
-                                timeout = setTimeout(() => resolve('timeout'), 2000)
-                            })
-
-                            const scriptExecutedPromise = new Promise((resolve) => {
-                                executeInterval = setInterval(() => {
-                                    if (window.__iframeScriptExecuted__) {
-                                        resolve('ready')
-                                    }
-                                }, 50)
-                            })
-
-                            const result = await Promise.race([timeoutPromise, scriptExecutedPromise])
-
-                            clearTimeout(timeout)
-                            clearInterval(executeInterval)
-
-                            if (result === 'ready') {
-                                sendReady()
-                            } else {
-                                sendMessage({
-                                    method: 'status',
-                                    state: 'script-timeout',
-                                    isReady: false
-                                })
-                            }
-                        }
-
-                        script.onerror = (e) => {
-                            sendMessage({
-                                method: 'status',
-                                state: 'script-load-error',
-                                isReady: false,
-                                error: e.message
-                            })
-                        }
-
-                        script.src = e.data.initScriptURL
-                        // https://sentry.io/answers/script-error/
-                        script.crossOrigin = 'anonymous'
-                        document.body.appendChild(script)
-                    }
-                }
-            }
-        })
-    </script>
-
-
-
-    <script
-        src="https://www.figma.com/webpack-artifacts/assets/code_components_preview_iframe-b4da7618b1d101bd.min.js.br"
-        crossorigin="anonymous"></script>
     <div id="container">
         <div class="tailwind">
             <div id="fig-code-root" style="height: 100%;">
-                <div class="min-h-screen bg-[#0A0A0A]">
-                    <header class="border-b border-[#2A2A2A] bg-[#0A0A0A] sticky top-0 z-50">
-                        <div class="max-w-[1440px] mx-auto px-8">
-                            <div class="flex items-center justify-between h-20">
-                                <div class="flex items-center gap-12"><a class="text-2xl font-bold text-white" href="/"
-                                        data-discover="true">AutoParts<span class="text-[#DC2626]">Pro</span></a>
-                                    <nav class="hidden md:flex items-center gap-8"><a
-                                            class="text-[#9CA3AF] hover:text-white transition-colors" href="/search"
-                                            data-discover="true">Browse Parts</a><a class="text-white transition-colors"
-                                            href="/services" data-discover="true">Services</a><a
-                                            class="text-[#9CA3AF] hover:text-white transition-colors" href="/rfq"
-                                            data-discover="true">Request Quote</a></nav>
-                                </div>
-                                <div class="flex items-center gap-4"><button
-                                        class="px-5 py-2.5 text-[#9CA3AF] hover:text-white transition-colors">Sign
-                                        In</button></div>
-                            </div>
-                        </div>
-                    </header>
-                    <section class="bg-gradient-to-b from-[#1A1A1A] to-[#0A0A0A] py-16">
-                        <div class="max-w-[1200px] mx-auto px-8">
-                            <div class="text-center mb-8">
-                                <h1 class="text-5xl font-bold text-white mb-4">Find Trusted Auto Services</h1>
-                                <p class="text-xl text-[#9CA3AF]">Book certified mechanics and garages near you</p>
-                            </div>
-                            <div class="max-w-4xl mx-auto">
-                                <div
-                                    class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-2 flex flex-col md:flex-row gap-2">
-                                    <div class="flex-1 flex items-center gap-3 px-4"><svg
+                <div class="min-h-screen bg-[#0A0A0A]"
+                    data-fg-rmh12="135.199:135.34366:/src/app/pages/supplier-detail.tsx:198:5:6188:28171:e:div:etete:1"
+                    data-fgid-rmh12=":rs6:" data-fg-callsite-c2kk0="">
+                    <header class="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A] border-b border-[#2A2A2A]"
+                        data-fg-r8y0="135.92:135.2927:/src/app/components/header.tsx:10:5:299:2620:e:header:e:1"
+                        data-fgid-r8y0=":rs8:" data-fg-callsite-rmh13="">
+                        <div class="max-w-7xl mx-auto px-6"
+                            data-fg-r8y1="135.92:135.2927:/src/app/components/header.tsx:11:7:397:2508:e:div:e"
+                            data-fgid-r8y1=":rs9:">
+                            <div class="flex items-center justify-between h-20"
+                                data-fg-r8y2="135.92:135.2927:/src/app/components/header.tsx:12:9:446:2446:e:div:xtetxtetxte"
+                                data-fgid-r8y2=":rsa:"><a class="flex items-center gap-3"
+                                    data-fg-r8y4="135.92:135.2927:/src/app/components/header.tsx:14:11:536:329:e:Link:ete:::::B0gV"
+                                    data-fgid-r8y4=":rsb:" href="/" data-discover="true">
+                                    <div class="w-10 h-10 bg-[#DC2626] rounded-lg flex items-center justify-center"
+                                        data-fg-r8y5="135.92:135.2927:/src/app/components/header.tsx:15:13:598:173:e:div:e"
+                                        data-fgid-r8y5=":rsc:"><span class="text-white font-bold text-xl"
+                                            data-fg-r8y6="135.92:135.2927:/src/app/components/header.tsx:16:15:697:55:e:span:t"
+                                            data-fgid-r8y6=":rsd:">A</span></div><span
+                                        class="text-xl font-bold text-white"
+                                        data-fg-r8y8="135.92:135.2927:/src/app/components/header.tsx:18:13:784:63:e:span:t"
+                                        data-fgid-r8y8=":rse:">AutoParts</span>
+                                </a>
+                                <nav class="hidden md:flex items-center gap-8"
+                                    data-fg-r8y11="135.92:135.2927:/src/app/components/header.tsx:22:11:906:1018:e:nav:etetetete"
+                                    data-fgid-r8y11=":rsf:"><a
+                                        class="text-[#9CA3AF] hover:text-white transition-colors font-medium"
+                                        data-fg-r8y12="135.92:135.2927:/src/app/components/header.tsx:23:13:970:174:e:Link:t:::::B0gV"
+                                        data-fgid-r8y12=":rsg:" href="/search" data-discover="true">Parts</a><a
+                                        class="text-[#9CA3AF] hover:text-white transition-colors font-medium"
+                                        data-fg-r8y14="135.92:135.2927:/src/app/components/header.tsx:29:13:1157:169:e:Link:t:::::B0gV"
+                                        data-fgid-r8y14=":rsh:" href="/rfq" data-discover="true">RFQ</a><a
+                                        class="text-[#9CA3AF] hover:text-white transition-colors font-medium"
+                                        data-fg-r8y16="135.92:135.2927:/src/app/components/header.tsx:35:13:1339:178:e:Link:t:::::B0gV"
+                                        data-fgid-r8y16=":rsi:" href="/services" data-discover="true">Garages</a><a
+                                        class="text-[#9CA3AF] hover:text-white transition-colors font-medium"
+                                        data-fg-r8y18="135.92:135.2927:/src/app/components/header.tsx:41:13:1530:181:e:Link:t:::::B0gV"
+                                        data-fgid-r8y18=":rsj:" href="/suppliers" data-discover="true">Suppliers</a><a
+                                        class="text-[#9CA3AF] hover:text-white transition-colors font-medium"
+                                        data-fg-r8y20="135.92:135.2927:/src/app/components/header.tsx:47:13:1724:183:e:Link:t:::::B0gV"
+                                        data-fgid-r8y20=":rsk:" href="/business" data-discover="true">For Business</a>
+                                </nav>
+                                <div class="flex items-center gap-4"
+                                    data-fg-r8y23="135.92:135.2927:/src/app/components/header.tsx:56:11:1962:915:e:div:etete"
+                                    data-fgid-r8y23=":rsl:"><button
+                                        class="p-2 text-[#9CA3AF] hover:text-white transition-colors"
+                                        data-fg-r8y24="135.92:135.2927:/src/app/components/header.tsx:57:13:2016:141:e:button:e"
+                                        data-fgid-r8y24=":rsm:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-search w-5 h-5"
+                                            data-fg-r8y25="135.92:135.2927:/src/app/components/header.tsx:58:15:2105:30:e:Search::::::B9rK"
+                                            data-fgid-r8y25=":rsn:">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <path d="m21 21-4.3-4.3"></path>
+                                        </svg></button><a
+                                        class="relative p-2 text-[#9CA3AF] hover:text-white transition-colors"
+                                        data-fg-r8y26="135.92:135.2927:/src/app/components/header.tsx:61:13:2171:477:e:Link:etx:::::B0gV"
+                                        data-fgid-r8y26=":rso:" href="/checkout" data-discover="true"><svg
                                             xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-wrench w-5 h-5 text-[#9CA3AF]">
+                                            class="lucide lucide-shopping-cart w-5 h-5"
+                                            data-fg-r8y27="135.92:135.2927:/src/app/components/header.tsx:65:15:2323:36:e:ShoppingCart::::::BPYc"
+                                            data-fgid-r8y27=":rsp:">
+                                            <circle cx="8" cy="21" r="1"></circle>
+                                            <circle cx="19" cy="21" r="1"></circle>
                                             <path
-                                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                                                d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12">
                                             </path>
-                                        </svg><input type="text" placeholder="What service do you need?"
-                                            class="flex-1 bg-transparent border-none focus:outline-none text-white placeholder:text-[#4B5563]">
-                                    </div>
-                                    <div
-                                        class="flex-1 flex items-center gap-3 px-4 border-t md:border-t-0 md:border-l border-[#2A2A2A] pt-2 md:pt-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        </svg></a><a class="p-2 text-[#9CA3AF] hover:text-white transition-colors"
+                                        data-fg-r8y31="135.92:135.2927:/src/app/components/header.tsx:73:13:2662:198:e:Link:e:::::B0gV"
+                                        data-fgid-r8y31=":rsq:" href="/dashboard/buyer" data-discover="true"><svg
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-map-pin w-5 h-5 text-[#9CA3AF]">
+                                            class="lucide lucide-user w-5 h-5"
+                                            data-fg-r8y32="135.92:135.2927:/src/app/components/header.tsx:77:15:2812:28:e:User::::::wpV"
+                                            data-fgid-r8y32=":rsr:">
+                                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg></a></div>
+                            </div>
+                        </div>
+                    </header>
+                    <main class="pt-24 pb-20"
+                        data-fg-rmh14="135.199:135.34366:/src/app/pages/supplier-detail.tsx:201:7:6256:28074:e:main:e"
+                        data-fgid-rmh14=":rss:">
+                        <div class="max-w-7xl mx-auto px-6"
+                            data-fg-rmh15="135.199:135.34366:/src/app/pages/supplier-detail.tsx:202:9:6295:28021:e:div:xtetxtetxtetxtetxtetxtxtxtxtxtxtxtx"
+                            data-fgid-rmh15=":rst:">
+                            <div class="mb-6"
+                                data-fg-rmh17="135.199:135.34366:/src/app/pages/supplier-detail.tsx:204:11:6375:445:e:div:e"
+                                data-fgid-rmh17=":rsu:">
+                                <div class="flex items-center gap-2 text-sm text-[#9CA3AF]"
+                                    data-fg-rmh18="135.199:135.34366:/src/app/pages/supplier-detail.tsx:205:13:6410:393:e:div:etetetete"
+                                    data-fgid-rmh18=":rsv:"><a class="hover:text-white transition-colors"
+                                        data-fg-rmh19="135.199:135.34366:/src/app/pages/supplier-detail.tsx:206:15:6489:71:e:Link:t:::::B0gV"
+                                        data-fgid-rmh19=":rt0:" href="/" data-discover="true">Home</a><span
+                                        data-fg-rmh21="135.199:135.34366:/src/app/pages/supplier-detail.tsx:207:15:6575:14:e:span:t"
+                                        data-fgid-rmh21=":rt1:">/</span><a class="hover:text-white transition-colors"
+                                        data-fg-rmh23="135.199:135.34366:/src/app/pages/supplier-detail.tsx:208:15:6604:85:e:Link:t:::::B0gV"
+                                        data-fgid-rmh23=":rt2:" href="/suppliers"
+                                        data-discover="true">Suppliers</a><span
+                                        data-fg-rmh25="135.199:135.34366:/src/app/pages/supplier-detail.tsx:209:15:6704:14:e:span:t"
+                                        data-fgid-rmh25=":rt3:">/</span><span class="text-white"
+                                        data-fg-rmh27="135.199:135.34366:/src/app/pages/supplier-detail.tsx:210:15:6733:51:e:span:x"
+                                        data-fgid-rmh27=":rt4:">Premium Auto Parts Inc.</span></div>
+                            </div>
+                            <div class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-2xl p-8 mb-8"
+                                data-fg-rmh30="135.199:135.34366:/src/app/pages/supplier-detail.tsx:215:11:6867:3036:e:motion.div:e"
+                                data-fgid-rmh30=":rt5:" style="opacity: 1; transform: none;">
+                                <div class="flex items-start gap-8"
+                                    data-fg-rmh31="135.199:135.34366:/src/app/pages/supplier-detail.tsx:220:13:7072:2807:e:div:xtetxte"
+                                    data-fgid-rmh31=":rt6:">
+                                    <div class="w-32 h-32 bg-white rounded-xl overflow-hidden flex-shrink-0 border-2 border-[#2A2A2A]"
+                                        data-fg-rmh33="135.199:135.34366:/src/app/pages/supplier-detail.tsx:222:15:7154:299:e:div:e"
+                                        data-fgid-rmh33=":rt7:"><img
+                                            src="https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=200&amp;h=200&amp;fit=crop"
+                                            alt="Premium Auto Parts Inc." class="w-full h-full object-cover"
+                                            data-fg-rmh34="135.199:135.34366:/src/app/pages/supplier-detail.tsx:223:17:7274:158:e:img"
+                                            data-fgid-rmh34=":rt8:"></div>
+                                    <div class="flex-1"
+                                        data-fg-rmh36="135.199:135.34366:/src/app/pages/supplier-detail.tsx:231:15:7496:2364:e:div:etxte"
+                                        data-fgid-rmh36=":rt9:">
+                                        <div class="flex items-start justify-between mb-4"
+                                            data-fg-rmh37="135.199:135.34366:/src/app/pages/supplier-detail.tsx:232:17:7537:1426:e:div:etxte"
+                                            data-fgid-rmh37=":rta:">
+                                            <div data-fg-rmh38="135.199:135.34366:/src/app/pages/supplier-detail.tsx:233:19:7611:1047:e:div:ete"
+                                                data-fgid-rmh38=":rtb:">
+                                                <div class="flex items-center gap-3 mb-3"
+                                                    data-fg-rmh39="135.199:135.34366:/src/app/pages/supplier-detail.tsx:234:21:7637:435:e:div:etxtx"
+                                                    data-fgid-rmh39=":rtc:">
+                                                    <h1 class="text-3xl font-bold text-white"
+                                                        data-fg-rmh40="135.199:135.34366:/src/app/pages/supplier-detail.tsx:235:23:7706:66:e:h1:x"
+                                                        data-fgid-rmh40=":rtd:">Premium Auto Parts Inc.</h1>
+                                                    <div class="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 border-green-500/20 border text-sm px-2 py-1"
+                                                        data-fg-eet0="135.101:135.5280:/src/app/components/trust-badge.tsx:64:5:1516:300:e:div:etx:1"
+                                                        data-fgid-eet0=":rtf:" data-fg-callsite-rmh43=""><svg
+                                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            class="lucide lucide-circle-check text-green-500 w-4 h-4"
+                                                            data-fg-eet1="135.101:135.5280:/src/app/components/trust-badge.tsx:67:7:1657:57:e:Icon"
+                                                            data-fgid-eet1=":rtg:">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <path d="m9 12 2 2 4-4"></path>
+                                                        </svg><span class="font-medium text-green-500"
+                                                            data-fg-eet3="135.101:135.5280:/src/app/components/trust-badge.tsx:68:21:1735:69:e:span:x"
+                                                            data-fgid-eet3=":rth:">Verified</span></div>
+                                                    <div class="inline-flex items-center gap-1.5 rounded-full bg-yellow-500/10 border-yellow-500/20 border text-sm px-2 py-1"
+                                                        data-fg-eet0="135.101:135.5280:/src/app/components/trust-badge.tsx:64:5:1516:300:e:div:etx:1"
+                                                        data-fgid-eet0=":rtj:" data-fg-callsite-rmh45=""><svg
+                                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                            stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                            class="lucide lucide-star text-yellow-500 w-4 h-4"
+                                                            data-fg-eet1="135.101:135.5280:/src/app/components/trust-badge.tsx:67:7:1657:57:e:Icon"
+                                                            data-fgid-eet1=":rtk:">
+                                                            <path
+                                                                d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
+                                                            </path>
+                                                        </svg><span class="font-medium text-yellow-500"
+                                                            data-fg-eet3="135.101:135.5280:/src/app/components/trust-badge.tsx:68:21:1735:69:e:span:x"
+                                                            data-fgid-eet3=":rtl:">Top Rated</span></div>
+                                                </div>
+                                                <div class="flex items-center gap-6 text-sm text-[#9CA3AF]"
+                                                    data-fg-rmh46="135.199:135.34366:/src/app/pages/supplier-detail.tsx:244:21:8114:519:e:div:ete"
+                                                    data-fgid-rmh46=":rtm:">
+                                                    <div class="flex items-center gap-2"
+                                                        data-fg-rmh47="135.199:135.34366:/src/app/pages/supplier-detail.tsx:245:23:8201:182:e:div:ete"
+                                                        data-fgid-rmh47=":rtn:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-map-pin w-4 h-4"
+                                                            data-fg-rmh48="135.199:135.34366:/src/app/pages/supplier-detail.tsx:246:25:8267:30:e:MapPin::::::BveZ"
+                                                            data-fgid-rmh48=":rto:">
+                                                            <path
+                                                                d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0">
+                                                            </path>
+                                                            <circle cx="12" cy="10" r="3"></circle>
+                                                        </svg><span
+                                                            data-fg-rmh49="135.199:135.34366:/src/app/pages/supplier-detail.tsx:247:25:8322:32:e:span:x"
+                                                            data-fgid-rmh49=":rtp:">Detroit, MI</span></div>
+                                                    <div class="flex items-center gap-2"
+                                                        data-fg-rmh51="135.199:135.34366:/src/app/pages/supplier-detail.tsx:249:23:8406:200:e:div:ete"
+                                                        data-fgid-rmh51=":rtq:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-clock w-4 h-4"
+                                                            data-fg-rmh52="135.199:135.34366:/src/app/pages/supplier-detail.tsx:250:25:8472:29:e:Clock::::::EGEm"
+                                                            data-fgid-rmh52=":rtr:">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                                        </svg><span
+                                                            data-fg-rmh53="135.199:135.34366:/src/app/pages/supplier-detail.tsx:251:25:8526:51:e:span:tx"
+                                                            data-fgid-rmh53=":rts:">Avg. response: 1.8 hrs</span></div>
+                                                </div>
+                                            </div>
+                                            <div class="text-center"
+                                                data-fg-rmh57="135.199:135.34366:/src/app/pages/supplier-detail.tsx:257:19:8716:224:e:div:ete"
+                                                data-fgid-rmh57=":rtt:">
+                                                <div class="inline-flex items-center gap-2"
+                                                    data-fg-eet7="135.101:135.5280:/src/app/components/trust-badge.tsx:104:5:2687:433:e:div:etx:1"
+                                                    data-fgid-eet7=":rtv:" data-fg-callsite-rmh58="">
+                                                    <div class="flex items-center gap-1.5"
+                                                        data-fg-eet8="135.101:135.5280:/src/app/components/trust-badge.tsx:105:7:2742:335:e:div:etetx"
+                                                        data-fgid-eet8=":ru0:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-shield text-green-500 w-4 h-4"
+                                                            data-fg-eet9="135.101:135.5280:/src/app/components/trust-badge.tsx:106:9:2794:51:e:Shield::::::B8zf"
+                                                            data-fgid-eet9=":ru1:">
+                                                            <path
+                                                                d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                                                            </path>
+                                                        </svg><span class="font-bold text-green-500 text-lg"
+                                                            data-fg-eet10="135.101:135.5280:/src/app/components/trust-badge.tsx:107:9:2854:104:e:span:x"
+                                                            data-fgid-eet10=":ru2:">92</span></div>
+                                                </div>
+                                                <p class="text-xs text-[#9CA3AF] mt-2"
+                                                    data-fg-rmh59="135.199:135.34366:/src/app/pages/supplier-detail.tsx:259:21:8857:58:e:p:t"
+                                                    data-fgid-rmh59=":ru3:">Trust Score</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4"
+                                            data-fg-rmh62="135.199:135.34366:/src/app/pages/supplier-detail.tsx:264:17:9013:826:e:div:ete"
+                                            data-fgid-rmh62=":ru4:"><button
+                                                class="px-8 py-3 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium"
+                                                data-fg-rmh63="135.199:135.34366:/src/app/pages/supplier-detail.tsx:265:19:9073:426:e:button:t"
+                                                data-fgid-rmh63=":ru5:">View Products</button><a
+                                                class="px-8 py-3 border border-[#2A2A2A] text-white rounded-lg hover:border-[#DC2626] hover:bg-[#DC2626]/10 transition-all font-medium"
+                                                data-fg-rmh65="135.199:135.34366:/src/app/pages/supplier-detail.tsx:274:19:9518:298:e:Link:t:::::B0gV"
+                                                data-fgid-rmh65=":ru6:" href="/dashboard/buyer/create-rfq"
+                                                data-discover="true">Request Quote</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
+                                data-fg-rmh68="135.199:135.34366:/src/app/pages/supplier-detail.tsx:286:11:9953:3793:e:div:etetete"
+                                data-fgid-rmh68=":ru7:">
+                                <div class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6"
+                                    data-fg-rmh69="135.199:135.34366:/src/app/pages/supplier-detail.tsx:287:13:10026:1332:e:motion.div:ete"
+                                    data-fgid-rmh69=":ru8:" style="opacity: 1; transform: none;">
+                                    <div class="flex items-center gap-3 mb-2"
+                                        data-fg-rmh70="135.199:135.34366:/src/app/pages/supplier-detail.tsx:293:15:10277:469:e:div:ete"
+                                        data-fgid-rmh70=":ru9:">
+                                        <div class="w-10 h-10 bg-[#DC2626]/10 rounded-lg flex items-center justify-center"
+                                            data-fg-rmh71="135.199:135.34366:/src/app/pages/supplier-detail.tsx:294:17:10340:172:e:div:e"
+                                            data-fgid-rmh71=":rua:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-star w-5 h-5 text-[#DC2626]"
+                                                data-fg-rmh72="135.199:135.34366:/src/app/pages/supplier-detail.tsx:295:19:10446:43:e:Star::::::hX0"
+                                                data-fgid-rmh72=":rub:">
+                                                <path
+                                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
+                                                </path>
+                                            </svg></div>
+                                        <div data-fg-rmh73="135.199:135.34366:/src/app/pages/supplier-detail.tsx:297:17:10529:196:e:div:ete"
+                                            data-fgid-rmh73=":ruc:">
+                                            <div class="text-2xl font-bold text-white"
+                                                data-fg-rmh74="135.199:135.34366:/src/app/pages/supplier-detail.tsx:298:19:10553:70:e:div:x"
+                                                data-fgid-rmh74=":rud:">4.8</div>
+                                            <div class="text-xs text-[#9CA3AF]"
+                                                data-fg-rmh76="135.199:135.34366:/src/app/pages/supplier-detail.tsx:299:19:10642:60:e:div:t"
+                                                data-fgid-rmh76=":rue:">Average Rating</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-1"
+                                        data-fg-rmh78="135.199:135.34366:/src/app/pages/supplier-detail.tsx:302:15:10761:571:e:div:xte"
+                                        data-fgid-rmh78=":ruf:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-star w-4 h-4 fill-[#DC2626] text-[#DC2626]"
+                                            data-fg-rmh80="135.199:135.34366:/src/app/pages/supplier-detail.tsx:304:19:10868:276:e:Star::::::hX0"
+                                            data-fgid-rmh80=":rug:">
+                                            <path
+                                                d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
+                                            </path>
+                                        </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-star w-4 h-4 fill-[#DC2626] text-[#DC2626]"
+                                            data-fg-rmh80="135.199:135.34366:/src/app/pages/supplier-detail.tsx:304:19:10868:276:e:Star::::::hX0"
+                                            data-fgid-rmh80=":ruh:">
+                                            <path
+                                                d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
+                                            </path>
+                                        </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-star w-4 h-4 fill-[#DC2626] text-[#DC2626]"
+                                            data-fg-rmh80="135.199:135.34366:/src/app/pages/supplier-detail.tsx:304:19:10868:276:e:Star::::::hX0"
+                                            data-fgid-rmh80=":rui:">
+                                            <path
+                                                d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
+                                            </path>
+                                        </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-star w-4 h-4 fill-[#DC2626] text-[#DC2626]"
+                                            data-fg-rmh80="135.199:135.34366:/src/app/pages/supplier-detail.tsx:304:19:10868:276:e:Star::::::hX0"
+                                            data-fgid-rmh80=":ruj:">
+                                            <path
+                                                d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
+                                            </path>
+                                        </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-star w-4 h-4 text-[#2A2A2A]"
+                                            data-fg-rmh80="135.199:135.34366:/src/app/pages/supplier-detail.tsx:304:19:10868:276:e:Star::::::hX0"
+                                            data-fgid-rmh80=":ruk:">
+                                            <path
+                                                d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
+                                            </path>
+                                        </svg><span class="text-xs text-[#9CA3AF] ml-2"
+                                            data-fg-rmh81="135.199:135.34366:/src/app/pages/supplier-detail.tsx:313:17:11181:130:e:span:txt"
+                                            data-fgid-rmh81=":rul:">(1,234)</span></div>
+                                </div>
+                                <div class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6"
+                                    data-fg-rmh85="135.199:135.34366:/src/app/pages/supplier-detail.tsx:319:13:11372:813:e:motion.div:e"
+                                    data-fgid-rmh85=":rum:" style="opacity: 1; transform: none;">
+                                    <div class="flex items-center gap-3 mb-2"
+                                        data-fg-rmh86="135.199:135.34366:/src/app/pages/supplier-detail.tsx:325:15:11623:536:e:div:ete"
+                                        data-fgid-rmh86=":run:">
+                                        <div class="w-10 h-10 bg-[#DC2626]/10 rounded-lg flex items-center justify-center"
+                                            data-fg-rmh87="135.199:135.34366:/src/app/pages/supplier-detail.tsx:326:17:11686:175:e:div:e"
+                                            data-fgid-rmh87=":ruo:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-package w-5 h-5 text-[#DC2626]"
+                                                data-fg-rmh88="135.199:135.34366:/src/app/pages/supplier-detail.tsx:327:19:11792:46:e:Package::::::BczM"
+                                                data-fgid-rmh88=":rup:">
+                                                <path
+                                                    d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z">
+                                                </path>
+                                                <path d="M12 22V12"></path>
+                                                <polyline points="3.29 7 12 12 20.71 7"></polyline>
+                                                <path d="m7.5 4.27 9 5.15"></path>
+                                            </svg></div>
+                                        <div data-fg-rmh89="135.199:135.34366:/src/app/pages/supplier-detail.tsx:329:17:11878:260:e:div:ete"
+                                            data-fgid-rmh89=":ruq:">
+                                            <div class="text-2xl font-bold text-white"
+                                                data-fg-rmh90="135.199:135.34366:/src/app/pages/supplier-detail.tsx:330:19:11902:132:e:div:x"
+                                                data-fgid-rmh90=":rur:">2,847</div>
+                                            <div class="text-xs text-[#9CA3AF]"
+                                                data-fg-rmh92="135.199:135.34366:/src/app/pages/supplier-detail.tsx:333:19:12053:62:e:div:t"
+                                                data-fgid-rmh92=":rus:">Orders Completed</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6"
+                                    data-fg-rmh94="135.199:135.34366:/src/app/pages/supplier-detail.tsx:338:13:12199:764:e:motion.div:e"
+                                    data-fgid-rmh94=":rut:" style="opacity: 1; transform: none;">
+                                    <div class="flex items-center gap-3 mb-2"
+                                        data-fg-rmh95="135.199:135.34366:/src/app/pages/supplier-detail.tsx:344:15:12450:487:e:div:ete"
+                                        data-fgid-rmh95=":ruu:">
+                                        <div class="w-10 h-10 bg-[#DC2626]/10 rounded-lg flex items-center justify-center"
+                                            data-fg-rmh96="135.199:135.34366:/src/app/pages/supplier-detail.tsx:345:17:12513:178:e:div:e"
+                                            data-fgid-rmh96=":ruv:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-trending-up w-5 h-5 text-[#DC2626]"
+                                                data-fg-rmh97="135.199:135.34366:/src/app/pages/supplier-detail.tsx:346:19:12619:49:e:TrendingUp::::::tM8"
+                                                data-fgid-rmh97=":rv0:">
+                                                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                                                <polyline points="16 7 22 7 22 13"></polyline>
+                                            </svg></div>
+                                        <div data-fg-rmh98="135.199:135.34366:/src/app/pages/supplier-detail.tsx:348:17:12708:208:e:div:ete"
+                                            data-fgid-rmh98=":rv1:">
+                                            <div class="text-2xl font-bold text-white"
+                                                data-fg-rmh99="135.199:135.34366:/src/app/pages/supplier-detail.tsx:349:19:12732:80:e:div:xt"
+                                                data-fgid-rmh99=":rv2:">98%</div>
+                                            <div class="text-xs text-[#9CA3AF]"
+                                                data-fg-rmh102="135.199:135.34366:/src/app/pages/supplier-detail.tsx:350:19:12831:62:e:div:t"
+                                                data-fgid-rmh102=":rv3:">Fulfillment Rate</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-6"
+                                    data-fg-rmh104="135.199:135.34366:/src/app/pages/supplier-detail.tsx:355:13:12977:752:e:motion.div:e"
+                                    data-fgid-rmh104=":rv4:" style="opacity: 1; transform: none;">
+                                    <div class="flex items-center gap-3 mb-2"
+                                        data-fg-rmh105="135.199:135.34366:/src/app/pages/supplier-detail.tsx:361:15:13228:475:e:div:ete"
+                                        data-fgid-rmh105=":rv5:">
+                                        <div class="w-10 h-10 bg-[#DC2626]/10 rounded-lg flex items-center justify-center"
+                                            data-fg-rmh106="135.199:135.34366:/src/app/pages/supplier-detail.tsx:362:17:13291:173:e:div:e"
+                                            data-fgid-rmh106=":rv6:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-clock w-5 h-5 text-[#DC2626]"
+                                                data-fg-rmh107="135.199:135.34366:/src/app/pages/supplier-detail.tsx:363:19:13397:44:e:Clock::::::EGEm"
+                                                data-fgid-rmh107=":rv7:">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <polyline points="12 6 12 12 16 14"></polyline>
+                                            </svg></div>
+                                        <div data-fg-rmh108="135.199:135.34366:/src/app/pages/supplier-detail.tsx:365:17:13481:201:e:div:ete"
+                                            data-fgid-rmh108=":rv8:">
+                                            <div class="text-2xl font-bold text-white"
+                                                data-fg-rmh109="135.199:135.34366:/src/app/pages/supplier-detail.tsx:366:19:13505:76:e:div:x"
+                                                data-fgid-rmh109=":rv9:">1.8 hrs</div>
+                                            <div class="text-xs text-[#9CA3AF]"
+                                                data-fg-rmh111="135.199:135.34366:/src/app/pages/supplier-detail.tsx:367:19:13600:59:e:div:t"
+                                                data-fgid-rmh111=":rva:">Response Time</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-r from-[#DC2626]/10 to-[#DC2626]/5 border border-[#DC2626]/20 rounded-xl p-4 mb-8"
+                                data-fg-rmh114="135.199:135.34366:/src/app/pages/supplier-detail.tsx:374:11:13799:1031:e:motion.div:e"
+                                data-fgid-rmh114=":rvb:" style="opacity: 1;">
+                                <div class="flex items-center justify-between"
+                                    data-fg-rmh115="135.199:135.34366:/src/app/pages/supplier-detail.tsx:379:13:14030:776:e:div:ete"
+                                    data-fgid-rmh115=":rvc:">
+                                    <div class="flex items-center gap-3"
+                                        data-fg-rmh116="135.199:135.34366:/src/app/pages/supplier-detail.tsx:380:15:14096:527:e:div:ete"
+                                        data-fgid-rmh116=":rvd:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-circle-check w-5 h-5 text-[#DC2626]"
+                                            data-fg-rmh117="135.199:135.34366:/src/app/pages/supplier-detail.tsx:381:17:14154:51:e:CheckCircle2::::::CELI"
+                                            data-fgid-rmh117=":rve:">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <path d="m9 12 2 2 4-4"></path>
+                                        </svg>
+                                        <div data-fg-rmh118="135.199:135.34366:/src/app/pages/supplier-detail.tsx:382:17:14222:380:e:div:ete"
+                                            data-fgid-rmh118=":rvf:">
+                                            <p class="text-sm font-medium text-white"
+                                                data-fg-rmh119="135.199:135.34366:/src/app/pages/supplier-detail.tsx:383:19:14246:168:e:p:te"
+                                                data-fgid-rmh119=":rvg:">Showing parts for <span class="text-[#DC2626]"
+                                                    data-fg-rmh121="135.199:135.34366:/src/app/pages/supplier-detail.tsx:384:39:14331:60:e:span:t"
+                                                    data-fgid-rmh121=":rvh:">2019 Toyota Camry SE</span></p>
+                                            <p class="text-xs text-[#9CA3AF] mt-0.5"
+                                                data-fg-rmh123="135.199:135.34366:/src/app/pages/supplier-detail.tsx:386:19:14433:146:e:p:t"
+                                                data-fgid-rmh123=":rvi:">Products are filtered for compatibility with
+                                                your vehicle</p>
+                                        </div>
+                                    </div><button
+                                        class="text-sm text-[#DC2626] hover:text-[#B91C1C] font-medium transition-colors"
+                                        data-fg-rmh125="135.199:135.34366:/src/app/pages/supplier-detail.tsx:391:15:14638:149:e:button:t"
+                                        data-fgid-rmh125=":rvj:">Change Vehicle</button>
+                                </div>
+                            </div>
+                            <div class="sticky top-20 z-10 bg-[#0A0A0A] border-b border-[#2A2A2A] mb-8 -mx-6 px-6"
+                                data-fg-rmh128="135.199:135.34366:/src/app/pages/supplier-detail.tsx:398:11:14875:741:e:div:e"
+                                data-fgid-rmh128=":rvk:">
+                                <div class="flex items-center gap-8"
+                                    data-fg-rmh129="135.199:135.34366:/src/app/pages/supplier-detail.tsx:399:13:14979:620:e:div:x"
+                                    data-fgid-rmh129=":rvl:"><button
+                                        class="py-4 text-sm font-medium border-b-2 transition-colors capitalize border-[#DC2626] text-white"
+                                        data-fg-rmh131="135.199:135.34366:/src/app/pages/supplier-detail.tsx:401:17:15118:444:e:button:x"
+                                        data-fgid-rmh131=":rvm:">products</button><button
+                                        class="py-4 text-sm font-medium border-b-2 transition-colors capitalize border-transparent text-[#9CA3AF] hover:text-white"
+                                        data-fg-rmh131="135.199:135.34366:/src/app/pages/supplier-detail.tsx:401:17:15118:444:e:button:x"
+                                        data-fgid-rmh131=":rvn:">reviews</button><button
+                                        class="py-4 text-sm font-medium border-b-2 transition-colors capitalize border-transparent text-[#9CA3AF] hover:text-white"
+                                        data-fg-rmh131="135.199:135.34366:/src/app/pages/supplier-detail.tsx:401:17:15118:444:e:button:x"
+                                        data-fgid-rmh131=":rvo:">about</button><button
+                                        class="py-4 text-sm font-medium border-b-2 transition-colors capitalize border-transparent text-[#9CA3AF] hover:text-white"
+                                        data-fg-rmh131="135.199:135.34366:/src/app/pages/supplier-detail.tsx:401:17:15118:444:e:button:x"
+                                        data-fgid-rmh131=":rvp:">rfq</button></div>
+                            </div>
+                            <div id="products-section"
+                                data-fg-rmh135="135.199:135.34366:/src/app/pages/supplier-detail.tsx:418:13:15702:8892:e:div:xtetxtetxte"
+                                data-fgid-rmh135=":rvq:">
+                                <div class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4 mb-6"
+                                    data-fg-rmh137="135.199:135.34366:/src/app/pages/supplier-detail.tsx:420:15:15777:3671:e:div:e"
+                                    data-fgid-rmh137=":rvr:">
+                                    <div class="flex items-center gap-4 flex-wrap"
+                                        data-fg-rmh138="135.199:135.34366:/src/app/pages/supplier-detail.tsx:421:17:15868:3559:e:div:xtetxtetxtetxte"
+                                        data-fgid-rmh138=":rvs:">
+                                        <div class="flex-1 min-w-[200px]"
+                                            data-fg-rmh140="135.199:135.34366:/src/app/pages/supplier-detail.tsx:423:19:15971:595:e:div:e"
+                                            data-fgid-rmh140=":rvt:">
+                                            <div class="relative"
+                                                data-fg-rmh141="135.199:135.34366:/src/app/pages/supplier-detail.tsx:424:21:16030:511:e:div:ete"
+                                                data-fgid-rmh141=":rvu:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    class="lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF]"
+                                                    data-fg-rmh142="135.199:135.34366:/src/app/pages/supplier-detail.tsx:425:23:16079:86:e:Search::::::B9rK"
+                                                    data-fgid-rmh142=":rvv:">
+                                                    <circle cx="11" cy="11" r="8"></circle>
+                                                    <path d="m21 21-4.3-4.3"></path>
+                                                </svg><input type="text" placeholder="Search products..."
+                                                    class="w-full pl-10 pr-4 py-2.5 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg text-white placeholder-[#9CA3AF] focus:outline-none focus:border-[#DC2626] transition-colors"
+                                                    data-fg-rmh143="135.199:135.34366:/src/app/pages/supplier-detail.tsx:426:23:16188:326:e:input"
+                                                    data-fgid-rmh143=":r100:"></div>
+                                        </div>
+                                        <div class="relative"
+                                            data-fg-rmh145="135.199:135.34366:/src/app/pages/supplier-detail.tsx:435:19:16628:928:e:div:ete"
+                                            data-fgid-rmh145=":r101:"><select
+                                                class="appearance-none pl-4 pr-10 py-2.5 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg text-white focus:outline-none focus:border-[#DC2626] transition-colors cursor-pointer"
+                                                data-fg-rmh146="135.199:135.34366:/src/app/pages/supplier-detail.tsx:436:21:16675:723:e:select:etetetete"
+                                                data-fgid-rmh146=":r102:">
+                                                <option value="all"
+                                                    data-fg-rmh147="135.199:135.34366:/src/app/pages/supplier-detail.tsx:441:23:17052:43:e:option:t"
+                                                    data-fgid-rmh147=":r103:">All Categories</option>
+                                                <option value="brakes"
+                                                    data-fg-rmh149="135.199:135.34366:/src/app/pages/supplier-detail.tsx:442:23:17118:45:e:option:t"
+                                                    data-fgid-rmh149=":r104:">Brake Systems</option>
+                                                <option value="suspension"
+                                                    data-fg-rmh151="135.199:135.34366:/src/app/pages/supplier-detail.tsx:443:23:17186:46:e:option:t"
+                                                    data-fgid-rmh151=":r105:">Suspension</option>
+                                                <option value="engine"
+                                                    data-fg-rmh153="135.199:135.34366:/src/app/pages/supplier-detail.tsx:444:23:17255:44:e:option:t"
+                                                    data-fgid-rmh153=":r106:">Engine Parts</option>
+                                                <option value="electrical"
+                                                    data-fg-rmh155="135.199:135.34366:/src/app/pages/supplier-detail.tsx:445:23:17322:46:e:option:t"
+                                                    data-fgid-rmh155=":r107:">Electrical</option>
+                                            </select><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-chevron-down absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none"
+                                                data-fg-rmh157="135.199:135.34366:/src/app/pages/supplier-detail.tsx:447:21:17419:112:e:ChevronDown::::::Ddn3"
+                                                data-fgid-rmh157=":r108:">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg></div>
+                                        <div class="relative"
+                                            data-fg-rmh159="135.199:135.34366:/src/app/pages/supplier-detail.tsx:451:19:17619:874:e:div:ete"
+                                            data-fgid-rmh159=":r109:"><select
+                                                class="appearance-none pl-4 pr-10 py-2.5 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg text-white focus:outline-none focus:border-[#DC2626] transition-colors cursor-pointer"
+                                                data-fg-rmh160="135.199:135.34366:/src/app/pages/supplier-detail.tsx:452:21:17666:669:e:select:etetete"
+                                                data-fgid-rmh160=":r10a:">
+                                                <option value="all"
+                                                    data-fg-rmh161="135.199:135.34366:/src/app/pages/supplier-detail.tsx:457:23:18045:43:e:option:t"
+                                                    data-fgid-rmh161=":r10b:">All Conditions</option>
+                                                <option value="new-oem"
+                                                    data-fg-rmh163="135.199:135.34366:/src/app/pages/supplier-detail.tsx:458:23:18111:42:e:option:t"
+                                                    data-fgid-rmh163=":r10c:">New - OEM</option>
+                                                <option value="new-aftermarket"
+                                                    data-fg-rmh165="135.199:135.34366:/src/app/pages/supplier-detail.tsx:459:23:18176:58:e:option:t"
+                                                    data-fgid-rmh165=":r10d:">New - Aftermarket</option>
+                                                <option value="refurbished"
+                                                    data-fg-rmh167="135.199:135.34366:/src/app/pages/supplier-detail.tsx:460:23:18257:48:e:option:t"
+                                                    data-fgid-rmh167=":r10e:">Refurbished</option>
+                                            </select><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-chevron-down absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none"
+                                                data-fg-rmh169="135.199:135.34366:/src/app/pages/supplier-detail.tsx:462:21:18356:112:e:ChevronDown::::::Ddn3"
+                                                data-fgid-rmh169=":r10f:">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg></div>
+                                        <div class="relative"
+                                            data-fg-rmh171="135.199:135.34366:/src/app/pages/supplier-detail.tsx:466:19:18544:860:e:div:ete"
+                                            data-fgid-rmh171=":r10g:"><select
+                                                class="appearance-none pl-4 pr-10 py-2.5 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg text-white focus:outline-none focus:border-[#DC2626] transition-colors cursor-pointer"
+                                                data-fg-rmh172="135.199:135.34366:/src/app/pages/supplier-detail.tsx:467:21:18591:655:e:select:etetete"
+                                                data-fgid-rmh172=":r10h:">
+                                                <option value="relevance"
+                                                    data-fg-rmh173="135.199:135.34366:/src/app/pages/supplier-detail.tsx:472:23:18948:48:e:option:t"
+                                                    data-fgid-rmh173=":r10i:">Most Relevant</option>
+                                                <option value="price-low"
+                                                    data-fg-rmh175="135.199:135.34366:/src/app/pages/supplier-detail.tsx:473:23:19019:53:e:option:t"
+                                                    data-fgid-rmh175=":r10j:">Price: Low to High</option>
+                                                <option value="price-high"
+                                                    data-fg-rmh177="135.199:135.34366:/src/app/pages/supplier-detail.tsx:474:23:19095:54:e:option:t"
+                                                    data-fgid-rmh177=":r10k:">Price: High to Low</option>
+                                                <option value="newest"
+                                                    data-fg-rmh179="135.199:135.34366:/src/app/pages/supplier-detail.tsx:475:23:19172:44:e:option:t"
+                                                    data-fgid-rmh179=":r10l:">Newest First</option>
+                                            </select><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-chevron-down absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none"
+                                                data-fg-rmh181="135.199:135.34366:/src/app/pages/supplier-detail.tsx:477:21:19267:112:e:ChevronDown::::::Ddn3"
+                                                data-fgid-rmh181=":r10m:">
+                                                <path d="m6 9 6 6 6-6"></path>
+                                            </svg></div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+                                    data-fg-rmh183="135.199:135.34366:/src/app/pages/supplier-detail.tsx:483:15:19499:3731:e:div:x"
+                                    data-fgid-rmh183=":r10n:">
+                                    <div data-fg-rmh185="135.199:135.34366:/src/app/pages/supplier-detail.tsx:485:19:19634:3555:e:motion.div:e"
+                                        data-fgid-rmh185=":r10o:" style="opacity: 1; transform: none;"><a
+                                            class="block bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl overflow-hidden hover:border-[#DC2626] hover:shadow-lg hover:shadow-[#DC2626]/10 transition-all group"
+                                            data-fg-rmh186="135.199:135.34366:/src/app/pages/supplier-detail.tsx:491:21:19882:3275:e:Link:xtetxte:::::B0gV"
+                                            data-fgid-rmh186=":r10p:" href="/product/1" data-discover="true">
+                                            <div class="relative aspect-square bg-[#0A0A0A] overflow-hidden"
+                                                data-fg-rmh188="135.199:135.34366:/src/app/pages/supplier-detail.tsx:496:23:20210:708:e:div:etx"
+                                                data-fgid-rmh188=":r10q:"><img
+                                                    src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400"
+                                                    alt="Front Brake Pad Set - Ceramic"
+                                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    data-fg-rmh189="135.199:135.34366:/src/app/pages/supplier-detail.tsx:497:25:20304:243:e:img"
+                                                    data-fgid-rmh189=":r10r:"></div>
+                                            <div class="p-5"
+                                                data-fg-rmh195="135.199:135.34366:/src/app/pages/supplier-detail.tsx:510:23:20980:2149:e:div:xtetxtetxtetxtetxtetxte"
+                                                data-fgid-rmh195=":r10s:">
+                                                <div class="mb-3"
+                                                    data-fg-rmh197="135.199:135.34366:/src/app/pages/supplier-detail.tsx:512:25:21072:114:e:div:x"
+                                                    data-fgid-rmh197=":r10t:">
+                                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-md"
+                                                        data-fg-rmh0="135.199:135.34366:/src/app/pages/supplier-detail.tsx:173:11:5142:287:e:div:ete"
+                                                        data-fgid-rmh0=":r10u:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-circle-check w-3.5 h-3.5 text-green-500"
+                                                            data-fg-rmh1="135.199:135.34366:/src/app/pages/supplier-detail.tsx:174:13:5271:55:e:CheckCircle2::::::CELI"
+                                                            data-fgid-rmh1=":r10v:">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <path d="m9 12 2 2 4-4"></path>
+                                                        </svg><span class="text-xs font-medium text-green-500"
+                                                            data-fg-rmh2="135.199:135.34366:/src/app/pages/supplier-detail.tsx:175:13:5339:73:e:span:t"
+                                                            data-fgid-rmh2=":r110:">Confirmed Fit</span></div>
+                                                </div>
+                                                <h3 class="text-lg font-semibold text-white mb-1 group-hover:text-[#DC2626] transition-colors"
+                                                    data-fg-rmh200="135.199:135.34366:/src/app/pages/supplier-detail.tsx:517:25:21249:170:e:h3:x"
+                                                    data-fgid-rmh200=":r111:">Front Brake Pad Set - Ceramic</h3>
+                                                <p class="text-sm text-[#9CA3AF] mb-3"
+                                                    data-fg-rmh203="135.199:135.34366:/src/app/pages/supplier-detail.tsx:522:25:21489:127:e:p:tx"
+                                                    data-fgid-rmh203=":r112:">Part #: BP-2847-C</p>
+                                                <div class="text-xs text-[#9CA3AF] mb-4"
+                                                    data-fg-rmh207="135.199:135.34366:/src/app/pages/supplier-detail.tsx:527:25:21684:122:e:div:x"
+                                                    data-fgid-rmh207=":r113:">New - OEM</div>
+                                                <div class="flex items-center justify-between mb-4"
+                                                    data-fg-rmh210="135.199:135.34366:/src/app/pages/supplier-detail.tsx:532:25:21881:676:e:div:e"
+                                                    data-fgid-rmh210=":r114:">
+                                                    <div data-fg-rmh211="135.199:135.34366:/src/app/pages/supplier-detail.tsx:533:27:21964:562:e:div:etx"
+                                                        data-fgid-rmh211=":r115:">
+                                                        <div class="text-2xl font-bold text-white"
+                                                            data-fg-rmh212="135.199:135.34366:/src/app/pages/supplier-detail.tsx:534:29:21998:140:e:div:tx"
+                                                            data-fgid-rmh212=":r116:">$89.99</div>
+                                                        <div class="text-xs text-[#9CA3AF]"
+                                                            data-fg-rmh216="135.199:135.34366:/src/app/pages/supplier-detail.tsx:538:31:22222:240:e:div:xtxtx"
+                                                            data-fgid-rmh216=":r117:">3 offers from $79.99</div>
+                                                    </div>
+                                                </div><button
+                                                    class="w-full py-2.5 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium text-sm"
+                                                    data-fg-rmh223="135.199:135.34366:/src/app/pages/supplier-detail.tsx:547:25:22619:481:e:button:t"
+                                                    data-fgid-rmh223=":r118:">View Offers</button>
+                                            </div>
+                                        </a></div>
+                                    <div data-fg-rmh185="135.199:135.34366:/src/app/pages/supplier-detail.tsx:485:19:19634:3555:e:motion.div:e"
+                                        data-fgid-rmh185=":r119:" style="opacity: 1; transform: none;"><a
+                                            class="block bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl overflow-hidden hover:border-[#DC2626] hover:shadow-lg hover:shadow-[#DC2626]/10 transition-all group"
+                                            data-fg-rmh186="135.199:135.34366:/src/app/pages/supplier-detail.tsx:491:21:19882:3275:e:Link:xtetxte:::::B0gV"
+                                            data-fgid-rmh186=":r11a:" href="/product/2" data-discover="true">
+                                            <div class="relative aspect-square bg-[#0A0A0A] overflow-hidden"
+                                                data-fg-rmh188="135.199:135.34366:/src/app/pages/supplier-detail.tsx:496:23:20210:708:e:div:etx"
+                                                data-fgid-rmh188=":r11b:"><img
+                                                    src="https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=400"
+                                                    alt="Front Strut Assembly"
+                                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    data-fg-rmh189="135.199:135.34366:/src/app/pages/supplier-detail.tsx:497:25:20304:243:e:img"
+                                                    data-fgid-rmh189=":r11c:"></div>
+                                            <div class="p-5"
+                                                data-fg-rmh195="135.199:135.34366:/src/app/pages/supplier-detail.tsx:510:23:20980:2149:e:div:xtetxtetxtetxtetxtetxte"
+                                                data-fgid-rmh195=":r11d:">
+                                                <div class="mb-3"
+                                                    data-fg-rmh197="135.199:135.34366:/src/app/pages/supplier-detail.tsx:512:25:21072:114:e:div:x"
+                                                    data-fgid-rmh197=":r11e:">
+                                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-md"
+                                                        data-fg-rmh0="135.199:135.34366:/src/app/pages/supplier-detail.tsx:173:11:5142:287:e:div:ete"
+                                                        data-fgid-rmh0=":r11f:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-circle-check w-3.5 h-3.5 text-green-500"
+                                                            data-fg-rmh1="135.199:135.34366:/src/app/pages/supplier-detail.tsx:174:13:5271:55:e:CheckCircle2::::::CELI"
+                                                            data-fgid-rmh1=":r11g:">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <path d="m9 12 2 2 4-4"></path>
+                                                        </svg><span class="text-xs font-medium text-green-500"
+                                                            data-fg-rmh2="135.199:135.34366:/src/app/pages/supplier-detail.tsx:175:13:5339:73:e:span:t"
+                                                            data-fgid-rmh2=":r11h:">Confirmed Fit</span></div>
+                                                </div>
+                                                <h3 class="text-lg font-semibold text-white mb-1 group-hover:text-[#DC2626] transition-colors"
+                                                    data-fg-rmh200="135.199:135.34366:/src/app/pages/supplier-detail.tsx:517:25:21249:170:e:h3:x"
+                                                    data-fgid-rmh200=":r11i:">Front Strut Assembly</h3>
+                                                <p class="text-sm text-[#9CA3AF] mb-3"
+                                                    data-fg-rmh203="135.199:135.34366:/src/app/pages/supplier-detail.tsx:522:25:21489:127:e:p:tx"
+                                                    data-fgid-rmh203=":r11j:">Part #: SA-1923-L</p>
+                                                <div class="text-xs text-[#9CA3AF] mb-4"
+                                                    data-fg-rmh207="135.199:135.34366:/src/app/pages/supplier-detail.tsx:527:25:21684:122:e:div:x"
+                                                    data-fgid-rmh207=":r11k:">New - Aftermarket</div>
+                                                <div class="flex items-center justify-between mb-4"
+                                                    data-fg-rmh210="135.199:135.34366:/src/app/pages/supplier-detail.tsx:532:25:21881:676:e:div:e"
+                                                    data-fgid-rmh210=":r11l:">
+                                                    <div data-fg-rmh211="135.199:135.34366:/src/app/pages/supplier-detail.tsx:533:27:21964:562:e:div:etx"
+                                                        data-fgid-rmh211=":r11m:">
+                                                        <div class="text-2xl font-bold text-white"
+                                                            data-fg-rmh212="135.199:135.34366:/src/app/pages/supplier-detail.tsx:534:29:21998:140:e:div:tx"
+                                                            data-fgid-rmh212=":r11n:">$249.99</div>
+                                                    </div>
+                                                </div><button
+                                                    class="w-full py-2.5 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium text-sm"
+                                                    data-fg-rmh223="135.199:135.34366:/src/app/pages/supplier-detail.tsx:547:25:22619:481:e:button:t"
+                                                    data-fgid-rmh223=":r11o:">View Offers</button>
+                                            </div>
+                                        </a></div>
+                                    <div data-fg-rmh185="135.199:135.34366:/src/app/pages/supplier-detail.tsx:485:19:19634:3555:e:motion.div:e"
+                                        data-fgid-rmh185=":r11p:" style="opacity: 1; transform: none;"><a
+                                            class="block bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl overflow-hidden hover:border-[#DC2626] hover:shadow-lg hover:shadow-[#DC2626]/10 transition-all group"
+                                            data-fg-rmh186="135.199:135.34366:/src/app/pages/supplier-detail.tsx:491:21:19882:3275:e:Link:xtetxte:::::B0gV"
+                                            data-fgid-rmh186=":r11q:" href="/product/3" data-discover="true">
+                                            <div class="relative aspect-square bg-[#0A0A0A] overflow-hidden"
+                                                data-fg-rmh188="135.199:135.34366:/src/app/pages/supplier-detail.tsx:496:23:20210:708:e:div:etx"
+                                                data-fgid-rmh188=":r11r:"><img
+                                                    src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400"
+                                                    alt="Oil Filter - Premium"
+                                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    data-fg-rmh189="135.199:135.34366:/src/app/pages/supplier-detail.tsx:497:25:20304:243:e:img"
+                                                    data-fgid-rmh189=":r11s:"></div>
+                                            <div class="p-5"
+                                                data-fg-rmh195="135.199:135.34366:/src/app/pages/supplier-detail.tsx:510:23:20980:2149:e:div:xtetxtetxtetxtetxtetxte"
+                                                data-fgid-rmh195=":r11t:">
+                                                <div class="mb-3"
+                                                    data-fg-rmh197="135.199:135.34366:/src/app/pages/supplier-detail.tsx:512:25:21072:114:e:div:x"
+                                                    data-fgid-rmh197=":r11u:">
+                                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-md"
+                                                        data-fg-rmh4="135.199:135.34366:/src/app/pages/supplier-detail.tsx:180:11:5489:286:e:div:ete"
+                                                        data-fgid-rmh4=":r11v:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-circle-help w-3.5 h-3.5 text-yellow-500"
+                                                            data-fg-rmh5="135.199:135.34366:/src/app/pages/supplier-detail.tsx:181:13:5620:54:e:HelpCircle::::::BvC5"
+                                                            data-fgid-rmh5=":r120:">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                                            <path d="M12 17h.01"></path>
+                                                        </svg><span class="text-xs font-medium text-yellow-500"
+                                                            data-fg-rmh6="135.199:135.34366:/src/app/pages/supplier-detail.tsx:182:13:5687:71:e:span:t"
+                                                            data-fgid-rmh6=":r121:">Review Fit</span></div>
+                                                </div>
+                                                <h3 class="text-lg font-semibold text-white mb-1 group-hover:text-[#DC2626] transition-colors"
+                                                    data-fg-rmh200="135.199:135.34366:/src/app/pages/supplier-detail.tsx:517:25:21249:170:e:h3:x"
+                                                    data-fgid-rmh200=":r122:">Oil Filter - Premium</h3>
+                                                <p class="text-sm text-[#9CA3AF] mb-3"
+                                                    data-fg-rmh203="135.199:135.34366:/src/app/pages/supplier-detail.tsx:522:25:21489:127:e:p:tx"
+                                                    data-fgid-rmh203=":r123:">Part #: OF-4562</p>
+                                                <div class="text-xs text-[#9CA3AF] mb-4"
+                                                    data-fg-rmh207="135.199:135.34366:/src/app/pages/supplier-detail.tsx:527:25:21684:122:e:div:x"
+                                                    data-fgid-rmh207=":r124:">New - OEM</div>
+                                                <div class="flex items-center justify-between mb-4"
+                                                    data-fg-rmh210="135.199:135.34366:/src/app/pages/supplier-detail.tsx:532:25:21881:676:e:div:e"
+                                                    data-fgid-rmh210=":r125:">
+                                                    <div data-fg-rmh211="135.199:135.34366:/src/app/pages/supplier-detail.tsx:533:27:21964:562:e:div:etx"
+                                                        data-fgid-rmh211=":r126:">
+                                                        <div class="text-2xl font-bold text-white"
+                                                            data-fg-rmh212="135.199:135.34366:/src/app/pages/supplier-detail.tsx:534:29:21998:140:e:div:tx"
+                                                            data-fgid-rmh212=":r127:">$12.99</div>
+                                                    </div>
+                                                </div><button
+                                                    class="w-full py-2.5 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium text-sm"
+                                                    data-fg-rmh223="135.199:135.34366:/src/app/pages/supplier-detail.tsx:547:25:22619:481:e:button:t"
+                                                    data-fgid-rmh223=":r128:">View Offers</button>
+                                            </div>
+                                        </a></div>
+                                    <div data-fg-rmh185="135.199:135.34366:/src/app/pages/supplier-detail.tsx:485:19:19634:3555:e:motion.div:e"
+                                        data-fgid-rmh185=":r129:" style="opacity: 1; transform: none;"><a
+                                            class="block bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl overflow-hidden hover:border-[#DC2626] hover:shadow-lg hover:shadow-[#DC2626]/10 transition-all group"
+                                            data-fg-rmh186="135.199:135.34366:/src/app/pages/supplier-detail.tsx:491:21:19882:3275:e:Link:xtetxte:::::B0gV"
+                                            data-fgid-rmh186=":r12a:" href="/product/4" data-discover="true">
+                                            <div class="relative aspect-square bg-[#0A0A0A] overflow-hidden"
+                                                data-fg-rmh188="135.199:135.34366:/src/app/pages/supplier-detail.tsx:496:23:20210:708:e:div:etx"
+                                                data-fgid-rmh188=":r12b:"><img
+                                                    src="https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400"
+                                                    alt="Air Filter - High Performance"
+                                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    data-fg-rmh189="135.199:135.34366:/src/app/pages/supplier-detail.tsx:497:25:20304:243:e:img"
+                                                    data-fgid-rmh189=":r12c:">
+                                                <div class="absolute top-3 right-3 px-2.5 py-1 bg-yellow-500/90 backdrop-blur-sm rounded-md"
+                                                    data-fg-rmh191="135.199:135.34366:/src/app/pages/supplier-detail.tsx:503:27:20634:228:e:div:e"
+                                                    data-fgid-rmh191=":r12d:"><span
+                                                        class="text-xs font-medium text-[#0A0A0A]"
+                                                        data-fg-rmh192="135.199:135.34366:/src/app/pages/supplier-detail.tsx:504:29:20760:69:e:span:t"
+                                                        data-fgid-rmh192=":r12e:">Low Stock</span></div>
+                                            </div>
+                                            <div class="p-5"
+                                                data-fg-rmh195="135.199:135.34366:/src/app/pages/supplier-detail.tsx:510:23:20980:2149:e:div:xtetxtetxtetxtetxtetxte"
+                                                data-fgid-rmh195=":r12f:">
+                                                <div class="mb-3"
+                                                    data-fg-rmh197="135.199:135.34366:/src/app/pages/supplier-detail.tsx:512:25:21072:114:e:div:x"
+                                                    data-fgid-rmh197=":r12g:">
+                                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-md"
+                                                        data-fg-rmh0="135.199:135.34366:/src/app/pages/supplier-detail.tsx:173:11:5142:287:e:div:ete"
+                                                        data-fgid-rmh0=":r12h:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-circle-check w-3.5 h-3.5 text-green-500"
+                                                            data-fg-rmh1="135.199:135.34366:/src/app/pages/supplier-detail.tsx:174:13:5271:55:e:CheckCircle2::::::CELI"
+                                                            data-fgid-rmh1=":r12i:">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <path d="m9 12 2 2 4-4"></path>
+                                                        </svg><span class="text-xs font-medium text-green-500"
+                                                            data-fg-rmh2="135.199:135.34366:/src/app/pages/supplier-detail.tsx:175:13:5339:73:e:span:t"
+                                                            data-fgid-rmh2=":r12j:">Confirmed Fit</span></div>
+                                                </div>
+                                                <h3 class="text-lg font-semibold text-white mb-1 group-hover:text-[#DC2626] transition-colors"
+                                                    data-fg-rmh200="135.199:135.34366:/src/app/pages/supplier-detail.tsx:517:25:21249:170:e:h3:x"
+                                                    data-fgid-rmh200=":r12k:">Air Filter - High Performance</h3>
+                                                <p class="text-sm text-[#9CA3AF] mb-3"
+                                                    data-fg-rmh203="135.199:135.34366:/src/app/pages/supplier-detail.tsx:522:25:21489:127:e:p:tx"
+                                                    data-fgid-rmh203=":r12l:">Part #: AF-7834-HP</p>
+                                                <div class="text-xs text-[#9CA3AF] mb-4"
+                                                    data-fg-rmh207="135.199:135.34366:/src/app/pages/supplier-detail.tsx:527:25:21684:122:e:div:x"
+                                                    data-fgid-rmh207=":r12m:">New - Aftermarket</div>
+                                                <div class="flex items-center justify-between mb-4"
+                                                    data-fg-rmh210="135.199:135.34366:/src/app/pages/supplier-detail.tsx:532:25:21881:676:e:div:e"
+                                                    data-fgid-rmh210=":r12n:">
+                                                    <div data-fg-rmh211="135.199:135.34366:/src/app/pages/supplier-detail.tsx:533:27:21964:562:e:div:etx"
+                                                        data-fgid-rmh211=":r12o:">
+                                                        <div class="text-2xl font-bold text-white"
+                                                            data-fg-rmh212="135.199:135.34366:/src/app/pages/supplier-detail.tsx:534:29:21998:140:e:div:tx"
+                                                            data-fgid-rmh212=":r12p:">$45.99</div>
+                                                    </div>
+                                                </div><button
+                                                    class="w-full py-2.5 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium text-sm"
+                                                    data-fg-rmh223="135.199:135.34366:/src/app/pages/supplier-detail.tsx:547:25:22619:481:e:button:t"
+                                                    data-fgid-rmh223=":r12q:">View Offers</button>
+                                            </div>
+                                        </a></div>
+                                    <div data-fg-rmh185="135.199:135.34366:/src/app/pages/supplier-detail.tsx:485:19:19634:3555:e:motion.div:e"
+                                        data-fgid-rmh185=":r12r:" style="opacity: 1; transform: none;"><a
+                                            class="block bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl overflow-hidden hover:border-[#DC2626] hover:shadow-lg hover:shadow-[#DC2626]/10 transition-all group"
+                                            data-fg-rmh186="135.199:135.34366:/src/app/pages/supplier-detail.tsx:491:21:19882:3275:e:Link:xtetxte:::::B0gV"
+                                            data-fgid-rmh186=":r12s:" href="/product/5" data-discover="true">
+                                            <div class="relative aspect-square bg-[#0A0A0A] overflow-hidden"
+                                                data-fg-rmh188="135.199:135.34366:/src/app/pages/supplier-detail.tsx:496:23:20210:708:e:div:etx"
+                                                data-fgid-rmh188=":r12t:"><img
+                                                    src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=400"
+                                                    alt="Spark Plug Set (4pc)"
+                                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    data-fg-rmh189="135.199:135.34366:/src/app/pages/supplier-detail.tsx:497:25:20304:243:e:img"
+                                                    data-fgid-rmh189=":r12u:"></div>
+                                            <div class="p-5"
+                                                data-fg-rmh195="135.199:135.34366:/src/app/pages/supplier-detail.tsx:510:23:20980:2149:e:div:xtetxtetxtetxtetxtetxte"
+                                                data-fgid-rmh195=":r12v:">
+                                                <div class="mb-3"
+                                                    data-fg-rmh197="135.199:135.34366:/src/app/pages/supplier-detail.tsx:512:25:21072:114:e:div:x"
+                                                    data-fgid-rmh197=":r130:">
+                                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-md"
+                                                        data-fg-rmh0="135.199:135.34366:/src/app/pages/supplier-detail.tsx:173:11:5142:287:e:div:ete"
+                                                        data-fgid-rmh0=":r131:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-circle-check w-3.5 h-3.5 text-green-500"
+                                                            data-fg-rmh1="135.199:135.34366:/src/app/pages/supplier-detail.tsx:174:13:5271:55:e:CheckCircle2::::::CELI"
+                                                            data-fgid-rmh1=":r132:">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <path d="m9 12 2 2 4-4"></path>
+                                                        </svg><span class="text-xs font-medium text-green-500"
+                                                            data-fg-rmh2="135.199:135.34366:/src/app/pages/supplier-detail.tsx:175:13:5339:73:e:span:t"
+                                                            data-fgid-rmh2=":r133:">Confirmed Fit</span></div>
+                                                </div>
+                                                <h3 class="text-lg font-semibold text-white mb-1 group-hover:text-[#DC2626] transition-colors"
+                                                    data-fg-rmh200="135.199:135.34366:/src/app/pages/supplier-detail.tsx:517:25:21249:170:e:h3:x"
+                                                    data-fgid-rmh200=":r134:">Spark Plug Set (4pc)</h3>
+                                                <p class="text-sm text-[#9CA3AF] mb-3"
+                                                    data-fg-rmh203="135.199:135.34366:/src/app/pages/supplier-detail.tsx:522:25:21489:127:e:p:tx"
+                                                    data-fgid-rmh203=":r135:">Part #: SP-9012-4</p>
+                                                <div class="text-xs text-[#9CA3AF] mb-4"
+                                                    data-fg-rmh207="135.199:135.34366:/src/app/pages/supplier-detail.tsx:527:25:21684:122:e:div:x"
+                                                    data-fgid-rmh207=":r136:">New - OEM</div>
+                                                <div class="flex items-center justify-between mb-4"
+                                                    data-fg-rmh210="135.199:135.34366:/src/app/pages/supplier-detail.tsx:532:25:21881:676:e:div:e"
+                                                    data-fgid-rmh210=":r137:">
+                                                    <div data-fg-rmh211="135.199:135.34366:/src/app/pages/supplier-detail.tsx:533:27:21964:562:e:div:etx"
+                                                        data-fgid-rmh211=":r138:">
+                                                        <div class="text-2xl font-bold text-white"
+                                                            data-fg-rmh212="135.199:135.34366:/src/app/pages/supplier-detail.tsx:534:29:21998:140:e:div:tx"
+                                                            data-fgid-rmh212=":r139:">$32.99</div>
+                                                    </div>
+                                                </div><button
+                                                    class="w-full py-2.5 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium text-sm"
+                                                    data-fg-rmh223="135.199:135.34366:/src/app/pages/supplier-detail.tsx:547:25:22619:481:e:button:t"
+                                                    data-fgid-rmh223=":r13a:">View Offers</button>
+                                            </div>
+                                        </a></div>
+                                    <div data-fg-rmh185="135.199:135.34366:/src/app/pages/supplier-detail.tsx:485:19:19634:3555:e:motion.div:e"
+                                        data-fgid-rmh185=":r13b:" style="opacity: 1; transform: none;"><a
+                                            class="block bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl overflow-hidden hover:border-[#DC2626] hover:shadow-lg hover:shadow-[#DC2626]/10 transition-all group"
+                                            data-fg-rmh186="135.199:135.34366:/src/app/pages/supplier-detail.tsx:491:21:19882:3275:e:Link:xtetxte:::::B0gV"
+                                            data-fgid-rmh186=":r13c:" href="/product/6" data-discover="true">
+                                            <div class="relative aspect-square bg-[#0A0A0A] overflow-hidden"
+                                                data-fg-rmh188="135.199:135.34366:/src/app/pages/supplier-detail.tsx:496:23:20210:708:e:div:etx"
+                                                data-fgid-rmh188=":r13d:"><img
+                                                    src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400"
+                                                    alt="Alternator - Remanufactured"
+                                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                    data-fg-rmh189="135.199:135.34366:/src/app/pages/supplier-detail.tsx:497:25:20304:243:e:img"
+                                                    data-fgid-rmh189=":r13e:"></div>
+                                            <div class="p-5"
+                                                data-fg-rmh195="135.199:135.34366:/src/app/pages/supplier-detail.tsx:510:23:20980:2149:e:div:xtetxtetxtetxtetxtetxte"
+                                                data-fgid-rmh195=":r13f:">
+                                                <div class="mb-3"
+                                                    data-fg-rmh197="135.199:135.34366:/src/app/pages/supplier-detail.tsx:512:25:21072:114:e:div:x"
+                                                    data-fgid-rmh197=":r13g:">
+                                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#2A2A2A] border border-[#3A3A3A] rounded-md"
+                                                        data-fg-rmh8="135.199:135.34366:/src/app/pages/supplier-detail.tsx:187:11:5837:276:e:div:ete"
+                                                        data-fgid-rmh8=":r13h:"><svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                            class="lucide lucide-circle-alert w-3.5 h-3.5 text-[#9CA3AF]"
+                                                            data-fg-rmh9="135.199:135.34366:/src/app/pages/supplier-detail.tsx:188:13:5960:54:e:AlertCircle::::::fAY"
+                                                            data-fgid-rmh9=":r13i:">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                            <line x1="12" x2="12" y1="8" y2="12"></line>
+                                                            <line x1="12" x2="12.01" y1="16" y2="16"></line>
+                                                        </svg><span class="text-xs font-medium text-[#9CA3AF]"
+                                                            data-fg-rmh10="135.199:135.34366:/src/app/pages/supplier-detail.tsx:189:13:6027:69:e:span:t"
+                                                            data-fgid-rmh10=":r13j:">Check Fit</span></div>
+                                                </div>
+                                                <h3 class="text-lg font-semibold text-white mb-1 group-hover:text-[#DC2626] transition-colors"
+                                                    data-fg-rmh200="135.199:135.34366:/src/app/pages/supplier-detail.tsx:517:25:21249:170:e:h3:x"
+                                                    data-fgid-rmh200=":r13k:">Alternator - Remanufactured</h3>
+                                                <p class="text-sm text-[#9CA3AF] mb-3"
+                                                    data-fg-rmh203="135.199:135.34366:/src/app/pages/supplier-detail.tsx:522:25:21489:127:e:p:tx"
+                                                    data-fgid-rmh203=":r13l:">Part #: ALT-5621-R</p>
+                                                <div class="text-xs text-[#9CA3AF] mb-4"
+                                                    data-fg-rmh207="135.199:135.34366:/src/app/pages/supplier-detail.tsx:527:25:21684:122:e:div:x"
+                                                    data-fgid-rmh207=":r13m:">Remanufactured</div>
+                                                <div class="flex items-center justify-between mb-4"
+                                                    data-fg-rmh210="135.199:135.34366:/src/app/pages/supplier-detail.tsx:532:25:21881:676:e:div:e"
+                                                    data-fgid-rmh210=":r13n:">
+                                                    <div data-fg-rmh211="135.199:135.34366:/src/app/pages/supplier-detail.tsx:533:27:21964:562:e:div:etx"
+                                                        data-fgid-rmh211=":r13o:">
+                                                        <div class="text-2xl font-bold text-white"
+                                                            data-fg-rmh212="135.199:135.34366:/src/app/pages/supplier-detail.tsx:534:29:21998:140:e:div:tx"
+                                                            data-fgid-rmh212=":r13p:">$189.99</div>
+                                                    </div>
+                                                </div><button
+                                                    class="w-full py-2.5 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium text-sm"
+                                                    data-fg-rmh223="135.199:135.34366:/src/app/pages/supplier-detail.tsx:547:25:22619:481:e:button:t"
+                                                    data-fgid-rmh223=":r13q:">View Offers</button>
+                                            </div>
+                                        </a></div>
+                                </div>
+                                <div class="bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] border border-[#DC2626]/30 rounded-2xl p-8 text-center"
+                                    data-fg-rmh226="135.199:135.34366:/src/app/pages/supplier-detail.tsx:563:15:23284:1291:e:motion.div:e"
+                                    data-fgid-rmh226=":r13r:" style="opacity: 1; transform: none;">
+                                    <div class="max-w-2xl mx-auto"
+                                        data-fg-rmh227="135.199:135.34366:/src/app/pages/supplier-detail.tsx:568:17:23552:995:e:div:etetete"
+                                        data-fgid-rmh227=":r13s:">
+                                        <div class="w-16 h-16 bg-[#DC2626]/10 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                                            data-fg-rmh228="135.199:135.34366:/src/app/pages/supplier-detail.tsx:569:19:23606:194:e:div:e"
+                                            data-fgid-rmh228=":r13t:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-file-text w-8 h-8 text-[#DC2626]"
+                                                data-fg-rmh229="135.199:135.34366:/src/app/pages/supplier-detail.tsx:570:21:23728:47:e:FileText::::::B1i5"
+                                                data-fgid-rmh229=":r13u:">
+                                                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z">
+                                                </path>
+                                                <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                                                <path d="M10 9H8"></path>
+                                                <path d="M16 13H8"></path>
+                                                <path d="M16 17H8"></path>
+                                            </svg></div>
+                                        <h3 class="text-2xl font-bold text-white mb-2"
+                                            data-fg-rmh230="135.199:135.34366:/src/app/pages/supplier-detail.tsx:572:19:23819:122:e:h3:t"
+                                            data-fgid-rmh230=":r13v:">Can't find the right part?</h3>
+                                        <p class="text-[#9CA3AF] mb-6"
+                                            data-fg-rmh232="135.199:135.34366:/src/app/pages/supplier-detail.tsx:575:19:23960:188:e:p:tstx"
+                                            data-fgid-rmh232=":r140:">Submit a Request for Quote and get personalized
+                                            offers directly from Premium Auto Parts Inc.</p><a
+                                            class="inline-flex items-center gap-2 px-8 py-3 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium"
+                                            data-fg-rmh236="135.199:135.34366:/src/app/pages/supplier-detail.tsx:579:19:24167:357:e:Link:et:::::B0gV"
+                                            data-fgid-rmh236=":r141:" href="/dashboard/buyer/create-rfq"
+                                            data-discover="true"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-message-square w-5 h-5"
+                                                data-fg-rmh237="135.199:135.34366:/src/app/pages/supplier-detail.tsx:583:21:24420:37:e:MessageSquare::::::BITa"
+                                                data-fgid-rmh237=":r142:">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z">
+                                                </path>
+                                            </svg>Request Custom Quote</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                    <footer class="bg-[#0A0A0A] border-t border-[#2A2A2A] mt-auto"
+                        data-fg-cadw0="135.90:135.6308:/src/app/components/footer.tsx:8:5:196:6104:e:footer:e:1"
+                        data-fgid-cadw0=":r144:" data-fg-callsite-rmh361="">
+                        <div class="max-w-[1440px] mx-auto px-8 py-16"
+                            data-fg-cadw1="135.90:135.6308:/src/app/components/footer.tsx:9:7:270:6016:e:div:etxtetxte"
+                            data-fgid-cadw1=":r145:">
+                            <div class="grid md:grid-cols-5 gap-12 mb-12"
+                                data-fg-cadw2="135.90:135.6308:/src/app/components/footer.tsx:10:9:330:3853:e:div:xtetxtetxtetxte"
+                                data-fgid-cadw2=":r146:">
+                                <div class="md:col-span-2"
+                                    data-fg-cadw4="135.90:135.6308:/src/app/components/footer.tsx:12:11:415:887:e:div:etete"
+                                    data-fgid-cadw4=":r147:"><a class="text-2xl font-bold text-white mb-4 block"
+                                        data-fg-cadw5="135.90:135.6308:/src/app/components/footer.tsx:13:13:459:153:e:Link:te:::::B0gV"
+                                        data-fgid-cadw5=":r148:" href="/" data-discover="true">AutoParts<span
+                                            class="text-[#DC2626]"
+                                            data-fg-cadw7="135.90:135.6308:/src/app/components/footer.tsx:14:24:549:43:e:span:t"
+                                            data-fgid-cadw7=":r149:">Pro</span></a>
+                                    <p class="text-[#9CA3AF] mb-6 leading-relaxed"
+                                        data-fg-cadw9="135.90:135.6308:/src/app/components/footer.tsx:16:13:625:175:e:p:t"
+                                        data-fgid-cadw9=":r14a:">Your premium B2B marketplace for automotive parts,
+                                        services, and fleet management solutions.</p>
+                                    <div class="flex items-center gap-4"
+                                        data-fg-cadw11="135.90:135.6308:/src/app/components/footer.tsx:19:13:813:472:e:div:ete"
+                                        data-fgid-cadw11=":r14b:">
+                                        <div class="flex items-center gap-2 text-sm text-[#9CA3AF]"
+                                            data-fg-cadw12="135.90:135.6308:/src/app/components/footer.tsx:20:15:869:193:e:div:ete"
+                                            data-fgid-cadw12=":r14c:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-shield w-4 h-4 text-[#DC2626]"
+                                                data-fg-cadw13="135.90:135.6308:/src/app/components/footer.tsx:21:17:950:45:e:Shield::::::B8zf"
+                                                data-fgid-cadw13=":r14d:">
+                                                <path
+                                                    d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
+                                                </path>
+                                            </svg><span
+                                                data-fg-cadw14="135.90:135.6308:/src/app/components/footer.tsx:22:17:1012:29:e:span:t"
+                                                data-fgid-cadw14=":r14e:">Verified Sellers</span></div>
+                                        <div class="flex items-center gap-2 text-sm text-[#9CA3AF]"
+                                            data-fg-cadw16="135.90:135.6308:/src/app/components/footer.tsx:24:15:1077:189:e:div:ete"
+                                            data-fgid-cadw16=":r14f:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-truck w-4 h-4 text-[#DC2626]"
+                                                data-fg-cadw17="135.90:135.6308:/src/app/components/footer.tsx:25:17:1158:44:e:Truck::::::Dl9l"
+                                                data-fgid-cadw17=":r14g:">
+                                                <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2">
+                                                </path>
+                                                <path d="M15 18H9"></path>
+                                                <path
+                                                    d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
+                                                </path>
+                                                <circle cx="17" cy="18" r="2"></circle>
+                                                <circle cx="7" cy="18" r="2"></circle>
+                                            </svg><span
+                                                data-fg-cadw18="135.90:135.6308:/src/app/components/footer.tsx:26:17:1219:26:e:span:t"
+                                                data-fgid-cadw18=":r14h:">Fast Delivery</span></div>
+                                    </div>
+                                </div>
+                                <div data-fg-cadw21="135.90:135.6308:/src/app/components/footer.tsx:32:11:1341:928:e:div:ete"
+                                    data-fgid-cadw21=":r14i:">
+                                    <h3 class="text-white font-semibold mb-4"
+                                        data-fg-cadw22="135.90:135.6308:/src/app/components/footer.tsx:33:13:1359:59:e:h3:t"
+                                        data-fgid-cadw22=":r14j:">Products</h3>
+                                    <ul class="space-y-3"
+                                        data-fg-cadw24="135.90:135.6308:/src/app/components/footer.tsx:34:13:1431:821:e:ul:etetete"
+                                        data-fgid-cadw24=":r14k:">
+                                        <li data-fg-cadw25="135.90:135.6308:/src/app/components/footer.tsx:35:15:1472:177:e:li:e"
+                                            data-fgid-cadw25=":r14l:"><a
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw26="135.90:135.6308:/src/app/components/footer.tsx:36:17:1493:136:e:Link:t:::::B0gV"
+                                                data-fgid-cadw26=":r14m:" href="/search" data-discover="true">Browse
+                                                Parts</a></li>
+                                        <li data-fg-cadw28="135.90:135.6308:/src/app/components/footer.tsx:40:15:1664:180:e:li:e"
+                                            data-fgid-cadw28=":r14n:"><a
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw29="135.90:135.6308:/src/app/components/footer.tsx:41:17:1685:139:e:Link:t:::::B0gV"
+                                                data-fgid-cadw29=":r14o:" href="/services" data-discover="true">Find
+                                                Services</a></li>
+                                        <li data-fg-cadw31="135.90:135.6308:/src/app/components/footer.tsx:45:15:1859:175:e:li:e"
+                                            data-fgid-cadw31=":r14p:"><a
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw32="135.90:135.6308:/src/app/components/footer.tsx:46:17:1880:134:e:Link:t:::::B0gV"
+                                                data-fgid-cadw32=":r14q:" href="/rfq" data-discover="true">Request
+                                                Quote</a></li>
+                                        <li data-fg-cadw34="135.90:135.6308:/src/app/components/footer.tsx:50:15:2049:185:e:li:e"
+                                            data-fgid-cadw34=":r14r:"><a
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw35="135.90:135.6308:/src/app/components/footer.tsx:51:17:2070:144:e:Link:t:::::B0gV"
+                                                data-fgid-cadw35=":r14s:" href="/business" data-discover="true">Business
+                                                Solutions</a></li>
+                                    </ul>
+                                </div>
+                                <div data-fg-cadw38="135.90:135.6308:/src/app/components/footer.tsx:59:11:2314:945:e:div:ete"
+                                    data-fgid-cadw38=":r14t:">
+                                    <h3 class="text-white font-semibold mb-4"
+                                        data-fg-cadw39="135.90:135.6308:/src/app/components/footer.tsx:60:13:2332:65:e:h3:t"
+                                        data-fgid-cadw39=":r14u:">For Businesses</h3>
+                                    <ul class="space-y-3"
+                                        data-fg-cadw41="135.90:135.6308:/src/app/components/footer.tsx:61:13:2410:832:e:ul:etetete"
+                                        data-fgid-cadw41=":r14v:">
+                                        <li data-fg-cadw42="135.90:135.6308:/src/app/components/footer.tsx:62:15:2451:192:e:li:e"
+                                            data-fgid-cadw42=":r150:"><a
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw43="135.90:135.6308:/src/app/components/footer.tsx:63:17:2472:151:e:Link:t:::::B0gV"
+                                                data-fgid-cadw43=":r151:" href="/supplier/dashboard"
+                                                data-discover="true">Supplier Portal</a></li>
+                                        <li data-fg-cadw45="135.90:135.6308:/src/app/components/footer.tsx:67:15:2658:190:e:li:e"
+                                            data-fgid-cadw45=":r152:"><a
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw46="135.90:135.6308:/src/app/components/footer.tsx:68:17:2679:149:e:Link:t:::::B0gV"
+                                                data-fgid-cadw46=":r153:" href="/fleet/dashboard"
+                                                data-discover="true">Fleet Management</a></li>
+                                        <li data-fg-cadw48="135.90:135.6308:/src/app/components/footer.tsx:72:15:2863:181:e:li:e"
+                                            data-fgid-cadw48=":r154:"><a
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw49="135.90:135.6308:/src/app/components/footer.tsx:73:17:2884:140:e:Link:t:::::B0gV"
+                                                data-fgid-cadw49=":r155:" href="/services" data-discover="true">Garage
+                                                Network</a></li>
+                                        <li data-fg-cadw51="135.90:135.6308:/src/app/components/footer.tsx:77:15:3059:165:e:li:e"
+                                            data-fgid-cadw51=":r156:"><a href="#"
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw52="135.90:135.6308:/src/app/components/footer.tsx:78:17:3080:124:e:a:t"
+                                                data-fgid-cadw52=":r157:">API Access</a></li>
+                                    </ul>
+                                </div>
+                                <div data-fg-cadw55="135.90:135.6308:/src/app/components/footer.tsx:86:11:3297:871:e:div:ete"
+                                    data-fgid-cadw55=":r158:">
+                                    <h3 class="text-white font-semibold mb-4"
+                                        data-fg-cadw56="135.90:135.6308:/src/app/components/footer.tsx:87:13:3315:58:e:h3:t"
+                                        data-fgid-cadw56=":r159:">Support</h3>
+                                    <ul class="space-y-3"
+                                        data-fg-cadw58="135.90:135.6308:/src/app/components/footer.tsx:88:13:3386:765:e:ul:etetete"
+                                        data-fgid-cadw58=":r15a:">
+                                        <li data-fg-cadw59="135.90:135.6308:/src/app/components/footer.tsx:89:15:3427:166:e:li:e"
+                                            data-fgid-cadw59=":r15b:"><a href="#"
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw60="135.90:135.6308:/src/app/components/footer.tsx:90:17:3448:125:e:a:t"
+                                                data-fgid-cadw60=":r15c:">Help Center</a></li>
+                                        <li data-fg-cadw62="135.90:135.6308:/src/app/components/footer.tsx:94:15:3608:165:e:li:e"
+                                            data-fgid-cadw62=":r15d:"><a href="#"
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw63="135.90:135.6308:/src/app/components/footer.tsx:95:17:3629:124:e:a:t"
+                                                data-fgid-cadw63=":r15e:">Contact Us</a></li>
+                                        <li data-fg-cadw65="135.90:135.6308:/src/app/components/footer.tsx:99:15:3788:168:e:li:e"
+                                            data-fgid-cadw65=":r15f:"><a href="#"
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw66="135.90:135.6308:/src/app/components/footer.tsx:100:17:3809:127:e:a:t"
+                                                data-fgid-cadw66=":r15g:">Shipping Info</a></li>
+                                        <li data-fg-cadw68="135.90:135.6308:/src/app/components/footer.tsx:104:15:3971:162:e:li:e"
+                                            data-fgid-cadw68=":r15h:"><a href="#"
+                                                class="text-[#9CA3AF] hover:text-white transition-colors"
+                                                data-fg-cadw69="135.90:135.6308:/src/app/components/footer.tsx:105:17:3992:121:e:a:t"
+                                                data-fgid-cadw69=":r15i:">Returns</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="border-t border-[#2A2A2A] pt-8 mb-8"
+                                data-fg-cadw72="135.90:135.6308:/src/app/components/footer.tsx:114:9:4222:1286:e:div:e"
+                                data-fgid-cadw72=":r15j:">
+                                <div class="grid md:grid-cols-3 gap-6"
+                                    data-fg-cadw73="135.90:135.6308:/src/app/components/footer.tsx:115:11:4286:1207:e:div:etete"
+                                    data-fgid-cadw73=":r15k:">
+                                    <div class="flex items-center gap-3"
+                                        data-fg-cadw74="135.90:135.6308:/src/app/components/footer.tsx:116:13:4342:396:e:div:ete"
+                                        data-fgid-cadw74=":r15l:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-phone w-5 h-5 text-[#DC2626]"
+                                            data-fg-cadw75="135.90:135.6308:/src/app/components/footer.tsx:117:15:4398:44:e:Phone::::::DmpI"
+                                            data-fgid-cadw75=":r15m:">
+                                            <path
+                                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                                            </path>
+                                        </svg>
+                                        <div data-fg-cadw76="135.90:135.6308:/src/app/components/footer.tsx:118:15:4457:262:e:div:ete"
+                                            data-fgid-cadw76=":r15n:">
+                                            <div class="text-xs text-[#9CA3AF]"
+                                                data-fg-cadw77="135.90:135.6308:/src/app/components/footer.tsx:119:17:4479:53:e:div:t"
+                                                data-fgid-cadw77=":r15o:">Call Us</div><a href="tel:+1-555-123-4567"
+                                                class="text-white hover:text-[#DC2626] transition-colors"
+                                                data-fg-cadw79="135.90:135.6308:/src/app/components/footer.tsx:120:17:4549:149:e:a:t"
+                                                data-fgid-cadw79=":r15p:">+1 (555) 123-4567</a>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3"
+                                        data-fg-cadw81="135.90:135.6308:/src/app/components/footer.tsx:125:13:4751:412:e:div:ete"
+                                        data-fgid-cadw81=":r15q:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-mail w-5 h-5 text-[#DC2626]"
+                                            data-fg-cadw82="135.90:135.6308:/src/app/components/footer.tsx:126:15:4807:43:e:Mail::::::D4VR"
+                                            data-fgid-cadw82=":r15r:">
+                                            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                                            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                                        </svg>
+                                        <div data-fg-cadw83="135.90:135.6308:/src/app/components/footer.tsx:127:15:4865:279:e:div:ete"
+                                            data-fgid-cadw83=":r15s:">
+                                            <div class="text-xs text-[#9CA3AF]"
+                                                data-fg-cadw84="135.90:135.6308:/src/app/components/footer.tsx:128:17:4887:51:e:div:t"
+                                                data-fgid-cadw84=":r15t:">Email</div><a
+                                                href="mailto:support@autopartspro.com"
+                                                class="text-white hover:text-[#DC2626] transition-colors"
+                                                data-fg-cadw86="135.90:135.6308:/src/app/components/footer.tsx:129:17:4955:168:e:a:t"
+                                                data-fgid-cadw86=":r15u:">support@autopartspro.com</a>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3"
+                                        data-fg-cadw88="135.90:135.6308:/src/app/components/footer.tsx:134:13:5176:300:e:div:ete"
+                                        data-fgid-cadw88=":r15v:"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="lucide lucide-map-pin w-5 h-5 text-[#DC2626]"
+                                            data-fg-cadw89="135.90:135.6308:/src/app/components/footer.tsx:135:15:5232:45:e:MapPin::::::BveZ"
+                                            data-fgid-cadw89=":r160:">
                                             <path
                                                 d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0">
                                             </path>
                                             <circle cx="12" cy="10" r="3"></circle>
-                                        </svg><input type="text" placeholder="Enter ZIP code or city"
-                                            class="flex-1 bg-transparent border-none focus:outline-none text-white placeholder:text-[#4B5563]">
-                                    </div><button
-                                        class="px-8 py-3 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium">Search</button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <div class="max-w-[1440px] mx-auto px-8 py-8">
-                        <div class="flex gap-8">
-                            <aside class="w-80 flex-shrink-0" style="opacity: 1; transform: none;">
-                                <div class="bg-[#1A1A1A] rounded-xl border border-[#2A2A2A] p-6 sticky top-28">
-                                    <div class="flex items-center justify-between mb-6">
-                                        <h3 class="text-lg font-semibold text-white">Filters</h3><button
-                                            class="text-sm text-[#DC2626] hover:underline">Clear all</button>
-                                    </div>
-                                    <div class="mb-6">
-                                        <h4 class="text-sm font-medium text-white mb-3">Service Type</h4>
-                                        <div class="space-y-2"><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Oil
-                                                    Change</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Brake
-                                                    Service</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Tire
-                                                    Rotation</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Battery
-                                                    Service</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Engine
-                                                    Diagnostics</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Transmission
-                                                    Service</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">AC
-                                                    Service</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Wheel
-                                                    Alignment</span></label></div>
-                                    </div>
-                                    <div class="border-t border-[#2A2A2A] my-6"></div>
-                                    <div class="mb-6">
-                                        <h4 class="text-sm font-medium text-white mb-3">Availability</h4>
-                                        <div class="space-y-2"><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
-                                                    checked=""><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Available
-                                                    Today</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Available This
-                                                    Week</span></label></div>
-                                    </div>
-                                    <div class="border-t border-[#2A2A2A] my-6"></div>
-                                    <div class="mb-6">
-                                        <h4 class="text-sm font-medium text-white mb-3">Certifications</h4>
-                                        <div class="space-y-2"><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">ASE
-                                                    Certified</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">AAA
-                                                    Approved</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Manufacturer
-                                                    Certified</span></label></div>
-                                    </div>
-                                    <div class="border-t border-[#2A2A2A] my-6"></div>
-                                    <div>
-                                        <h4 class="text-sm font-medium text-white mb-3">Price Range</h4>
-                                        <div class="space-y-2"><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Under
-                                                    $50</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">$50 -
-                                                    $100</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">$100 -
-                                                    $200</span></label><label
-                                                class="flex items-center gap-3 cursor-pointer group"><input
-                                                    type="checkbox"
-                                                    class="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"><span
-                                                    class="text-sm text-[#9CA3AF] group-hover:text-white">Over
-                                                    $200</span></label></div>
-                                    </div>
-                                </div>
-                            </aside>
-                            <div class="flex-1">
-                                <div class="flex items-center justify-between mb-6">
-                                    <div class="flex items-center gap-4"><button
-                                            class="flex items-center gap-2 px-4 py-2 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg hover:border-[#DC2626] transition-colors text-white"><svg
-                                                xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="lucide lucide-sliders-horizontal w-4 h-4">
-                                                <line x1="21" x2="14" y1="4" y2="4"></line>
-                                                <line x1="10" x2="3" y1="4" y2="4"></line>
-                                                <line x1="21" x2="12" y1="12" y2="12"></line>
-                                                <line x1="8" x2="3" y1="12" y2="12"></line>
-                                                <line x1="21" x2="16" y1="20" y2="20"></line>
-                                                <line x1="12" x2="3" y1="20" y2="20"></line>
-                                                <line x1="14" x2="14" y1="2" y2="6"></line>
-                                                <line x1="8" x2="8" y1="10" y2="14"></line>
-                                                <line x1="16" x2="16" y1="18" y2="22"></line>
-                                            </svg><span class="text-sm">Filters</span></button>
-                                        <p class="text-sm text-[#9CA3AF]"><span class="font-medium text-white">4</span>
-                                            garages near you</p>
-                                    </div>
-                                    <div class="flex items-center gap-3"><span class="text-sm text-[#9CA3AF]">Sort
-                                            by:</span><button
-                                            class="flex items-center gap-2 px-4 py-2 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg hover:border-[#DC2626] transition-colors text-white"><span
-                                                class="text-sm">Best Match</span><svg xmlns="http://www.w3.org/2000/svg"
-                                                width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                stroke-linejoin="round" class="lucide lucide-chevron-down w-4 h-4">
-                                                <path d="m6 9 6 6 6-6"></path>
-                                            </svg></button></div>
-                                </div>
-                                <div class="space-y-6">
-                                    <div class="bg-[#1A1A1A] rounded-xl border border-[#2A2A2A] overflow-hidden hover:border-[#DC2626] transition-all group"
-                                        style="opacity: 1; transform: none;">
-                                        <div class="flex flex-col md:flex-row">
-                                            <div class="md:w-80 h-64 md:h-auto relative overflow-hidden bg-[#2A2A2A]">
-                                                <img src="https://images.unsplash.com/photo-1632053002928-c6c8763bb0c0?w=400&amp;h=300&amp;fit=crop"
-                                                    alt="Premium Auto Care"
-                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                                <div class="absolute top-4 left-4"><span
-                                                        class="px-3 py-1 bg-[#10B981] text-white text-xs font-semibold rounded-lg flex items-center gap-1"><svg
-                                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="lucide lucide-shield w-3 h-3">
-                                                            <path
-                                                                d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                                                            </path>
-                                                        </svg>Verified</span></div>
-                                            </div>
-                                            <div class="flex-1 p-6">
-                                                <div class="flex items-start justify-between mb-3">
-                                                    <div><a class="text-2xl font-bold text-white hover:text-[#DC2626] transition-colors"
-                                                            href="/garage/1" data-discover="true">Premium Auto Care</a>
-                                                        <div class="flex items-center gap-4 mt-2">
-                                                            <div class="flex items-center gap-1"><svg
-                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                    height="24" viewBox="0 0 24 24" fill="none"
-                                                                    stroke="currentColor" stroke-width="2"
-                                                                    stroke-linecap="round" stroke-linejoin="round"
-                                                                    class="lucide lucide-star w-5 h-5 fill-[#F59E0B] text-[#F59E0B]">
-                                                                    <path
-                                                                        d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                                                    </path>
-                                                                </svg><span
-                                                                    class="font-semibold text-white">4.9</span><span
-                                                                    class="text-sm text-[#9CA3AF]">(328)</span></div>
-                                                            <div class="flex items-center gap-2"><span
-                                                                    class="px-2 py-1 bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium rounded border border-[#DC2626]/20">ASE</span><span
-                                                                    class="px-2 py-1 bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium rounded border border-[#DC2626]/20">AAA</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <div class="text-sm text-[#9CA3AF] mb-1">Starting at</div>
-                                                        <div class="text-3xl font-bold text-[#DC2626]">$49.99</div>
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center gap-2 text-sm text-[#9CA3AF] mb-4"><svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                        class="lucide lucide-map-pin w-4 h-4">
-                                                        <path
-                                                            d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0">
-                                                        </path>
-                                                        <circle cx="12" cy="10" r="3"></circle>
-                                                    </svg><span>2.3 miles away</span><span
-                                                        class="mx-2">•</span><span>1234 Main St, San Francisco,
-                                                        CA</span></div>
-                                                <div
-                                                    class="grid grid-cols-3 gap-4 mb-4 p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Jobs Completed</div>
-                                                        <div class="font-semibold text-white">2,340</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Response Time</div>
-                                                        <div class="font-semibold text-white">&lt; 15 min</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Next Available</div>
-                                                        <div class="font-semibold text-[#10B981]">Today at 2:00 PM</div>
-                                                    </div>
-                                                </div>
-                                                <div class="mb-4">
-                                                    <div class="text-xs text-[#9CA3AF] mb-2">Specialties:</div>
-                                                    <div class="flex flex-wrap gap-2"><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Brake
-                                                            Service</span><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Engine
-                                                            Diagnostics</span><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Oil
-                                                            Change</span></div>
-                                                </div>
-                                                <div class="flex gap-3"><a
-                                                        class="flex-1 h-11 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all flex items-center justify-center font-medium"
-                                                        href="/garage/1" data-discover="true">View Details &amp;
-                                                        Book</a><button
-                                                        class="h-11 px-6 bg-[#2A2A2A] text-white rounded-lg hover:bg-[#3A3A3A] transition-all font-medium">Get
-                                                        Quote</button></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-[#1A1A1A] rounded-xl border border-[#2A2A2A] overflow-hidden hover:border-[#DC2626] transition-all group"
-                                        style="opacity: 1; transform: none;">
-                                        <div class="flex flex-col md:flex-row">
-                                            <div class="md:w-80 h-64 md:h-auto relative overflow-hidden bg-[#2A2A2A]">
-                                                <img src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&amp;h=300&amp;fit=crop"
-                                                    alt="AutoTech Pro"
-                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                                <div class="absolute top-4 left-4"><span
-                                                        class="px-3 py-1 bg-[#10B981] text-white text-xs font-semibold rounded-lg flex items-center gap-1"><svg
-                                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="lucide lucide-shield w-3 h-3">
-                                                            <path
-                                                                d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                                                            </path>
-                                                        </svg>Verified</span></div>
-                                            </div>
-                                            <div class="flex-1 p-6">
-                                                <div class="flex items-start justify-between mb-3">
-                                                    <div><a class="text-2xl font-bold text-white hover:text-[#DC2626] transition-colors"
-                                                            href="/garage/2" data-discover="true">AutoTech Pro</a>
-                                                        <div class="flex items-center gap-4 mt-2">
-                                                            <div class="flex items-center gap-1"><svg
-                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                    height="24" viewBox="0 0 24 24" fill="none"
-                                                                    stroke="currentColor" stroke-width="2"
-                                                                    stroke-linecap="round" stroke-linejoin="round"
-                                                                    class="lucide lucide-star w-5 h-5 fill-[#F59E0B] text-[#F59E0B]">
-                                                                    <path
-                                                                        d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                                                    </path>
-                                                                </svg><span
-                                                                    class="font-semibold text-white">4.8</span><span
-                                                                    class="text-sm text-[#9CA3AF]">(512)</span></div>
-                                                            <div class="flex items-center gap-2"><span
-                                                                    class="px-2 py-1 bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium rounded border border-[#DC2626]/20">ASE</span><span
-                                                                    class="px-2 py-1 bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium rounded border border-[#DC2626]/20">Bosch</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <div class="text-sm text-[#9CA3AF] mb-1">Starting at</div>
-                                                        <div class="text-3xl font-bold text-[#DC2626]">$44.99</div>
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center gap-2 text-sm text-[#9CA3AF] mb-4"><svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                        class="lucide lucide-map-pin w-4 h-4">
-                                                        <path
-                                                            d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0">
-                                                        </path>
-                                                        <circle cx="12" cy="10" r="3"></circle>
-                                                    </svg><span>3.7 miles away</span><span
-                                                        class="mx-2">•</span><span>5678 Oak Ave, San Francisco,
-                                                        CA</span></div>
-                                                <div
-                                                    class="grid grid-cols-3 gap-4 mb-4 p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Jobs Completed</div>
-                                                        <div class="font-semibold text-white">3,120</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Response Time</div>
-                                                        <div class="font-semibold text-white">&lt; 10 min</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Next Available</div>
-                                                        <div class="font-semibold text-[#10B981]">Tomorrow at 9:00 AM
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="mb-4">
-                                                    <div class="text-xs text-[#9CA3AF] mb-2">Specialties:</div>
-                                                    <div class="flex flex-wrap gap-2"><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Transmission
-                                                            Service</span><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">AC
-                                                            Service</span><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Oil
-                                                            Change</span></div>
-                                                </div>
-                                                <div class="flex gap-3"><a
-                                                        class="flex-1 h-11 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all flex items-center justify-center font-medium"
-                                                        href="/garage/2" data-discover="true">View Details &amp;
-                                                        Book</a><button
-                                                        class="h-11 px-6 bg-[#2A2A2A] text-white rounded-lg hover:bg-[#3A3A3A] transition-all font-medium">Get
-                                                        Quote</button></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-[#1A1A1A] rounded-xl border border-[#2A2A2A] overflow-hidden hover:border-[#DC2626] transition-all group"
-                                        style="opacity: 1; transform: none;">
-                                        <div class="flex flex-col md:flex-row">
-                                            <div class="md:w-80 h-64 md:h-auto relative overflow-hidden bg-[#2A2A2A]">
-                                                <img src="https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=400&amp;h=300&amp;fit=crop"
-                                                    alt="Quick Service Center"
-                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                                <div class="absolute top-4 left-4"><span
-                                                        class="px-3 py-1 bg-[#10B981] text-white text-xs font-semibold rounded-lg flex items-center gap-1"><svg
-                                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="lucide lucide-shield w-3 h-3">
-                                                            <path
-                                                                d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                                                            </path>
-                                                        </svg>Verified</span></div>
-                                            </div>
-                                            <div class="flex-1 p-6">
-                                                <div class="flex items-start justify-between mb-3">
-                                                    <div><a class="text-2xl font-bold text-white hover:text-[#DC2626] transition-colors"
-                                                            href="/garage/3" data-discover="true">Quick Service
-                                                            Center</a>
-                                                        <div class="flex items-center gap-4 mt-2">
-                                                            <div class="flex items-center gap-1"><svg
-                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                    height="24" viewBox="0 0 24 24" fill="none"
-                                                                    stroke="currentColor" stroke-width="2"
-                                                                    stroke-linecap="round" stroke-linejoin="round"
-                                                                    class="lucide lucide-star w-5 h-5 fill-[#F59E0B] text-[#F59E0B]">
-                                                                    <path
-                                                                        d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                                                    </path>
-                                                                </svg><span
-                                                                    class="font-semibold text-white">4.7</span><span
-                                                                    class="text-sm text-[#9CA3AF]">(201)</span></div>
-                                                            <div class="flex items-center gap-2"><span
-                                                                    class="px-2 py-1 bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium rounded border border-[#DC2626]/20">ASE</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <div class="text-sm text-[#9CA3AF] mb-1">Starting at</div>
-                                                        <div class="text-3xl font-bold text-[#DC2626]">$39.99</div>
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center gap-2 text-sm text-[#9CA3AF] mb-4"><svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                        class="lucide lucide-map-pin w-4 h-4">
-                                                        <path
-                                                            d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0">
-                                                        </path>
-                                                        <circle cx="12" cy="10" r="3"></circle>
-                                                    </svg><span>5.1 miles away</span><span
-                                                        class="mx-2">•</span><span>9012 Elm St, San Francisco, CA</span>
-                                                </div>
-                                                <div
-                                                    class="grid grid-cols-3 gap-4 mb-4 p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Jobs Completed</div>
-                                                        <div class="font-semibold text-white">1,560</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Response Time</div>
-                                                        <div class="font-semibold text-white">&lt; 20 min</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Next Available</div>
-                                                        <div class="font-semibold text-[#10B981]">Today at 4:30 PM</div>
-                                                    </div>
-                                                </div>
-                                                <div class="mb-4">
-                                                    <div class="text-xs text-[#9CA3AF] mb-2">Specialties:</div>
-                                                    <div class="flex flex-wrap gap-2"><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Oil
-                                                            Change</span><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Tire
-                                                            Rotation</span><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Battery
-                                                            Service</span></div>
-                                                </div>
-                                                <div class="flex gap-3"><a
-                                                        class="flex-1 h-11 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all flex items-center justify-center font-medium"
-                                                        href="/garage/3" data-discover="true">View Details &amp;
-                                                        Book</a><button
-                                                        class="h-11 px-6 bg-[#2A2A2A] text-white rounded-lg hover:bg-[#3A3A3A] transition-all font-medium">Get
-                                                        Quote</button></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-[#1A1A1A] rounded-xl border border-[#2A2A2A] overflow-hidden hover:border-[#DC2626] transition-all group"
-                                        style="opacity: 1; transform: none;">
-                                        <div class="flex flex-col md:flex-row">
-                                            <div class="md:w-80 h-64 md:h-auto relative overflow-hidden bg-[#2A2A2A]">
-                                                <img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&amp;h=300&amp;fit=crop"
-                                                    alt="Elite Motors Service"
-                                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                                                <div class="absolute top-4 left-4"><span
-                                                        class="px-3 py-1 bg-[#10B981] text-white text-xs font-semibold rounded-lg flex items-center gap-1"><svg
-                                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                            viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                            stroke-width="2" stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            class="lucide lucide-shield w-3 h-3">
-                                                            <path
-                                                                d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                                                            </path>
-                                                        </svg>Verified</span></div>
-                                            </div>
-                                            <div class="flex-1 p-6">
-                                                <div class="flex items-start justify-between mb-3">
-                                                    <div><a class="text-2xl font-bold text-white hover:text-[#DC2626] transition-colors"
-                                                            href="/garage/4" data-discover="true">Elite Motors
-                                                            Service</a>
-                                                        <div class="flex items-center gap-4 mt-2">
-                                                            <div class="flex items-center gap-1"><svg
-                                                                    xmlns="http://www.w3.org/2000/svg" width="24"
-                                                                    height="24" viewBox="0 0 24 24" fill="none"
-                                                                    stroke="currentColor" stroke-width="2"
-                                                                    stroke-linecap="round" stroke-linejoin="round"
-                                                                    class="lucide lucide-star w-5 h-5 fill-[#F59E0B] text-[#F59E0B]">
-                                                                    <path
-                                                                        d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                                                    </path>
-                                                                </svg><span
-                                                                    class="font-semibold text-white">5</span><span
-                                                                    class="text-sm text-[#9CA3AF]">(89)</span></div>
-                                                            <div class="flex items-center gap-2"><span
-                                                                    class="px-2 py-1 bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium rounded border border-[#DC2626]/20">ASE</span><span
-                                                                    class="px-2 py-1 bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium rounded border border-[#DC2626]/20">AAA</span><span
-                                                                    class="px-2 py-1 bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium rounded border border-[#DC2626]/20">BMW</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <div class="text-sm text-[#9CA3AF] mb-1">Starting at</div>
-                                                        <div class="text-3xl font-bold text-[#DC2626]">$69.99</div>
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center gap-2 text-sm text-[#9CA3AF] mb-4"><svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                        class="lucide lucide-map-pin w-4 h-4">
-                                                        <path
-                                                            d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0">
-                                                        </path>
-                                                        <circle cx="12" cy="10" r="3"></circle>
-                                                    </svg><span>1.8 miles away</span><span
-                                                        class="mx-2">•</span><span>3456 Pine St, San Francisco,
-                                                        CA</span></div>
-                                                <div
-                                                    class="grid grid-cols-3 gap-4 mb-4 p-4 bg-[#0A0A0A] rounded-lg border border-[#2A2A2A]">
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Jobs Completed</div>
-                                                        <div class="font-semibold text-white">890</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Response Time</div>
-                                                        <div class="font-semibold text-white">&lt; 5 min</div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="text-xs text-[#9CA3AF] mb-1">Next Available</div>
-                                                        <div class="font-semibold text-[#10B981]">Today at 3:00 PM</div>
-                                                    </div>
-                                                </div>
-                                                <div class="mb-4">
-                                                    <div class="text-xs text-[#9CA3AF] mb-2">Specialties:</div>
-                                                    <div class="flex flex-wrap gap-2"><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Engine
-                                                            Diagnostics</span><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Transmission
-                                                            Service</span><span
-                                                            class="px-3 py-1 bg-[#2A2A2A] text-white text-xs rounded-lg">Brake
-                                                            Service</span></div>
-                                                </div>
-                                                <div class="flex gap-3"><a
-                                                        class="flex-1 h-11 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all flex items-center justify-center font-medium"
-                                                        href="/garage/4" data-discover="true">View Details &amp;
-                                                        Book</a><button
-                                                        class="h-11 px-6 bg-[#2A2A2A] text-white rounded-lg hover:bg-[#3A3A3A] transition-all font-medium">Get
-                                                        Quote</button></div>
-                                            </div>
+                                        </svg>
+                                        <div data-fg-cadw90="135.90:135.6308:/src/app/components/footer.tsx:136:15:5292:165:e:div:ete"
+                                            data-fgid-cadw90=":r161:">
+                                            <div class="text-xs text-[#9CA3AF]"
+                                                data-fg-cadw91="135.90:135.6308:/src/app/components/footer.tsx:137:17:5314:54:e:div:t"
+                                                data-fgid-cadw91=":r162:">Location</div>
+                                            <div class="text-white"
+                                                data-fg-cadw93="135.90:135.6308:/src/app/components/footer.tsx:138:17:5385:51:e:div:t"
+                                                data-fgid-cadw93=":r163:">San Francisco, CA</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="border-t border-[#2A2A2A] pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
+                                data-fg-cadw96="135.90:135.6308:/src/app/components/footer.tsx:145:9:5545:728:e:div:ete"
+                                data-fgid-cadw96=":r164:">
+                                <p class="text-sm text-[#9CA3AF]"
+                                    data-fg-cadw97="135.90:135.6308:/src/app/components/footer.tsx:146:11:5665:116:e:p:txt"
+                                    data-fgid-cadw97=":r165:">© 2026 AutoPartsPro. All rights reserved.</p>
+                                <div class="flex items-center gap-6 text-sm"
+                                    data-fg-cadw101="135.90:135.6308:/src/app/components/footer.tsx:149:11:5792:466:e:div:etete"
+                                    data-fgid-cadw101=":r166:"><a href="#"
+                                        class="text-[#9CA3AF] hover:text-white transition-colors"
+                                        data-fg-cadw102="135.90:135.6308:/src/app/components/footer.tsx:150:13:5854:120:e:a:t"
+                                        data-fgid-cadw102=":r167:">Privacy Policy</a><a href="#"
+                                        class="text-[#9CA3AF] hover:text-white transition-colors"
+                                        data-fg-cadw104="135.90:135.6308:/src/app/components/footer.tsx:153:13:5987:122:e:a:t"
+                                        data-fgid-cadw104=":r168:">Terms of Service</a><a href="#"
+                                        class="text-[#9CA3AF] hover:text-white transition-colors"
+                                        data-fg-cadw106="135.90:135.6308:/src/app/components/footer.tsx:156:13:6122:119:e:a:t"
+                                        data-fgid-cadw106=":r169:">Cookie Policy</a></div>
+                            </div>
                         </div>
-                    </div>
+                    </footer>
                 </div>
-                <div class="fixed top-4 right-4 z-[100] flex flex-col gap-3 max-w-md"></div>
+                <div class="fixed top-4 right-4 z-[100] flex flex-col gap-3 max-w-md"
+                    data-fg-bt9k2="135.100:135.3475:/src/app/components/toast.tsx:53:7:1502:282:e:div:e"
+                    data-fgid-bt9k2=":r6t:"></div>
             </div>
         </div>
     </div>
-</body>
-
-</html>
