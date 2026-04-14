@@ -12,7 +12,7 @@ import {
 import { MainHeader } from "@/components/site/header";
 import { VehicleChangeSection } from "@/components/site/user/sections/vehicle-change-section";
 import type { SearchProduct } from "@/types/site/search";
-
+import { Button } from "@/components/ui/button";
 const products: SearchProduct[] = [
   {
     id: 1,
@@ -378,9 +378,12 @@ export default function SearchPage() {
                             </p>
                           </div>
 
-                          <button className="rounded-lg bg-[#DC2626] px-6 py-2.5 font-medium text-white transition-all hover:bg-[#B91C1C]">
+                          {/* <button className="rounded-lg bg-[#DC2626] px-6 py-2.5 font-medium text-white transition-all hover:bg-[#B91C1C]">
                             View Details
-                          </button>
+                          </button> */}
+                          <Button  className="px-6 py-5 rounded-sm">
+                            View Details
+                          </Button>
                         </div>
                       </div>
                     </Link>

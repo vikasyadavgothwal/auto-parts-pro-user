@@ -24,10 +24,10 @@ export function SupplierCustomQuoteSection() {
 
           <Button
             asChild
-            className="h-auto rounded-lg px-8 py-3 font-medium hover:bg-brand-primary-hover"
+            className="h-auto rounded-sm px-8 py-3 font-medium hover:bg-brand-primary-hover"
           >
             <Link href="/rfq">
-              <MessageIcon className="h-5 w-5" />
+              <MessageIcon className="h-5 w-5 " />
               Request Custom Quote
             </Link>
           </Button>

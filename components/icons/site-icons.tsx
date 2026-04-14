@@ -44,7 +44,12 @@ import {
   Award,
   ChevronUp,
   ChevronDown,
+  Calendar,
+  Phone,
+  Mail,
+  ChevronRight
 } from "lucide-react"
+
 
 import type { AppIconProps, RatingStarIconProps } from "@/types/icons"
 
@@ -58,7 +63,9 @@ export const SellerPackageIcon = (props: AppIconProps) => <Package {...props} />
 export const PackageIcon = (props: AppIconProps) => <Package {...props} />
 export const FilterSlidersIcon = (props: AppIconProps) => <SlidersHorizontal {...props} />
 export const DropdownChevronIcon = (props: AppIconProps) => <ChevronDown {...props} />
+export const ChevronDownIcon = (props: AppIconProps) => <ChevronDown {...props} />
 export const ChevronLeftIcon = (props: AppIconProps) => <ChevronLeft {...props} />
+export const ChevronUpIcon = (props: AppIconProps) => <ChevronUp {...props} />
 
 /* Ratings */
 export const RatingStarFilledIcon = (props: AppIconProps) => (
@@ -93,6 +100,7 @@ export const SparklesIcon = (props: AppIconProps) => <Sparkles {...props} />
 export const TimerIcon = (props: AppIconProps) => <Timer {...props} />
 export const ClockIcon = (props: AppIconProps) => <Clock {...props} />
 export const Clock3Icon = (props: AppIconProps) => <Clock3 {...props} />
+export const CalendarIcon = (props: AppIconProps) => <Calendar {...props} />
 export const ZapIcon = (props: AppIconProps) => <Zap {...props} />
 export const UsersIcon = (props: AppIconProps) => <Users {...props} />
 
@@ -114,9 +122,13 @@ export const BatteryIcon = (props: AppIconProps) => <Battery {...props} />
 export const WrenchIcon = (props: AppIconProps) => <Wrench {...props} />
 export const CogIcon = (props: AppIconProps) => <Cog {...props} />
 
+/* Contact / Communication */
+export const PhoneIcon = (props: AppIconProps) => <Phone {...props} />
+export const MailIcon = (props: AppIconProps) => <Mail {...props} />
+export const MessageIcon = (props: AppIconProps) => <MessageSquare {...props} />
+
 /* Social / Misc */
 export const ShareIcon = (props: AppIconProps) => <Share2 {...props} />
-export const MessageIcon = (props: AppIconProps) => <MessageSquare {...props} />
 export const HeartIcon = (props: AppIconProps) => <Heart {...props} />
 
 /* Navigation / Search */
@@ -128,4 +140,4 @@ export const FileTextIcon = (props: AppIconProps) => <FileText {...props} />
 /* Commerce */
 export const ShoppingCartIcon = (props: AppIconProps) => <ShoppingCart {...props} />
 export const UserIcon = (props: AppIconProps) => <User {...props} />
-export const ChevronUpIcon = (props: AppIconProps) => <ChevronUp {...props} />
+export const ChevronRightIcon = (props: AppIconProps) => <ChevronRight {...props} />;

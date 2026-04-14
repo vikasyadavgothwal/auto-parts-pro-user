@@ -143,7 +143,7 @@ export function RequestQuotePage() {
           <div className="flex justify-center">
             <Button
               type="submit"
-              className="rounded-xl px-12 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+              className="rounded-xl px-10 py-8 rounded-md text-lg font-medium hover:bg-brand-primary-hover"
             >
               Submit Quote Request
             </Button>

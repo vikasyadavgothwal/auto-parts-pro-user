@@ -1,16 +1,16 @@
-import Image from "next/image"
-import Link from "next/link"
+import Image from "next/image";
+import Link from "next/link";
 import {
   FilterIcon,
   MapPinIcon,
   RatingStarIcon,
-} from "@/components/icons/site-icons"
+} from "@/components/icons/site-icons";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
 
 const garages = [
   {
@@ -59,9 +59,13 @@ const garages = [
     address: "3456 Pine St, San Francisco, CA",
     image:
       "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=300&fit=crop",
-    specialties: ["Engine Diagnostics", "Transmission Service", "Brake Service"],
+    specialties: [
+      "Engine Diagnostics",
+      "Transmission Service",
+      "Brake Service",
+    ],
   },
-]
+];
 
 export function ServicesListingSection() {
   return (
@@ -130,7 +134,8 @@ export function ServicesListingSection() {
               </Button>
 
               <p className="text-sm text-brand-muted">
-                <span className="font-medium text-white">4</span> garages near you
+                <span className="font-medium text-white">4</span> garages near
+                you
               </p>
             </div>
 
@@ -153,7 +158,7 @@ export function ServicesListingSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function FilterGroup({
@@ -161,9 +166,9 @@ function FilterGroup({
   items,
   defaultChecked = [],
 }: {
-  title: string
-  items: string[]
-  defaultChecked?: number[]
+  title: string;
+  items: string[];
+  defaultChecked?: number[];
 }) {
   return (
     <div>
@@ -171,7 +176,9 @@ function FilterGroup({
 
       <div className="space-y-2">
         {items.map((item, index) => {
-          const checkboxId = `${title}-${index}`.toLowerCase().replace(/\s+/g, "-")
+          const checkboxId = `${title}-${index}`
+            .toLowerCase()
+            .replace(/\s+/g, "-");
 
           return (
             <label
@@ -179,16 +186,19 @@ function FilterGroup({
               htmlFor={checkboxId}
               className="group flex cursor-pointer items-center gap-3"
             >
-              <Checkbox id={checkboxId} defaultChecked={defaultChecked.includes(index)} />
+              <Checkbox
+                id={checkboxId}
+                defaultChecked={defaultChecked.includes(index)}
+              />
               <span className="text-sm text-brand-muted group-hover:text-white">
                 {item}
               </span>
             </label>
-          )
+          );
         })}
       </div>
     </div>
-  )
+  );
 }
 
 function GarageCard({
@@ -202,15 +212,15 @@ function GarageCard({
   image,
   specialties,
 }: {
-  id: string
-  title: string
-  rating: string
-  reviews: string
-  price: string
-  distance: string
-  address: string
-  image: string
-  specialties: string[]
+  id: string;
+  title: string;
+  rating: string;
+  reviews: string;
+  price: string;
+  distance: string;
+  address: string;
+  image: string;
+  specialties: string[];
 }) {
   return (
     <Card className="group overflow-hidden transition-all hover:border-primary">
@@ -254,6 +264,31 @@ function GarageCard({
             </span>
           </div>
 
+          <Card className="mb-4 rounded-lg border border-[#2A2A2A] bg-[#0A0A0A] shadow-none">
+            <CardContent className="grid grid-cols-3 gap-4 p-4">
+              <div>
+                <div className="mb-1 text-xs text-[#9CA3AF]">
+                  Jobs Completed
+                </div>
+                <div className="font-semibold text-white">2,340</div>
+              </div>
+
+              <div>
+                <div className="mb-1 text-xs text-[#9CA3AF]">Response Time</div>
+                <div className="font-semibold text-white">&lt; 15 min</div>
+              </div>
+
+              <div>
+                <div className="mb-1 text-xs text-[#9CA3AF]">
+                  Next Available
+                </div>
+                <div className="font-semibold text-[#10B981]">
+                  Today at 2:00 PM
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="mb-4 flex flex-wrap gap-2">
             {specialties.map((specialty) => (
               <Badge
@@ -265,13 +300,12 @@ function GarageCard({
               </Badge>
             ))}
           </div>
-
           <div className="flex flex-wrap gap-3">
             <Button
               asChild
               className="h-11 flex-1 rounded-lg hover:bg-brand-primary-hover"
             >
-              <Link href={`/garage/${id}`}>View Details &amp; Book</Link>
+              <Link href={`/garage`}>View Details &amp; Book</Link>
             </Button>
 
             <Button
@@ -284,5 +318,5 @@ function GarageCard({
         </div>
       </div>
     </Card>
-  )
+  );
 }

@@ -143,13 +143,13 @@ export function PartsSection() {
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <Button className="rounded-lg px-8 py-3 font-medium hover:bg-brand-primary-hover">
+                <Button className="rounded-sm px-8 py-6 font-medium hover:bg-brand-primary-hover">
                   View Products
                 </Button>
                 <Button
                   asChild
                   variant="outline"
-                  className="rounded-lg border-border px-8 py-3 font-medium text-white hover:border-primary hover:bg-primary/10"
+                  className="rounded-sm border-border px-8 py-6 font-medium text-white hover:border-primary hover:bg-primary/10"
                 >
                   <Link href="/rfq">Request Quote</Link>
                 </Button>
@@ -235,7 +235,7 @@ export function PartsSection() {
         </div>
 
         <div id="products-section">
-          <Card className="mb-6 p-4">
+          <Card className="mb-6 p-4 rounded-sm">
             <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center">
               <div className="min-w-0 flex-1 lg:min-w-[200px]">
                 <div className="relative">
@@ -243,22 +243,22 @@ export function PartsSection() {
                   <Input
                     type="text"
                     placeholder="Search products..."
-                    className="h-10 bg-brand-surface py-2.5 pl-10 pr-4"
+                    className="h-10 bg-brand-surface py-2.5 pl-10 pr-4 rounded-sm"
                   />
                 </div>
               </div>
 
               <PartsFilterSelect
                 items={productFilters.categories}
-                className="w-full sm:w-auto sm:min-w-[180px]"
+                className="w-full sm:w-auto sm:min-w-[180px] rounded-sm"
               />
               <PartsFilterSelect
                 items={productFilters.conditions}
-                className="w-full sm:w-auto sm:min-w-[180px]"
+                className="w-full sm:w-auto sm:min-w-[180px] rounded-sm"
               />
               <PartsFilterSelect
                 items={productFilters.sorts}
-                className="w-full sm:w-auto sm:min-w-[180px]"
+                className="w-full sm:w-auto sm:min-w-[180px] rounded-sm"
               />
             </div>
           </Card>
@@ -310,8 +310,9 @@ export function PartsSection() {
                         ) : null}
                       </div>
                     </div>
+                    
 
-                    <Button className="w-full rounded-lg py-2.5 text-sm font-medium hover:bg-brand-primary-hover">
+                    <Button className="w-full rounded-lg px-6 py-5 text-sm font-medium hover:bg-brand-primary-hover rounded-sm">
                       View Offers
                     </Button>
                   </div>
@@ -362,7 +363,7 @@ function PartsFilterSelect({
   return (
     <div className={className}>
       <Select defaultValue={items[0]}>
-        <SelectTrigger className="h-10 w-full bg-brand-surface py-2.5">
+        <SelectTrigger className="h-10 w-full bg-brand-surface py-2.5 rounded-sm">
           <SelectValue placeholder={items[0]} />
         </SelectTrigger>
         <SelectContent>

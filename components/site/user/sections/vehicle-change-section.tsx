@@ -1,5 +1,5 @@
 import { FitmentConfirmedIcon } from "@/components/icons/site-icons"
-
+import { Button } from "@/components/ui/button"
 export const VehicleChangeSection = () => {
   return (
     <div className="border-b border-[#2A2A2A] bg-gradient-to-r from-[#10B981]/10 to-emerald-500/10 backdrop-blur-xl">
@@ -25,9 +25,9 @@ export const VehicleChangeSection = () => {
             </div>
           </div>
 
-          <button className="rounded-lg bg-[#DC2626] px-6 py-2.5 font-medium text-white transition-colors hover:bg-[#B91C1C]">
+          <Button  className="px-6 py-5 rounded-sm">
             Change Vehicle
-          </button>
+          </Button>
         </div>
       </div>
     </div>

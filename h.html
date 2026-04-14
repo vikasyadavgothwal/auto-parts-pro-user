@@ -1,1204 +1,278 @@
+<html>
 
-        <div class="max-w-[1440px] mx-auto px-8 py-6"
-          data-fg-c5fy20="135.194:135.15535:/src/app/pages/product.tsx:152:7:5073:354:e:div:e"
-          data-fgid-c5fy20=":r4qo:"><button
-            class="flex items-center gap-2 text-[#9CA3AF] hover:text-white transition-colors"
-            data-fg-c5fy21="135.194:135.15535:/src/app/pages/product.tsx:153:9:5132:282:e:button:ete"
-            data-fgid-c5fy21=":r4qp:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-              class="lucide lucide-chevron-left w-4 h-4"
-              data-fg-c5fy22="135.194:135.15535:/src/app/pages/product.tsx:157:11:5295:35:e:ChevronLeft::::::O1c"
-              data-fgid-c5fy22=":r4qq:">
-              <path d="m15 18-6-6 6-6"></path>
-            </svg><span class="text-sm"
-              data-fg-c5fy23="135.194:135.15535:/src/app/pages/product.tsx:158:11:5341:55:e:span:t"
-              data-fgid-c5fy23=":r4qr:">Back to search results</span></button></div>
-        <div class="max-w-[1200px] mx-auto px-8 pb-16"
-          data-fg-c5fy26="135.194:135.15535:/src/app/pages/product.tsx:163:7:5465:10052:e:div:etxtetxte"
-          data-fgid-c5fy26=":r4qs:">
-          <div class="grid md:grid-cols-2 gap-12 mb-16"
-            data-fg-c5fy27="135.194:135.15535:/src/app/pages/product.tsx:164:9:5525:5180:e:div:xtetxte"
-            data-fgid-c5fy27=":r4qt:">
-            <div data-fg-c5fy29="135.194:135.15535:/src/app/pages/product.tsx:166:11:5611:1081:e:div:ete"
-              data-fgid-c5fy29=":r4qu:">
-              <div class="bg-[#1A1A1A] rounded-2xl border border-[#2A2A2A] p-8 mb-4"
-                data-fg-c5fy30="135.194:135.15535:/src/app/pages/product.tsx:167:13:5629:290:e:div:e"
-                data-fgid-c5fy30=":r4qv:"><img
-                  src="https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=800&amp;h=800&amp;fit=crop"
-                  alt="Bosch QuietCast Premium Ceramic Brake Pads" class="w-full aspect-square object-cover rounded-xl"
-                  data-fg-c5fy31="135.194:135.15535:/src/app/pages/product.tsx:168:15:5719:181:e:img"
-                  data-fgid-c5fy31=":r4r0:"></div>
-              <div class="flex gap-4"
-                data-fg-c5fy32="135.194:135.15535:/src/app/pages/product.tsx:174:13:5932:743:e:div:x"
-                data-fgid-c5fy32=":r4r1:"><button
-                  class="flex-1 rounded-xl border-2 overflow-hidden transition-all border-[#DC2626] ring-2 ring-[#DC2626]/20"
-                  data-fg-c5fy34="135.194:135.15535:/src/app/pages/product.tsx:176:17:6027:611:e:button:e"
-                  data-fgid-c5fy34=":r4r2:"><img
-                    src="https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=800&amp;h=800&amp;fit=crop"
-                    alt="View 1" class="w-full aspect-square object-cover"
-                    data-fg-c5fy35="135.194:135.15535:/src/app/pages/product.tsx:185:19:6447:165:e:img"
-                    data-fgid-c5fy35=":r4r3:"></button><button
-                  class="flex-1 rounded-xl border-2 overflow-hidden transition-all border-[#2A2A2A] hover:border-[#DC2626]/50"
-                  data-fg-c5fy34="135.194:135.15535:/src/app/pages/product.tsx:176:17:6027:611:e:button:e"
-                  data-fgid-c5fy34=":r4r4:"><img
-                    src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=800&amp;h=800&amp;fit=crop"
-                    alt="View 2" class="w-full aspect-square object-cover"
-                    data-fg-c5fy35="135.194:135.15535:/src/app/pages/product.tsx:185:19:6447:165:e:img"
-                    data-fgid-c5fy35=":r4r5:"></button><button
-                  class="flex-1 rounded-xl border-2 overflow-hidden transition-all border-[#2A2A2A] hover:border-[#DC2626]/50"
-                  data-fg-c5fy34="135.194:135.15535:/src/app/pages/product.tsx:176:17:6027:611:e:button:e"
-                  data-fgid-c5fy34=":r4r6:"><img
-                    src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=800&amp;h=800&amp;fit=crop"
-                    alt="View 3" class="w-full aspect-square object-cover"
-                    data-fg-c5fy35="135.194:135.15535:/src/app/pages/product.tsx:185:19:6447:165:e:img"
-                    data-fgid-c5fy35=":r4r7:"></button></div>
+<head>
+  <style id="reset-css">
+    @layer figreset, figoverridable, reset, theme, base, figutils, components, utilities;
+
+    @layer figoverridable {
+      :root {
+        font-synthesis: none
+      }
+    }
+
+    @layer figutils {
+      :root {
+        --banner-height: 48px;
+        --banner-height-v2: 40px;
+        --full-height-with-banner: calc(100dvh - var(--banner-height))
+      }
+
+      @media (max-width:600px) {
+        .banner-v2-container {
+          left: 0 !important;
+          right: 0 !important;
+          margin: 0 auto !important
+        }
+      }
+
+      .wrapper-with-banner .min-h-screen {
+        min-height: var(--full-height-with-banner)
+      }
+
+      .wrapper-with-banner .h-screen {
+        height: var(--full-height-with-banner)
+      }
+    }
+  </style>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    html,
+    body,
+    #container,
+    #container>div {
+      height: 100%;
+    }
+  </style>
+  <link rel="stylesheet"
+    href="https://s3-figma-foundry-cached-previews-production-sig.figma.com/2e254a5a-1584-4b2f-be61-0490fe1cd7a1/index.css?Expires=1777248000&amp;Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&amp;Signature=U79cKtzpPdSMBI71heXsGbgUY3va2vrU8~YvQz9nG25BZ1YgiQNllOj3IlhJecya-zHnOL6A7FQFE3XKH7F3gIT47BGW5hpXL2Ka6RRBx~ovP61RnlpdQOsUCUPHceUkx8VYTkaj6rOCrHOfNdBLpisAuKzWiY3NB~i~tSomv~n4foTORwQFrDI~nJspQWme3stON1jl-KGCDTph-npDuN~nCGW4lfany303gRxSciytzZtQXdiaMxt6vx1XfkLGwCqPfXssG1HjewkckbF1gIFxvtZjUowyqF99O5OR7q2NRWiEH0e--l8qjjvQusYWaqGAbcfEMCpLLZw6gDvMfg__">
+</head>
+
+<body>
+  <script>
+    window.messagePort = null
+
+    const allowedOrigins = [
+      'https://figma-gov.com',
+      'https://www.figma.com',
+      'https://staging.figma.com',
+      'https://devenv01.figma.engineering',
+      'https://local.figma.engineering:8443',
+      'http://localhost:9000',
+    ]
+
+    const allowedOriginPatterns = [
+      /^https:\/\/[a-z0-9-]+\.figdev\.systems:8443$/,
+      /^https:\/\/[a-z0-9-]+\.figdev\.systems$/,
+    ]
+
+    function isAllowedOrigin(origin) {
+      return allowedOrigins.includes(origin) || allowedOriginPatterns.some(p => p.test(origin))
+    }
+
+    window.addEventListener('message', (e) => {
+      function sendMessage(data) {
+        if (window.messagePort) {
+          window.messagePort.postMessage({ data })
+        }
+      }
+
+      if (isAllowedOrigin(e.origin)) {
+        if (e.data.type === 'iframe-init') {
+          window.messagePort = e.ports[0]
+          window.__PREVIEW_IFRAME_INITIAL_OPTIONS__ = e.data.previewIframeInitialOptions
+
+          sendMessage({
+            method: 'status',
+            state: 'init-received',
+            isReady: false
+          })
+
+          if (e.data.initScriptBlob) {
+            import(URL.createObjectURL(e.data.initScriptBlob))
+          } else {
+            const script = document.createElement('script')
+
+            script.onload = async () => {
+              function sendReady() {
+                sendMessage({
+                  method: 'status',
+                  state: 'ready',
+                  isReady: true
+                })
+              }
+
+              if (window.__iframeScriptExecuted__) {
+                sendReady()
+                return
+              }
+
+              let executeInterval = null
+              let timeout = null
+
+              const timeoutPromise = new Promise((resolve) => {
+                timeout = setTimeout(() => resolve('timeout'), 2000)
+              })
+
+              const scriptExecutedPromise = new Promise((resolve) => {
+                executeInterval = setInterval(() => {
+                  if (window.__iframeScriptExecuted__) {
+                    resolve('ready')
+                  }
+                }, 50)
+              })
+
+              const result = await Promise.race([timeoutPromise, scriptExecutedPromise])
+
+              clearTimeout(timeout)
+              clearInterval(executeInterval)
+
+              if (result === 'ready') {
+                sendReady()
+              } else {
+                sendMessage({
+                  method: 'status',
+                  state: 'script-timeout',
+                  isReady: false
+                })
+              }
+            }
+
+            script.onerror = (e) => {
+              sendMessage({
+                method: 'status',
+                state: 'script-load-error',
+                isReady: false,
+                error: e.message
+              })
+            }
+
+            script.src = e.data.initScriptURL
+            // https://sentry.io/answers/script-error/
+            script.crossOrigin = 'anonymous'
+            document.body.appendChild(script)
+          }
+        }
+      }
+    })
+  </script>
+
+
+
+  <script src="https://www.figma.com/webpack-artifacts/assets/code_components_preview_iframe-46922b41bb960e15.min.js.br"
+    crossorigin="anonymous"></script>
+  <div id="container">
+    <div class="tailwind">
+      <div id="fig-code-root" style="height: 100%;">
+        <div class="min-h-screen bg-[#0A0A0A]">
+          <header class="border-b border-[#2A2A2A] bg-[#0A0A0A] sticky top-0 z-50">
+            <div class="max-w-[1440px] mx-auto px-8">
+              <div class="flex items-center justify-between h-20"><a class="text-2xl font-bold text-white" href="/"
+                  data-discover="true">AutoParts<span class="text-[#DC2626]">Pro</span></a><button
+                  class="text-[#9CA3AF] hover:text-white transition-colors">Cancel</button></div>
             </div>
-            <div data-fg-c5fy37="135.194:135.15535:/src/app/pages/product.tsx:196:11:6735:3955:e:div:etxtetxtetxte"
-              data-fgid-c5fy37=":r4r8:">
-              <div class="mb-6"
-                data-fg-c5fy38="135.194:135.15535:/src/app/pages/product.tsx:197:13:6753:1700:e:div:etetete"
-                data-fgid-c5fy38=":r4r9:">
-                <div class="flex items-center gap-3 mb-3"
-                  data-fg-c5fy39="135.194:135.15535:/src/app/pages/product.tsx:198:15:6790:444:e:div:ete"
-                  data-fgid-c5fy39=":r4ra:"><span
-                    class="px-3 py-1 bg-[#10B981]/10 text-[#10B981] text-sm font-medium rounded-lg border border-[#10B981]/20"
-                    data-fg-c5fy40="135.194:135.15535:/src/app/pages/product.tsx:199:17:6853:171:e:span:t"
-                    data-fgid-c5fy40=":r4rb:">OEM Quality</span><span
-                    class="flex items-center gap-1 text-sm text-[#9CA3AF]"
-                    data-fg-c5fy42="135.194:135.15535:/src/app/pages/product.tsx:202:17:7041:172:e:span:et"
-                    data-fgid-c5fy42=":r4rc:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" class="lucide lucide-shield w-4 h-4"
-                      data-fg-c5fy43="135.194:135.15535:/src/app/pages/product.tsx:203:19:7125:30:e:Shield::::::B8zf"
-                      data-fgid-c5fy43=":r4rd:">
-                      <path
-                        d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                      </path>
-                    </svg>Verified Seller</span></div>
-                <h1 class="text-4xl font-bold text-white mb-4"
-                  data-fg-c5fy45="135.194:135.15535:/src/app/pages/product.tsx:207:15:7249:102:e:h1:x"
-                  data-fgid-c5fy45=":r4re:">Bosch QuietCast Premium Ceramic Brake Pads</h1>
-                <div class="flex items-center gap-4 mb-4"
-                  data-fg-c5fy47="135.194:135.15535:/src/app/pages/product.tsx:210:15:7366:882:e:div:e"
-                  data-fgid-c5fy47=":r4rf:">
-                  <div class="flex items-center gap-2"
-                    data-fg-c5fy48="135.194:135.15535:/src/app/pages/product.tsx:211:17:7429:798:e:div:etete"
-                    data-fgid-c5fy48=":r4rg:">
-                    <div class="flex"
-                      data-fg-c5fy49="135.194:135.15535:/src/app/pages/product.tsx:212:19:7489:448:e:div:x"
-                      data-fgid-c5fy49=":r4rh:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-star w-5 h-5 fill-[#F59E0B] text-[#F59E0B]"
-                        data-fg-c5fy51="135.194:135.15535:/src/app/pages/product.tsx:214:23:7585:303:e:Star::::::hX0"
-                        data-fgid-c5fy51=":r4ri:">
-                        <path
-                          d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                        </path>
-                      </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-star w-5 h-5 fill-[#F59E0B] text-[#F59E0B]"
-                        data-fg-c5fy51="135.194:135.15535:/src/app/pages/product.tsx:214:23:7585:303:e:Star::::::hX0"
-                        data-fgid-c5fy51=":r4rj:">
-                        <path
-                          d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                        </path>
-                      </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-star w-5 h-5 fill-[#F59E0B] text-[#F59E0B]"
-                        data-fg-c5fy51="135.194:135.15535:/src/app/pages/product.tsx:214:23:7585:303:e:Star::::::hX0"
-                        data-fgid-c5fy51=":r4rk:">
-                        <path
-                          d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                        </path>
-                      </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-star w-5 h-5 fill-[#F59E0B] text-[#F59E0B]"
-                        data-fg-c5fy51="135.194:135.15535:/src/app/pages/product.tsx:214:23:7585:303:e:Star::::::hX0"
-                        data-fgid-c5fy51=":r4rl:">
-                        <path
-                          d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                        </path>
-                      </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-star w-5 h-5 text-[#2A2A2A]"
-                        data-fg-c5fy51="135.194:135.15535:/src/app/pages/product.tsx:214:23:7585:303:e:Star::::::hX0"
-                        data-fgid-c5fy51=":r4rm:">
-                        <path
-                          d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                        </path>
-                      </svg></div><span class="text-lg font-semibold text-white"
-                      data-fg-c5fy52="135.194:135.15535:/src/app/pages/product.tsx:224:19:7956:114:e:span:x"
-                      data-fgid-c5fy52=":r4rn:">4.9</span><span class="text-sm text-[#9CA3AF]"
-                      data-fg-c5fy54="135.194:135.15535:/src/app/pages/product.tsx:227:19:8089:115:e:span:txt"
-                      data-fgid-c5fy54=":r4ro:">(512 reviews)</span>
+          </header>
+          <div class="bg-[#1A1A1A] border-b border-[#2A2A2A]">
+            <div class="max-w-4xl mx-auto px-8 py-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center flex-1">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all bg-[#10B981] text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-circle-check w-5 h-5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m9 12 2 2 4-4"></path>
+                      </svg></div><span class="text-sm font-medium hidden md:block text-[#9CA3AF]">Select Service</span>
+                  </div>
+                  <div class="flex-1 h-0.5 bg-[#2A2A2A] mx-4">
+                    <div class="h-full transition-all bg-[#10B981]"></div>
                   </div>
                 </div>
-                <p class="text-lg text-[#9CA3AF] mb-6 leading-relaxed"
-                  data-fg-c5fy58="135.194:135.15535:/src/app/pages/product.tsx:232:15:8263:171:e:p:te"
-                  data-fgid-c5fy58=":r4rp:">Part #: <span class="font-medium text-white"
-                    data-fg-c5fy60="135.194:135.15535:/src/app/pages/product.tsx:233:25:8347:68:e:span:x"
-                    data-fgid-c5fy60=":r4rq:">Bosch BC1259</span></p>
-              </div>
-              <div class="mb-8 p-6 bg-[#1A1A1A] rounded-2xl border border-[#2A2A2A]"
-                data-fg-c5fy63="135.194:135.15535:/src/app/pages/product.tsx:238:13:8500:605:e:div:ete"
-                data-fgid-c5fy63=":r4rr:">
-                <h3 class="text-lg font-semibold text-white mb-4"
-                  data-fg-c5fy64="135.194:135.15535:/src/app/pages/product.tsx:239:15:8590:103:e:h3:t"
-                  data-fgid-c5fy64=":r4rs:">Key Features</h3>
-                <ul class="space-y-3"
-                  data-fg-c5fy66="135.194:135.15535:/src/app/pages/product.tsx:242:15:8708:378:e:ul:x"
-                  data-fgid-c5fy66=":r4rt:">
-                  <li class="flex items-start gap-3"
-                    data-fg-c5fy68="135.194:135.15535:/src/app/pages/product.tsx:244:19:8811:235:e:li:ete"
-                    data-fgid-c5fy68=":r4ru:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-circle-check-big w-5 h-5 text-[#DC2626] mt-0.5 flex-shrink-0"
-                      data-fg-c5fy69="135.194:135.15535:/src/app/pages/product.tsx:245:21:8881:71:e:CheckCircle::::::C4Wc"
-                      data-fgid-c5fy69=":r4rv:">
-                      <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-                      <path d="m9 11 3 3L22 4"></path>
-                    </svg><span class="text-[#9CA3AF]"
-                      data-fg-c5fy70="135.194:135.15535:/src/app/pages/product.tsx:246:21:8973:49:e:span:x"
-                      data-fgid-c5fy70=":r4s0:">Premium ceramic formula for consistent braking</span></li>
-                  <li class="flex items-start gap-3"
-                    data-fg-c5fy68="135.194:135.15535:/src/app/pages/product.tsx:244:19:8811:235:e:li:ete"
-                    data-fgid-c5fy68=":r4s1:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-circle-check-big w-5 h-5 text-[#DC2626] mt-0.5 flex-shrink-0"
-                      data-fg-c5fy69="135.194:135.15535:/src/app/pages/product.tsx:245:21:8881:71:e:CheckCircle::::::C4Wc"
-                      data-fgid-c5fy69=":r4s2:">
-                      <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-                      <path d="m9 11 3 3L22 4"></path>
-                    </svg><span class="text-[#9CA3AF]"
-                      data-fg-c5fy70="135.194:135.15535:/src/app/pages/product.tsx:246:21:8973:49:e:span:x"
-                      data-fgid-c5fy70=":r4s3:">Multi-layered shims reduce noise and vibration</span></li>
-                  <li class="flex items-start gap-3"
-                    data-fg-c5fy68="135.194:135.15535:/src/app/pages/product.tsx:244:19:8811:235:e:li:ete"
-                    data-fgid-c5fy68=":r4s4:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-circle-check-big w-5 h-5 text-[#DC2626] mt-0.5 flex-shrink-0"
-                      data-fg-c5fy69="135.194:135.15535:/src/app/pages/product.tsx:245:21:8881:71:e:CheckCircle::::::C4Wc"
-                      data-fgid-c5fy69=":r4s5:">
-                      <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-                      <path d="m9 11 3 3L22 4"></path>
-                    </svg><span class="text-[#9CA3AF]"
-                      data-fg-c5fy70="135.194:135.15535:/src/app/pages/product.tsx:246:21:8973:49:e:span:x"
-                      data-fgid-c5fy70=":r4s6:">Low dust formula keeps wheels cleaner</span></li>
-                  <li class="flex items-start gap-3"
-                    data-fg-c5fy68="135.194:135.15535:/src/app/pages/product.tsx:244:19:8811:235:e:li:ete"
-                    data-fgid-c5fy68=":r4s7:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-circle-check-big w-5 h-5 text-[#DC2626] mt-0.5 flex-shrink-0"
-                      data-fg-c5fy69="135.194:135.15535:/src/app/pages/product.tsx:245:21:8881:71:e:CheckCircle::::::C4Wc"
-                      data-fgid-c5fy69=":r4s8:">
-                      <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-                      <path d="m9 11 3 3L22 4"></path>
-                    </svg><span class="text-[#9CA3AF]"
-                      data-fg-c5fy70="135.194:135.15535:/src/app/pages/product.tsx:246:21:8973:49:e:span:x"
-                      data-fgid-c5fy70=":r4s9:">Hardware kit included</span></li>
-                  <li class="flex items-start gap-3"
-                    data-fg-c5fy68="135.194:135.15535:/src/app/pages/product.tsx:244:19:8811:235:e:li:ete"
-                    data-fgid-c5fy68=":r4sa:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="lucide lucide-circle-check-big w-5 h-5 text-[#DC2626] mt-0.5 flex-shrink-0"
-                      data-fg-c5fy69="135.194:135.15535:/src/app/pages/product.tsx:245:21:8881:71:e:CheckCircle::::::C4Wc"
-                      data-fgid-c5fy69=":r4sb:">
-                      <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-                      <path d="m9 11 3 3L22 4"></path>
-                    </svg><span class="text-[#9CA3AF]"
-                      data-fg-c5fy70="135.194:135.15535:/src/app/pages/product.tsx:246:21:8973:49:e:span:x"
-                      data-fgid-c5fy70=":r4sc:">Backed by Bosch Limited Lifetime Warranty</span></li>
-                </ul>
-              </div>
-              <div class="grid grid-cols-3 gap-4 mb-8"
-                data-fg-c5fy73="135.194:135.15535:/src/app/pages/product.tsx:253:13:9152:849:e:div:etete"
-                data-fgid-c5fy73=":r4sd:">
-                <div class="text-center p-4 bg-[#1A1A1A] rounded-xl border border-[#2A2A2A]"
-                  data-fg-c5fy74="135.194:135.15535:/src/app/pages/product.tsx:254:15:9212:248:e:div:ete"
-                  data-fgid-c5fy74=":r4se:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="lucide lucide-package w-6 h-6 text-[#DC2626] mx-auto mb-2"
-                    data-fg-c5fy75="135.194:135.15535:/src/app/pages/product.tsx:255:17:9310:59:e:Package::::::BczM"
-                    data-fgid-c5fy75=":r4sf:">
-                    <path
-                      d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z">
-                    </path>
-                    <path d="M12 22V12"></path>
-                    <polyline points="3.29 7 12 12 20.71 7"></polyline>
-                    <path d="m7.5 4.27 9 5.15"></path>
-                  </svg>
-                  <p class="text-xs text-[#9CA3AF]"
-                    data-fg-c5fy76="135.194:135.15535:/src/app/pages/product.tsx:256:17:9386:53:e:p:t"
-                    data-fgid-c5fy76=":r4sg:">OEM Quality</p>
+                <div class="flex items-center flex-1">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all bg-[#10B981] text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-circle-check w-5 h-5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m9 12 2 2 4-4"></path>
+                      </svg></div><span class="text-sm font-medium hidden md:block text-[#9CA3AF]">Select Vehicle</span>
+                  </div>
+                  <div class="flex-1 h-0.5 bg-[#2A2A2A] mx-4">
+                    <div class="h-full transition-all bg-[#10B981]"></div>
+                  </div>
                 </div>
-                <div class="text-center p-4 bg-[#1A1A1A] rounded-xl border border-[#2A2A2A]"
-                  data-fg-c5fy78="135.194:135.15535:/src/app/pages/product.tsx:258:15:9475:248:e:div:ete"
-                  data-fgid-c5fy78=":r4sh:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="lucide lucide-truck w-6 h-6 text-[#DC2626] mx-auto mb-2"
-                    data-fg-c5fy79="135.194:135.15535:/src/app/pages/product.tsx:259:17:9573:57:e:Truck::::::Dl9l"
-                    data-fgid-c5fy79=":r4si:">
-                    <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
-                    <path d="M15 18H9"></path>
-                    <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"></path>
-                    <circle cx="17" cy="18" r="2"></circle>
-                    <circle cx="7" cy="18" r="2"></circle>
-                  </svg>
-                  <p class="text-xs text-[#9CA3AF]"
-                    data-fg-c5fy80="135.194:135.15535:/src/app/pages/product.tsx:260:17:9647:55:e:p:t"
-                    data-fgid-c5fy80=":r4sj:">Fast Shipping</p>
+                <div class="flex items-center flex-1">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all bg-[#10B981] text-white">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-circle-check w-5 h-5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="m9 12 2 2 4-4"></path>
+                      </svg></div><span class="text-sm font-medium hidden md:block text-[#9CA3AF]">Date &amp;
+                      Time</span>
+                  </div>
+                  <div class="flex-1 h-0.5 bg-[#2A2A2A] mx-4">
+                    <div class="h-full transition-all bg-[#10B981]"></div>
+                  </div>
                 </div>
-                <div class="text-center p-4 bg-[#1A1A1A] rounded-xl border border-[#2A2A2A]"
-                  data-fg-c5fy82="135.194:135.15535:/src/app/pages/product.tsx:262:15:9738:244:e:div:ete"
-                  data-fgid-c5fy82=":r4sk:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="lucide lucide-shield w-6 h-6 text-[#DC2626] mx-auto mb-2"
-                    data-fg-c5fy83="135.194:135.15535:/src/app/pages/product.tsx:263:17:9836:58:e:Shield::::::B8zf"
-                    data-fgid-c5fy83=":r4sl:">
-                    <path
-                      d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                    </path>
-                  </svg>
-                  <p class="text-xs text-[#9CA3AF]"
-                    data-fg-c5fy84="135.194:135.15535:/src/app/pages/product.tsx:264:17:9911:50:e:p:t"
-                    data-fgid-c5fy84=":r4sm:">Warranty</p>
+                <div class="flex items-center flex-1">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all bg-[#DC2626] text-white">
+                      4</div><span class="text-sm font-medium hidden md:block text-white">Review</span>
+                  </div>
                 </div>
               </div>
-              <div class="flex gap-3"
-                data-fg-c5fy87="135.194:135.15535:/src/app/pages/product.tsx:269:13:10050:623:e:div:ete"
-                data-fgid-c5fy87=":r4sn:"><button
-                  class="flex-1 h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg hover:border-[#DC2626] transition-all flex items-center justify-center gap-2 text-white"
-                  data-fg-c5fy88="135.194:135.15535:/src/app/pages/product.tsx:270:15:10093:272:e:button:ete"
-                  data-fgid-c5fy88=":r4so:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="lucide lucide-heart w-5 h-5"
-                    data-fg-c5fy89="135.194:135.15535:/src/app/pages/product.tsx:271:17:10278:29:e:Heart::::::Bi8G"
-                    data-fgid-c5fy89=":r4sp:">
-                    <path
-                      d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z">
-                    </path>
-                  </svg><span data-fg-c5fy90="135.194:135.15535:/src/app/pages/product.tsx:272:17:10324:17:e:span:t"
-                    data-fgid-c5fy90=":r4sq:">Save</span></button><button
-                  class="flex-1 h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-lg hover:border-[#DC2626] transition-all flex items-center justify-center gap-2 text-white"
-                  data-fg-c5fy92="135.194:135.15535:/src/app/pages/product.tsx:274:15:10380:274:e:button:ete"
-                  data-fgid-c5fy92=":r4sr:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="lucide lucide-share2 lucide-share-2 w-5 h-5"
-                    data-fg-c5fy93="135.194:135.15535:/src/app/pages/product.tsx:275:17:10565:30:e:Share2::::::BCAr"
-                    data-fgid-c5fy93=":r4ss:">
-                    <circle cx="18" cy="5" r="3"></circle>
-                    <circle cx="6" cy="12" r="3"></circle>
-                    <circle cx="18" cy="19" r="3"></circle>
-                    <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"></line>
-                    <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"></line>
-                  </svg><span data-fg-c5fy94="135.194:135.15535:/src/app/pages/product.tsx:276:17:10612:18:e:span:t"
-                    data-fgid-c5fy94=":r4st:">Share</span></button></div>
             </div>
           </div>
-          <div class="mb-16"
-            data-fg-c5fy97="135.194:135.15535:/src/app/pages/product.tsx:283:9:10756:3698:e:div:etetxtetxte"
-            data-fgid-c5fy97=":r4su:">
-            <div class="mb-8" data-fg-c5fy98="135.194:135.15535:/src/app/pages/product.tsx:284:11:10790:304:e:div:ete"
-              data-fgid-c5fy98=":r4sv:">
-              <h2 class="text-3xl font-bold text-white mb-3"
-                data-fg-c5fy99="135.194:135.15535:/src/app/pages/product.tsx:285:13:10825:98:e:h2:t"
-                data-fgid-c5fy99=":r4t0:">Compare Offers</h2>
-              <p class="text-lg text-[#9CA3AF]"
-                data-fg-c5fy101="135.194:135.15535:/src/app/pages/product.tsx:288:13:10936:141:e:p:txt"
-                data-fgid-c5fy101=":r4t1:">Choose from 4 verified suppliers — best offer highlighted</p>
-            </div>
-            <div class="space-y-4"
-              data-fg-dgje0="135.96:135.9866:/src/app/components/offer-table.tsx:75:5:2227:7632:e:div:xtxte:1"
-              data-fgid-dgje0=":r4t3:" data-fg-callsite-c5fy105="">
-              <div
-                class="relative bg-white rounded-2xl border-2 overflow-hidden transition-all cursor-pointer border-[#2563EB] shadow-xl shadow-blue-500/20 ring-2 ring-[#2563EB]/20"
-                data-fg-dgje2="135.96:135.9866:/src/app/components/offer-table.tsx:77:9:2301:6771:e:motion.div:xtxte"
-                data-fgid-dgje2=":r4t4:" style="opacity: 1; transform: none;">
-                <div
-                  class="absolute top-0 left-0 right-0 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center"
-                  data-fg-dgje5="135.96:135.9866:/src/app/components/offer-table.tsx:93:13:3004:361:e:div:e"
-                  data-fgid-dgje5=":r4t5:"><span class="text-white text-sm font-semibold flex items-center gap-2"
-                    data-fg-dgje6="135.96:135.9866:/src/app/components/offer-table.tsx:94:15:3149:197:e:span:et"
-                    data-fgid-dgje6=":r4t6:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" class="lucide lucide-circle-check w-4 h-4"
-                      data-fg-dgje7="135.96:135.9866:/src/app/components/offer-table.tsx:95:17:3241:36:e:CheckCircle2::::::CELI"
-                      data-fgid-dgje7=":r4t7:">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <path d="m9 12 2 2 4-4"></path>
-                    </svg>BEST VALUE - Recommended Offer</span></div>
-                <div class="p-6 mt-10"
-                  data-fg-dgje9="135.96:135.9866:/src/app/components/offer-table.tsx:101:11:3390:5660:e:div:e"
-                  data-fgid-dgje9=":r4t8:">
-                  <div class="grid grid-cols-12 gap-6 items-center"
-                    data-fg-dgje10="135.96:135.9866:/src/app/components/offer-table.tsx:102:13:3460:5573:e:div:xtetxtetxtetxtetxte"
-                    data-fgid-dgje10=":r4t9:">
-                    <div class="col-span-3"
-                      data-fg-dgje12="135.96:135.9866:/src/app/components/offer-table.tsx:104:15:3565:3036:e:div:e"
-                      data-fgid-dgje12=":r4ta:">
-                      <div class="flex items-center gap-4"
-                        data-fg-dgje13="135.96:135.9866:/src/app/components/offer-table.tsx:105:17:3610:2970:e:div:ete"
-                        data-fgid-dgje13=":r4tb:"><img
-                          src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=100&amp;h=100&amp;fit=crop"
-                          alt="Bosch Direct" class="w-16 h-16 rounded-xl object-cover border border-[#E5E7EB]"
-                          data-fg-dgje14="135.96:135.9866:/src/app/components/offer-table.tsx:106:19:3670:201:e:img"
-                          data-fgid-dgje14=":r4tc:">
-                        <div class="flex-1"
-                          data-fg-dgje15="135.96:135.9866:/src/app/components/offer-table.tsx:111:19:3890:2667:e:div:etxtetxte"
-                          data-fgid-dgje15=":r4td:">
-                          <h4 class="font-semibold text-[#0F172A] mb-1.5"
-                            data-fg-dgje16="135.96:135.9866:/src/app/components/offer-table.tsx:112:21:3935:117:e:h4:x"
-                            data-fgid-dgje16=":r4te:">Bosch Direct</h4>
-                          <div class="flex items-center gap-1.5 mb-1.5 flex-wrap"
-                            data-fg-dgje19="135.96:135.9866:/src/app/components/offer-table.tsx:117:21:4135:1117:e:div:xtxtx"
-                            data-fgid-dgje19=":r4tf:">
-                            <div
-                              class="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-600 rounded-md text-xs"
-                              data-fg-dgje21="135.96:135.9866:/src/app/components/offer-table.tsx:119:25:4263:235:e:div:ete"
-                              data-fgid-dgje21=":r4tg:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield w-3 h-3"
-                                data-fg-dgje22="135.96:135.9866:/src/app/components/offer-table.tsx:120:27:4389:30:e:Shield::::::B8zf"
-                                data-fgid-dgje22=":r4th:">
-                                <path
-                                  d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                                </path>
-                              </svg><span
-                                data-fg-dgje23="135.96:135.9866:/src/app/components/offer-table.tsx:121:27:4446:21:e:span:t"
-                                data-fgid-dgje23=":r4ti:">Verified</span></div>
-                          </div>
-                          <div class="flex items-center gap-2 text-xs text-[#64748B]"
-                            data-fg-dgje36="135.96:135.9866:/src/app/components/offer-table.tsx:139:21:5341:1191:e:div:etx"
-                            data-fgid-dgje36=":r4tj:">
-                            <div class="flex items-center gap-1"
-                              data-fg-dgje37="135.96:135.9866:/src/app/components/offer-table.tsx:140:23:5428:805:e:div:etete"
-                              data-fgid-dgje37=":r4tk:">
-                              <div class="flex"
-                                data-fg-dgje38="135.96:135.9866:/src/app/components/offer-table.tsx:141:25:5494:512:e:div:x"
-                                data-fgid-dgje38=":r4tl:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                  stroke-linecap="round" stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4tm:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4tn:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4to:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4tp:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round" class="lucide lucide-star w-3 h-3 text-[#E5E7EB]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4tq:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg></div><span class="font-medium text-[#0F172A]"
-                                data-fg-dgje41="135.96:135.9866:/src/app/components/offer-table.tsx:153:25:6031:118:e:span:x"
-                                data-fgid-dgje41=":r4tr:">4.9</span><span
-                                data-fg-dgje43="135.96:135.9866:/src/app/components/offer-table.tsx:156:25:6174:30:e:span:txt"
-                                data-fgid-dgje43=":r4ts:">(2340)</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje55="135.96:135.9866:/src/app/components/offer-table.tsx:170:15:6645:264:e:div:ete"
-                      data-fgid-dgje55=":r4tt:">
-                      <div class="text-3xl font-bold text-[#0F172A]"
-                        data-fg-dgje56="135.96:135.9866:/src/app/components/offer-table.tsx:171:17:6690:118:e:div:tx"
-                        data-fgid-dgje56=":r4tu:">$124.99</div>
-                      <div class="text-sm text-[#64748B]"
-                        data-fg-dgje59="135.96:135.9866:/src/app/components/offer-table.tsx:174:17:6825:63:e:div:x"
-                        data-fgid-dgje59=":r4tv:">New - OEM</div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje62="135.96:135.9866:/src/app/components/offer-table.tsx:178:15:6953:425:e:div:e"
-                      data-fgid-dgje62=":r4u0:">
-                      <div
-                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-green-50 text-green-700"
-                        data-fg-dgje63="135.96:135.9866:/src/app/components/offer-table.tsx:179:17:6998:359:e:div:x"
-                        data-fgid-dgje63=":r4u1:">In Stock</div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje66="135.96:135.9866:/src/app/components/offer-table.tsx:191:15:7425:465:e:div:e"
-                      data-fgid-dgje66=":r4u2:">
-                      <div class="flex items-center gap-2 text-[#0F172A]"
-                        data-fg-dgje67="135.96:135.9866:/src/app/components/offer-table.tsx:192:17:7470:399:e:div:ete"
-                        data-fgid-dgje67=":r4u3:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                          stroke-linejoin="round" class="lucide lucide-truck w-4 h-4 text-[#64748B]"
-                          data-fg-dgje68="135.96:135.9866:/src/app/components/offer-table.tsx:193:19:7545:44:e:Truck::::::Dl9l"
-                          data-fgid-dgje68=":r4u4:">
-                          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
-                          <path d="M15 18H9"></path>
-                          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
-                          </path>
-                          <circle cx="17" cy="18" r="2"></circle>
-                          <circle cx="7" cy="18" r="2"></circle>
-                        </svg>
-                        <div
-                          data-fg-dgje69="135.96:135.9866:/src/app/components/offer-table.tsx:194:19:7608:238:e:div:ete"
-                          data-fgid-dgje69=":r4u5:">
-                          <div class="font-medium"
-                            data-fg-dgje70="135.96:135.9866:/src/app/components/offer-table.tsx:195:21:7634:51:e:div:x"
-                            data-fgid-dgje70=":r4u6:">Free 2-Day</div>
-                          <div class="text-xs text-[#64748B]"
-                            data-fg-dgje72="135.96:135.9866:/src/app/components/offer-table.tsx:196:21:7706:115:e:div:xt"
-                            data-fgid-dgje72=":r4u7:">2 days</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-span-3"
-                      data-fg-dgje76="135.96:135.9866:/src/app/components/offer-table.tsx:204:15:7932:1082:e:div:e"
-                      data-fgid-dgje76=":r4u8:"><button
-                        class="w-full h-12 rounded-xl font-medium transition-all bg-[#2563EB] text-white hover:bg-[#1D4ED8] shadow-lg hover:shadow-xl shadow-blue-500/25"
-                        data-fg-dgje77="135.96:135.9866:/src/app/components/offer-table.tsx:205:17:7977:1016:e:button:x"
-                        data-fgid-dgje77=":r4u9:">Add to Cart</button></div>
+          <div class="max-w-4xl mx-auto px-8 py-16">
+            <div style="opacity: 1; transform: none;">
+              <h2 class="text-3xl font-bold text-white mb-2">Review Your Booking</h2>
+              <p class="text-[#9CA3AF] mb-8">Please confirm your appointment details</p>
+              <div class="bg-[#1A1A1A] rounded-xl border border-[#2A2A2A] p-8 mb-8">
+                <div class="space-y-6">
+                  <div>
+                    <h3 class="text-sm font-semibold text-[#9CA3AF] mb-2">Service</h3>
+                    <div class="text-lg font-semibold text-white">Engine Diagnostics</div>
+                    <div class="text-sm text-[#9CA3AF] mt-1">Comprehensive computer diagnostics</div>
+                    <div class="flex items-center gap-4 mt-2 text-sm"><span
+                        class="flex items-center gap-1 text-[#9CA3AF]"><svg xmlns="http://www.w3.org/2000/svg"
+                          width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                          stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock w-4 h-4">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>1 hour</span></div>
+                  </div>
+                  <div class="border-t border-[#2A2A2A] pt-6">
+                    <h3 class="text-sm font-semibold text-[#9CA3AF] mb-2">Vehicle</h3>
+                    <div class="text-lg font-semibold text-white">2020 Toyota Camry</div>
+                    <div class="text-sm text-[#9CA3AF] mt-1">VIN: 4T1B11HK1LU345678</div>
+                  </div>
+                  <div class="border-t border-[#2A2A2A] pt-6">
+                    <h3 class="text-sm font-semibold text-[#9CA3AF] mb-2">Date &amp; Time</h3>
+                    <div class="text-lg font-semibold text-white">Mon, Mar 30 at 1:30 PM</div>
+                  </div>
+                  <div class="border-t border-[#2A2A2A] pt-6">
+                    <div class="flex justify-between items-center"><span
+                        class="text-lg font-semibold text-white">Total</span><span
+                        class="text-3xl font-bold text-[#DC2626]">$89.99</span></div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="relative bg-white rounded-2xl border-2 overflow-hidden transition-all cursor-pointer border-[#E5E7EB] hover:border-[#2563EB]/50"
-                data-fg-dgje2="135.96:135.9866:/src/app/components/offer-table.tsx:77:9:2301:6771:e:motion.div:xtxte"
-                data-fgid-dgje2=":r4ua:" style="opacity: 1; transform: none;">
-                <div class="p-6 "
-                  data-fg-dgje9="135.96:135.9866:/src/app/components/offer-table.tsx:101:11:3390:5660:e:div:e"
-                  data-fgid-dgje9=":r4ub:">
-                  <div class="grid grid-cols-12 gap-6 items-center"
-                    data-fg-dgje10="135.96:135.9866:/src/app/components/offer-table.tsx:102:13:3460:5573:e:div:xtetxtetxtetxtetxte"
-                    data-fgid-dgje10=":r4uc:">
-                    <div class="col-span-3"
-                      data-fg-dgje12="135.96:135.9866:/src/app/components/offer-table.tsx:104:15:3565:3036:e:div:e"
-                      data-fgid-dgje12=":r4ud:">
-                      <div class="flex items-center gap-4"
-                        data-fg-dgje13="135.96:135.9866:/src/app/components/offer-table.tsx:105:17:3610:2970:e:div:ete"
-                        data-fgid-dgje13=":r4ue:"><img
-                          src="https://images.unsplash.com/photo-1557821552-17105176677c?w=100&amp;h=100&amp;fit=crop"
-                          alt="AutoZone Pro" class="w-16 h-16 rounded-xl object-cover border border-[#E5E7EB]"
-                          data-fg-dgje14="135.96:135.9866:/src/app/components/offer-table.tsx:106:19:3670:201:e:img"
-                          data-fgid-dgje14=":r4uf:">
-                        <div class="flex-1"
-                          data-fg-dgje15="135.96:135.9866:/src/app/components/offer-table.tsx:111:19:3890:2667:e:div:etxtetxte"
-                          data-fgid-dgje15=":r4ug:">
-                          <h4 class="font-semibold text-[#0F172A] mb-1.5"
-                            data-fg-dgje16="135.96:135.9866:/src/app/components/offer-table.tsx:112:21:3935:117:e:h4:x"
-                            data-fgid-dgje16=":r4uh:">AutoZone Pro</h4>
-                          <div class="flex items-center gap-1.5 mb-1.5 flex-wrap"
-                            data-fg-dgje19="135.96:135.9866:/src/app/components/offer-table.tsx:117:21:4135:1117:e:div:xtxtx"
-                            data-fgid-dgje19=":r4ui:">
-                            <div
-                              class="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-600 rounded-md text-xs"
-                              data-fg-dgje21="135.96:135.9866:/src/app/components/offer-table.tsx:119:25:4263:235:e:div:ete"
-                              data-fgid-dgje21=":r4uj:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield w-3 h-3"
-                                data-fg-dgje22="135.96:135.9866:/src/app/components/offer-table.tsx:120:27:4389:30:e:Shield::::::B8zf"
-                                data-fgid-dgje22=":r4uk:">
-                                <path
-                                  d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                                </path>
-                              </svg><span
-                                data-fg-dgje23="135.96:135.9866:/src/app/components/offer-table.tsx:121:27:4446:21:e:span:t"
-                                data-fgid-dgje23=":r4ul:">Verified</span></div>
-                          </div>
-                          <div class="flex items-center gap-2 text-xs text-[#64748B]"
-                            data-fg-dgje36="135.96:135.9866:/src/app/components/offer-table.tsx:139:21:5341:1191:e:div:etx"
-                            data-fgid-dgje36=":r4um:">
-                            <div class="flex items-center gap-1"
-                              data-fg-dgje37="135.96:135.9866:/src/app/components/offer-table.tsx:140:23:5428:805:e:div:etete"
-                              data-fgid-dgje37=":r4un:">
-                              <div class="flex"
-                                data-fg-dgje38="135.96:135.9866:/src/app/components/offer-table.tsx:141:25:5494:512:e:div:x"
-                                data-fgid-dgje38=":r4uo:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                  stroke-linecap="round" stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4up:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4uq:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4ur:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4us:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round" class="lucide lucide-star w-3 h-3 text-[#E5E7EB]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4ut:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg></div><span class="font-medium text-[#0F172A]"
-                                data-fg-dgje41="135.96:135.9866:/src/app/components/offer-table.tsx:153:25:6031:118:e:span:x"
-                                data-fgid-dgje41=":r4uu:">4.7</span><span
-                                data-fg-dgje43="135.96:135.9866:/src/app/components/offer-table.tsx:156:25:6174:30:e:span:txt"
-                                data-fgid-dgje43=":r4uv:">(1823)</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje55="135.96:135.9866:/src/app/components/offer-table.tsx:170:15:6645:264:e:div:ete"
-                      data-fgid-dgje55=":r4v0:">
-                      <div class="text-3xl font-bold text-[#0F172A]"
-                        data-fg-dgje56="135.96:135.9866:/src/app/components/offer-table.tsx:171:17:6690:118:e:div:tx"
-                        data-fgid-dgje56=":r4v1:">$129.99</div>
-                      <div class="text-sm text-[#64748B]"
-                        data-fg-dgje59="135.96:135.9866:/src/app/components/offer-table.tsx:174:17:6825:63:e:div:x"
-                        data-fgid-dgje59=":r4v2:">New - OEM</div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje62="135.96:135.9866:/src/app/components/offer-table.tsx:178:15:6953:425:e:div:e"
-                      data-fgid-dgje62=":r4v3:">
-                      <div
-                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-green-50 text-green-700"
-                        data-fg-dgje63="135.96:135.9866:/src/app/components/offer-table.tsx:179:17:6998:359:e:div:x"
-                        data-fgid-dgje63=":r4v4:">In Stock</div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje66="135.96:135.9866:/src/app/components/offer-table.tsx:191:15:7425:465:e:div:e"
-                      data-fgid-dgje66=":r4v5:">
-                      <div class="flex items-center gap-2 text-[#0F172A]"
-                        data-fg-dgje67="135.96:135.9866:/src/app/components/offer-table.tsx:192:17:7470:399:e:div:ete"
-                        data-fgid-dgje67=":r4v6:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                          stroke-linejoin="round" class="lucide lucide-truck w-4 h-4 text-[#64748B]"
-                          data-fg-dgje68="135.96:135.9866:/src/app/components/offer-table.tsx:193:19:7545:44:e:Truck::::::Dl9l"
-                          data-fgid-dgje68=":r4v7:">
-                          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
-                          <path d="M15 18H9"></path>
-                          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
-                          </path>
-                          <circle cx="17" cy="18" r="2"></circle>
-                          <circle cx="7" cy="18" r="2"></circle>
-                        </svg>
-                        <div
-                          data-fg-dgje69="135.96:135.9866:/src/app/components/offer-table.tsx:194:19:7608:238:e:div:ete"
-                          data-fgid-dgje69=":r4v8:">
-                          <div class="font-medium"
-                            data-fg-dgje70="135.96:135.9866:/src/app/components/offer-table.tsx:195:21:7634:51:e:div:x"
-                            data-fgid-dgje70=":r4v9:">Free Standard</div>
-                          <div class="text-xs text-[#64748B]"
-                            data-fg-dgje72="135.96:135.9866:/src/app/components/offer-table.tsx:196:21:7706:115:e:div:xt"
-                            data-fgid-dgje72=":r4va:">3 days</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-span-3"
-                      data-fg-dgje76="135.96:135.9866:/src/app/components/offer-table.tsx:204:15:7932:1082:e:div:e"
-                      data-fgid-dgje76=":r4vb:"><button
-                        class="w-full h-12 rounded-xl font-medium transition-all bg-[#F8FAFC] text-[#2563EB] hover:bg-blue-50 border border-[#E5E7EB]"
-                        data-fg-dgje77="135.96:135.9866:/src/app/components/offer-table.tsx:205:17:7977:1016:e:button:x"
-                        data-fgid-dgje77=":r4vc:">Select Offer</button></div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="relative bg-white rounded-2xl border-2 overflow-hidden transition-all cursor-pointer border-[#E5E7EB] hover:border-[#2563EB]/50"
-                data-fg-dgje2="135.96:135.9866:/src/app/components/offer-table.tsx:77:9:2301:6771:e:motion.div:xtxte"
-                data-fgid-dgje2=":r4vd:" style="opacity: 1; transform: none;">
-                <div class="p-6 "
-                  data-fg-dgje9="135.96:135.9866:/src/app/components/offer-table.tsx:101:11:3390:5660:e:div:e"
-                  data-fgid-dgje9=":r4ve:">
-                  <div class="grid grid-cols-12 gap-6 items-center"
-                    data-fg-dgje10="135.96:135.9866:/src/app/components/offer-table.tsx:102:13:3460:5573:e:div:xtetxtetxtetxtetxte"
-                    data-fgid-dgje10=":r4vf:">
-                    <div class="col-span-3"
-                      data-fg-dgje12="135.96:135.9866:/src/app/components/offer-table.tsx:104:15:3565:3036:e:div:e"
-                      data-fgid-dgje12=":r4vg:">
-                      <div class="flex items-center gap-4"
-                        data-fg-dgje13="135.96:135.9866:/src/app/components/offer-table.tsx:105:17:3610:2970:e:div:ete"
-                        data-fgid-dgje13=":r4vh:"><img
-                          src="https://images.unsplash.com/photo-1565688534245-05d6b5be184a?w=100&amp;h=100&amp;fit=crop"
-                          alt="RockAuto" class="w-16 h-16 rounded-xl object-cover border border-[#E5E7EB]"
-                          data-fg-dgje14="135.96:135.9866:/src/app/components/offer-table.tsx:106:19:3670:201:e:img"
-                          data-fgid-dgje14=":r4vi:">
-                        <div class="flex-1"
-                          data-fg-dgje15="135.96:135.9866:/src/app/components/offer-table.tsx:111:19:3890:2667:e:div:etxtetxte"
-                          data-fgid-dgje15=":r4vj:">
-                          <h4 class="font-semibold text-[#0F172A] mb-1.5"
-                            data-fg-dgje16="135.96:135.9866:/src/app/components/offer-table.tsx:112:21:3935:117:e:h4:x"
-                            data-fgid-dgje16=":r4vk:">RockAuto</h4>
-                          <div class="flex items-center gap-1.5 mb-1.5 flex-wrap"
-                            data-fg-dgje19="135.96:135.9866:/src/app/components/offer-table.tsx:117:21:4135:1117:e:div:xtxtx"
-                            data-fgid-dgje19=":r4vl:">
-                            <div
-                              class="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-600 rounded-md text-xs"
-                              data-fg-dgje21="135.96:135.9866:/src/app/components/offer-table.tsx:119:25:4263:235:e:div:ete"
-                              data-fgid-dgje21=":r4vm:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield w-3 h-3"
-                                data-fg-dgje22="135.96:135.9866:/src/app/components/offer-table.tsx:120:27:4389:30:e:Shield::::::B8zf"
-                                data-fgid-dgje22=":r4vn:">
-                                <path
-                                  d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                                </path>
-                              </svg><span
-                                data-fg-dgje23="135.96:135.9866:/src/app/components/offer-table.tsx:121:27:4446:21:e:span:t"
-                                data-fgid-dgje23=":r4vo:">Verified</span></div>
-                          </div>
-                          <div class="flex items-center gap-2 text-xs text-[#64748B]"
-                            data-fg-dgje36="135.96:135.9866:/src/app/components/offer-table.tsx:139:21:5341:1191:e:div:etx"
-                            data-fgid-dgje36=":r4vp:">
-                            <div class="flex items-center gap-1"
-                              data-fg-dgje37="135.96:135.9866:/src/app/components/offer-table.tsx:140:23:5428:805:e:div:etete"
-                              data-fgid-dgje37=":r4vq:">
-                              <div class="flex"
-                                data-fg-dgje38="135.96:135.9866:/src/app/components/offer-table.tsx:141:25:5494:512:e:div:x"
-                                data-fgid-dgje38=":r4vr:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                  stroke-linecap="round" stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4vs:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4vt:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4vu:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r4vv:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round" class="lucide lucide-star w-3 h-3 text-[#E5E7EB]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r500:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg></div><span class="font-medium text-[#0F172A]"
-                                data-fg-dgje41="135.96:135.9866:/src/app/components/offer-table.tsx:153:25:6031:118:e:span:x"
-                                data-fgid-dgje41=":r501:">4.6</span><span
-                                data-fg-dgje43="135.96:135.9866:/src/app/components/offer-table.tsx:156:25:6174:30:e:span:txt"
-                                data-fgid-dgje43=":r502:">(3421)</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje55="135.96:135.9866:/src/app/components/offer-table.tsx:170:15:6645:264:e:div:ete"
-                      data-fgid-dgje55=":r503:">
-                      <div class="text-3xl font-bold text-[#0F172A]"
-                        data-fg-dgje56="135.96:135.9866:/src/app/components/offer-table.tsx:171:17:6690:118:e:div:tx"
-                        data-fgid-dgje56=":r504:">$119.99</div>
-                      <div class="text-sm text-[#64748B]"
-                        data-fg-dgje59="135.96:135.9866:/src/app/components/offer-table.tsx:174:17:6825:63:e:div:x"
-                        data-fgid-dgje59=":r505:">New - OEM</div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje62="135.96:135.9866:/src/app/components/offer-table.tsx:178:15:6953:425:e:div:e"
-                      data-fgid-dgje62=":r506:">
-                      <div
-                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-green-50 text-green-700"
-                        data-fg-dgje63="135.96:135.9866:/src/app/components/offer-table.tsx:179:17:6998:359:e:div:x"
-                        data-fgid-dgje63=":r507:">In Stock</div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje66="135.96:135.9866:/src/app/components/offer-table.tsx:191:15:7425:465:e:div:e"
-                      data-fgid-dgje66=":r508:">
-                      <div class="flex items-center gap-2 text-[#0F172A]"
-                        data-fg-dgje67="135.96:135.9866:/src/app/components/offer-table.tsx:192:17:7470:399:e:div:ete"
-                        data-fgid-dgje67=":r509:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                          stroke-linejoin="round" class="lucide lucide-truck w-4 h-4 text-[#64748B]"
-                          data-fg-dgje68="135.96:135.9866:/src/app/components/offer-table.tsx:193:19:7545:44:e:Truck::::::Dl9l"
-                          data-fgid-dgje68=":r50a:">
-                          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
-                          <path d="M15 18H9"></path>
-                          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
-                          </path>
-                          <circle cx="17" cy="18" r="2"></circle>
-                          <circle cx="7" cy="18" r="2"></circle>
-                        </svg>
-                        <div
-                          data-fg-dgje69="135.96:135.9866:/src/app/components/offer-table.tsx:194:19:7608:238:e:div:ete"
-                          data-fgid-dgje69=":r50b:">
-                          <div class="font-medium"
-                            data-fg-dgje70="135.96:135.9866:/src/app/components/offer-table.tsx:195:21:7634:51:e:div:x"
-                            data-fgid-dgje70=":r50c:">$8.95</div>
-                          <div class="text-xs text-[#64748B]"
-                            data-fg-dgje72="135.96:135.9866:/src/app/components/offer-table.tsx:196:21:7706:115:e:div:xt"
-                            data-fgid-dgje72=":r50d:">5 days</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-span-3"
-                      data-fg-dgje76="135.96:135.9866:/src/app/components/offer-table.tsx:204:15:7932:1082:e:div:e"
-                      data-fgid-dgje76=":r50e:"><button
-                        class="w-full h-12 rounded-xl font-medium transition-all bg-[#F8FAFC] text-[#2563EB] hover:bg-blue-50 border border-[#E5E7EB]"
-                        data-fg-dgje77="135.96:135.9866:/src/app/components/offer-table.tsx:205:17:7977:1016:e:button:x"
-                        data-fgid-dgje77=":r50f:">Select Offer</button></div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="relative bg-white rounded-2xl border-2 overflow-hidden transition-all cursor-pointer border-[#E5E7EB] hover:border-[#2563EB]/50"
-                data-fg-dgje2="135.96:135.9866:/src/app/components/offer-table.tsx:77:9:2301:6771:e:motion.div:xtxte"
-                data-fgid-dgje2=":r50g:" style="opacity: 1; transform: none;">
-                <div class="p-6 "
-                  data-fg-dgje9="135.96:135.9866:/src/app/components/offer-table.tsx:101:11:3390:5660:e:div:e"
-                  data-fgid-dgje9=":r50h:">
-                  <div class="grid grid-cols-12 gap-6 items-center"
-                    data-fg-dgje10="135.96:135.9866:/src/app/components/offer-table.tsx:102:13:3460:5573:e:div:xtetxtetxtetxtetxte"
-                    data-fgid-dgje10=":r50i:">
-                    <div class="col-span-3"
-                      data-fg-dgje12="135.96:135.9866:/src/app/components/offer-table.tsx:104:15:3565:3036:e:div:e"
-                      data-fgid-dgje12=":r50j:">
-                      <div class="flex items-center gap-4"
-                        data-fg-dgje13="135.96:135.9866:/src/app/components/offer-table.tsx:105:17:3610:2970:e:div:ete"
-                        data-fgid-dgje13=":r50k:"><img
-                          src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&amp;h=100&amp;fit=crop"
-                          alt="AdvanceAutoParts" class="w-16 h-16 rounded-xl object-cover border border-[#E5E7EB]"
-                          data-fg-dgje14="135.96:135.9866:/src/app/components/offer-table.tsx:106:19:3670:201:e:img"
-                          data-fgid-dgje14=":r50l:">
-                        <div class="flex-1"
-                          data-fg-dgje15="135.96:135.9866:/src/app/components/offer-table.tsx:111:19:3890:2667:e:div:etxtetxte"
-                          data-fgid-dgje15=":r50m:">
-                          <h4 class="font-semibold text-[#0F172A] mb-1.5"
-                            data-fg-dgje16="135.96:135.9866:/src/app/components/offer-table.tsx:112:21:3935:117:e:h4:x"
-                            data-fgid-dgje16=":r50n:">AdvanceAutoParts</h4>
-                          <div class="flex items-center gap-1.5 mb-1.5 flex-wrap"
-                            data-fg-dgje19="135.96:135.9866:/src/app/components/offer-table.tsx:117:21:4135:1117:e:div:xtxtx"
-                            data-fgid-dgje19=":r50o:">
-                            <div
-                              class="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-600 rounded-md text-xs"
-                              data-fg-dgje21="135.96:135.9866:/src/app/components/offer-table.tsx:119:25:4263:235:e:div:ete"
-                              data-fgid-dgje21=":r50p:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield w-3 h-3"
-                                data-fg-dgje22="135.96:135.9866:/src/app/components/offer-table.tsx:120:27:4389:30:e:Shield::::::B8zf"
-                                data-fgid-dgje22=":r50q:">
-                                <path
-                                  d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z">
-                                </path>
-                              </svg><span
-                                data-fg-dgje23="135.96:135.9866:/src/app/components/offer-table.tsx:121:27:4446:21:e:span:t"
-                                data-fgid-dgje23=":r50r:">Verified</span></div>
-                          </div>
-                          <div class="flex items-center gap-2 text-xs text-[#64748B]"
-                            data-fg-dgje36="135.96:135.9866:/src/app/components/offer-table.tsx:139:21:5341:1191:e:div:etx"
-                            data-fgid-dgje36=":r50s:">
-                            <div class="flex items-center gap-1"
-                              data-fg-dgje37="135.96:135.9866:/src/app/components/offer-table.tsx:140:23:5428:805:e:div:etete"
-                              data-fgid-dgje37=":r50t:">
-                              <div class="flex"
-                                data-fg-dgje38="135.96:135.9866:/src/app/components/offer-table.tsx:141:25:5494:512:e:div:x"
-                                data-fgid-dgje38=":r50u:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                  stroke-linecap="round" stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r50v:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r510:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r511:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  class="lucide lucide-star w-3 h-3 fill-[#F59E0B] text-[#F59E0B]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r512:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                  stroke-linejoin="round" class="lucide lucide-star w-3 h-3 text-[#E5E7EB]"
-                                  data-fg-dgje40="135.96:135.9866:/src/app/components/offer-table.tsx:143:29:5602:343:e:Star::::::hX0"
-                                  data-fgid-dgje40=":r513:">
-                                  <path
-                                    d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z">
-                                  </path>
-                                </svg></div><span class="font-medium text-[#0F172A]"
-                                data-fg-dgje41="135.96:135.9866:/src/app/components/offer-table.tsx:153:25:6031:118:e:span:x"
-                                data-fgid-dgje41=":r514:">4.8</span><span
-                                data-fg-dgje43="135.96:135.9866:/src/app/components/offer-table.tsx:156:25:6174:30:e:span:txt"
-                                data-fgid-dgje43=":r515:">(987)</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje55="135.96:135.9866:/src/app/components/offer-table.tsx:170:15:6645:264:e:div:ete"
-                      data-fgid-dgje55=":r516:">
-                      <div class="text-3xl font-bold text-[#0F172A]"
-                        data-fg-dgje56="135.96:135.9866:/src/app/components/offer-table.tsx:171:17:6690:118:e:div:tx"
-                        data-fgid-dgje56=":r517:">$134.99</div>
-                      <div class="text-sm text-[#64748B]"
-                        data-fg-dgje59="135.96:135.9866:/src/app/components/offer-table.tsx:174:17:6825:63:e:div:x"
-                        data-fgid-dgje59=":r518:">New - OEM</div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje62="135.96:135.9866:/src/app/components/offer-table.tsx:178:15:6953:425:e:div:e"
-                      data-fgid-dgje62=":r519:">
-                      <div
-                        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-amber-50 text-amber-700"
-                        data-fg-dgje63="135.96:135.9866:/src/app/components/offer-table.tsx:179:17:6998:359:e:div:x"
-                        data-fgid-dgje63=":r51a:">Limited Stock</div>
-                    </div>
-                    <div class="col-span-2"
-                      data-fg-dgje66="135.96:135.9866:/src/app/components/offer-table.tsx:191:15:7425:465:e:div:e"
-                      data-fgid-dgje66=":r51b:">
-                      <div class="flex items-center gap-2 text-[#0F172A]"
-                        data-fg-dgje67="135.96:135.9866:/src/app/components/offer-table.tsx:192:17:7470:399:e:div:ete"
-                        data-fgid-dgje67=":r51c:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                          stroke-linejoin="round" class="lucide lucide-truck w-4 h-4 text-[#64748B]"
-                          data-fg-dgje68="135.96:135.9866:/src/app/components/offer-table.tsx:193:19:7545:44:e:Truck::::::Dl9l"
-                          data-fgid-dgje68=":r51d:">
-                          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"></path>
-                          <path d="M15 18H9"></path>
-                          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14">
-                          </path>
-                          <circle cx="17" cy="18" r="2"></circle>
-                          <circle cx="7" cy="18" r="2"></circle>
-                        </svg>
-                        <div
-                          data-fg-dgje69="135.96:135.9866:/src/app/components/offer-table.tsx:194:19:7608:238:e:div:ete"
-                          data-fgid-dgje69=":r51e:">
-                          <div class="font-medium"
-                            data-fg-dgje70="135.96:135.9866:/src/app/components/offer-table.tsx:195:21:7634:51:e:div:x"
-                            data-fgid-dgje70=":r51f:">Free 2-Day</div>
-                          <div class="text-xs text-[#64748B]"
-                            data-fg-dgje72="135.96:135.9866:/src/app/components/offer-table.tsx:196:21:7706:115:e:div:xt"
-                            data-fgid-dgje72=":r51g:">2 days</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-span-3"
-                      data-fg-dgje76="135.96:135.9866:/src/app/components/offer-table.tsx:204:15:7932:1082:e:div:e"
-                      data-fgid-dgje76=":r51h:"><button
-                        class="w-full h-12 rounded-xl font-medium transition-all bg-[#F8FAFC] text-[#2563EB] hover:bg-blue-50 border border-[#E5E7EB]"
-                        data-fg-dgje77="135.96:135.9866:/src/app/components/offer-table.tsx:205:17:7977:1016:e:button:x"
-                        data-fgid-dgje77=":r51i:">Select Offer</button></div>
-                  </div>
-                </div>
-              </div>
-              <div class="mt-8 p-8 bg-gradient-to-br from-slate-50 to-blue-50 rounded-2xl border border-[#E5E7EB]"
-                data-fg-dgje80="135.96:135.9866:/src/app/components/offer-table.tsx:232:7:9117:731:e:div:e"
-                data-fgid-dgje80=":r51j:">
-                <div class="flex items-center justify-between"
-                  data-fg-dgje81="135.96:135.9866:/src/app/components/offer-table.tsx:233:9:9231:604:e:div:ete"
-                  data-fgid-dgje81=":r51k:">
-                  <div data-fg-dgje82="135.96:135.9866:/src/app/components/offer-table.tsx:234:11:9293:309:e:div:ete"
-                    data-fgid-dgje82=":r51l:">
-                    <h4 class="text-xl font-semibold text-[#0F172A] mb-2"
-                      data-fg-dgje83="135.96:135.9866:/src/app/components/offer-table.tsx:235:13:9311:118:e:h4:t"
-                      data-fgid-dgje83=":r51m:">Can't find the right offer?</h4>
-                    <p class="text-[#64748B]"
-                      data-fg-dgje85="135.96:135.9866:/src/app/components/offer-table.tsx:238:13:9442:143:e:p:t"
-                      data-fgid-dgje85=":r51n:">Submit a Request for Quote and get personalized offers from our supplier
-                      network.</p>
-                  </div><button
-                    class="px-8 py-3 bg-white text-[#2563EB] border-2 border-[#2563EB] rounded-xl hover:bg-[#2563EB] hover:text-white transition-all font-medium"
-                    data-fg-dgje87="135.96:135.9866:/src/app/components/offer-table.tsx:242:11:9613:207:e:button:t"
-                    data-fgid-dgje87=":r51o:">Request Custom Quote</button>
-                </div>
-              </div>
-            </div>
-            <div class="mt-8 p-6 bg-[#1A1A1A] rounded-xl border border-[#2A2A2A]"
-              data-fg-c5fy107="135.194:135.15535:/src/app/pages/product.tsx:301:11:11338:905:e:div:e"
-              data-fgid-c5fy107=":r51p:">
-              <div class="flex items-start gap-4"
-                data-fg-c5fy108="135.194:135.15535:/src/app/pages/product.tsx:302:13:11425:801:e:div:ete"
-                data-fgid-c5fy108=":r51q:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                  stroke-linejoin="round" class="lucide lucide-message-square w-6 h-6 text-[#DC2626] flex-shrink-0 mt-1"
-                  data-fg-c5fy109="135.194:135.15535:/src/app/pages/product.tsx:303:15:11480:71:e:MessageSquare::::::BITa"
-                  data-fgid-c5fy109=":r51r:">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <div class="flex-1"
-                  data-fg-c5fy110="135.194:135.15535:/src/app/pages/product.tsx:304:15:11566:641:e:div:etete"
-                  data-fgid-c5fy110=":r51s:">
-                  <h3 class="text-lg font-semibold text-white mb-2"
-                    data-fg-c5fy111="135.194:135.15535:/src/app/pages/product.tsx:305:17:11607:129:e:h3:t"
-                    data-fgid-c5fy111=":r51t:">Need a better price or bulk order?</h3>
-                  <p class="text-[#9CA3AF] mb-4"
-                    data-fg-c5fy113="135.194:135.15535:/src/app/pages/product.tsx:308:17:11753:157:e:p:t"
-                    data-fgid-c5fy113=":r51u:">Request a custom quote from multiple suppliers. They'll compete for your
-                    business.</p><a
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium"
-                    data-fg-c5fy115="135.194:135.15535:/src/app/pages/product.tsx:311:17:11927:259:e:Link:t:::::B0gV"
-                    data-fgid-c5fy115=":r51v:" href="/rfq" data-discover="true">Request Quote</a>
-                </div>
-              </div>
-            </div>
-            <div class="mt-8 bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] rounded-xl border border-[#2A2A2A] p-8"
-              data-fg-c5fy118="135.194:135.15535:/src/app/pages/product.tsx:322:11:12300:2139:e:div:etete"
-              data-fgid-c5fy118=":r520:">
-              <div class="flex items-start gap-4 mb-6"
-                data-fg-c5fy119="135.194:135.15535:/src/app/pages/product.tsx:323:13:12420:626:e:div:ete"
-                data-fgid-c5fy119=":r521:">
-                <div
-                  class="w-12 h-12 rounded-full bg-[#DC2626]/10 flex items-center justify-center flex-shrink-0 border border-[#DC2626]/20"
-                  data-fg-c5fy120="135.194:135.15535:/src/app/pages/product.tsx:324:15:12480:213:e:div:e"
-                  data-fgid-c5fy120=":r522:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" class="lucide lucide-wrench w-6 h-6 text-[#DC2626]"
-                    data-fg-c5fy121="135.194:135.15535:/src/app/pages/product.tsx:325:17:12627:45:e:Wrench::::::dbj"
-                    data-fgid-c5fy121=":r523:">
-                    <path
-                      d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
-                    </path>
-                  </svg></div>
-                <div data-fg-c5fy122="135.194:135.15535:/src/app/pages/product.tsx:327:15:12708:319:e:div:ete"
-                  data-fgid-c5fy122=":r524:">
-                  <h3 class="text-2xl font-bold text-white mb-2"
-                    data-fg-c5fy123="135.194:135.15535:/src/app/pages/product.tsx:328:17:12730:110:e:h3:t"
-                    data-fgid-c5fy123=":r525:">Need Installation?</h3>
-                  <p class="text-[#9CA3AF]"
-                    data-fg-c5fy125="135.194:135.15535:/src/app/pages/product.tsx:331:17:12857:149:e:p:t"
-                    data-fgid-c5fy125=":r526:">Bundle this part with professional installation from certified garages
-                    near you</p>
-                </div>
-              </div>
-              <div class="grid md:grid-cols-2 gap-4 mb-6"
-                data-fg-c5fy127="135.194:135.15535:/src/app/pages/product.tsx:337:13:13060:1046:e:div:ete"
-                data-fgid-c5fy127=":r527:">
-                <div class="p-5 bg-[#0A0A0A] rounded-xl border border-[#2A2A2A]"
-                  data-fg-c5fy128="135.194:135.15535:/src/app/pages/product.tsx:338:15:13123:477:e:div:ete"
-                  data-fgid-c5fy128=":r528:">
-                  <div class="flex items-center gap-3 mb-3"
-                    data-fg-c5fy129="135.194:135.15535:/src/app/pages/product.tsx:339:17:13209:226:e:div:ete"
-                    data-fgid-c5fy129=":r529:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" class="lucide lucide-circle-check-big w-5 h-5 text-[#10B981]"
-                      data-fg-c5fy130="135.194:135.15535:/src/app/pages/product.tsx:340:19:13274:50:e:CheckCircle::::::C4Wc"
-                      data-fgid-c5fy130=":r52a:">
-                      <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-                      <path d="m9 11 3 3L22 4"></path>
-                    </svg><span class="font-semibold text-white"
-                      data-fg-c5fy131="135.194:135.15535:/src/app/pages/product.tsx:341:19:13343:69:e:span:t"
-                      data-fgid-c5fy131=":r52b:">Expert Installation</span></div>
-                  <p class="text-sm text-[#9CA3AF]"
-                    data-fg-c5fy133="135.194:135.15535:/src/app/pages/product.tsx:343:17:13452:127:e:p:t"
-                    data-fgid-c5fy133=":r52c:">ASE-certified mechanics with specialized training</p>
-                </div>
-                <div class="p-5 bg-[#0A0A0A] rounded-xl border border-[#2A2A2A]"
-                  data-fg-c5fy135="135.194:135.15535:/src/app/pages/product.tsx:347:15:13615:472:e:div:ete"
-                  data-fgid-c5fy135=":r52d:">
-                  <div class="flex items-center gap-3 mb-3"
-                    data-fg-c5fy136="135.194:135.15535:/src/app/pages/product.tsx:348:17:13701:223:e:div:ete"
-                    data-fgid-c5fy136=":r52e:"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round" class="lucide lucide-circle-check-big w-5 h-5 text-[#10B981]"
-                      data-fg-c5fy137="135.194:135.15535:/src/app/pages/product.tsx:349:19:13766:50:e:CheckCircle::::::C4Wc"
-                      data-fgid-c5fy137=":r52f:">
-                      <path d="M21.801 10A10 10 0 1 1 17 3.335"></path>
-                      <path d="m9 11 3 3L22 4"></path>
-                    </svg><span class="font-semibold text-white"
-                      data-fg-c5fy138="135.194:135.15535:/src/app/pages/product.tsx:350:19:13835:66:e:span:t"
-                      data-fgid-c5fy138=":r52g:">Same-Day Service</span></div>
-                  <p class="text-sm text-[#9CA3AF]"
-                    data-fg-c5fy140="135.194:135.15535:/src/app/pages/product.tsx:352:17:13941:125:e:p:t"
-                    data-fgid-c5fy140=":r52h:">Schedule installation as early as part delivery</p>
-                </div>
-              </div><a
-                class="inline-flex items-center gap-2 px-6 py-3 bg-[#DC2626] text-white rounded-lg hover:bg-[#B91C1C] transition-all font-medium"
-                data-fg-c5fy142="135.194:135.15535:/src/app/pages/product.tsx:358:13:14120:302:e:Link:et:::::B0gV"
-                data-fgid-c5fy142=":r52i:" href="/services" data-discover="true"><svg xmlns="http://www.w3.org/2000/svg"
-                  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wrench w-5 h-5"
-                  data-fg-c5fy143="135.194:135.15535:/src/app/pages/product.tsx:362:15:14331:30:e:Wrench::::::dbj"
-                  data-fgid-c5fy143=":r52j:">
-                  <path
-                    d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
-                  </path>
-                </svg>Find Installation Services</a>
-            </div>
-          </div>
-          <div class="grid md:grid-cols-2 gap-8"
-            data-fg-c5fy146="135.194:135.15535:/src/app/pages/product.tsx:369:9:14508:996:e:div:ete"
-            data-fgid-c5fy146=":r52k:">
-            <div class="bg-[#1A1A1A] rounded-2xl border border-[#2A2A2A] p-8"
-              data-fg-c5fy147="135.194:135.15535:/src/app/pages/product.tsx:370:11:14562:311:e:div:ete"
-              data-fgid-c5fy147=":r52l:">
-              <h3 class="text-2xl font-semibold text-white mb-4"
-                data-fg-c5fy148="135.194:135.15535:/src/app/pages/product.tsx:371:13:14645:99:e:h3:t"
-                data-fgid-c5fy148=":r52m:">Description</h3>
-              <p class="text-[#9CA3AF] leading-relaxed"
-                data-fg-c5fy150="135.194:135.15535:/src/app/pages/product.tsx:374:13:14757:99:e:p:x"
-                data-fgid-c5fy150=":r52n:">Bosch QuietCast Premium Ceramic Brake Pads deliver exceptional stopping power
-                with ultra-quiet operation. Engineered with a proprietary ceramic formula and multi-layered shims for
-                superior noise dampening. Perfect for daily driving and light towing applications.</p>
-            </div>
-            <div class="bg-[#1A1A1A] rounded-2xl border border-[#2A2A2A] p-8"
-              data-fg-c5fy152="135.194:135.15535:/src/app/pages/product.tsx:379:11:14885:604:e:div:ete"
-              data-fgid-c5fy152=":r52o:">
-              <h3 class="text-2xl font-semibold text-white mb-4"
-                data-fg-c5fy153="135.194:135.15535:/src/app/pages/product.tsx:380:13:14968:102:e:h3:t"
-                data-fgid-c5fy153=":r52p:">Specifications</h3>
-              <dl class="space-y-3"
-                data-fg-c5fy155="135.194:135.15535:/src/app/pages/product.tsx:383:13:15083:389:e:dl:x"
-                data-fgid-c5fy155=":r52q:">
-                <div class="flex justify-between py-2 border-b border-[#2A2A2A]"
-                  data-fg-c5fy157="135.194:135.15535:/src/app/pages/product.tsx:385:17:15204:232:e:div:ete"
-                  data-fgid-c5fy157=":r52r:">
-                  <dt class="text-[#9CA3AF]"
-                    data-fg-c5fy158="135.194:135.15535:/src/app/pages/product.tsx:386:19:15302:41:e:dt:x"
-                    data-fgid-c5fy158=":r52s:">Part Number</dt>
-                  <dd class="font-medium text-white"
-                    data-fg-c5fy160="135.194:135.15535:/src/app/pages/product.tsx:387:19:15362:51:e:dd:x"
-                    data-fgid-c5fy160=":r52t:">BC1259</dd>
-                </div>
-                <div class="flex justify-between py-2 border-b border-[#2A2A2A]"
-                  data-fg-c5fy157="135.194:135.15535:/src/app/pages/product.tsx:385:17:15204:232:e:div:ete"
-                  data-fgid-c5fy157=":r52u:">
-                  <dt class="text-[#9CA3AF]"
-                    data-fg-c5fy158="135.194:135.15535:/src/app/pages/product.tsx:386:19:15302:41:e:dt:x"
-                    data-fgid-c5fy158=":r52v:">Manufacturer</dt>
-                  <dd class="font-medium text-white"
-                    data-fg-c5fy160="135.194:135.15535:/src/app/pages/product.tsx:387:19:15362:51:e:dd:x"
-                    data-fgid-c5fy160=":r530:">Bosch</dd>
-                </div>
-                <div class="flex justify-between py-2 border-b border-[#2A2A2A]"
-                  data-fg-c5fy157="135.194:135.15535:/src/app/pages/product.tsx:385:17:15204:232:e:div:ete"
-                  data-fgid-c5fy157=":r531:">
-                  <dt class="text-[#9CA3AF]"
-                    data-fg-c5fy158="135.194:135.15535:/src/app/pages/product.tsx:386:19:15302:41:e:dt:x"
-                    data-fgid-c5fy158=":r532:">Position</dt>
-                  <dd class="font-medium text-white"
-                    data-fg-c5fy160="135.194:135.15535:/src/app/pages/product.tsx:387:19:15362:51:e:dd:x"
-                    data-fgid-c5fy160=":r533:">Front</dd>
-                </div>
-                <div class="flex justify-between py-2 border-b border-[#2A2A2A]"
-                  data-fg-c5fy157="135.194:135.15535:/src/app/pages/product.tsx:385:17:15204:232:e:div:ete"
-                  data-fgid-c5fy157=":r534:">
-                  <dt class="text-[#9CA3AF]"
-                    data-fg-c5fy158="135.194:135.15535:/src/app/pages/product.tsx:386:19:15302:41:e:dt:x"
-                    data-fgid-c5fy158=":r535:">Material</dt>
-                  <dd class="font-medium text-white"
-                    data-fg-c5fy160="135.194:135.15535:/src/app/pages/product.tsx:387:19:15362:51:e:dd:x"
-                    data-fgid-c5fy160=":r536:">Ceramic</dd>
-                </div>
-                <div class="flex justify-between py-2 border-b border-[#2A2A2A]"
-                  data-fg-c5fy157="135.194:135.15535:/src/app/pages/product.tsx:385:17:15204:232:e:div:ete"
-                  data-fgid-c5fy157=":r537:">
-                  <dt class="text-[#9CA3AF]"
-                    data-fg-c5fy158="135.194:135.15535:/src/app/pages/product.tsx:386:19:15302:41:e:dt:x"
-                    data-fgid-c5fy158=":r538:">Hardware Included</dt>
-                  <dd class="font-medium text-white"
-                    data-fg-c5fy160="135.194:135.15535:/src/app/pages/product.tsx:387:19:15362:51:e:dd:x"
-                    data-fgid-c5fy160=":r539:">Yes</dd>
-                </div>
-                <div class="flex justify-between py-2 border-b border-[#2A2A2A]"
-                  data-fg-c5fy157="135.194:135.15535:/src/app/pages/product.tsx:385:17:15204:232:e:div:ete"
-                  data-fgid-c5fy157=":r53a:">
-                  <dt class="text-[#9CA3AF]"
-                    data-fg-c5fy158="135.194:135.15535:/src/app/pages/product.tsx:386:19:15302:41:e:dt:x"
-                    data-fgid-c5fy158=":r53b:">Warranty</dt>
-                  <dd class="font-medium text-white"
-                    data-fg-c5fy160="135.194:135.15535:/src/app/pages/product.tsx:387:19:15362:51:e:dd:x"
-                    data-fgid-c5fy160=":r53c:">Limited Lifetime</dd>
-                </div>
-              </dl>
+              </div><button
+                class="w-full h-14 bg-[#DC2626] text-white rounded-xl hover:bg-[#B91C1C] transition-all font-medium text-lg">Confirm
+                Booking</button>
             </div>
           </div>
         </div>
+        <div class="fixed top-4 right-4 z-[100] flex flex-col gap-3 max-w-md"></div>
       </div>
-      <div class="fixed top-4 right-4 z-[100] flex flex-col gap-3 max-w-md"
-        data-fg-bt9k2="135.100:135.3475:/src/app/components/toast.tsx:53:7:1502:282:e:div:e" data-fgid-bt9k2=":r84:">
-      </div>
+    </div>
+  </div>
+</body>
+
+</html>

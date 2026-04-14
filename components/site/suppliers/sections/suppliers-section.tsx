@@ -312,14 +312,14 @@ export function SuppliersSection() {
                       <div className="flex flex-col gap-3 sm:flex-row">
                         <Button
                           asChild
-                          className="rounded-lg px-6 py-2.5 text-sm font-medium hover:bg-brand-primary-hover"
+                          className="rounded-lg px-6 py-5 text-sm font-medium rounded-sm text-white hover:bg-brand-primary-hover"
                         >
                           <Link href={supplier.href}>View Products</Link>
                         </Button>
                         <Button
                           asChild
                           variant="outline"
-                          className="rounded-lg border-border px-6 py-2.5 text-sm font-medium text-white hover:border-primary hover:bg-primary/10"
+                          className="rounded-lg border-border px-6 py-5 text-sm rounded-md font-medium text-white hover:border-primary hover:bg-primary/10"
                         >
                           <Link href="/rfq">Request Quote</Link>
                         </Button>
