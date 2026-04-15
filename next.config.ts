@@ -14,6 +14,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/fleet",
+        destination: "http://localhost:3001/fleet",
+      },
+      {
+        source: "/fleet/:path*",
+        destination: "http://localhost:3001/fleet/:path*",
+      },
+    ];
+  },
 };
-    
+
 export default nextConfig;
