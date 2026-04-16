@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 
 export function SupplierCustomQuoteSection() {
   return (
-    <div className="mx-auto mt-12 max-w-7xl px-4 sm:px-6 lg:mb-16">
+    <div className="mx-auto md:mt-12 mt-0 md:mb-0 mb-10 max-w-7xl px-4 sm:px-6 lg:mb-16">
       <Card className="rounded-2xl border-primary/30 bg-gradient-to-br from-brand-panel to-brand-surface p-6 text-center sm:p-8">
         <div className="mx-auto max-w-2xl">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">

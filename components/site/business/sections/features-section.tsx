@@ -64,7 +64,7 @@ const features: BusinessFeature[] = [
 
 export function BusinessFeaturesSection() {
   return (
-    <section className="bg-brand-panel py-24">
+    <section className="bg-brand-panel md:py-24 py-10">
       <div className="site-container">
         <SectionHeading
           title="Everything Your Business Needs"

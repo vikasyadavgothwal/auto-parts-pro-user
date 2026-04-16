@@ -9,7 +9,7 @@ export function BusinessHeroSection() {
     <section className="relative overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
 
-      <div className="site-container relative py-24">
+      <div className="site-container relative md:py-24 py-10">
         <div className="mx-auto max-w-4xl text-center">
           <Badge className="mb-6 rounded-full px-4 py-2 text-sm font-medium">
             <SparklesIcon className="h-4 w-4" />

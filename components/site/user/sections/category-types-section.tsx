@@ -23,7 +23,7 @@ const categories: Category[] = [
 
 export function CategoryTypesSection() {
   return (
-    <section className="bg-brand-surface py-24">
+    <section className="bg-brand-surface md:py-24 py-10">
       <div className="site-container">
         <SectionHeading
           eyebrow="Explore By Type"

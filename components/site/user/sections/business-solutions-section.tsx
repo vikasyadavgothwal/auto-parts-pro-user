@@ -26,7 +26,7 @@ const solutions: Solution[] = [
 
 export function BusinessSolutionsSection() {
   return (
-    <section id="business" className="scroll-mt-20 bg-brand-surface py-24">
+    <section id="business" className="scroll-mt-20 bg-brand-surface md:py-24 py-10">
       <div className="site-container">
         <SectionHeading
           eyebrow="Enterprise Solutions"

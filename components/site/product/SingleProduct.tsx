@@ -245,14 +245,14 @@ export function AutoPartsMarketplacePage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button
                 variant="outline"
-                className="h-12 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
+                className="md:h-12 md:p-0 p-3 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
               >
                 <HeartIcon className="mr-2 h-5 w-5" />
                 Save
               </Button>
               <Button
                 variant="outline"
-                className="h-12 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
+                className="h-12 flex-1 md:p-0 p-3 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
               >
                 <ShareIcon className="mr-2 h-5 w-5" />
                 Share
@@ -486,7 +486,7 @@ export function AutoPartsMarketplacePage() {
             </CardContent>
           </Card>
         </section>
-        <section>
+        <section className="mt-8">
           <div className="grid gap-8 md:grid-cols-2">
             {/* Description */}
             <Card className="rounded-2xl border border-[#2A2A2A] bg-[#1A1A1A] shadow-none">
@@ -505,7 +505,7 @@ export function AutoPartsMarketplacePage() {
             </Card>
 
             {/* Specifications */}
-            <Card className="rounded-2xl border border-[#2A2A2A] bg-[#1A1A1A] shadow-none">
+            <Card className="rounded-2xl  border border-[#2A2A2A] bg-[#1A1A1A] shadow-none">
               <CardContent className="p-8">
                 <h3 className="mb-4 text-2xl font-semibold text-white">
                   Specifications

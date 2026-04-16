@@ -42,7 +42,7 @@ const products = [
 
 export function FeaturedPartsSection() {
   return (
-    <section className="bg-brand-surface py-24">
+    <section className="bg-brand-surface pb-10">
       <div className="site-container">
         <SectionHeading
           eyebrow="Featured Parts"

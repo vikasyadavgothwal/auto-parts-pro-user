@@ -57,7 +57,7 @@ const plans: BusinessPlan[] = [
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="bg-brand-surface py-24">
+    <section id="pricing" className="bg-brand-surface md:py-24 py-10">
       <div className="site-container">
         <div className="mb-16 text-center">
           <Badge

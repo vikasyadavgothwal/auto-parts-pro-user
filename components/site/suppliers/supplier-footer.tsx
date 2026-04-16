@@ -37,7 +37,7 @@ export function SupplierFooter() {
   return (
     <footer className="mt-auto border-t border-border bg-brand-surface">
       <div className="site-container-wide py-16">
-        <div className="mb-12 grid gap-12 md:grid-cols-5">
+        <div className="mb:mb-12 mb-4 grid md:gap-12 gap-8 md:grid-cols-5">
           <div className="md:col-span-2">
             <BrandLogo href="/" className="mb-4" textClassName="text-2xl" />
 
@@ -64,7 +64,7 @@ export function SupplierFooter() {
           <FooterColumn title="Support" links={supportLinks} />
         </div>
 
-        <div className="mb-8 grid gap-6 border-t border-border pt-8 md:grid-cols-3">
+        <div className="mb-8 grid md:gap-6 gap-2 border-t border-border pt-8 md:grid-cols-3">
           <div>
             <div className="text-xs text-brand-muted">Call Us</div>
             <a href="tel:+1-555-123-4567" className="text-white hover:text-primary">
@@ -93,7 +93,7 @@ export function SupplierFooter() {
             © 2026 AutoPartsPro. All rights reserved.
           </p>
 
-          <div className="flex items-center gap-6 text-sm">
+          <div className="flex items-center md:gap-6 gap-2 text-sm">
             {policyLinks.map((link) => (
               <a key={link.label} href={link.href} className="text-brand-muted hover:text-white">
                 {link.label}

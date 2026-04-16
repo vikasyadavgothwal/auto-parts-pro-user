@@ -74,7 +74,7 @@ const productFilters = {
 
 export function PartsSection() {
   return (
-    <main className="pb-20 pt-24">
+    <main className="md:pb-20 pb-6 md:pt-24 pt-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-6">
           <div className="flex flex-wrap items-center gap-2 text-sm text-brand-muted">

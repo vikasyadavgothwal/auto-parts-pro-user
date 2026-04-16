@@ -111,7 +111,7 @@ const galleryImages = [
 export default function ServiceDetailPage() {
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-[1440px] px-8 py-6">
+      <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
         <Button
           asChild
           variant="ghost"
@@ -124,7 +124,7 @@ export default function ServiceDetailPage() {
         </Button>
       </div>
 
-      <div className="relative h-96 overflow-hidden">
+      <div className="relative h-64 overflow-hidden sm:h-80 lg:h-96">
         <Image
           src="https://plus.unsplash.com/premium_photo-1661373022510-dfd61512e080?q=80&w=2731&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Premium Auto Care"
@@ -134,19 +134,19 @@ export default function ServiceDetailPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
       </div>
 
-      <div className="mx-auto max-w-[1440px] px-8 pb-16">
-        <div className="relative z-10 -mt-32 grid gap-8 lg:grid-cols-3">
+      <div className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6 lg:px-8">
+        <div className="relative z-10 -mt-24 grid gap-8 sm:-mt-32 lg:grid-cols-3">
           <div className="space-y-8 lg:col-span-2">
             <Card className="rounded-2xl border border-border bg-card shadow-none">
-              <CardContent className="p-8">
-                <div className="mb-4 flex items-start justify-between">
+              <CardContent className="p-6 sm:p-8">
+                <div className="mb-4 flex flex-col items-start justify-between sm:flex-row">
                   <div>
-                    <h1 className="mb-3 text-4xl font-bold text-foreground">
+                    <h1 className="mb-3 text-3xl font-bold text-foreground sm:text-4xl">
                       Premium Auto Care
                     </h1>
 
-                    <div className="mb-3 flex items-center gap-4">
-                      <div className="flex items-center gap-2">
+                    <div className="mb-3 flex flex-wrap items-center gap-4">
+                      <div className="flex flex-wrap items-center gap-2">
                         <RatingStarIcon
                           filled
                           className="h-6 w-6 text-brand-warning"
@@ -168,7 +168,7 @@ export default function ServiceDetailPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-6 rounded-xl border border-border bg-background p-6">
+                <div className="grid grid-cols-1 gap-6 rounded-xl border border-border bg-background p-4 sm:grid-cols-3 sm:p-6">
                   <div className="text-center">
                     <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
                       <CircleCheckBigIcon className="h-6 w-6 text-primary" />
@@ -215,7 +215,7 @@ export default function ServiceDetailPage() {
             </Card>
 
             <Card className="rounded-2xl border border-border bg-card shadow-none">
-              <CardContent className="p-8">
+              <CardContent className="p-6 sm:p-8">
                 <h2 className="mb-4 text-2xl font-bold text-foreground">About</h2>
                 <p className="leading-relaxed text-brand-muted">
                   Premium Auto Care has been serving the San Francisco community
@@ -227,7 +227,7 @@ export default function ServiceDetailPage() {
             </Card>
 
             <Card className="rounded-2xl border border-border bg-card shadow-none">
-              <CardContent className="p-8">
+              <CardContent className="p-6 sm:p-8">
                 <h2 className="mb-6 text-2xl font-bold text-foreground">
                   Services Offered
                 </h2>
@@ -236,9 +236,9 @@ export default function ServiceDetailPage() {
                   {services.map((service) => (
                     <div
                       key={service.title}
-                      className="group rounded-xl border border-border bg-background p-6 transition-all hover:border-primary"
+                      className="group rounded-xl border border-border bg-background p-4 transition-all hover:border-primary sm:p-6"
                     >
-                      <div className="mb-3 flex items-start justify-between">
+                      <div className="flex flex-col items-start justify-between sm:flex-row">
                         <div className="flex-1">
                           <div className="mb-2 flex items-center gap-3">
                             <h3 className="text-lg font-semibold text-foreground">
@@ -264,11 +264,11 @@ export default function ServiceDetailPage() {
                           </div>
                         </div>
 
-                        <div className="ml-6 text-right">
+                        <div className="mt-4 w-full text-left sm:mt-0 sm:ml-6 sm:w-auto sm:text-right">
                           <div className="mb-3 text-2xl font-bold text-primary">
                             {service.price}
                           </div>
-                          <Button className="bg-primary text-sm font-medium text-primary-foreground hover:bg-brand-primary-hover">
+                          <Button className="w-full bg-primary text-sm font-medium text-primary-foreground hover:bg-brand-primary-hover sm:w-auto">
                             Book Now
                           </Button>
                         </div>
@@ -280,7 +280,7 @@ export default function ServiceDetailPage() {
             </Card>
 
             <Card className="rounded-2xl border border-border bg-card shadow-none">
-              <CardContent className="p-8">
+              <CardContent className="p-6 sm:p-8">
                 <h2 className="mb-6 text-2xl font-bold text-foreground">
                   Customer Reviews
                 </h2>
@@ -291,7 +291,7 @@ export default function ServiceDetailPage() {
                       key={`${review.name}-${index}`}
                       className="border-b border-border pb-6 last:border-0"
                     >
-                      <div className="mb-3 flex items-start justify-between">
+                      <div className="mb-3 flex flex-col items-start justify-between sm:flex-row">
                         <div>
                           <div className="mb-1 flex items-center gap-3">
                             <span className="font-semibold text-foreground">
@@ -334,10 +334,10 @@ export default function ServiceDetailPage() {
             </Card>
 
             <Card className="rounded-2xl border border-border bg-card shadow-none">
-              <CardContent className="p-8">
+              <CardContent className="p-6 sm:p-8">
                 <h2 className="mb-6 text-2xl font-bold text-foreground">Gallery</h2>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                   {galleryImages.map((image) => (
                     <div
                       key={image.alt}
@@ -418,7 +418,7 @@ export default function ServiceDetailPage() {
                   </div>
                 </div>
 
-                <Link href="/booking" className="flex w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 py-2 text-primary-foreground hover:bg-brand-primary-hover">
+                <Link href="/booking" className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-primary-foreground hover:bg-brand-primary-hover">
                   <CalendarIcon className="h-5 w-5" />
                   Book Appointment
                 </Link>

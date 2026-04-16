@@ -126,8 +126,8 @@ const suppliers: Supplier[] = [
 
 export function SuppliersSection() {
   return (
-    <main className="pb-20 pt-24">
-      <div className="mb-12 border-b border-border bg-gradient-to-b from-brand-panel to-brand-surface py-16">
+    <main className="pb-20 md:pt-24 pt-10">
+      <div className="mb:mb-12 mb-5 border-b border-border bg-gradient-to-b from-brand-panel to-brand-surface py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
