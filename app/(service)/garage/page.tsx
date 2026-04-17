@@ -59,6 +59,7 @@ const services = [
     popular: false,
   },
 ];
+
 const reviews = [
   {
     name: "John Smith",
@@ -88,7 +89,9 @@ const reviews = [
     helpful: 12,
   },
 ];
+
 const certifications = ["ASE Certified", "AAA Approved", "Bosch Service"];
+
 const galleryImages = [
   {
     src: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&h=300&fit=crop",

@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -15,59 +13,9 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
+import { availableDates, servicesnew, vehicles , stepOrder } from "@/lib/Data/BookingData";
 type BookingStep = "service" | "vehicle" | "datetime" | "review" | "confirmed";
 
-const stepOrder: BookingStep[] = ["service", "vehicle", "datetime", "review"];
-
-const services = [
-  {
-    id: "1",
-    name: "Oil Change & Filter",
-    price: 49.99,
-    duration: "30 min",
-    description: "Complete oil change with premium synthetic oil",
-  },
-  {
-    id: "2",
-    name: "Brake Pad Replacement",
-    price: 199.99,
-    duration: "2 hours",
-    description: "Front or rear brake pad replacement with inspection",
-  },
-  {
-    id: "3",
-    name: "Engine Diagnostics",
-    price: 89.99,
-    duration: "1 hour",
-    description: "Comprehensive computer diagnostics",
-  },
-];
-
-const vehicles = [
-  {
-    id: "1",
-    year: "2018",
-    make: "Honda",
-    model: "Accord",
-    vin: "1HGBH41JXMN109186",
-  },
-  {
-    id: "2",
-    year: "2020",
-    make: "Toyota",
-    model: "Camry",
-    vin: "4T1B11HK1LU345678",
-  },
-];
-
-const availableDates = [
-  { date: "2026-03-28", label: "Today", availability: "limited" },
-  { date: "2026-03-29", label: "Tomorrow", availability: "available" },
-  { date: "2026-03-30", label: "Mon, Mar 30", availability: "available" },
-  { date: "2026-03-31", label: "Tue, Mar 31", availability: "available" },
-  { date: "2026-04-01", label: "Wed, Apr 1", availability: "limited" },
-] as const;
 
 const timeSlots = {
   morning: ["9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM"],
@@ -85,7 +33,7 @@ export default function BookingPage() {
   const [selectedTime, setSelectedTime] = useState("");
 
   const selectedServiceData = useMemo(
-    () => services.find((service) => service.id === selectedService),
+    () => servicesnew.find((service) => service.id === selectedService),
     [selectedService]
   );
 
@@ -199,7 +147,7 @@ export default function BookingPage() {
 
                 <Button
                   variant="outline"
-                  onClick={() => router.push("/services")}
+                  onClick={() => router.push("/servicesnew")}
                   className="rounded-xl border-2 border-border bg-card px-8 py-3 text-foreground hover:border-primary hover:bg-card"
                 >
                   Book Another
@@ -302,7 +250,7 @@ export default function BookingPage() {
               <p className="mb-8 text-brand-muted">Choose the service you need</p>
 
               <div className="space-y-4">
-                {services.map((service) => (
+                {servicesnew.map((service) => (
                   <Card
                     key={service.id}
                     onClick={() => setSelectedService(service.id)}
