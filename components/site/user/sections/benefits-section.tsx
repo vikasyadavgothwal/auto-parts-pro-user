@@ -1,28 +1,4 @@
-import {
-  DiscountBadgeIcon,
-  ShieldCheckIcon,
-  TrendingIcon,
-} from "@/components/icons/site-icons"
-import type { BenefitItem } from "@/types/site/user"
-
-const benefits: BenefitItem[] = [
-  {
-    title: "Guaranteed Fitment",
-    description: "VIN-verified compatibility on every part",
-    icon: ShieldCheckIcon,
-  },
-  {
-    title: "Best Price Promise",
-    description: "Compare offers from verified suppliers",
-    icon: DiscountBadgeIcon,
-  },
-  {
-    title: "Real-Time Inventory",
-    description: "Live stock updates across 500+ suppliers",
-    icon: TrendingIcon,
-  },
-]
-
+import { benefits } from "@/lib/Data/UserData"
 export function BenefitsSection() {
   return (
     <section className="bg-brand-panel py-16">

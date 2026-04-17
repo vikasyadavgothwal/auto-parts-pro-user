@@ -4,57 +4,7 @@ import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import type { BusinessPlan } from "@/types/site/business"
-
-const plans: BusinessPlan[] = [
-  {
-    name: "Starter",
-    description: "Perfect for independent mechanics",
-    price: "Free",
-    buttonText: "Get Started",
-    features: [
-      "5% discount on all orders",
-      "Standard shipping rates",
-      "Email support",
-      "Basic order history",
-      "Monthly statements",
-    ],
-  },
-  {
-    name: "Professional",
-    description: "For established repair shops",
-    price: "$49",
-    suffix: "/month",
-    buttonText: "Start Free Trial",
-    popular: true,
-    features: [
-      "12% discount on all orders",
-      "Free 2-day shipping",
-      "Priority phone support",
-      "Advanced analytics",
-      "NET 30 payment terms",
-      "Dedicated account manager",
-      "Custom price lists",
-    ],
-  },
-  {
-    name: "Enterprise",
-    description: "For multi-location operations",
-    price: "Custom",
-    buttonText: "Contact Sales",
-    features: [
-      "Custom volume pricing",
-      "White-glove service",
-      "24/7 priority support",
-      "API access",
-      "Custom NET terms",
-      "Multi-location management",
-      "Custom integrations",
-      "Training & onboarding",
-    ],
-  },
-]
-
+import { plans } from "@/lib/Data/BusinessData"
 export function PricingSection() {
   return (
     <section id="pricing" className="bg-brand-surface md:py-24 py-10">

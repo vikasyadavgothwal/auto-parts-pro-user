@@ -24,54 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { SupplierProduct } from "@/types/site/suppliers"
-
-const products: SupplierProduct[] = [
-  {
-    id: 1,
-    name: "Front Brake Pad Set - Ceramic",
-    partNumber: "BP-2847-C",
-    condition: "New - OEM",
-    price: "$89.99",
-    offers: "3 offers from $79.99",
-    image:
-      "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400",
-    href: "/product/1",
-    confirmedFit: true,
-  },
-  {
-    id: 2,
-    name: "Front Strut Assembly",
-    partNumber: "SA-1923-L",
-    condition: "New - Aftermarket",
-    price: "$249.99",
-    image:
-      "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=400",
-    href: "/product/2",
-    confirmedFit: true,
-  },
-  {
-    id: 3,
-    name: "Engine Air Filter",
-    partNumber: "AF-7781",
-    condition: "New - OEM",
-    price: "$34.99",
-    offers: "2 offers from $29.99",
-    image:
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400",
-    href: "/product/3",
-    confirmedFit: true,
-  },
-]
-
-const tabs = ["products", "reviews", "about", "rfq"]
-
-const productFilters = {
-  categories: ["All Categories", "Brake Systems", "Suspension", "Engine Parts", "Electrical"],
-  conditions: ["All Conditions", "New - OEM", "New - Aftermarket", "Refurbished"],
-  sorts: ["Most Relevant", "Price: Low to High", "Price: High to Low", "Newest First"],
-}
-
+import { tabs, productFilters, products } from "@/lib/Data/ServiceData"
 export function PartsSection() {
   return (
     <main className="md:pb-20 pb-6 md:pt-24 pt-10">

@@ -1,17 +1,6 @@
 import Image from "next/image"
-import {
-  Clock3Icon,
-  ShieldCheckIcon,
-  ZapIcon,
-} from "@/components/icons/site-icons"
-
 import { Badge } from "@/components/ui/badge"
-
-const features = [
-  { title: "Verified OEM Parts", icon: ShieldCheckIcon },
-  { title: "Same-Day Shipping", icon: ZapIcon },
-  { title: "24/7 Support", icon: Clock3Icon },
-]
+import { features } from "@/lib/Data/UserData"
 
 export function HeroSection() {
   return (
