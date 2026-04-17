@@ -1,6 +1,5 @@
 import {BusinessHeader}  from "@/components/site/business/business-header";
 import {BusinessFooter} from "@/components/site/business/business-footer";
-
 export default function BusinessLayout({
   children,
 }: Readonly<{
