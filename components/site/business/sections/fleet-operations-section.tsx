@@ -2,17 +2,8 @@ import {  CheckIcon, SellerPackageIcon } from "@/components/icons/site-icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { metrics } from "@/lib/Data/BusinessData"
- const features = [
-  "Bulk ordering with custom pricing",
-  "Fleet-specific inventory management",
-  "Predictive maintenance alerts",
-  "Multi-vehicle tracking",
-  "Custom reporting & analytics",
-  "Integration with fleet management software",
-  "Dedicated fleet specialist",
-  "Emergency part sourcing",
-]
+import { metrics , fleetFeatures } from "@/lib/Data/BusinessData"
+
 export function FleetOperationsSection() {
   return (
     <section className="bg-brand-panel py-16 md:py-24"> 
@@ -34,7 +25,7 @@ export function FleetOperationsSection() {
             </p>
 
             <ul className="mb-8 space-y-4">
-              {features.map((feature : string) => (
+              {fleetFeatures.map((feature : string) => (
                 <li key={feature} className="flex items-start gap-3">
                   <CheckIcon className="mt-1 h-5 w-5 shrink-0 text-primary" />
                   <span className="text-base md:text-lg text-brand-muted">{feature}</span>

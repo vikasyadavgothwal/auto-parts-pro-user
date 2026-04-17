@@ -13,7 +13,16 @@ import {
 } from "@/components/icons/site-icons"
 import type { BusinessFeature } from "@/types/site/business"
 import type { BusinessPlan } from "@/types/site/business"
-
+ export const fleetFeatures = [
+  "Bulk ordering with custom pricing",
+  "Fleet-specific inventory management",
+  "Predictive maintenance alerts",
+  "Multi-vehicle tracking",
+  "Custom reporting & analytics",
+  "Integration with fleet management software",
+  "Dedicated fleet specialist",
+  "Emergency part sourcing",
+]
 export const plans: BusinessPlan[] = [
   {
     name: "Starter",

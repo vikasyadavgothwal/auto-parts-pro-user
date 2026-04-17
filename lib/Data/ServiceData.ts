@@ -191,3 +191,5 @@ export const productFilters = {
   conditions: ["All Conditions", "New - OEM", "New - Aftermarket", "Refurbished"],
   sorts: ["Most Relevant", "Price: Low to High", "Price: High to Low", "Newest First"],
 }
+
+

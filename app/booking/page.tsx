@@ -13,15 +13,9 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { availableDates, servicesnew, vehicles , stepOrder } from "@/lib/Data/BookingData";
+import { availableDates, servicesnew, vehicles , stepOrder , timeSlots } from "@/lib/Data/BookingData";
 type BookingStep = "service" | "vehicle" | "datetime" | "review" | "confirmed";
 
-
-const timeSlots = {
-  morning: ["9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM"],
-  afternoon: ["12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM"],
-  evening: ["3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM"],
-};
 
 export default function BookingPage() {
   const router = useRouter();
