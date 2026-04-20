@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 export const BusinessFooter = () => {
   return (
     <footer className="border-t border-border bg-brand-surface py-16 text-white">
@@ -34,7 +33,6 @@ export const BusinessFooter = () => {
               </li>
             </ul>
           </div>
-
           <div>
             <h4 className="mb-4 font-semibold text-white">Company</h4>
             <ul className="space-y-2 text-brand-muted">
@@ -55,7 +53,6 @@ export const BusinessFooter = () => {
               </li>
             </ul>
           </div>
-
           <div>
             <h4 className="mb-4 font-semibold text-white">Support</h4>
             <ul className="space-y-2 text-brand-muted">

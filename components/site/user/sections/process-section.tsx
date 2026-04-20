@@ -1,29 +1,10 @@
 import { SectionHeading } from "@/components/site/shared/section-heading"
+import { steps } from "@/lib/data/User"
 
-const steps = [
-  {
-    number: "1",
-    title: "Enter Your VIN",
-    description:
-      "Start with your vehicle's VIN for guaranteed fitment or browse by category",
-  },
-  {
-    number: "2",
-    title: "Compare Offers",
-    description:
-      "View real-time prices from multiple verified suppliers side by side",
-  },
-  {
-    number: "3",
-    title: "Order or RFQ",
-    description:
-      "Buy instantly or request custom quotes for bulk orders and special parts",
-  },
-]
 
 export function ProcessSection() {
   return (
-    <section className="bg-brand-panel py-24">
+    <section className="bg-brand-panel md:py-24 py-10">
       <div className="site-container">
         <SectionHeading
           eyebrow="Simple Process"

@@ -5,44 +5,11 @@ import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-const products = [
-  {
-    id: 1,
-    category: "BRAKES",
-    name: "ACDelco Professional Brake Pads",
-    price: "$89.99",
-    image:
-      "https://images.unsplash.com/photo-1656597631995-9fa0e1072279?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-  {
-    id: 2,
-    category: "FILTERS",
-    name: "Bosch Oil Filter Premium",
-    price: "$24.99",
-    image:
-      "https://images.unsplash.com/photo-1764869427688-3e97480f4b82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-  {
-    id: 3,
-    category: "IGNITION",
-    name: "Denso Spark Plug Set",
-    price: "$42.99",
-    image:
-      "https://images.unsplash.com/photo-1759832217256-244b5bc54882?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-  {
-    id: 4,
-    category: "SUSPENSION",
-    name: "Monroe Shock Absorber",
-    price: "$156.00",
-    image:
-      "https://images.unsplash.com/photo-1729545321223-e597f91a25d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-  },
-]
+import { products } from "@/lib/data/User"
 
 export function FeaturedPartsSection() {
   return (
-    <section className="bg-brand-surface py-24">
+    <section className="bg-brand-surface pb-10">
       <div className="site-container">
         <SectionHeading
           eyebrow="Featured Parts"

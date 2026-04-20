@@ -19,83 +19,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import type {
-  ProductHighlight,
-  ProductOffer,
+import { 
   RatingStarsProps,
 } from "@/types/site/product";
-
-const productImages = [
-  "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=1200&h=1200&fit=crop",
-  "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=1200&h=1200&fit=crop",
-  "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=1200&h=1200&fit=crop",
-];
-
-const keyFeatures = [
-  "Premium ceramic formula for consistent braking",
-  "Multi-layered shims reduce noise and vibration",
-  "Low dust formula keeps wheels cleaner",
-  "Hardware kit included",
-  "Backed by Bosch Limited Lifetime Warranty",
-];
-
-const highlights: ProductHighlight[] = [
-  { icon: CheckCircleIcon, label: "OEM Quality" },
-  { icon: TruckIcon, label: "Fast Shipping" },
-  { icon: ShieldIcon, label: "Warranty" },
-];
-
-const offers: ProductOffer[] = [
-  {
-    seller: "Bosch Direct",
-    logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=200&fit=crop",
-    rating: 4.9,
-    reviews: 2340,
-    price: "$124.99",
-    condition: "New - OEM",
-    stock: "In Stock",
-    shipping: "Free 2-Day",
-    shippingTime: "2 days",
-    recommended: true,
-  },
-  {
-    seller: "AutoZone Pro",
-    logo: "https://images.unsplash.com/photo-1557821552-17105176677c?w=200&h=200&fit=crop",
-    rating: 4.8,
-    reviews: 1892,
-    price: "$128.50",
-    condition: "New - OEM",
-    stock: "In Stock",
-    shipping: "Express Delivery",
-    shippingTime: "3 days",
-    recommended: false,
-  },
-  {
-    seller: "PartsHub Motors",
-    logo: "https://images.unsplash.com/photo-1556740749-887f6717d7e4?w=200&h=200&fit=crop",
-    rating: 4.7,
-    reviews: 1148,
-    price: "$119.90",
-    condition: "New - Aftermarket",
-    stock: "Limited Stock",
-    shipping: "Standard Shipping",
-    shippingTime: "4 days",
-    recommended: false,
-  },
-  {
-    seller: "Prime Auto Supply",
-    logo: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?w=200&h=200&fit=crop",
-    rating: 4.6,
-    reviews: 906,
-    price: "$132.00",
-    condition: "New - OEM",
-    stock: "In Stock",
-    shipping: "Priority Delivery",
-    shippingTime: "1 day",
-    recommended: false,
-  },
-];
-
+import { productImages ,  keyFeatures , highlights ,offers , } from "@/lib/data/Product";
 function RatingStars({
   rating,
   size = "h-5 w-5",
@@ -120,7 +47,6 @@ function RatingStars({
 
 export function AutoPartsMarketplacePage() {
   const [selectedImage, setSelectedImage] = useState(0);
-
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-white">
       <div className="mx-auto max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8">
@@ -245,14 +171,14 @@ export function AutoPartsMarketplacePage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button
                 variant="outline"
-                className="h-12 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
+                className="md:h-12 md:p-0 p-3 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
               >
                 <HeartIcon className="mr-2 h-5 w-5" />
                 Save
               </Button>
               <Button
                 variant="outline"
-                className="h-12 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
+                className="h-12 flex-1 md:p-0 p-3 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
               >
                 <ShareIcon className="mr-2 h-5 w-5" />
                 Share
@@ -486,7 +412,7 @@ export function AutoPartsMarketplacePage() {
             </CardContent>
           </Card>
         </section>
-        <section>
+        <section className="mt-8">
           <div className="grid gap-8 md:grid-cols-2">
             {/* Description */}
             <Card className="rounded-2xl border border-[#2A2A2A] bg-[#1A1A1A] shadow-none">
@@ -505,7 +431,7 @@ export function AutoPartsMarketplacePage() {
             </Card>
 
             {/* Specifications */}
-            <Card className="rounded-2xl border border-[#2A2A2A] bg-[#1A1A1A] shadow-none">
+            <Card className="rounded-2xl  border border-[#2A2A2A] bg-[#1A1A1A] shadow-none">
               <CardContent className="p-8">
                 <h3 className="mb-4 text-2xl font-semibold text-white">
                   Specifications

@@ -1,29 +1,10 @@
 import Link from "next/link"
-import {
-  BatteryIcon,
-  CarFrontIcon,
-  CogIcon,
-  GaugeIcon,
-  PackageIcon,
-  WrenchIcon,
-} from "@/components/icons/site-icons"
-
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
-import type { Category } from "@/types/site/user"
-
-const categories: Category[] = [
-  { name: "Engine Parts", count: "12,450 parts", icon: CogIcon },
-  { name: "Suspension", count: "8,320 parts", icon: WrenchIcon },
-  { name: "Electrical", count: "15,680 parts", icon: BatteryIcon },
-  { name: "Brakes", count: "9,870 parts", icon: PackageIcon },
-  { name: "Transmission", count: "6,540 parts", icon: GaugeIcon },
-  { name: "Body Parts", count: "22,100 parts", icon: CarFrontIcon },
-]
-
+import { categories } from "@/lib/data/User"
 export function CategoryTypesSection() {
   return (
-    <section className="bg-brand-surface py-24">
+    <section className="bg-brand-surface md:py-24 py-10">
       <div className="site-container">
         <SectionHeading
           eyebrow="Explore By Type"

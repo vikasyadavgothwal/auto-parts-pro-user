@@ -11,62 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-
-const garages = [
-  {
-    id: "1",
-    title: "Premium Auto Care",
-    rating: "4.9",
-    reviews: "328",
-    price: "$49.99",
-    distance: "2.3 miles away",
-    address: "1234 Main St, San Francisco, CA",
-    image:
-      "https://images.unsplash.com/photo-1632053002928-c6c8763bb0c0?w=400&h=300&fit=crop",
-    specialties: ["Brake Service", "Engine Diagnostics", "Oil Change"],
-  },
-  {
-    id: "2",
-    title: "AutoTech Pro",
-    rating: "4.8",
-    reviews: "512",
-    price: "$44.99",
-    distance: "3.7 miles away",
-    address: "5678 Oak Ave, San Francisco, CA",
-    image:
-      "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&h=300&fit=crop",
-    specialties: ["Transmission Service", "AC Service", "Oil Change"],
-  },
-  {
-    id: "3",
-    title: "Quick Service Center",
-    rating: "4.7",
-    reviews: "201",
-    price: "$39.99",
-    distance: "5.1 miles away",
-    address: "9012 Elm St, San Francisco, CA",
-    image:
-      "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=400&h=300&fit=crop",
-    specialties: ["Oil Change", "Tire Rotation", "Battery Service"],
-  },
-  {
-    id: "4",
-    title: "Elite Motors Service",
-    rating: "5",
-    reviews: "89",
-    price: "$69.99",
-    distance: "1.8 miles away",
-    address: "3456 Pine St, San Francisco, CA",
-    image:
-      "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=300&fit=crop",
-    specialties: [
-      "Engine Diagnostics",
-      "Transmission Service",
-      "Brake Service",
-    ],
-  },
-];
-
+import { garages } from "@/lib/data/Service";
 export function ServicesListingSection() {
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">

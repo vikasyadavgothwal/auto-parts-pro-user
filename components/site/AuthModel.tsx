@@ -33,7 +33,7 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
     <div className="fixed inset-0 z-[100] flex items-center justify-center">
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
 
-      <Card className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+      <Card className="relative md:mx-4 mx-0 w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl no-scrollbar ">
         <Button
           variant="ghost"
           size="icon"
@@ -45,9 +45,9 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
         </Button>
 
         <CardContent className="p-0">
-          <div className="p-8 pb-6">
+          <div className="p-6 sm:p-8 sm:pb-6">
             <div className="mb-6 text-center">
-              <h2 className="mb-2 text-3xl font-bold text-foreground">
+              <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
                 {mode === "signin" ? "Welcome Back" : "Get Started"}
               </h2>
               <p className="text-brand-muted">
@@ -86,7 +86,7 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
 
           {mode === "signin" ? (
             <form
-              className="px-8 pb-8"
+              className="px-6 pb-8 sm:px-8"
               onSubmit={(event) => event.preventDefault()}
             >
               <div className="mb-4 space-y-2">
@@ -149,7 +149,7 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
             </form>
           ) : (
             <form
-              className="px-8 pb-8"
+              className="px-6 pb-8 sm:px-8"
               onSubmit={(event) => event.preventDefault()}
             >
               <div className="mb-6">
@@ -157,7 +157,7 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
                   Account Type
                 </Label>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3 ">
                   <button
                     type="button"
                     onClick={() => setAccountType("buyer")}

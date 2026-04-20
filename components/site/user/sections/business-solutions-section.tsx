@@ -1,32 +1,13 @@
 import Link from "next/link"
 import {
   ArrowRightIcon,
-  PackageIcon,
-  WrenchIcon,
 } from "@/components/icons/site-icons"
-
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
-import type { Solution } from "@/types/site/user"
-
-const solutions: Solution[] = [
-  {
-    title: "For Repair Shops",
-    description:
-      "Volume pricing, dedicated account manager, priority support, and integrated shop management tools.",
-    icon: WrenchIcon,
-  },
-  {
-    title: "For Fleet Managers",
-    description:
-      "Bulk ordering, custom integrations, procurement dashboards, and fleet-specific inventory management.",
-    icon: PackageIcon,
-  },
-]
-
+import { solutions } from "@/lib/data/User"
 export function BusinessSolutionsSection() {
   return (
-    <section id="business" className="scroll-mt-20 bg-brand-surface py-24">
+    <section id="business" className="scroll-mt-20 bg-brand-surface md:py-24 py-10">
       <div className="site-container">
         <SectionHeading
           eyebrow="Enterprise Solutions"

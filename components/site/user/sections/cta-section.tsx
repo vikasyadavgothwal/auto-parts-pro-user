@@ -8,7 +8,7 @@ export function CTASection() {
       </div>
       <div className="site-container relative z-10">
         <div className="text-center">
-          <h2 className="mb-6 text-5xl font-bold text-white">
+          <h2 className="mb-6 md:text-5xl text-3xl font-bold text-white">
             Ready to Find Your Part?
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-xl text-white/90">

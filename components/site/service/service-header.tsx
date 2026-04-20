@@ -2,7 +2,6 @@ import Link from "next/link"
 
 import { BrandLogo } from "@/components/site/shared/brand-logo"
 import { Button } from "@/components/ui/button"
-
 export function ServiceHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-brand-surface">
@@ -25,7 +24,6 @@ export function ServiceHeader() {
               </Link>
             </nav>
           </div>
-
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"

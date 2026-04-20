@@ -3,11 +3,9 @@ import {
   SearchIcon,
   WrenchIcon,
 } from "@/components/icons/site-icons"
-
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-
 export function SearchHeroSection() {
   return (
     <section className="bg-gradient-to-b from-brand-panel to-brand-surface py-16">
@@ -20,7 +18,6 @@ export function SearchHeroSection() {
             Book certified mechanics and garages near you
           </p>
         </div>
-
         <div className="mx-auto max-w-4xl">
           <Card className="flex flex-col gap-2 p-2 md:flex-row">
             <div className="flex flex-1 items-center gap-3 px-4">
@@ -31,7 +28,6 @@ export function SearchHeroSection() {
                 className="h-auto border-none bg-transparent px-0 shadow-none focus-visible:ring-0"
               />
             </div>
-
             <div className="flex flex-1 items-center gap-3 border-t border-border px-4 pt-2 md:border-l md:border-t-0 md:pt-0">
               <MapPinIcon className="h-5 w-5 text-brand-muted" />
               <Input
@@ -40,7 +36,6 @@ export function SearchHeroSection() {
                 className="h-auto border-none bg-transparent px-0 shadow-none focus-visible:ring-0"
               />
             </div>
-
             <Button className="h-auto rounded-lg px-8 py-3 font-medium hover:bg-brand-primary-hover">
               <SearchIcon className="h-4 w-4" />
               Search

@@ -5,21 +5,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {MainHeader} from "@/components/site/header"
-
-const companyFields = [
-  ["Company Name *", "Your Company LLC"],
-  ["Contact Name *", "John Doe"],
-  ["Email *", "john@company.com"],
-  ["Phone *", "+1 (555) 123-4567"],
-] as const
-
-const vehicleFields = ["Year *", "Make *", "Model *", "Trim"] as const
+import { companyFields , vehicleFields } from "@/lib/data/Request"
 
 export function RequestQuotePage() {
   return (
     <div className="min-h-screen bg-brand-surface">
       <MainHeader />
-      <div className="mx-auto max-w-4xl px-8 py-16">
+      <div className="mx-auto max-w-4xl md:px-8 px-4 py-16">
         <div className="mb-12 text-center">
           <h1 className="mb-4 text-5xl font-bold text-white">Request a Quote</h1>
           <p className="text-xl text-brand-muted">
