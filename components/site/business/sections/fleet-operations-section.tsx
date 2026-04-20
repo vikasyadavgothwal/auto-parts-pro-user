@@ -25,7 +25,11 @@ export function FleetOperationsSection() {
             </p>
 
             <ul className="mb-8 space-y-4">
+<<<<<<< HEAD
               {fleetFeatures.map((feature : string) => (
+=======
+              {features.map((feature : string) => (
+>>>>>>> 57503524ce7a46b879fcc59cc4333c4f673082bc
                 <li key={feature} className="flex items-start gap-3">
                   <CheckIcon className="mt-1 h-5 w-5 shrink-0 text-primary" />
                   <span className="text-base md:text-lg text-brand-muted">{feature}</span>

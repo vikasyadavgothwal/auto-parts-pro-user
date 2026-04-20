@@ -16,7 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { certifications, galleryImages, reviews, services } from "@/lib/Data/ServiceData";
-
 export default function ServiceDetailPage() {
   return (
     <div className="min-h-screen bg-background">
