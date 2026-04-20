@@ -20,7 +20,7 @@ import {
   galleryImages,
   reviews,
   services,
-} from "@/lib/Data/Service";
+} from "@/lib/data/Service";
 export function ServiceDetailPage() {
   return (
     <div className="min-h-screen bg-background">

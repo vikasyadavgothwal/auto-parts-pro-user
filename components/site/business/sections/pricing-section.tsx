@@ -23,7 +23,6 @@ export function PricingSection() {
             description="Choose the plan that fits your shop size and needs"
           />
         </div>
-
         <div className="grid gap-8 md:grid-cols-3">
           {plans.map((plan) => (
             <Card
@@ -39,17 +38,14 @@ export function PricingSection() {
                   Most Popular
                 </Badge>
               ) : null}
-
               <h3 className="mb-2 text-2xl font-bold text-white">{plan.name}</h3>
               <p className="mb-6 text-brand-muted">{plan.description}</p>
-
               <div className="mb-6">
                 <span className="text-5xl font-bold text-white">{plan.price}</span>
                 {plan.suffix ? (
                   <span className="text-brand-muted">{plan.suffix}</span>
                 ) : null}
               </div>
-
               <ul className="mb-8 space-y-4">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
@@ -58,7 +54,6 @@ export function PricingSection() {
                   </li>
                 ))}
               </ul>
-
               <Button
                 className={`h-12 w-full rounded-lg font-medium ${
                   plan.popular

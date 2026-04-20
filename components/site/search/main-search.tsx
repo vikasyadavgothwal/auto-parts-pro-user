@@ -16,7 +16,7 @@ import { MainHeader } from "@/components/site/header";
 import { VehicleChangeSection } from "@/components/site/user/sections/vehicle-change-section";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { brands, prices, products } from "@/lib/Data/Search";
+import { brands, prices, products } from "@/lib/data/Search";
 
 export  function SearchPage() {
   const [showFilters, setShowFilters] = useState(true);

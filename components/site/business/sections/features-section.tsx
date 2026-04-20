@@ -12,11 +12,9 @@ export function BusinessFeaturesSection() {
           description="Professional tools and support to power your operations"
           className="mb-16"
         />
-
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => {
             const Icon = feature.icon
-
             return (
               <Card
                 key={feature.title}
@@ -29,7 +27,6 @@ export function BusinessFeaturesSection() {
                 <h3 className="mb-2 text-xl font-semibold text-white">
                   {feature.title}
                 </h3>
-
                 <p className="text-brand-muted">{feature.description}</p>
               </Card>
             )
