@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { garages } from "@/lib/Data/ServiceData";
+import { garages } from "@/lib/data/Service";
 export function ServicesListingSection() {
   return (
     <section className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">

@@ -1,4 +1,4 @@
-import { benefits } from "@/lib/Data/UserData"
+import { benefits } from "@/lib/data/User"
 export function BenefitsSection() {
   return (
     <section className="bg-brand-panel py-16">

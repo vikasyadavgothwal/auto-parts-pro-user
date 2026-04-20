@@ -13,7 +13,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { availableDates, servicesnew, vehicles , stepOrder , timeSlots } from "@/lib/Data/BookingData";
+import { availableDates, servicesnew, vehicles , stepOrder , timeSlots } from "@/lib/data/Booking";
 type BookingStep = "service" | "vehicle" | "datetime" | "review" | "confirmed";
 
 

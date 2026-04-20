@@ -22,7 +22,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   RatingStarsProps,
 } from "@/types/site/product";
-import { productImages ,  keyFeatures , highlights ,offers , } from "@/lib/Data/ProductData";
+import { productImages ,  keyFeatures , highlights ,offers , } from "@/lib/data/Product";
 function RatingStars({
   rating,
   size = "h-5 w-5",

@@ -1,6 +1,6 @@
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
-import { features } from "@/lib/Data/UserData"
+import { features } from "@/lib/data/User"
 
 export function HeroSection() {
   return (

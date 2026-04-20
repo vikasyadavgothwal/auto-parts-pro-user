@@ -12,7 +12,7 @@ import {
 import { MainHeader } from "@/components/site/header";
 import { VehicleChangeSection } from "@/components/site/user/sections/vehicle-change-section";
 import { Button } from "@/components/ui/button";
-import { brands, prices , products } from "@/lib/Data/SearchData";
+import { brands, prices , products } from "@/lib/data/Search";
 
 export default function SearchPage() {
   return (

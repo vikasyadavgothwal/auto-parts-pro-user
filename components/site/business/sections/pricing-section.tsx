@@ -4,7 +4,7 @@ import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { plans } from "@/lib/Data/BusinessData"
+import { plans } from "@/lib/data/Business"
 export function PricingSection() {
   return (
     <section id="pricing" className="bg-brand-surface md:py-24 py-10">

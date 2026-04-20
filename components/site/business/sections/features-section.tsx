@@ -2,7 +2,7 @@
 
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
-import { features } from "@/lib/Data/BusinessData"
+import { features } from "@/lib/data/Business"
 export function BusinessFeaturesSection() {
   return (
     <section className="bg-brand-panel md:py-24 py-10">
