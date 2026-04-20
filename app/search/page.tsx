@@ -20,7 +20,6 @@ import { brands, prices, products } from "@/lib/Data/Search";
 
 export default function SearchPage() {
   const [showFilters, setShowFilters] = useState(true);
-
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
       <MainHeader />
