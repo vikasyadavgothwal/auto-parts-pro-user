@@ -15,7 +15,8 @@ import {
 import { MainHeader } from "@/components/site/header";
 import { VehicleChangeSection } from "@/components/site/user/sections/vehicle-change-section";
 import { Button } from "@/components/ui/button";
-import { brands, prices , products } from "@/lib/data/Search";
+import { Input } from "@/components/ui/input";
+import { brands, prices, products } from "@/lib/Data/Search";
 
 export default function SearchPage() {
   const [showFilters, setShowFilters] = useState(true);
@@ -29,113 +30,110 @@ export default function SearchPage() {
         <div className="flex flex-col gap-8 xl:flex-row">
           {showFilters && (
             <aside className="w-full xl:w-70 xl:shrink-0 transition-all duration-300">
-            <div className="rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] p-6 xl:sticky xl:top-28">
-              <div className="mb-6 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">Filters</h3>
-                <button className="text-sm text-[#DC2626] hover:underline">
-                  Clear all
-                </button>
-              </div>
+              <div className="rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] p-6 xl:sticky xl:top-28">
+                <div className="mb-6 flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-white">Filters</h3>
+                  <button className="text-sm text-[#DC2626] hover:underline">
+                    Clear all
+                  </button>
+                </div>
 
-              <div className="mb-6">
-                <h4 className="mb-3 text-sm font-medium text-white">
-                  Fitment Status
-                </h4>
-                <div className="space-y-2">
+                <div className="mb-6">
+                  <h4 className="mb-3 text-sm font-medium text-white">
+                    Fitment Status
+                  </h4>
+                  <div className="space-y-2">
+                    <label className="group flex cursor-pointer items-center gap-3">
+                      <Input
+                        type="checkbox"
+                        defaultChecked
+                        className="h-4 w-4  rounded bg-white border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
+                      />
+                      <div className="flex flex-1 items-center gap-2">
+                        <FitmentConfirmedIcon className="h-4 w-4 text-[#10B981]" />
+                        <span className="text-sm text-[#9CA3AF] group-hover:text-white">
+                          Confirmed Fit
+                        </span>
+                      </div>
+                    </label>
+
+                    <label className="group flex cursor-pointer items-center gap-3">
+                      <Input type="checkbox" className="w-4 h-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20" data-fg-cw0b45="135.196:135.11403:/src/app/pages/search.tsx:175:23:6640:122:e:input" data-fgid-cw0b45=":r9k:"/>
+                      <div className="flex flex-1 items-center gap-2">
+                        <FitmentLikelyIcon className="h-4 w-4 text-[#F59E0B]" />
+                        <span className="text-sm text-[#9CA3AF] group-hover:text-white">
+                          Likely Fit
+                        </span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="my-6 border-t border-[#2A2A2A]" />
+
+                <div className="mb-6">
+                  <h4 className="mb-3 text-sm font-medium text-white">Brand</h4>
+                  <div className="space-y-2">
+                    {brands.map((brand) => (
+                      <label
+                        key={brand}
+                        className="group flex cursor-pointer items-center gap-3"
+                      >
+                        <Input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
+                        />
+                        <span className="text-sm text-[#9CA3AF] group-hover:text-white">
+                          {brand}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="my-6 border-t border-[#2A2A2A]" />
+
+                <div className="mb-6">
+                  <h4 className="mb-3 text-sm font-medium text-white">
+                    Price Range
+                  </h4>
+                  <div className="space-y-2">
+                    {prices.map((price) => (
+                      <label
+                        key={price}
+                        className="group flex cursor-pointer items-center gap-3"
+                      >
+                        <Input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
+                        />
+                        <span className="text-sm text-[#9CA3AF] group-hover:text-white">
+                          {price}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="my-6 border-t border-[#2A2A2A]" />
+
+                <div>
+                  <h4 className="mb-3 text-sm font-medium text-white">
+                    Availability
+                  </h4>
                   <label className="group flex cursor-pointer items-center gap-3">
-                    <input
+                    <Input
                       type="checkbox"
                       defaultChecked
                       className="h-4 w-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
                     />
-                    <div className="flex flex-1 items-center gap-2">
-                      <FitmentConfirmedIcon className="h-4 w-4 text-[#10B981]" />
-                      <span className="text-sm text-[#9CA3AF] group-hover:text-white">
-                        Confirmed Fit
-                      </span>
-                    </div>
-                  </label>
-
-                  <label className="group flex cursor-pointer items-center gap-3">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
-                    />
-                    <div className="flex flex-1 items-center gap-2">
-                      <FitmentLikelyIcon className="h-4 w-4 text-[#F59E0B]" />
-                      <span className="text-sm text-[#9CA3AF] group-hover:text-white">
-                        Likely Fit
-                      </span>
-                    </div>
+                    <span className="text-sm text-[#9CA3AF] group-hover:text-white">
+                      In Stock Only
+                    </span>
                   </label>
                 </div>
               </div>
-
-              <div className="my-6 border-t border-[#2A2A2A]" />
-
-              <div className="mb-6">
-                <h4 className="mb-3 text-sm font-medium text-white">Brand</h4>
-                <div className="space-y-2">
-                  {brands.map((brand) => (
-                    <label
-                      key={brand}
-                      className="group flex cursor-pointer items-center gap-3"
-                    >
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
-                      />
-                      <span className="text-sm text-[#9CA3AF] group-hover:text-white">
-                        {brand}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="my-6 border-t border-[#2A2A2A]" />
-
-              <div className="mb-6">
-                <h4 className="mb-3 text-sm font-medium text-white">
-                  Price Range
-                </h4>
-                <div className="space-y-2">
-                  {prices.map((price) => (
-                    <label
-                      key={price}
-                      className="group flex cursor-pointer items-center gap-3"
-                    >
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
-                      />
-                      <span className="text-sm text-[#9CA3AF] group-hover:text-white">
-                        {price}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="my-6 border-t border-[#2A2A2A]" />
-
-              <div>
-                <h4 className="mb-3 text-sm font-medium text-white">
-                  Availability
-                </h4>
-                <label className="group flex cursor-pointer items-center gap-3">
-                  <input
-                    type="checkbox"
-                    defaultChecked
-                    className="h-4 w-4 rounded border-[#2A2A2A] bg-[#0A0A0A] text-[#DC2626] focus:ring-[#DC2626]/20"
-                  />
-                  <span className="text-sm text-[#9CA3AF] group-hover:text-white">
-                    In Stock Only
-                  </span>
-                </label>
-              </div>
-            </div>
-          </aside>
+            </aside>
           )}
 
           <div className="min-w-0 flex-1">
@@ -169,7 +167,9 @@ export default function SearchPage() {
 
             <div
               className={`grid grid-cols-1 gap-6 md:grid-cols-3 ${
-                showFilters ? "2xl:grid-cols-3" : "xl:grid-cols-4 2xl:grid-cols-4"
+                showFilters
+                  ? "2xl:grid-cols-3"
+                  : "xl:grid-cols-4 2xl:grid-cols-4"
               }`}
             >
               {products.map((product) => {
@@ -287,7 +287,7 @@ export default function SearchPage() {
                           {/* <button className="rounded-lg bg-[#DC2626] px-6 py-2.5 font-medium text-white transition-all hover:bg-[#B91C1C]">
                             View Details
                           </button> */}
-                          <Button  className="px-6 py-5 rounded-sm">
+                          <Button className="px-6 py-5 rounded-sm">
                             View Details
                           </Button>
                         </div>
