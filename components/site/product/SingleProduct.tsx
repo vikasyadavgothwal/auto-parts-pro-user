@@ -22,7 +22,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   RatingStarsProps,
 } from "@/types/site/product";
-import { productImages ,  keyFeatures , highlights ,offers , } from "@/lib/data/Product";
+import { productImages ,  keyFeatures , highlights ,offers , } from "@/lib/Data/Product";
 function RatingStars({
   rating,
   size = "h-5 w-5",
@@ -47,7 +47,6 @@ function RatingStars({
 
 export function AutoPartsMarketplacePage() {
   const [selectedImage, setSelectedImage] = useState(0);
-
   return (
     <main className="min-h-screen bg-[#0A0A0A] text-white">
       <div className="mx-auto max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8">
