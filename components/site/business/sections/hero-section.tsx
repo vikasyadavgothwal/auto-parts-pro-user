@@ -16,7 +16,7 @@ export function BusinessHeroSection() {
             <span>Trusted by 5,000+ businesses</span>
           </Badge>
 
-          <h1 className="mb-6 text-6xl font-bold leading-tight text-white">
+          <h1 className="md:mb-6 mb-2 md:text-6xl text-2xl font-bold leading-tight text-white">
             Enterprise Solutions for
             <br />
             <span className="text-primary">Repair Shops &amp; Fleets</span>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -15,14 +18,17 @@ import { Button } from "@/components/ui/button";
 import { brands, prices , products } from "@/lib/data/Search";
 
 export default function SearchPage() {
+  const [showFilters, setShowFilters] = useState(true);
+
   return (
     <div className="min-h-screen bg-[#0A0A0A]">
       <MainHeader />
       <VehicleChangeSection />
 
-      <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-4 sm:py-4 lg:px-4">
         <div className="flex flex-col gap-8 xl:flex-row">
-          <aside className="w-full xl:w-80 xl:shrink-0">
+          {showFilters && (
+            <aside className="w-full xl:w-70 xl:shrink-0 transition-all duration-300">
             <div className="rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] p-6 xl:sticky xl:top-28">
               <div className="mb-6 flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-white">Filters</h3>
@@ -130,13 +136,19 @@ export default function SearchPage() {
               </div>
             </div>
           </aside>
+          )}
 
           <div className="min-w-0 flex-1">
             <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <button className="flex items-center gap-2 rounded-lg border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626] xl:hidden">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2 rounded-sm border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
+                >
                   <FilterSlidersIcon className="h-4 w-4" />
-                  <span className="text-sm">Filters</span>
+                  <span className="text-sm">
+                    {showFilters ? "Hide Filters" : "Show Filters"}
+                  </span>
                 </button>
 
                 <p className="text-sm text-[#9CA3AF]">
@@ -155,7 +167,11 @@ export default function SearchPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-3">
+            <div
+              className={`grid grid-cols-1 gap-6 md:grid-cols-3 ${
+                showFilters ? "2xl:grid-cols-3" : "xl:grid-cols-4 2xl:grid-cols-4"
+              }`}
+            >
               {products.map((product) => {
                 const isFit = product.badgeType === "fit";
                 const isLikely = product.badgeType === "likely";
