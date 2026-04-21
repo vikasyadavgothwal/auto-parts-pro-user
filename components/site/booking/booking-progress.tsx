@@ -1,7 +1,8 @@
 import { FitmentConfirmedIcon } from "@/components/icons/site-icons";
 import { BOOKING_STEP_LABELS } from "@/components/site/booking/config";
-import { bookingStepOrder } from "@/lib/data/booking";
 import type { BookingActiveStep } from "@/types/site/booking";
+
+const bookingStepOrder: BookingActiveStep[] = [];
 type BookingProgressProps = {
   currentStep: BookingActiveStep;
   currentStepIndex: number;
