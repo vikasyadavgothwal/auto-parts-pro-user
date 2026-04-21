@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { brands, prices, products } from "@/lib/data/Search";
+import { brands, prices, products } from "@/lib/data/search";
 import { FiltersSidebar } from "./filters-sidebar";
 import { SearchResultsGrid } from "./search-results-grid";
 import { SearchToolbar } from "./search-toolbar";

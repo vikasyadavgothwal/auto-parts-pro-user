@@ -1,7 +1,7 @@
 import { ClockIcon } from "@/components/icons/site-icons";
 import { BookingStepFrame } from "@/components/site/booking/booking-step-frame";
 import { Card, CardContent } from "@/components/ui/card";
-import { bookingServices } from "@/lib/data/Booking";
+import { bookingServices } from "@/lib/data/booking";
 
 type ServiceStepProps = {
   onSelectService: (serviceId: string) => void;

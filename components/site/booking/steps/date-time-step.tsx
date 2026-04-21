@@ -5,7 +5,7 @@ import {
 import { BookingStepFrame } from "@/components/site/booking/booking-step-frame";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { bookingAvailableDates, bookingTimeSlots } from "@/lib/data/Booking";
+import { bookingAvailableDates, bookingTimeSlots } from "@/lib/data/booking";
 
 type DateTimeStepProps = {
   onSelectDate: (date: string) => void;

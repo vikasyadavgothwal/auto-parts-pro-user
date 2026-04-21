@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronLeftIcon } from "@/components/icons/site-icons";
 import { Button } from "@/components/ui/button";
-import { productImages, keyFeatures, highlights, offers } from "@/lib/data/Product";
+import { productImages, keyFeatures, highlights, offers } from "@/lib/data/product";
 import { CompareOffersSection } from "./compare-offers-section";
 import { ProductDetailsSection } from "./product-details-section";
 import { ProductGallery } from "./product-gallery";

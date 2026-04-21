@@ -2,7 +2,7 @@ import {  CheckIcon, SellerPackageIcon } from "@/components/icons/site-icons"
 import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
-import { metrics , fleetFeatures } from "@/lib/data/Business"
+import { metrics , fleetFeatures } from "@/lib/data/business"
 
 export function FleetOperationsSection() {
   return (
