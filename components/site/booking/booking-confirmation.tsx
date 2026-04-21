@@ -47,7 +47,7 @@ export function BookingConfirmation({
               You&apos;ll receive a confirmation email shortly.
             </p>
 
-            <Card className="mb-8 rounded-xl border border-border bg-background shadow-none">
+            <Card className="mb-8 rounded-sm border border-border bg-background shadow-none">
               <CardContent className="p-6 text-left">
                 <h3 className="mb-4 text-sm font-semibold text-brand-muted">
                   Appointment Details
@@ -89,7 +89,7 @@ export function BookingConfirmation({
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <Button
                 asChild
-                className="rounded-xl bg-primary px-8 py-3 text-primary-foreground hover:bg-brand-primary-hover"
+                className="rounded-sm bg-primary px-8 py-6 text-primary-foreground hover:bg-brand-primary-hover"
               >
                 <Link href={BOOKING_ROUTES.home}>Back to Home</Link>
               </Button>
@@ -97,7 +97,7 @@ export function BookingConfirmation({
               <Button
                 variant="outline"
                 onClick={onBookAnother}
-                className="rounded-xl border-2 border-border bg-card px-8 py-3 text-foreground hover:border-primary hover:bg-card"
+                className="rounded-sm border-2 border-border bg-card px-8 py-6 text-foreground hover:border-primary hover:bg-card"
               >
                 Book Another
               </Button>

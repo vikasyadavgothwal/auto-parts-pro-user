@@ -23,7 +23,7 @@ export function BookingActions({
         <Button
           variant="outline"
           onClick={onBack}
-          className="gap-2 rounded-xl border border-border bg-card px-8 py-6 text-foreground hover:border-primary hover:bg-card"
+          className="gap-2 rounded-sm border border-border bg-card px-8 py-6 text-foreground hover:border-primary hover:bg-card"
         >
           <ChevronLeftIcon className="h-5 w-5" />
           Back
@@ -33,7 +33,7 @@ export function BookingActions({
       <Button
         onClick={onNext}
         disabled={!canProceed}
-        className={`h-10 flex-1 gap-2 rounded-xl px-8 py-6 font-medium transition-all ${
+        className={`h-10 flex-1 gap-2 rounded-sm px-8 py-6 font-medium transition-all ${
           canProceed
             ? "bg-primary text-primary-foreground hover:bg-brand-primary-hover"
             : "cursor-not-allowed bg-border text-brand-placeholder hover:bg-border"

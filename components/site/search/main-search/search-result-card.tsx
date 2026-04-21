@@ -54,7 +54,7 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
         )}
       >
         {product.highlight ? (
-          <div className="absolute top-4 right-4 z-10 rounded-lg bg-gradient-to-r from-[#DC2626] to-[#B91C1C] px-3 py-1.5 text-xs font-semibold text-white shadow-lg">
+          <div className="absolute top-4 right-4 z-10 rounded-sm bg-gradient-to-r from-[#DC2626] to-[#B91C1C] px-3 py-1.5 text-xs font-semibold text-white shadow-lg">
             {product.highlightLabel}
           </div>
         ) : null}
@@ -69,7 +69,7 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
 
           <div
             className={cn(
-              "absolute top-4 left-4 flex items-center gap-2 rounded-lg border px-3 py-1.5 backdrop-blur-sm",
+              "absolute top-4 left-4 flex items-center gap-2 rounded-sm border px-3 py-1.5 backdrop-blur-sm",
               badgeClassNames[product.badgeType]
             )}
           >
@@ -78,7 +78,7 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
           </div>
 
           {product.stockLabel ? (
-            <div className="absolute bottom-4 left-4 rounded-lg border border-[#DC2626]/30 bg-[#DC2626]/10 px-3 py-1.5 text-xs font-medium text-[#DC2626] backdrop-blur-sm">
+            <div className="absolute bottom-4 left-4 rounded-sm border border-[#DC2626]/30 bg-[#DC2626]/10 px-3 py-1.5 text-xs font-medium text-[#DC2626] backdrop-blur-sm">
               {product.stockLabel}
             </div>
           ) : null}

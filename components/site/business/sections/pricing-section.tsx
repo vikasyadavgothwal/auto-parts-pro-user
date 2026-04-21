@@ -1,4 +1,5 @@
 import { CheckIcon, WrenchIcon } from "@/components/icons/site-icons"
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog"
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -52,16 +53,31 @@ export function PricingSection() {
                   </li>
                 ))}
               </ul>
-              <Button
-                className={`h-12 w-full rounded-lg font-medium ${
-                  plan.popular
-                    ? "hover:bg-brand-primary-hover"
-                    : "border border-border bg-brand-surface text-primary hover:bg-border"
-                }`}
-                variant={plan.popular ? "default" : "outline"}
-              >
-                {plan.buttonText}
-              </Button>
+              {plan.buttonText === "Start Free Trial" ||
+              plan.buttonText === "Contact Sales" ? (
+                <BusinessDemoDialogButton
+                  source={`Pricing ${plan.buttonText}`}
+                  className={`h-12 w-full rounded-sm font-medium ${
+                    plan.popular
+                      ? "hover:bg-brand-primary-hover"
+                      : "border border-border bg-brand-surface text-primary hover:bg-border"
+                  }`}
+                  variant={plan.popular ? "default" : "outline"}
+                >
+                  {plan.buttonText}
+                </BusinessDemoDialogButton>
+              ) : (
+                <Button
+                  className={`h-12 w-full rounded-sm font-medium ${
+                    plan.popular
+                      ? "hover:bg-brand-primary-hover"
+                      : "border border-border bg-brand-surface text-primary hover:bg-border"
+                  }`}
+                  variant={plan.popular ? "default" : "outline"}
+                >
+                  {plan.buttonText}
+                </Button>
+              )}
             </Card>
           ))}
         </div>

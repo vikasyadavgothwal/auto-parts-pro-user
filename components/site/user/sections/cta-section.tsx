@@ -19,14 +19,14 @@ export function CTASection() {
             <Button
               asChild
               variant="outline"
-              className="h-auto rounded-lg bg-white border border-white px-8 py-4 text-lg font-medium text-primary  hover:bg-white/90 hover:text-primary"
+              className="h-auto rounded-sm bg-white border border-white px-8 py-4 text-lg font-medium text-primary  hover:bg-white/90 hover:text-primary"
             >
               <Link href="/search">Start Shopping Now</Link>
             </Button>
             <Button
               asChild
               variant="outline"
-              className="h-auto rounded-lg border-2 border-white bg-white/10 px-8 py-4 text-lg font-medium text-white hover:bg-white/20 hover:text-white"
+              className="h-auto rounded-sm border-2 border-white bg-white/10 px-8 py-4 text-lg font-medium text-white hover:bg-white/20 hover:text-white"
             >
               <Link href="/rfq">Request Quote</Link>
             </Button>

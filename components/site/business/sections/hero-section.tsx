@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SparklesIcon } from "@/components/icons/site-icons";
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,13 +26,16 @@ export function BusinessHeroSection() {
             professionals.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button className="h-auto rounded-lg px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover">
+            <BusinessDemoDialogButton
+              source="Hero Schedule a Demo"
+              className="h-auto rounded-sm px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+            >
               Schedule a Demo
-            </Button>
+            </BusinessDemoDialogButton>
             <Button
               asChild
               variant="outline"
-              className="h-auto rounded-lg border-border bg-brand-panel px-8 py-4 text-lg font-medium text-white hover:border-primary hover:bg-transparent"
+              className="h-auto rounded-sm border-border bg-brand-panel px-8 py-4 text-lg font-medium text-white hover:border-primary hover:bg-transparent"
             >
               <Link href="#pricing">View Pricing</Link>
             </Button>

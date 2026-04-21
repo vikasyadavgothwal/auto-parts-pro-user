@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog";
 export function BusinessCTASection() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-primary to-brand-primary-hover py-24">
@@ -14,15 +14,19 @@ export function BusinessCTASection() {
             AutoPartsPro
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button className="h-auto rounded-lg bg-white px-8 py-4 text-lg font-medium text-primary hover:bg-gray-100">
+            <BusinessDemoDialogButton
+              source="CTA Schedule a Demo"
+              className="h-auto rounded-sm bg-white px-8 py-4 text-lg font-medium text-primary hover:bg-gray-100"
+            >
               Schedule a Demo
-            </Button>
-            <Button
+            </BusinessDemoDialogButton>
+            <BusinessDemoDialogButton
+              source="CTA Contact Sales"
               variant="outline"
-              className="h-auto rounded-lg border-2 border-white bg-transparent px-8 py-4 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
+              className="h-auto rounded-sm border-2 border-white bg-transparent px-8 py-4 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
             >
               Contact Sales
-            </Button>
+            </BusinessDemoDialogButton>
           </div>
         </div>
       </div>

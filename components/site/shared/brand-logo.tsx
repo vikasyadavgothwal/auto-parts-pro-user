@@ -16,7 +16,7 @@ export function BrandLogo({
       {showMark ? (
         <span
           className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-xl font-bold text-primary-foreground",
+            "flex h-10 w-10 items-center justify-center rounded-sm bg-primary text-xl font-bold text-primary-foreground",
             markClassName
           )}
         >
