@@ -1,5 +1,4 @@
 import { CheckIcon, WrenchIcon } from "@/components/icons/site-icons"
-
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -17,7 +16,6 @@ export function PricingSection() {
             <WrenchIcon className="h-4 w-4 text-primary" />
             <span>For Repair Shops</span>
           </Badge>
-
           <SectionHeading
             title="Plans That Scale With You"
             description="Choose the plan that fits your shop size and needs"

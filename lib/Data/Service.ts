@@ -1,7 +1,8 @@
 export const services = [
   {
     title: "Oil Change & Filter",
-    description: "Complete oil change with premium synthetic oil and new filter",
+    description:
+      "Complete oil change with premium synthetic oil and new filter",
     duration: "30 min",
     price: "$49.99",
     popular: true,
@@ -71,7 +72,11 @@ export const reviews = [
     helpful: 12,
   },
 ];
-export const certifications = ["ASE Certified", "AAA Approved", "Bosch Service"];
+export const certifications = [
+  "ASE Certified",
+  "AAA Approved",
+  "Bosch Service",
+];
 export const galleryImages = [
   {
     src: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&h=300&fit=crop",
@@ -140,12 +145,7 @@ export const garages = [
     ],
   },
 ];
-
-
-
-
-import type { SupplierProduct } from "@/types/site/suppliers"
-
+import type { SupplierProduct } from "@/types/site/suppliers";
 export const products: SupplierProduct[] = [
   {
     id: 1,
@@ -154,8 +154,7 @@ export const products: SupplierProduct[] = [
     condition: "New - OEM",
     price: "$89.99",
     offers: "3 offers from $79.99",
-    image:
-      "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400",
+    image: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400",
     href: "/product/1",
     confirmedFit: true,
   },
@@ -165,8 +164,7 @@ export const products: SupplierProduct[] = [
     partNumber: "SA-1923-L",
     condition: "New - Aftermarket",
     price: "$249.99",
-    image:
-      "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=400",
+    image: "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=400",
     href: "/product/2",
     confirmedFit: true,
   },
@@ -177,19 +175,30 @@ export const products: SupplierProduct[] = [
     condition: "New - OEM",
     price: "$34.99",
     offers: "2 offers from $29.99",
-    image:
-      "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400",
+    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400",
     href: "/product/3",
     confirmedFit: true,
   },
-]
-
-export const tabs = ["products", "reviews", "about", "rfq"]
-
+];
+export const tabs = ["products", "reviews", "about", "rfq"];
 export const productFilters = {
-  categories: ["All Categories", "Brake Systems", "Suspension", "Engine Parts", "Electrical"],
-  conditions: ["All Conditions", "New - OEM", "New - Aftermarket", "Refurbished"],
-  sorts: ["Most Relevant", "Price: Low to High", "Price: High to Low", "Newest First"],
-}
-
-
+  categories: [
+    "All Categories",
+    "Brake Systems",
+    "Suspension",
+    "Engine Parts",
+    "Electrical",
+  ],
+  conditions: [
+    "All Conditions",
+    "New - OEM",
+    "New - Aftermarket",
+    "Refurbished",
+  ],
+  sorts: [
+    "Most Relevant",
+    "Price: Low to High",
+    "Price: High to Low",
+    "Newest First",
+  ],
+};

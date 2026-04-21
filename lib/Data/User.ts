@@ -1,4 +1,4 @@
-import type { BenefitItem } from "@/types/site/user"
+import type { BenefitItem } from "@/types/site/user";
 import {
   DiscountBadgeIcon,
   ShieldCheckIcon,
@@ -11,9 +11,9 @@ import {
   CarFrontIcon,
   ZapIcon,
   Clock3Icon,
-} from "@/components/icons/site-icons"
-import type { Solution } from "@/types/site/user"
-import type { Category } from "@/types/site/user"
+} from "@/components/icons/site-icons";
+import type { Solution } from "@/types/site/user";
+import type { Category } from "@/types/site/user";
 export const steps = [
   {
     number: "1",
@@ -33,12 +33,12 @@ export const steps = [
     description:
       "Buy instantly or request custom quotes for bulk orders and special parts",
   },
-]
+];
 export const features = [
   { title: "Verified OEM Parts", icon: ShieldCheckIcon },
   { title: "Same-Day Shipping", icon: ZapIcon },
   { title: "24/7 Support", icon: Clock3Icon },
-]
+];
 export const products = [
   {
     id: 1,
@@ -72,7 +72,7 @@ export const products = [
     image:
       "https://images.unsplash.com/photo-1729545321223-e597f91a25d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
   },
-]
+];
 export const categories: Category[] = [
   { name: "Engine Parts", count: "12,450 parts", icon: CogIcon },
   { name: "Suspension", count: "8,320 parts", icon: WrenchIcon },
@@ -80,7 +80,7 @@ export const categories: Category[] = [
   { name: "Brakes", count: "9,870 parts", icon: PackageIcon },
   { name: "Transmission", count: "6,540 parts", icon: GaugeIcon },
   { name: "Body Parts", count: "22,100 parts", icon: CarFrontIcon },
-]
+];
 export const solutions: Solution[] = [
   {
     title: "For Repair Shops",
@@ -94,8 +94,7 @@ export const solutions: Solution[] = [
       "Bulk ordering, custom integrations, procurement dashboards, and fleet-specific inventory management.",
     icon: PackageIcon,
   },
-]
-
+];
 export const benefits: BenefitItem[] = [
   {
     title: "Guaranteed Fitment",
@@ -112,4 +111,4 @@ export const benefits: BenefitItem[] = [
     description: "Live stock updates across 500+ suppliers",
     icon: TrendingIcon,
   },
-]
+];

@@ -1,4 +1,5 @@
 import type { SearchProduct } from "@/types/site/search";
+
 export const products: SearchProduct[] = [
   {
     id: 1,
@@ -99,6 +100,7 @@ export const products: SearchProduct[] = [
     highlight: false,
   },
 ];
+
 export const brands = [
   "ACDelco",
   "Bosch",
@@ -106,6 +108,11 @@ export const brands = [
   "Wagner",
   "EBC Brakes",
   "Hawk Performance",
-];
+] as const;
 
-export const prices = ["Under $50", "$50 - $100", "$100 - $150", "Over $150"];
+export const prices = [
+  "Under $50",
+  "$50 - $100",
+  "$100 - $150",
+  "Over $150",
+] as const;
