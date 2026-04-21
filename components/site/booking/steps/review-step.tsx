@@ -84,7 +84,7 @@ export function ReviewStep({
                   Total
                 </span>
                 <span className="text-3xl font-bold text-primary">
-                  ${selectedService?.price}
+                  AED {selectedService?.price}
                 </span>
               </div>
             </div>

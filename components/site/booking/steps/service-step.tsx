@@ -50,7 +50,7 @@ export function ServiceStep({
 
                 <div className="ml-6 text-right">
                   <div className="text-2xl font-bold text-primary">
-                    ${service.price}
+                    AED {service.price}
                   </div>
                 </div>
               </div>

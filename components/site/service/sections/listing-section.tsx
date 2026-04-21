@@ -53,10 +53,10 @@ const certificationOptions = [
 ];
 
 const priceRangeOptions = [
-  "Under $50",
-  "$50 - $100",
-  "$100 - $200",
-  "Over $200",
+  "Under AED 50",
+  "AED 50 - AED 100",
+  "AED 100 - AED 200",
+  "Over AED 200",
 ];
 
 const garageFilterDetails: Record<string, GarageFilterDetails> = {
@@ -141,13 +141,13 @@ function matchesPriceRange(price: string, priceRange: string) {
   const priceValue = getPriceValue(price);
 
   switch (priceRange) {
-    case "Under $50":
+    case "Under AED 50":
       return priceValue < 50;
-    case "$50 - $100":
+    case "AED 50 - AED 100":
       return priceValue >= 50 && priceValue <= 100;
-    case "$100 - $200":
+    case "AED 100 - AED 200":
       return priceValue > 100 && priceValue <= 200;
-    case "Over $200":
+    case "Over AED 200":
       return priceValue > 200;
     default:
       return true;
@@ -418,7 +418,7 @@ function GarageCard({
           <div className="mb-3 flex items-start justify-between gap-4">
             <div>
               <Link
-                href={`/garage/${id}`}
+                href={`/garage`}
                 className="text-2xl font-bold text-white hover:text-primary"
               >
                 {title}
