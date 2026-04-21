@@ -70,6 +70,7 @@ function PartRequestCard({
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="md:col-span-2">
+          <Label className="mb-2">Part Name / Description</Label>
           <Input
             name={`parts.${part.id}.name`}
             placeholder="Front brake pads"
@@ -78,14 +79,19 @@ function PartRequestCard({
           />
         </div>
 
-        <Input
+<div>
+  <Label className="mb-2">Part Number (if known)</Label>
+          <Input
           name={`parts.${part.id}.partNumber`}
           placeholder="BC1259"
           aria-label={`Part ${partNumber} part number`}
           className="h-12 rounded-xl bg-brand-panel px-4 text-base"
         />
+</div>
 
-        <Input
+        <div>
+          <Label className="mb-2">Quantity</Label>
+          <Input
           name={`parts.${part.id}.quantity`}
           type="number"
           min={1}
@@ -93,8 +99,10 @@ function PartRequestCard({
           aria-label={`Part ${partNumber} quantity`}
           className="h-12 rounded-xl bg-brand-panel px-4 text-base"
         />
+        </div>
 
         <div className="md:col-span-2">
+          <Label className="mb-2">Additional Notes</Label>
           <Textarea
             name={`parts.${part.id}.requirements`}
             rows={2}

@@ -79,7 +79,7 @@ export function BookingConfirmation({
                   <div className="flex justify-between gap-4 border-t border-border pt-3">
                     <span className="text-brand-muted">Total</span>
                     <span className="text-xl font-bold text-primary">
-                      ${selectedService?.price}
+                      AED {selectedService?.price}
                     </span>
                   </div>
                 </div>

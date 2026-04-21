@@ -40,7 +40,7 @@ export const plans: BusinessPlan[] = [
   {
     name: "Professional",
     description: "For established repair shops",
-    price: "$49",
+    price: "AED 49",
     suffix: "/month",
     buttonText: "Start Free Trial",
     popular: true,
@@ -123,7 +123,7 @@ export const features: BusinessFeature[] = [
 export const metrics = [
   {
     label: "Monthly Savings",
-    value: "$12,450",
+    value: "AED 12,450",
     caption: "↑ 23% vs last month",
     icon: AnalyticsIcon,
   },
