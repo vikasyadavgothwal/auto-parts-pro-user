@@ -49,10 +49,10 @@ export function FeaturedPartsSection() {
           ))}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="my-12 text-center">
           <Button
             asChild
-            className="h-auto rounded-lg px-8 py-4 text-base font-medium hover:bg-brand-primary-hover"
+            className="h-auto rounded-sm px-8 py-4 text-base font-medium hover:bg-brand-primary-hover"
           >
             <Link href="/search">
               <span>View All Parts</span>

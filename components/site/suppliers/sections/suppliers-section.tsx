@@ -195,7 +195,7 @@ export function SuppliersSection() {
 
                     <div className="flex flex-col gap-4 border-t border-border pt-4 sm:flex-row sm:items-center sm:gap-6">
                       <div className="flex items-center gap-2 text-sm">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-primary/10">
                           <AwardIcon className="h-4 w-4 text-primary" />
                         </div>
                         <div>
@@ -213,14 +213,14 @@ export function SuppliersSection() {
                       <div className="flex flex-col gap-3 sm:flex-row">
                         <Button
                           asChild
-                          className="rounded-lg px-6 py-5 text-sm font-medium rounded-sm text-white hover:bg-brand-primary-hover"
+                          className="rounded-sm px-6 py-5 text-sm font-medium rounded-sm text-white hover:bg-brand-primary-hover"
                         >
                           <Link href={supplier.href}>View Products</Link>
                         </Button>
                         <Button
                           asChild
                           variant="outline"
-                          className="rounded-lg border-border px-6 py-5 text-sm rounded-md font-medium text-white hover:border-primary hover:bg-primary/10"
+                          className="rounded-sm border-border px-6 py-5 text-sm rounded-md font-medium text-white hover:border-primary hover:bg-primary/10"
                         >
                           <Link href="/rfq">Request Quote</Link>
                         </Button>
@@ -236,7 +236,7 @@ export function SuppliersSection() {
         <div className="mt-12 text-center">
           <Button
             variant="outline"
-            className="rounded-lg border-border px-8 py-3 font-medium text-white hover:border-primary hover:bg-primary/10"
+            className="rounded-sm border-border px-8 py-3 font-medium text-white hover:border-primary hover:bg-primary/10"
           >
             Load More Suppliers
           </Button>

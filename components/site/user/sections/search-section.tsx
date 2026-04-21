@@ -24,7 +24,7 @@ export function SearchSection() {
           <div className="flex items-end">
             <Button
               asChild
-              className="h-14 w-full rounded-lg px-8 text-base font-medium hover:bg-brand-primary-hover md:w-auto"
+              className="h-14 w-full rounded-sm px-8 text-base font-medium hover:bg-brand-primary-hover md:w-auto"
             >
               <Link href="/search">
                 <SearchIcon className="size-5 text-white" />

@@ -24,7 +24,7 @@ export const BusinessHeader = () => {
           {/* Desktop Actions */}
           <div className="hidden items-center gap-4 md:flex">
             <Button variant="ghost" className="text-brand-muted hover:text-white">Sign In</Button>
-            <Button className="rounded-lg text-white hover:bg-brand-primary-hover">Get Started</Button>
+            <Button className="rounded-sm text-white hover:bg-brand-primary-hover">Get Started</Button>
           </div>
           {/* Mobile Menu Toggle */}
           <button 

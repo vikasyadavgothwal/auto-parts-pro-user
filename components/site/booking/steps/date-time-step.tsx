@@ -79,7 +79,7 @@ export function DateTimeStep({
                       key={time}
                       onClick={() => onSelectTime(time)}
                       variant="outline"
-                      className={`rounded-sm border-2 py-4 font-medium transition-all ${
+                      className={`rounded-sm border-2 py-6 font-medium transition-all ${
                         selectedTime === time
                           ? "border-primary bg-primary text-primary-foreground hover:bg-brand-primary-hover"
                           : "border-border bg-card text-foreground hover:border-primary/50 hover:bg-card"

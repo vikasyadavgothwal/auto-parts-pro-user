@@ -1,6 +1,6 @@
 import {  CheckIcon, SellerPackageIcon } from "@/components/icons/site-icons"
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { metrics , fleetFeatures } from "@/lib/data/Business"
 
@@ -33,9 +33,12 @@ export function FleetOperationsSection() {
               ))}
             </ul>
 
-            <Button className="w-full md:w-auto h-auto rounded-lg px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover">
+            <BusinessDemoDialogButton
+              source="Fleet Demo"
+              className="w-full md:w-auto h-auto rounded-sm px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+            >
               Request Fleet Demo
-            </Button>
+            </BusinessDemoDialogButton>
           </div>
 
           <div className="relative">
