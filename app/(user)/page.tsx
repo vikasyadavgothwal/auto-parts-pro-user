@@ -6,7 +6,6 @@ import { FeaturedPartsSection } from "@/components/site/user/sections/featured-p
 import { HeroSection } from "@/components/site/user/sections/hero-section"
 import { ProcessSection } from "@/components/site/user/sections/process-section"
 import { SearchSection } from "@/components/site/user/sections/search-section"
-
 export default function UserPage() {
   return (
     <>
@@ -20,4 +19,4 @@ export default function UserPage() {
       <CTASection />
     </>
   )
-}
+};

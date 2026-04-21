@@ -73,7 +73,6 @@ export const BusinessFooter = () => {
               </li>
             </ul>
           </div>
-
           <div>
             <h4 className="mb-4 font-semibold text-white">Legal</h4>
             <ul className="space-y-2 text-brand-muted">
@@ -90,7 +89,6 @@ export const BusinessFooter = () => {
             </ul>
           </div>
         </div>
-
         <div className="flex flex-col items-center justify-center gap-4 border-t border-border pt-8 md:flex-row">
           <p className="text-brand-muted">
             © 2026 AutoPartsPro. All rights reserved.

@@ -1,18 +1,18 @@
 import type {
   ProductHighlight,
   ProductOffer,
-
 } from "@/types/site/product";
 import {
   CheckCircleIcon,
   ShieldIcon,
-  TruckIcon
+  TruckIcon,
 } from "@/components/icons/site-icons";
+
 export const productImages = [
   "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=1200&h=1200&fit=crop",
   "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=1200&h=1200&fit=crop",
   "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=1200&h=1200&fit=crop",
-];
+] as const;
 
 export const keyFeatures = [
   "Premium ceramic formula for consistent braking",
@@ -20,7 +20,7 @@ export const keyFeatures = [
   "Low dust formula keeps wheels cleaner",
   "Hardware kit included",
   "Backed by Bosch Limited Lifetime Warranty",
-];
+] as const;
 
 export const highlights: ProductHighlight[] = [
   { icon: CheckCircleIcon, label: "OEM Quality" },

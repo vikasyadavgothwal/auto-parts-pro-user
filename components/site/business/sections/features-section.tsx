@@ -1,5 +1,3 @@
-
-
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
 import { features } from "@/lib/data/Business"
@@ -35,4 +33,4 @@ export function BusinessFeaturesSection() {
       </div>
     </section>
   )
-}
+};
