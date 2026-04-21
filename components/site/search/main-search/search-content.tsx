@@ -25,7 +25,6 @@ export function SearchContent() {
             sortLabel={defaultSortLabel}
             onToggleFilters={() => setShowFilters((current) => !current)}
           />
-
           <SearchResultsGrid products={products} showFilters={showFilters} />
         </div>
       </div>
