@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { companyFields, vehicleFields } from "@/lib/data/Request";
+import { companyFields, vehicleFields } from "@/lib/data/request";
 type TextFieldProps = {
   label: string;
   placeholder?: string;

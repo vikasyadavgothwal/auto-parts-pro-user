@@ -21,7 +21,7 @@ import {
   bookingServices,
   bookingStepOrder,
   bookingVehicles,
-} from "@/lib/data/Booking";
+} from "@/lib/data/booking";
 import type { BookingSelection, BookingStep } from "@/types/site/booking";
 export function BookingPage() {
   const router = useRouter();

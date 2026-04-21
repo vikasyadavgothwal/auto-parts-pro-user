@@ -2,7 +2,7 @@ import { CarFrontIcon } from "@/components/icons/site-icons";
 import { BookingStepFrame } from "@/components/site/booking/booking-step-frame";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { bookingVehicles } from "@/lib/data/Booking";
+import { bookingVehicles } from "@/lib/data/booking";
 
 type VehicleStepProps = {
   onSelectVehicle: (vehicleId: string) => void;

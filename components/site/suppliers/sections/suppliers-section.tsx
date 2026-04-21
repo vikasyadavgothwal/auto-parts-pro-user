@@ -23,7 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { suppliers } from "@/lib/data/Suppliers"
+import { suppliers } from "@/lib/data/suppliers"
 
 export function SuppliersSection() {
   return (

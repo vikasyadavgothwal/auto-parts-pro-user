@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
-import { features } from "@/lib/data/User"
+import { features } from "@/lib/data/user"
 import { motion } from "framer-motion"
 
 export function HeroSection() {

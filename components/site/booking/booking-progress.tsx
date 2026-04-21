@@ -1,6 +1,6 @@
 import { FitmentConfirmedIcon } from "@/components/icons/site-icons";
 import { BOOKING_STEP_LABELS } from "@/components/site/booking/config";
-import { bookingStepOrder } from "@/lib/data/Booking";
+import { bookingStepOrder } from "@/lib/data/booking";
 import type { BookingActiveStep } from "@/types/site/booking";
 type BookingProgressProps = {
   currentStep: BookingActiveStep;

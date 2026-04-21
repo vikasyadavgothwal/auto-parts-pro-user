@@ -4,7 +4,7 @@ import {
 } from "@/components/icons/site-icons"
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
-import { solutions } from "@/lib/data/User"
+import { solutions } from "@/lib/data/user"
 export function BusinessSolutionsSection() {
   return (
     <section id="business" className="scroll-mt-20 bg-brand-surface md:py-24 py-10">

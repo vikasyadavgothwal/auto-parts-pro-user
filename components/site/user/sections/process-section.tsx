@@ -1,5 +1,5 @@
 import { SectionHeading } from "@/components/site/shared/section-heading"
-import { steps } from "@/lib/data/User"
+import { steps } from "@/lib/data/user"
 
 
 export function ProcessSection() {

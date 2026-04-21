@@ -1,6 +1,6 @@
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
-import { features } from "@/lib/data/Business"
+import { features } from "@/lib/data/business"
 export function BusinessFeaturesSection() {
   return (
     <section className="bg-brand-panel md:py-24 py-10">

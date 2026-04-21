@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { tabs, productFilters, products } from "@/lib/data/Service"
+import { tabs, productFilters, products } from "@/lib/data/service"
 export function PartsSection() {
   return (
     <main className="md:pb-20 pb-6 md:pt-24 pt-10">

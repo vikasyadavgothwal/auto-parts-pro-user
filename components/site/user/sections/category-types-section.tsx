@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Card } from "@/components/ui/card"
-import { categories } from "@/lib/data/User"
+import { categories } from "@/lib/data/user"
 export function CategoryTypesSection() {
   return (
     <section className="bg-brand-surface md:py-24 py-10">
