@@ -51,7 +51,7 @@ export function UserHeader() {
               <DialogTrigger asChild>
                 <Button
                   type="button"
-                  className="h-auto rounded-lg p-2.5 text-white hover:bg-brand-primary-hover"
+                  className="h-auto rounded-sm p-2.5 text-white hover:bg-brand-primary-hover"
                   aria-label="Profile"
                 >
                   <UserIcon className="size-5" />
@@ -75,7 +75,7 @@ export function UserHeader() {
 
             <Button
               type="button"
-              className="h-auto rounded-lg p-2.5 text-white hover:bg-brand-primary-hover"
+              className="h-auto rounded-sm p-2.5 text-white hover:bg-brand-primary-hover"
               aria-label="Shopping cart"
             >
               <ShoppingCartIcon className="size-5" />
