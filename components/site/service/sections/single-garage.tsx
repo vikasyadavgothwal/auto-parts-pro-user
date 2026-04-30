@@ -24,33 +24,103 @@ import {
 export function ServiceDetailPage() {
   return (
     <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8">
-        <Button
-          asChild
-          variant="ghost"
-          className="gap-2 px-0 text-brand-muted hover:bg-transparent hover:text-foreground"
-        >
-          <Link href="/services">
-            <ChevronLeftIcon className="h-4 w-4" />
-            <span className="text-sm">Back to services</span>
-          </Link>
-        </Button>
-      </div>
-      <div className="relative h-64 overflow-hidden sm:h-80 lg:h-96">
+      <div className="h-[260px] w-full overflow-hidden sm:h-[320px] lg:h-[380px] xl:h-[420px]">
         <Image
-          src="https://plus.unsplash.com/premium_photo-1661373022510-dfd61512e080?q=80&w=2731&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src="https://plus.unsplash.com/premium_photo-1661373022510-dfd61512e080?q=80&w=2731&auto=format&fit=crop"
           alt="Premium Auto Care"
-          fill
-          className="object-cover"
+          width={2731}
+          height={1820}
+          className="h-full w-full object-cover"
           priority
-          sizes="(max-width: 768px) 100vw,
-              (max-width: 1200px) 50vw,
-              33vw"
+          sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
       </div>
+
       <div className="mx-auto max-w-[1440px] px-4 pb-16 sm:px-6 lg:px-8">
-        <div className="relative z-10 -mt-24 grid gap-8 sm:-mt-32 lg:grid-cols-3">
+        <div className="grid gap-8 pt-8 lg:grid-cols-3">
+          <div className="lg:col-span-1">
+            <Card className="sticky top-28 rounded-2xl border border-border bg-card shadow-none">
+              <CardContent className="p-6">
+                <h3 className="mb-6 text-xl font-bold text-foreground">
+                  Book a Service
+                </h3>
+
+                <div className="mb-6 rounded-xl border border-border bg-background p-4">
+                  <div className="mb-3 flex items-center gap-3">
+                    <PhoneIcon className="h-5 w-5 text-primary" />
+                    <div>
+                      <div className="text-xs text-brand-muted">Call Us</div>
+                      <a
+                        href="tel:+1 (555) 123-4567"
+                        className="font-medium text-foreground hover:text-primary"
+                      >
+                        +1 (555) 123-4567
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <MailIcon className="h-5 w-5 text-primary" />
+                    <div>
+                      <div className="text-xs text-brand-muted">Email</div>
+                      <a
+                        href="mailto:contact@premiumautocare.com"
+                        className="text-sm font-medium text-foreground hover:text-primary"
+                      >
+                        contact@premiumautocare.com
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <h4 className="mb-3 text-sm font-semibold text-foreground">
+                    Working Hours
+                  </h4>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-brand-muted">Monday - Friday</span>
+                      <span className="font-medium text-foreground">
+                        8:00 AM - 6:00 PM
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between text-sm">
+                      <span className="text-brand-muted">Saturday</span>
+                      <span className="font-medium text-foreground">
+                        9:00 AM - 4:00 PM
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between text-sm">
+                      <span className="text-brand-muted">Sunday</span>
+                      <span className="font-medium text-foreground">
+                        Closed
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  href="/booking"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-primary-foreground hover:bg-brand-primary-hover"
+                >
+                  <CalendarIcon className="h-5 w-5" />
+                  Book Appointment
+                </Link>
+
+                <div className="mt-4 text-center">
+                  <Button
+                    variant="ghost"
+                    className="text-sm text-brand-muted hover:bg-transparent hover:text-foreground"
+                  >
+                    Request Custom Quote
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
           <div className="space-y-8 lg:col-span-2">
             <Card className="rounded-2xl border border-border bg-card shadow-none">
               <CardContent className="p-6 sm:p-8">
@@ -131,7 +201,7 @@ export function ServiceDetailPage() {
                     {certifications.map((item) => (
                       <Badge
                         key={item}
-                        className="rounded-xl border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10"
+                        className="rounded-md border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10"
                       >
                         {item}
                       </Badge>
@@ -143,7 +213,7 @@ export function ServiceDetailPage() {
 
             <Card className="rounded-2xl border border-border bg-card shadow-none">
               <CardContent className="p-6 sm:p-8">
-                <h2 className="mb-4 text-2xl font-bold text-foreground">
+                <h2 className="mb-4 text-2xl font-Inter text-foreground">
                   About
                 </h2>
                 <p className="leading-relaxed text-brand-muted">
@@ -157,7 +227,7 @@ export function ServiceDetailPage() {
 
             <Card className="rounded-2xl border border-border bg-card shadow-none">
               <CardContent className="p-6 sm:p-8">
-                <h2 className="mb-6 text-2xl font-bold text-foreground">
+                <h2 className="mb-6 text-2xl font-Inter text-foreground">
                   Services Offered
                 </h2>
 
@@ -197,7 +267,7 @@ export function ServiceDetailPage() {
                           <div className="mb-3 text-2xl font-bold text-primary">
                             {service.price}
                           </div>
-                          <Button className="w-full bg-primary text-sm font-medium text-primary-foreground hover:bg-brand-primary-hover sm:w-auto">
+                          <Button className="w-full bg-primary text-sm px-6 py-5 font-medium text-primary-foreground hover:bg-brand-primary-hover sm:w-auto">
                             Book Now
                           </Button>
                         </div>
@@ -210,7 +280,7 @@ export function ServiceDetailPage() {
 
             <Card className="rounded-2xl border border-border bg-card shadow-none">
               <CardContent className="p-6 sm:p-8">
-                <h2 className="mb-6 text-2xl font-bold text-foreground">
+                <h2 className="mb-6 text-2xl font-Inter text-foreground">
                   Customer Reviews
                 </h2>
 
@@ -221,7 +291,7 @@ export function ServiceDetailPage() {
                       className="border-b border-border pb-6 last:border-0"
                     >
                       <div className="mb-3 flex flex-col items-start justify-between sm:flex-row">
-                        <div>
+                        <div className="flex flex-col md:flex-row md:justify-between w-full">
                           <div className="mb-1 flex items-center gap-3">
                             <span className="font-semibold text-foreground">
                               {review.name}
@@ -264,7 +334,7 @@ export function ServiceDetailPage() {
 
             <Card className="rounded-2xl border border-border bg-card shadow-none">
               <CardContent className="p-6 sm:p-8">
-                <h2 className="mb-6 text-2xl font-bold text-foreground">
+                <h2 className="mb-6 text-2xl font-Inter text-foreground">
                   Gallery
                 </h2>
 
@@ -282,90 +352,6 @@ export function ServiceDetailPage() {
                       />
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="lg:col-span-1">
-            <Card className="sticky top-28 rounded-2xl border border-border bg-card shadow-none">
-              <CardContent className="p-6">
-                <h3 className="mb-6 text-xl font-bold text-foreground">
-                  Book a Service
-                </h3>
-
-                <div className="mb-6 rounded-xl border border-border bg-background p-4">
-                  <div className="mb-3 flex items-center gap-3">
-                    <PhoneIcon className="h-5 w-5 text-primary" />
-                    <div>
-                      <div className="text-xs text-brand-muted">Call Us</div>
-                      <a
-                        href="tel:+1 (555) 123-4567"
-                        className="font-medium text-foreground hover:text-primary"
-                      >
-                        +1 (555) 123-4567
-                      </a>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <MailIcon className="h-5 w-5 text-primary" />
-                    <div>
-                      <div className="text-xs text-brand-muted">Email</div>
-                      <a
-                        href="mailto:contact@premiumautocare.com"
-                        className="text-sm font-medium text-foreground hover:text-primary"
-                      >
-                        contact@premiumautocare.com
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-6">
-                  <h4 className="mb-3 text-sm font-semibold text-foreground">
-                    Working Hours
-                  </h4>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-brand-muted">Monday - Friday</span>
-                      <span className="font-medium text-foreground">
-                        8:00 AM - 6:00 PM
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between text-sm">
-                      <span className="text-brand-muted">Saturday</span>
-                      <span className="font-medium text-foreground">
-                        9:00 AM - 4:00 PM
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between text-sm">
-                      <span className="text-brand-muted">Sunday</span>
-                      <span className="font-medium text-foreground">
-                        Closed
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <Link
-                  href="/booking"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-primary-foreground hover:bg-brand-primary-hover"
-                >
-                  <CalendarIcon className="h-5 w-5" />
-                  Book Appointment
-                </Link>
-
-                <div className="mt-4 text-center">
-                  <Button
-                    variant="ghost"
-                    className="text-sm text-brand-muted hover:bg-transparent hover:text-foreground"
-                  >
-                    Request Custom Quote
-                  </Button>
                 </div>
               </CardContent>
             </Card>

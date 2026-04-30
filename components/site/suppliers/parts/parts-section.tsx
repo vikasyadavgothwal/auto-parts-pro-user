@@ -29,19 +29,6 @@ export function PartsSection() {
   return (
     <main className="md:pb-20 pb-6 md:pt-24 pt-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="mb-6">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-brand-muted">
-            <Link href="/" className="transition-colors hover:text-white">
-              Home
-            </Link>
-            <span>/</span>
-            <Link href="/suppliers" className="transition-colors hover:text-white">
-              Suppliers
-            </Link>
-            <span>/</span>
-            <span className="text-white">Premium Auto Parts Inc.</span>
-          </div>
-        </div>
 
         <Card className="mb-8 rounded-2xl p-5 sm:p-6 lg:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
