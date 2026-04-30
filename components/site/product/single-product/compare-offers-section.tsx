@@ -79,7 +79,7 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
           </div>
 
           <div>
-            <div className="inline-flex items-center gap-2 rounded-sm bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700">
+            <div className="inline-flex items-center gap-2 rounded-xl bg-green-50 px-3 py-1.5 text-sm font-medium text-green-700">
               {offer.stock}
             </div>
           </div>
@@ -95,7 +95,7 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
           <div>
             <Button
               className={cn(
-                "h-12 w-full rounded-sm font-medium",
+                "h-12 w-full rounded-xl font-medium",
                 offer.recommended
                   ? "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
                   : "bg-blue-50 text-blue-500 hover:bg-blue-200 border border-gray-200",
@@ -144,7 +144,7 @@ export function CompareOffersSection({ offers }: CompareOffersSectionProps) {
             <Button
               asChild
               variant="outline"
-              className="rounded-sm border-2 border-[#2563EB] bg-white px-8 py-7 font-medium text-[#2563EB] hover:bg-[#2563EB] hover:text-white"
+              className="rounded-xl border-2 border-[#2563EB] bg-white px-8 py-7 font-medium text-[#2563EB] hover:bg-[#2563EB] hover:text-white"
             >
               <Link href="/request-quote">Request Custom Quote</Link>
             </Button>

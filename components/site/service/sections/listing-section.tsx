@@ -224,7 +224,7 @@ export function ServicesListingSection() {
               <button
                 type="button"
                 onClick={() => setShowFilters((current) => !current)}
-                className="flex items-center gap-2 rounded-sm border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
+                className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
               >
                 <FilterSlidersIcon className="h-4 w-4" />
                 <span className="text-sm">
@@ -245,7 +245,7 @@ export function ServicesListingSection() {
               <span className="text-sm text-brand-muted">Sort by:</span>
               <button
                 type="button"
-                className="flex items-center gap-2 rounded-sm border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
+                className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
               >
                 <span className="text-sm">Best Match</span>
                 <DropdownChevronIcon className="h-4 w-4" />
@@ -276,7 +276,7 @@ export function ServicesListingSection() {
               <Button
                 type="button"
                 onClick={handleClearFilters}
-                className="mt-5 rounded-sm hover:bg-brand-primary-hover"
+                className="mt-5 rounded-xl hover:bg-brand-primary-hover"
               >
                 Clear filters
               </Button>
@@ -443,7 +443,7 @@ function GarageCard({
             </span>
           </div>
 
-          <Card className="mb-4 rounded-sm border border-[#2A2A2A] bg-[#0A0A0A] shadow-none">
+          <Card className="mb-4 rounded-xl border border-[#2A2A2A] bg-[#0A0A0A] shadow-none">
             <CardContent className="grid grid-cols-3 gap-4 p-4">
               <div>
                 <div className="mb-1 text-xs text-[#9CA3AF]">
@@ -473,7 +473,7 @@ function GarageCard({
               <Badge
                 key={specialty}
                 variant="secondary"
-                className="rounded-sm bg-border px-3 py-1 text-xs text-white"
+                className="rounded-xl bg-border px-3 py-1 text-xs text-white"
               >
                 {specialty}
               </Badge>
@@ -482,14 +482,14 @@ function GarageCard({
           <div className="flex flex-wrap gap-3">
             <Button
               asChild
-              className="h-11 flex-1 rounded-sm hover:bg-brand-primary-hover"
+              className="h-11 flex-1 rounded-xl hover:bg-brand-primary-hover"
             >
               <Link href={`/garage`}>View Details &amp; Book</Link>
             </Button>
 
             <Button
               variant="secondary"
-              className="h-11 rounded-sm bg-border px-6 text-white hover:bg-brand-surface-strong"
+              className="h-11 rounded-xl bg-border px-6 text-white hover:bg-brand-surface-strong"
             >
               Get Quote
             </Button>

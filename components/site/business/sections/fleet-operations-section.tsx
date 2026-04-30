@@ -35,7 +35,7 @@ export function FleetOperationsSection() {
 
             <BusinessDemoDialogButton
               source="Fleet Demo"
-              className="w-full md:w-auto h-auto rounded-sm px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+              className="w-full md:w-auto h-auto rounded-xl px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
             >
               Request Fleet Demo
             </BusinessDemoDialogButton>

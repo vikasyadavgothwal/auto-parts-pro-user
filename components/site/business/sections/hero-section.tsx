@@ -28,14 +28,14 @@ export function BusinessHeroSection() {
           <div className="flex flex-wrap justify-center gap-4">
             <BusinessDemoDialogButton
               source="Hero Schedule a Demo"
-              className="h-auto rounded-sm px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+              className="h-auto rounded-xl px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
             >
               Schedule a Demo
             </BusinessDemoDialogButton>
             <Button
               asChild
               variant="outline"
-              className="h-auto rounded-sm border-border bg-brand-panel px-8 py-4 text-lg font-medium text-white hover:border-primary hover:bg-transparent"
+              className="h-auto rounded-xl border-border bg-brand-panel px-8 py-4 text-lg font-medium text-white hover:border-primary hover:bg-transparent"
             >
               <Link href="#pricing">View Pricing</Link>
             </Button>

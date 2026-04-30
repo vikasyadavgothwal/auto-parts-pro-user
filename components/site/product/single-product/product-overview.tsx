@@ -31,7 +31,7 @@ export function ProductOverview({
     <div>
       <div className="mb-6">
         <div className="mb-3 flex flex-wrap items-center gap-3">
-          <Badge className="rounded-sm border border-[#10B981]/20 bg-[#10B981]/10 px-3 py-1 text-sm font-medium text-[#10B981] hover:bg-[#10B981]/10">
+          <Badge className="rounded-xl border border-[#10B981]/20 bg-[#10B981]/10 px-3 py-1 text-sm font-medium text-[#10B981] hover:bg-[#10B981]/10">
             OEM Quality
           </Badge>
           <span className="inline-flex items-center gap-1 text-sm text-[#9CA3AF]">

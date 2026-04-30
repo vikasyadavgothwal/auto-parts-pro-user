@@ -57,7 +57,7 @@ export function PricingSection() {
               plan.buttonText === "Contact Sales" ? (
                 <BusinessDemoDialogButton
                   source={`Pricing ${plan.buttonText}`}
-                  className={`h-12 w-full rounded-sm font-medium ${
+                  className={`h-12 w-full rounded-xl font-medium ${
                     plan.popular
                       ? "hover:bg-brand-primary-hover"
                       : "border border-border bg-brand-surface text-primary hover:bg-border"
@@ -68,7 +68,7 @@ export function PricingSection() {
                 </BusinessDemoDialogButton>
               ) : (
                 <Button
-                  className={`h-12 w-full rounded-sm font-medium ${
+                  className={`h-12 w-full rounded-xl font-medium ${
                     plan.popular
                       ? "hover:bg-brand-primary-hover"
                       : "border border-border bg-brand-surface text-primary hover:bg-border"

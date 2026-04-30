@@ -36,7 +36,7 @@ export function SearchHeroSection() {
                 className="h-auto border-none bg-transparent px-0 shadow-none focus-visible:ring-0"
               />
             </div>
-            <Button className="h-auto rounded-sm px-8 py-3 font-medium hover:bg-brand-primary-hover">
+            <Button className="h-auto rounded-xl px-8 py-3 font-medium hover:bg-brand-primary-hover">
               <SearchIcon className="h-4 w-4" />
               Search
             </Button>

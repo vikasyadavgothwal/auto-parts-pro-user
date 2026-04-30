@@ -17,7 +17,6 @@ import {
 
 const navItems = [
   { label: "Browse Parts", href: "/search" },
-  { label: "Suppliers", href: "/suppliers" },
   { label: "Request Quote", href: "/rfq"},
   { label: "Services", href: "/services" },
   { label: "For Business", href: "/business" },
@@ -27,31 +26,37 @@ export function UserHeader() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-brand-surface">
+    <header className="sticky top-0 z-50 border-b border-border bg-white-surface">
       <div className="site-container-wide">
-        <div className="flex h-20 items-center justify-between">
-          <div className="flex items-center gap-12">
-            <BrandLogo href="/" />
+        <div className="grid h-20 grid-cols-[auto_1fr_auto] items-center gap-4">
+          
+          {/* Left: Logo */}
+          <div className="flex items-center">
+            <BrandLogo href="/" textClassName="text-brand-surface" />
+          </div>
 
-            <nav className="hidden items-center gap-8 md:flex">
+          {/* Center: Nav Links */}
+          <nav className="hidden justify-center md:flex">
+            <div className="flex items-center gap-8">
               {navItems.map((item) => (
                 <Link
                   key={item.label}
                   href={item.href}
-                  className="text-brand-muted transition-colors hover:text-white"
+                  className="whitespace-nowrap text-black transition-colors hover:text-brand-primary-hover"
                 >
                   {item.label}
                 </Link>
               ))}
-            </nav>
-          </div>
+            </div>
+          </nav>
 
-          <div className="flex items-center gap-4">
+          {/* Right: Icons */}
+          <div className="flex items-center justify-end gap-4">
             <Dialog open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen}>
               <DialogTrigger asChild>
                 <Button
                   type="button"
-                  className="h-auto rounded-sm p-2.5 text-white hover:bg-brand-primary-hover"
+                  className="h-auto rounded-xl p-2.5 text-white hover:bg-brand-primary-hover"
                   aria-label="Profile"
                 >
                   <UserIcon className="size-5" />
@@ -75,14 +80,15 @@ export function UserHeader() {
 
             <Button
               type="button"
-              className="h-auto rounded-sm p-2.5 text-white hover:bg-brand-primary-hover"
+              className="h-auto rounded-xl p-2.5 text-white hover:bg-brand-primary-hover"
               aria-label="Shopping cart"
             >
               <ShoppingCartIcon className="size-5" />
             </Button>
           </div>
         </div>
+
       </div>
     </header>
-  )
+  );
 }

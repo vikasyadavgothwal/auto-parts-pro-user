@@ -16,7 +16,7 @@ export function BrandLogo({
       {showMark ? (
         <span
           className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-sm bg-primary text-xl font-bold text-primary-foreground",
+            "flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-xl font-bold text-primary-foreground",
             markClassName
           )}
         >
@@ -24,7 +24,7 @@ export function BrandLogo({
         </span>
       ) : null}
 
-      <span className={cn("text-2xl font-bold text-white", textClassName)}>
+      <span className={cn("text-2xl font-bold text-black", textClassName)}>
         AutoParts<span className={cn("text-primary", accentClassName)}>Pro</span>
       </span>
     </Link>

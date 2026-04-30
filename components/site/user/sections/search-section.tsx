@@ -16,15 +16,15 @@ export function SearchSection() {
             </Label>
             <Input
               type="text"
-              placeholder="Enter 17-digit VIN (e.g., 1HGBH41JXMN109186)"
-              className="h-14 bg-brand-panel px-5 text-base"
+              placeholder="Enter 17-digit Vehicle Identification Number (VIN) (e.g., 1HGBH41JXMN109186)"
+              className="h-14 bg-brand-panel px-5 text-base rounded-sm"
             />
           </div>
 
           <div className="flex items-end">
             <Button
               asChild
-              className="h-14 w-full rounded-sm px-8 text-base font-medium hover:bg-brand-primary-hover md:w-auto"
+              className="h-14 w-full rounded-full px-8 text-base font-medium hover:bg-brand-primary-hover md:w-auto"
             >
               <Link href="/search">
                 <SearchIcon className="size-5 text-white" />

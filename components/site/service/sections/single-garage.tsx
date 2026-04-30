@@ -72,7 +72,7 @@ export function ServiceDetailPage() {
                         <span className="text-brand-muted">(328 reviews)</span>
                       </div>
 
-                      <Badge className="flex items-center gap-1 rounded-sm border border-brand-success/20 bg-brand-success/10 px-3 py-1 text-sm font-semibold text-brand-success hover:bg-brand-success/10">
+                      <Badge className="flex items-center gap-1 rounded-xl border border-brand-success/20 bg-brand-success/10 px-3 py-1 text-sm font-semibold text-brand-success hover:bg-brand-success/10">
                         <ShieldIcon className="h-4 w-4" />
                         Verified
                       </Badge>
@@ -131,7 +131,7 @@ export function ServiceDetailPage() {
                     {certifications.map((item) => (
                       <Badge
                         key={item}
-                        className="rounded-sm border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10"
+                        className="rounded-xl border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10"
                       >
                         {item}
                       </Badge>
@@ -353,7 +353,7 @@ export function ServiceDetailPage() {
 
                 <Link
                   href="/booking"
-                  className="flex w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 py-3 text-primary-foreground hover:bg-brand-primary-hover"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-primary-foreground hover:bg-brand-primary-hover"
                 >
                   <CalendarIcon className="h-5 w-5" />
                   Book Appointment

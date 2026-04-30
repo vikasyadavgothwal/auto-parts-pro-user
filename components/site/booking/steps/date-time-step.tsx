@@ -39,7 +39,7 @@ export function DateTimeStep({
             <Card
               key={dateOption.date}
               onClick={() => onSelectDate(dateOption.date)}
-              className={`cursor-pointer rounded-sm border-2 bg-card text-center shadow-none transition-all ${
+              className={`cursor-pointer rounded-xl border-2 bg-card text-center shadow-none transition-all ${
                 selectedDate === dateOption.date
                   ? "border-primary ring-2 ring-primary/20"
                   : "border-border hover:border-primary/50"
@@ -79,7 +79,7 @@ export function DateTimeStep({
                       key={time}
                       onClick={() => onSelectTime(time)}
                       variant="outline"
-                      className={`rounded-sm border-2 py-6 font-medium transition-all ${
+                      className={`rounded-xl border-2 py-6 font-medium transition-all ${
                         selectedTime === time
                           ? "border-primary bg-primary text-primary-foreground hover:bg-brand-primary-hover"
                           : "border-border bg-card text-foreground hover:border-primary/50 hover:bg-card"

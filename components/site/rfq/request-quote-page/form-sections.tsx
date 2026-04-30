@@ -60,7 +60,7 @@ function PartRequestCard({
             type="button"
             variant="ghost"
             onClick={() => onRemove(part.id)}
-            className="rounded-sm px-3 text-[#DC2626] hover:bg-[#DC2626]/10 hover:text-[#DC2626]"
+            className="rounded-xl px-3 text-[#DC2626] hover:bg-[#DC2626]/10 hover:text-[#DC2626]"
           >
             <CloseIcon className="h-4 w-4" />
             Remove
@@ -184,7 +184,7 @@ export function PartsNeededSection() {
           type="button"
           variant="outline"
           onClick={handleAddPart}
-          className="rounded-sm border-primary/20 px-4 py-4 text-primary hover:bg-primary/10"
+          className="rounded-xl border-primary/20 px-4 py-4 text-primary hover:bg-primary/10"
         >
           <PlusIcon className="h-4 w-4" />
           Add Part

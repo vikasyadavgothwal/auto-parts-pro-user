@@ -24,7 +24,7 @@ export function SearchToolbar({
         <button
           type="button"
           onClick={onToggleFilters}
-          className="flex items-center gap-2 rounded-sm border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
+          className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
         >
           <FilterSlidersIcon className="h-4 w-4" />
           <span className="text-sm">
@@ -43,7 +43,7 @@ export function SearchToolbar({
         <span className="text-sm text-[#9CA3AF]">Sort by:</span>
         <button
           type="button"
-          className="flex items-center gap-2 rounded-sm border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
+          className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
         >
           <span className="text-sm">{sortLabel}</span>
           <DropdownChevronIcon className="h-4 w-4" />
