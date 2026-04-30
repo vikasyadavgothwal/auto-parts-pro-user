@@ -20,12 +20,12 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
       className={cn(
         "overflow-hidden rounded-2xl border-2 transition-all",
         offer.recommended
-          ? "border-[#2563EB] bg-white shadow-xl shadow-blue-500/20 ring-2 ring-[#2563EB]/20"
-          : "border-[#E5E7EB] bg-white hover:border-[#2563EB]/50",
+          ? "border-primary bg-white shadow-xl shadow-blue-500/20 ring-2 ring-primary"
+          : "border-[#E5E7EB] bg-white ",
       )}
     >
       {offer.recommended && (
-        <div className="flex h-10 items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-600 px-4 text-center">
+        <div className="flex h-10 items-center justify-center bg-primary px-4 text-center">
           <span className="flex items-center gap-2 text-sm font-semibold text-white">
             <FitmentConfirmedIcon className="h-4 w-4" />
             BEST VALUE - Recommended Offer
@@ -95,10 +95,10 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
           <div>
             <Button
               className={cn(
-                "h-12 w-full rounded-xl font-medium",
+                "h-12 w-full rounded-full font-medium",
                 offer.recommended
-                  ? "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
-                  : "bg-blue-50 text-blue-500 hover:bg-blue-200 border border-gray-200",
+                  ? "bg-primary text-white"
+                  : "bg-primary text-white  border border-gray-200",
               )}
             >
              {offer.recommended ? "Add to Cart" : "Select Offer"}
@@ -132,7 +132,7 @@ export function CompareOffersSection({ offers }: CompareOffersSectionProps) {
         <CardContent className="p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h4 className="mb-2 text-xl font-semibold text-[#0F172A]">
+              <h4 className="mb-2 text-2xl font-thin text-[#0F172A]">
                 Can&apos;t find the right offer?
               </h4>
               <p className="text-[#64748B]">
@@ -144,7 +144,7 @@ export function CompareOffersSection({ offers }: CompareOffersSectionProps) {
             <Button
               asChild
               variant="outline"
-              className="rounded-xl border-2 border-[#2563EB] bg-white px-8 py-7 font-medium text-[#2563EB] hover:bg-[#2563EB] hover:text-white"
+              className="rounded-full border-2 border-primary bg-white px-8 py-7 font-medium text-primary"
             >
               <Link href="/request-quote">Request Custom Quote</Link>
             </Button>

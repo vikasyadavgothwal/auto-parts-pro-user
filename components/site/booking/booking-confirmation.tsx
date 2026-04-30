@@ -25,7 +25,7 @@ export function BookingConfirmation({
   onBookAnother,
 }: BookingConfirmationProps) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-8">
+    <div className="flex min-h-full items-center justify-center bg-background p-8">
       <motion.div
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}

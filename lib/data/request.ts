@@ -5,4 +5,18 @@ export const companyFields = [
   ["Phone *", "+1 (555) 123-4567"],
 ] as const;
 
-export const vehicleFields = ["Year *", "Make *", "Model *", "Trim"] as const;
+// export const vehicleFields = [ "Year *", "Make *", "Model *", "Trim"] as const;
+
+export const vehicleFields = [{
+  label: "Year *",
+  placeholder: "2020",
+}, {
+  label: "Make *",
+  placeholder: "Toyota",
+}, {
+  label: "Model *",
+  placeholder: "Camry",
+}, {
+  label: "Trim",
+  placeholder: "SE",
+}] as const;

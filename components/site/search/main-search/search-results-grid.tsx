@@ -14,8 +14,8 @@ export function SearchResultsGrid({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 gap-6 md:grid-cols-3",
-        showFilters ? "2xl:grid-cols-3" : "xl:grid-cols-4 2xl:grid-cols-4"
+        "grid grid-cols-1 gap-6 md:grid-cols-2",
+        showFilters ? "2xl:grid-cols-2" : "xl:grid-cols-4 2xl:grid-cols-3"
       )}
     >
       {products.map((product) => (
