@@ -29,19 +29,6 @@ export function PartsSection() {
   return (
     <main className="md:pb-20 pb-6 md:pt-24 pt-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="mb-6">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-brand-muted">
-            <Link href="/" className="transition-colors hover:text-white">
-              Home
-            </Link>
-            <span>/</span>
-            <Link href="/suppliers" className="transition-colors hover:text-white">
-              Suppliers
-            </Link>
-            <span>/</span>
-            <span className="text-white">Premium Auto Parts Inc.</span>
-          </div>
-        </div>
 
         <Card className="mb-8 rounded-2xl p-5 sm:p-6 lg:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
@@ -96,13 +83,13 @@ export function PartsSection() {
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <Button className="rounded-sm px-8 py-6 font-medium hover:bg-brand-primary-hover">
+                <Button className="rounded-xl px-8 py-6 font-medium hover:bg-brand-primary-hover">
                   View Products
                 </Button>
                 <Button
                   asChild
                   variant="outline"
-                  className="rounded-sm border-border px-8 py-6 font-medium text-white hover:border-primary hover:bg-primary/10"
+                  className="rounded-xl border-border px-8 py-6 font-medium text-white hover:border-primary hover:bg-primary/10"
                 >
                   <Link href="/rfq">Request Quote</Link>
                 </Button>
@@ -188,7 +175,7 @@ export function PartsSection() {
         </div>
 
         <div id="products-section">
-          <Card className="mb-6 p-4 rounded-sm">
+          <Card className="mb-6 p-4 rounded-xl">
             <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center">
               <div className="min-w-0 flex-1 lg:min-w-[200px]">
                 <div className="relative">
@@ -196,22 +183,22 @@ export function PartsSection() {
                   <Input
                     type="text"
                     placeholder="Search products..."
-                    className="h-10 bg-brand-surface py-2.5 pl-10 pr-4 rounded-sm"
+                    className="h-10 bg-brand-surface py-2.5 pl-10 pr-4 rounded-xl"
                   />
                 </div>
               </div>
 
               <PartsFilterSelect
                 items={productFilters.categories}
-                className="w-full sm:w-auto sm:min-w-[180px] rounded-sm"
+                className="w-full sm:w-auto sm:min-w-[180px] rounded-xl"
               />
               <PartsFilterSelect
                 items={productFilters.conditions}
-                className="w-full sm:w-auto sm:min-w-[180px] rounded-sm"
+                className="w-full sm:w-auto sm:min-w-[180px] rounded-xl"
               />
               <PartsFilterSelect
                 items={productFilters.sorts}
-                className="w-full sm:w-auto sm:min-w-[180px] rounded-sm"
+                className="w-full sm:w-auto sm:min-w-[180px] rounded-xl"
               />
             </div>
           </Card>
@@ -265,7 +252,7 @@ export function PartsSection() {
                     </div>
                     
 
-                    <Button className="w-full rounded-sm px-6 py-5 text-sm font-medium hover:bg-brand-primary-hover rounded-sm">
+                    <Button className="w-full rounded-xl px-6 py-5 text-sm font-medium hover:bg-brand-primary-hover rounded-xl">
                       View Offers
                     </Button>
                   </div>
@@ -293,7 +280,7 @@ function MetricCard({
   return (
     <Card className="p-6">
       <div className="mb-2 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-primary/10">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
           {icon}
         </div>
         <div>
@@ -316,7 +303,7 @@ function PartsFilterSelect({
   return (
     <div className={className}>
       <Select defaultValue={items[0]}>
-        <SelectTrigger className="h-10 w-full bg-brand-surface py-2.5 rounded-sm">
+        <SelectTrigger className="h-10 w-full bg-brand-surface py-2.5 rounded-xl">
           <SelectValue placeholder={items[0]} />
         </SelectTrigger>
         <SelectContent>

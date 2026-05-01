@@ -2,7 +2,7 @@ import {
   CircleCheckIcon,
   HeartIcon,
   ShareIcon,
-  ShieldIcon,
+  SellerPackageIcon,
 } from "@/components/icons/site-icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,29 +30,25 @@ export function ProductOverview({
   return (
     <div>
       <div className="mb-6">
-        <div className="mb-3 flex flex-wrap items-center gap-3">
-          <Badge className="rounded-sm border border-[#10B981]/20 bg-[#10B981]/10 px-3 py-1 text-sm font-medium text-[#10B981] hover:bg-[#10B981]/10">
-            OEM Quality
-          </Badge>
-          <span className="inline-flex items-center gap-1 text-sm text-[#9CA3AF]">
-            <ShieldIcon className="h-4 w-4" />
-            Verified Seller
-          </span>
+        <div className="mb-3 flex flex-wrap items-center gap-3 justify-between">
+          <div className="flex items-center gap-2">
+            <SellerPackageIcon className="h-4 w-4 text-[#9CA3AF]" />
+            <span className="text-sm text-[#9CA3AF]">ACDelco Authorized</span>
+          </div>
+          <div className=" flex flex-wrap  items-center gap-4">
+            <div className="flex items-center gap-2">
+              <RatingStars rating={rating} />
+              <span className="text-lg font-semibold text-white">{rating}</span>
+              <span className="text-sm text-[#9CA3AF]">
+                ({reviewCount} reviews)
+              </span>
+            </div>
+          </div>
         </div>
 
         <h1 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
           {title}
         </h1>
-
-        <div className="mb-4 flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <RatingStars rating={rating} />
-            <span className="text-lg font-semibold text-white">{rating}</span>
-            <span className="text-sm text-[#9CA3AF]">
-              ({reviewCount} reviews)
-            </span>
-          </div>
-        </div>
 
         <p className="mb-6 text-lg leading-relaxed text-[#9CA3AF]">
           Part #: <span className="font-medium text-white">{partNumber}</span>
@@ -76,14 +72,22 @@ export function ProductOverview({
       </Card>
 
       <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-        {highlights.map(({ icon: Icon, label }) => (
+        {highlights.map(({ icon: Icon, label, svg }) => (
           <Card
             key={label}
             className="rounded-xl border border-[#2A2A2A] bg-[#1A1A1A]"
           >
-            <CardContent className="p-4 text-center">
-              <Icon className="mx-auto mb-2 h-6 w-6 text-[#DC2626]" />
-              <p className="text-xs text-[#9CA3AF]">{label}</p>
+            <CardContent className="flex flex-col justify-center p-4 text-center">
+              {Icon ? (
+                <Icon className="mx-auto mb-2 h-8 w-8 text-[#DC2626]" />
+              ) : svg ? (
+                <div
+                  className="mx-auto mb-2 h-8 w-8 text-[#DC2626]"
+                  dangerouslySetInnerHTML={{ __html: svg }}
+                />
+              ) : null}
+
+              <span className="text-sm text-[#9CA3AF]">{label}</span>
             </CardContent>
           </Card>
         ))}

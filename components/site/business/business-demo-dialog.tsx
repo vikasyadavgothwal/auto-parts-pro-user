@@ -27,7 +27,7 @@ type BusinessDemoDialogButtonProps = {
 };
 
 const inputClassName =
-  "h-11 rounded-sm border-border bg-brand-surface px-3 text-white placeholder:text-brand-placeholder";
+  "h-11 rounded-xl border-border bg-brand-surface px-3 text-white placeholder:text-brand-placeholder";
 
 export function BusinessDemoDialogButton({
   children,
@@ -121,13 +121,13 @@ export function BusinessDemoDialogButton({
               id={`${formId}-message`}
               name="message"
               rows={4}
-              className="resize-none rounded-sm border-border bg-brand-surface px-3 py-2 text-white placeholder:text-brand-placeholder"
+              className="resize-none rounded-xl border-border bg-brand-surface px-3 py-2 text-white placeholder:text-brand-placeholder"
             />
           </div>
 
           <Button
             type="submit"
-            className="mt-2 h-11 w-full rounded-sm font-medium hover:bg-brand-primary-hover"
+            className="mt-2 h-11 w-full rounded-xl font-medium hover:bg-brand-primary-hover"
           >
             Submit
           </Button>

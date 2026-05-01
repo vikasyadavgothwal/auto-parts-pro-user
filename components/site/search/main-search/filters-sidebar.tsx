@@ -18,7 +18,7 @@ type FilterSectionProps = {
 };
 
 const checkboxClassName =
-  "h-4 w-4 border-blue-500 bg-white data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500";
+  "h-4 w-4   data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500";
 
 const fitmentOptions: FilterOption[] = [
   {

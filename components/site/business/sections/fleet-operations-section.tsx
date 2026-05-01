@@ -1,41 +1,40 @@
-import {  CheckIcon, SellerPackageIcon } from "@/components/icons/site-icons"
-import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog"
-import { Badge } from "@/components/ui/badge"
-import { Card } from "@/components/ui/card"
-import { metrics , fleetFeatures } from "@/lib/data/business"
+import { CheckIcon } from "@/components/icons/site-icons";
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog";
+import { Card } from "@/components/ui/card";
+import { metrics, fleetFeatures } from "@/lib/data/business";
 
 export function FleetOperationsSection() {
   return (
-    <section className="bg-brand-panel py-16 md:py-24"> 
+    <section className="bg-brand-panel py-16 md:py-24">
       <div className="site-container">
         <div className="grid items-center gap-12 md:gap-16 md:grid-cols-2">
           <div>
-            <Badge className="mb-6 rounded-full px-4 py-2 text-sm font-medium">
-              <SellerPackageIcon className="mr-2 h-4 w-4" /> {/* Added margin for icon */}
-              <span>For Fleet Managers</span>
-            </Badge>
-
-            <h2 className="mb-6 text-4xl md:text-5xl font-bold text-white leading-tight">
+            <span className="mb-2 block text-sm font-normal uppercase text-primary">
+              For Fleet Managers
+            </span>
+            <h2 className="mb-6 text-3xl md:text-[40px] font-bold text-white leading-tight">
               Purpose-Built for Fleet Operations
             </h2>
 
-            <p className="mb-8 text-lg md:text-xl leading-relaxed text-brand-muted">
+            <p className="mb-8 text-[16px] leading-relaxed text-brand-muted">
               Manage parts procurement across your entire fleet with intelligent
               tools designed for scale.
             </p>
 
             <ul className="mb-8 space-y-4">
-              {fleetFeatures.map((feature : string) => (
+              {fleetFeatures.map((feature: string) => (
                 <li key={feature} className="flex items-start gap-3">
                   <CheckIcon className="mt-1 h-5 w-5 shrink-0 text-primary" />
-                  <span className="text-base md:text-lg text-brand-muted">{feature}</span>
+                  <span className="text-[18px] text-brand-muted">
+                    {feature}
+                  </span>
                 </li>
               ))}
             </ul>
 
             <BusinessDemoDialogButton
               source="Fleet Demo"
-              className="w-full md:w-auto h-auto rounded-sm px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+              className="w-full md:w-auto h-auto rounded-full px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
             >
               Request Fleet Demo
             </BusinessDemoDialogButton>
@@ -48,15 +47,17 @@ export function FleetOperationsSection() {
 
               <div className="relative z-10 space-y-4 md:space-y-6">
                 {metrics.map((metric) => {
-                  const Icon = metric.icon
-
                   return (
                     <Card key={metric.label} className="bg-brand-surface p-5">
                       <div className="mb-2 flex items-center justify-between">
                         <span className="text-sm text-brand-muted">
                           {metric.label}
                         </span>
-                        <Icon className="h-5 w-5 text-primary" />
+
+                        <div
+                          className="h-8 w-8 text-[#DC2626] md:h-10 md:w-10"
+                          dangerouslySetInnerHTML={{ __html: metric.svg }}
+                        />
                       </div>
 
                       <p className="text-2xl md:text-3xl font-bold text-white">
@@ -69,7 +70,7 @@ export function FleetOperationsSection() {
                         </p>
                       ) : null}
                     </Card>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -77,5 +78,5 @@ export function FleetOperationsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

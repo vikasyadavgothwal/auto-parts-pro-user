@@ -21,7 +21,7 @@ export function SupplierCustomQuoteSection() {
           </p>
           <Button
             asChild
-            className="h-auto rounded-sm px-8 py-3 font-medium hover:bg-brand-primary-hover"
+            className="h-auto rounded-xl px-8 py-3 font-medium hover:bg-brand-primary-hover"
           >
             <Link href="/rfq">
               <MessageIcon className="h-5 w-5 " />

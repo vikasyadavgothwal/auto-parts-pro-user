@@ -8,7 +8,7 @@ import {
   Share2,CheckCircle,MessageSquare,Plus,Filter,MapPin,Search,
   FileText,CircleCheck,ShoppingCart,User,Clock,Award,ChevronUp,
   ChevronDown,Calendar,Phone,Mail,
-  ChevronRight, X, Eye, Lock, Building2
+  ChevronRight, X, Eye, Lock, Building2, Upload
 } from "lucide-react"
 import type { AppIconProps, RatingStarIconProps } from "@/types/icons"
 
@@ -95,6 +95,7 @@ export const FilterIcon = (props: AppIconProps) => <Filter {...props} />
 export const MapPinIcon = (props: AppIconProps) => <MapPin {...props} />
 export const SearchIcon = (props: AppIconProps) => <Search {...props} />
 export const FileTextIcon = (props: AppIconProps) => <FileText {...props} />
+export const UploadIcon = (props: AppIconProps) => <Upload {...props} />
 
 /* Commerce */
 export const ShoppingCartIcon = (props: AppIconProps) => <ShoppingCart {...props} />

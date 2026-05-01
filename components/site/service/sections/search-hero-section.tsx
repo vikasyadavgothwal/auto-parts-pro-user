@@ -19,7 +19,7 @@ export function SearchHeroSection() {
           </p>
         </div>
         <div className="mx-auto max-w-4xl">
-          <Card className="flex flex-col gap-2 p-2 md:flex-row">
+          <Card className="flex flex-col gap-2 p-2 md:flex-row rounded-full">
             <div className="flex flex-1 items-center gap-3 px-4">
               <WrenchIcon className="h-5 w-5 text-brand-muted" />
               <Input
@@ -36,7 +36,7 @@ export function SearchHeroSection() {
                 className="h-auto border-none bg-transparent px-0 shadow-none focus-visible:ring-0"
               />
             </div>
-            <Button className="h-auto rounded-sm px-8 py-3 font-medium hover:bg-brand-primary-hover">
+            <Button className="h-auto rounded-full px-8 py-3 font-medium hover:bg-brand-primary-hover">
               <SearchIcon className="h-4 w-4" />
               Search
             </Button>

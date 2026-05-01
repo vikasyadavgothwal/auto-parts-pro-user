@@ -18,7 +18,7 @@ export function BusinessFeaturesSection() {
                 key={feature.title}
                 className="bg-brand-surface p-8 transition-all hover:border-primary"
               >
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-primary/20 bg-primary/10">
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
                   <Icon className="h-7 w-7 text-primary" />
                 </div>
 

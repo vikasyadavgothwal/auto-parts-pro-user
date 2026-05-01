@@ -17,12 +17,3 @@ export const installationBenefits = [
     description: "Schedule installation as early as part delivery",
   },
 ] as const;
-
-export const productSpecifications = [
-  { label: "Part Number", value: "BC1259" },
-  { label: "Manufacturer", value: "Bosch" },
-  { label: "Position", value: "Front" },
-  { label: "Material", value: "Ceramic" },
-  { label: "Hardware Included", value: "Yes" },
-  { label: "Warranty", value: "Limited Lifetime" },
-] as const;

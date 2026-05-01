@@ -16,14 +16,14 @@ export function BusinessCTASection() {
           <div className="flex flex-wrap justify-center gap-4">
             <BusinessDemoDialogButton
               source="CTA Schedule a Demo"
-              className="h-auto rounded-sm bg-white px-8 py-4 text-lg font-medium text-primary hover:bg-gray-100"
+              className="h-auto rounded-full bg-white px-8 py-4 text-lg font-medium text-primary hover:bg-gray-100"
             >
               Schedule a Demo
             </BusinessDemoDialogButton>
             <BusinessDemoDialogButton
               source="CTA Contact Sales"
               variant="outline"
-              className="h-auto rounded-sm border-2 border-white bg-transparent px-8 py-4 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
+              className="h-auto rounded-full border-2 border-white bg-transparent px-8 py-4 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
             >
               Contact Sales
             </BusinessDemoDialogButton>

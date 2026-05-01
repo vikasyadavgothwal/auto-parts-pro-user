@@ -14,7 +14,7 @@ export function FeaturedPartsSection() {
         <SectionHeading
           eyebrow="Featured Parts"
           title="Top-Rated Products"
-          description="Best-selling parts from verified suppliers"
+          // description="Best-selling parts from verified suppliers"
           className="mb-16"
         />
 
@@ -39,10 +39,10 @@ export function FeaturedPartsSection() {
                 </div>
 
                 <div className="p-5">
-                  <h3 className="mb-2 text-sm font-semibold text-white">
+                  <h3 className="mb-2 text-xl font-inter text-white">
                     {product.name}
                   </h3>
-                  <p className="text-lg font-bold text-primary">{product.price}</p>
+                  <p className="text-lg font-inter text-primary">{product.price}</p>
                 </div>
               </Card>
             </Link>
@@ -52,7 +52,7 @@ export function FeaturedPartsSection() {
         <div className="my-12 text-center">
           <Button
             asChild
-            className="h-auto rounded-sm px-8 py-4 text-base font-medium hover:bg-brand-primary-hover"
+            className="h-auto rounded-full px-8 py-4 text-base font-medium hover:bg-brand-primary-hover"
           >
             <Link href="/search">
               <span>View All Parts</span>

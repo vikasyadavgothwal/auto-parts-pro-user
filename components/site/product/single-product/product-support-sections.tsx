@@ -24,7 +24,7 @@ export function ProductSupportSections({
       <section>
         <Card className="mt-8 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] shadow-none">
           <CardContent className="p-6">
-            <div className="flex items-start gap-4">
+            <div className="flex items-center gap-4">
               <MessageIcon className="mt-1 h-6 w-6 shrink-0 text-[#DC2626]" />
 
               <div className="flex-1">
@@ -36,14 +36,13 @@ export function ProductSupportSections({
                   Request a custom quote from multiple suppliers. They&apos;ll
                   compete for your business.
                 </p>
-
-                <Button
-                  asChild
-                  className="bg-[#DC2626] p-6 font-medium text-white hover:bg-[#B91C1C]"
-                >
-                  <Link href="/rfq">Request Quote</Link>
-                </Button>
               </div>
+              <Button
+                asChild
+                className="bg-primary rounded-full p-6 font-medium text-white hover:bg-[#B91C1C]"
+              >
+                <Link href="/rfq">Request Quote</Link>
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -63,8 +62,8 @@ export function ProductSupportSections({
                 </h3>
 
                 <p className="text-[#9CA3AF]">
-                  Bundle this part with professional installation from
-                  certified garages near you
+                  Bundle this part with professional installation from certified
+                  garages near you
                 </p>
               </div>
             </div>

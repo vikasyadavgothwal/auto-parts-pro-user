@@ -31,10 +31,11 @@ export function HeroSection() {
     >
       <div className="absolute inset-0">
         <Image
-          src="https://images.unsplash.com/photo-1759189189642-192febc42404?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzcG9ydHMlMjBjYXIlMjBhdXRvbW90aXZlJTIwd29ya3Nob3B8ZW58MXx8fHwxNzc0OTU1ODgzfDA&ixlib=rb-4.1.0&q=80&w=1080"
-          alt="Banner background"
+          src="/home.jpg"
+          alt=""
           fill
-          priority
+          preload
+          sizes="100vw"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-black/24" />
@@ -62,7 +63,7 @@ export function HeroSection() {
 
           <motion.p 
             variants={itemVariants}
-            className="text-[20px] leading-relaxed text-brand-muted"
+            className="text-[20px] leading-relaxed text-white"
           >
             Access thousands of verified OEM and aftermarket parts from trusted
             suppliers.
@@ -73,17 +74,14 @@ export function HeroSection() {
 
         <motion.div 
           variants={itemVariants}
-          className="mt-12 flex flex-wrap justify-start gap-6 md:gap-12"
+          className="mt-6 flex flex-col justify-start gap-6"
         >
           {features.map((feature) => {
             const Icon = feature.icon
-
             return (
               <div key={feature.title} className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10">
                   <Icon className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-sm text-brand-muted">{feature.title}</span>
+                <span className="text-sm text-white">{feature.title}</span>
               </div>
             )
           })}

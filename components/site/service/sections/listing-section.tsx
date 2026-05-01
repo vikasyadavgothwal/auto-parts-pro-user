@@ -4,16 +4,21 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  ArrowRightIcon,
+  AwardIcon,
+  Clock3Icon,
   DropdownChevronIcon,
   FilterSlidersIcon,
   MapPinIcon,
   RatingStarIcon,
+  ShieldCheckIcon,
 } from "@/components/icons/site-icons";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 import { garages } from "@/lib/data/service";
 
 type FilterKey =
@@ -31,7 +36,7 @@ type GarageFilterDetails = {
 };
 
 const checkboxClassName =
-  "h-4 w-4 border-blue-500 bg-white data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500";
+  "h-4 w-4  data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500";
 
 const serviceTypeOptions = [
   "Oil Change",
@@ -62,22 +67,22 @@ const priceRangeOptions = [
 const garageFilterDetails: Record<string, GarageFilterDetails> = {
   "1": {
     availability: ["Available Today", "Available This Week"],
-    certifications: ["ASE Certified", "AAA Approved"],
+    certifications: ["ASE", "BOSH"],
     nextAvailable: "Today at 2:00 PM",
   },
   "2": {
     availability: ["Available This Week"],
-    certifications: ["Manufacturer Certified"],
+    certifications: ["ASE", "BOSH"],
     nextAvailable: "This week",
   },
   "3": {
     availability: ["Available Today", "Available This Week"],
-    certifications: ["AAA Approved"],
+    certifications:["ASE", "BOSH"],
     nextAvailable: "Today at 4:30 PM",
   },
   "4": {
     availability: ["Available Today", "Available This Week"],
-    certifications: ["ASE Certified", "Manufacturer Certified"],
+    certifications: ["ASE", "BOSH"],
     nextAvailable: "Today at 1:15 PM",
   },
 };
@@ -164,7 +169,7 @@ function hasSelectedMatch(selectedItems: string[], availableItems: string[]) {
 export function ServicesListingSection() {
   const [showFilters, setShowFilters] = useState(true);
   const [filters, setFilters] = useState<FilterState>(() =>
-    createInitialFilters()
+    createInitialFilters(),
   );
 
   const filteredGarages = useMemo(
@@ -178,17 +183,17 @@ export function ServicesListingSection() {
           hasSelectedMatch(filters.certifications, details.certifications) &&
           (filters.priceRanges.length === 0 ||
             filters.priceRanges.some((priceRange) =>
-              matchesPriceRange(garage.price, priceRange)
+              matchesPriceRange(garage.price, priceRange),
             ))
         );
       }),
-    [filters]
+    [filters],
   );
 
   function handleFilterChange(
     filterKey: FilterKey,
     item: string,
-    checked: boolean
+    checked: boolean,
   ) {
     setFilters((currentFilters) => {
       const currentItems = currentFilters[filterKey];
@@ -224,7 +229,7 @@ export function ServicesListingSection() {
               <button
                 type="button"
                 onClick={() => setShowFilters((current) => !current)}
-                className="flex items-center gap-2 rounded-sm border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
+                className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
               >
                 <FilterSlidersIcon className="h-4 w-4" />
                 <span className="text-sm">
@@ -245,7 +250,7 @@ export function ServicesListingSection() {
               <span className="text-sm text-brand-muted">Sort by:</span>
               <button
                 type="button"
-                className="flex items-center gap-2 rounded-sm border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
+                className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
               >
                 <span className="text-sm">Best Match</span>
                 <DropdownChevronIcon className="h-4 w-4" />
@@ -254,14 +259,16 @@ export function ServicesListingSection() {
           </div>
 
           {filteredGarages.length > 0 ? (
-            <div className="space-y-6">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
               {filteredGarages.map((garage) => (
                 <GarageCard
                   key={garage.id}
                   {...garage}
-                  nextAvailable={
-                    getGarageFilterDetails(garage.id).nextAvailable
+                  availability={getGarageFilterDetails(garage.id).availability}
+                  certifications={
+                    getGarageFilterDetails(garage.id).certifications
                   }
+                  nextAvailable={getGarageFilterDetails(garage.id).nextAvailable}
                 />
               ))}
             </div>
@@ -276,7 +283,7 @@ export function ServicesListingSection() {
               <Button
                 type="button"
                 onClick={handleClearFilters}
-                className="mt-5 rounded-sm hover:bg-brand-primary-hover"
+                className="mt-5 rounded-xl hover:bg-brand-primary-hover"
               >
                 Clear filters
               </Button>
@@ -288,6 +295,25 @@ export function ServicesListingSection() {
   );
 }
 
+function GarageRatingStars({ rating }: { rating: string }) {
+  const filledStars = Math.round(Number(rating));
+
+  return (
+    <div className="flex">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <RatingStarIcon
+          key={index}
+          filled={index < filledStars}
+          className={cn(
+            "h-4 w-4",
+            index < filledStars ? "text-[#F59E0B]" : "text-[#2A2A2A]",
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
 function FiltersSidebar({
   filters,
   onClearFilters,
@@ -295,7 +321,11 @@ function FiltersSidebar({
 }: {
   filters: FilterState;
   onClearFilters: () => void;
-  onFilterChange: (filterKey: FilterKey, item: string, checked: boolean) => void;
+  onFilterChange: (
+    filterKey: FilterKey,
+    item: string,
+    checked: boolean,
+  ) => void;
 }) {
   return (
     <aside className="w-full transition-all duration-300 lg:w-80 lg:shrink-0">
@@ -379,7 +409,6 @@ function FilterGroup({
 }
 
 function GarageCard({
-  id,
   title,
   rating,
   reviews,
@@ -388,6 +417,8 @@ function GarageCard({
   address,
   image,
   specialties,
+  availability,
+  certifications,
   nextAvailable,
 }: {
   id: string;
@@ -399,68 +430,119 @@ function GarageCard({
   address: string;
   image: string;
   specialties: string[];
+  availability: string[];
+  certifications: string[];
   nextAvailable: string;
 }) {
+  const isAvailableToday = availability.includes("Available Today");
+  const garageCertifications =
+    certifications.length > 0 ? certifications : ["Verified Garage"];
+  const isTopRated = Number(rating) >= 4.9;
+
   return (
-    <Card className="group overflow-hidden transition-all hover:border-primary">
-      <div className="flex flex-col md:flex-row">
-        <div className="relative h-64 overflow-hidden bg-border md:h-auto md:w-80">
+    <div className="group relative">
+      <Link
+        href="/garage"
+        className={cn(
+          "block h-full overflow-hidden rounded-xl border-2 bg-[#1A1A1A] transition-all",
+          isTopRated
+            ? "border-[#DC2626]/60 shadow-xl shadow-[#DC2626]/10"
+            : "border-[#2A2A2A] hover:border-[#DC2626]/50 hover:shadow-xl hover:shadow-[#DC2626]/10",
+        )}
+      >
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#0A0A0A]">
           <Image
             src={image}
             alt={title}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-            width={400}
-            height={300}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
-        </div>
 
-        <div className="flex-1 p-6">
-          <div className="mb-3 flex items-start justify-between gap-4">
-            <div>
-              <Link
-                href={`/garage`}
-                className="text-2xl font-bold text-white hover:text-primary"
-              >
-                {title}
-              </Link>
-
-              <div className="mt-2 flex items-center gap-2 text-sm text-brand-muted">
-                <RatingStarIcon filled className="h-4 w-4 text-primary" />
-                {rating} ({reviews})
-              </div>
-            </div>
-
-            <div className="text-right">
-              <div className="text-sm text-brand-muted">Starting at</div>
-              <div className="text-3xl font-bold text-primary">{price}</div>
-            </div>
-          </div>
-
-          <div className="mb-4 flex items-center gap-2 text-sm text-brand-muted">
-            <MapPinIcon className="h-4 w-4" />
+          <div className="absolute top-4 left-4 flex items-center gap-2 rounded-xl border border-[#10B981]/30 bg-[#10B981] px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
+            <Clock3Icon className="h-4 w-4" />
             <span>
-              {distance} • {address}
+              {isAvailableToday ? "Verified" : "Next Slot This Week"}
             </span>
           </div>
 
-          <Card className="mb-4 rounded-sm border border-[#2A2A2A] bg-[#0A0A0A] shadow-none">
+          {/* {isTopRated ? (
+            <div className="absolute top-4 right-4 rounded-xl bg-gradient-to-r from-[#DC2626] to-[#B91C1C] px-3 py-1.5 text-xs font-semibold text-white shadow-lg">
+              Top Rated
+            </div>
+          ) : null} */}
+
+          <div className="absolute bottom-4 left-4 rounded-xl border border-white/10 bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
+            Starting at {price}
+          </div>
+        </div>
+
+        <div className="p-6">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              {garageCertifications.map((certification, index) => (
+                <Badge
+                  key={`${certification}-${index}`}
+                  variant="secondary"
+                  className="rounded-sm border border-primary/30 bg-primary/10 px-3 py-1 text-xs text-primary"
+                >
+                  {certification}
+                </Badge>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <GarageRatingStars rating={rating} />
+              <span className="text-sm font-medium text-white">{rating}</span>
+              <span className="text-sm text-[#9CA3AF]">({reviews})</span>
+            </div>
+          </div>
+
+          <h3 className="mb-2 line-clamp-2 text-xl font-semibold text-white transition-colors group-hover:text-[#DC2626]">
+            {title}
+          </h3>
+
+          <div className="mb-4 flex items-center gap-2 text-sm text-[#9CA3AF]">
+            <MapPinIcon className="h-4 w-4 shrink-0" />
+            <span className="line-clamp-1">
+              {distance} • {address}
+            </span>
+          </div>
+          <span className="mb-2 block text-sm font-medium  text-[#9CA3AF]">
+            Specialties:
+          </span>
+          <div className="mb-4 flex flex-wrap gap-2">
+            {specialties.slice(0, 3).map((specialty) => (
+              <Badge
+                key={specialty}
+                variant="secondary"
+                className="rounded-md border border-[#2A2A2A] bg-[#2A2A2A] px-3 py-1 text-xs text-white"
+              >
+                {specialty}
+              </Badge>
+            ))}
+          </div>
+
+          <Card className="mb-4 rounded-xl border border-[#2A2A2A] bg-[#0A0A0A] shadow-none">
             <CardContent className="grid grid-cols-3 gap-4 p-4">
               <div>
-                <div className="mb-1 text-xs text-[#9CA3AF]">
-                  Jobs Completed
+                <div className="mb-1 flex items-center gap-1 text-xs text-[#9CA3AF]">
+                  <AwardIcon className="h-3.5 w-3.5" />
+                  <span>Jobs</span>
                 </div>
-                <div className="font-semibold text-white">2,340</div>
+                <div className="font-semibold text-white">2,340+</div>
               </div>
 
               <div>
-                <div className="mb-1 text-xs text-[#9CA3AF]">Response Time</div>
+                <div className="mb-1 flex items-center gap-1 text-xs text-[#9CA3AF]">
+                  <Clock3Icon className="h-3.5 w-3.5" />
+                  <span>Response</span>
+                </div>
                 <div className="font-semibold text-white">&lt; 15 min</div>
               </div>
 
               <div>
-                <div className="mb-1 text-xs text-[#9CA3AF]">
-                  Next Available
-                </div>
+                <div className="mb-1 text-xs text-[#9CA3AF]">Next slot</div>
                 <div className="font-semibold text-[#10B981]">
                   {nextAvailable}
                 </div>
@@ -468,34 +550,26 @@ function GarageCard({
             </CardContent>
           </Card>
 
-          <div className="mb-4 flex flex-wrap gap-2">
-            {specialties.map((specialty) => (
-              <Badge
-                key={specialty}
-                variant="secondary"
-                className="rounded-sm bg-border px-3 py-1 text-xs text-white"
-              >
-                {specialty}
-              </Badge>
-            ))}
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Button
-              asChild
-              className="h-11 flex-1 rounded-sm hover:bg-brand-primary-hover"
-            >
-              <Link href={`/garage`}>View Details &amp; Book</Link>
-            </Button>
+          <div className="flex items-center justify-between border-t border-[#2A2A2A] pt-4">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 ">
+                <p className="text-2xl font-bold text-white">{price}</p>
+                <p className="text-xs text-[#9CA3AF]">Starting at</p>
+              </div>
+            </div>
 
-            <Button
-              variant="secondary"
-              className="h-11 rounded-sm bg-border px-6 text-white hover:bg-brand-surface-strong"
+            <span
+              className={cn(
+                buttonVariants(),
+                "rounded-xl px-5 py-5 text-sm",
+              )}
             >
-              Get Quote
-            </Button>
+             Book Now
+              <ArrowRightIcon className="h-4 w-4" />
+            </span>
           </div>
         </div>
-      </div>
-    </Card>
+      </Link>
+    </div>
   );
 }

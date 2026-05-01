@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "motion/react";
 import { BookingActions } from "@/components/site/booking/booking-actions";
@@ -135,24 +134,18 @@ export function BookingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b border-border bg-background">
-        <div className="mx-auto max-w-[1440px] px-8">
-          <div className="flex h-20 items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-foreground">
-              AutoParts<span className="text-primary">Pro</span>
-            </Link>
-
-            <Button
-              variant="ghost"
-              onClick={() => router.back()}
-              className="text-brand-muted hover:bg-transparent hover:text-foreground"
-            >
-              Cancel
-            </Button>
-          </div>
+    <div className="min-h-full bg-background">
+      <div className="mx-auto max-w-[1440px] px-8 pt-6">
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="text-brand-muted hover:bg-transparent hover:text-foreground"
+          >
+            Cancel
+          </Button>
         </div>
-      </header>
+      </div>
 
       <BookingProgress currentStep={step} currentStepIndex={currentStepIndex} />
 

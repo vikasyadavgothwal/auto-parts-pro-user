@@ -101,7 +101,7 @@ export const garages = [
     distance: "2.3 miles away",
     address: "1234 Main St, San Francisco, CA",
     image:
-      "https://images.unsplash.com/photo-1632053002928-c6c8763bb0c0?w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&h=300&fit=crop",
     specialties: ["Brake Service", "Engine Diagnostics", "Oil Change"],
   },
   {
