@@ -19,7 +19,7 @@ export const SiteFooter = () => {
           </div>
 
           {/* Right → Links */}
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-2">
             {/* Quick Links */}
             <div>
               <h4 className="mb-4 text-md font-semibold uppercase tracking-wider">

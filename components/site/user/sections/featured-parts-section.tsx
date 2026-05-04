@@ -1,6 +1,5 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRightIcon } from "@/components/icons/site-icons"
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -56,7 +55,6 @@ export function FeaturedPartsSection() {
           >
             <Link href="/search">
               <span>View All Parts</span>
-              <ArrowRightIcon className="size-5" />
             </Link>
           </Button>
         </div>

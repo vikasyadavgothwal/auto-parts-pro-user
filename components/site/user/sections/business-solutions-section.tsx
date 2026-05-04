@@ -12,7 +12,6 @@ export function BusinessSolutionsSection() {
         <SectionHeading
           eyebrow="Enterprise Solutions"
           title="Built for Business"
-          description="Specialized solutions for garages, fleets, and repair shops"
           className="mb-16"
         />
 
@@ -25,7 +24,7 @@ export function BusinessSolutionsSection() {
                 key={solution.title}
                 className="group p-10 transition-all hover:border-primary"
               >
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl border border-primary/20 bg-primary/10">
+                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
                   <Icon className="h-8 w-8 text-primary" />
                 </div>
 

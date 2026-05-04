@@ -21,12 +21,12 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
   return (
     <div>
       <Card className="mb-4 overflow-hidden rounded-xl border border-[#2A2A2A] bg-[#1A1A1A]">
-        <div className="relative aspect-square overflow-hidden rounded-xl">
+        <div className="relative aspect-square overflow-hidden rounded-xl ">
           <Image
             src={primaryImage}
             alt={title}
             fill
-            className="object-cover"
+            className="object-cover w-full h-full"
             priority
           />
         </div>

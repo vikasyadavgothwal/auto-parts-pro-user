@@ -28,7 +28,7 @@ export function ProductOverview({
   highlights,
 }: ProductOverviewProps) {
   return (
-    <div>
+    <div className="flex flex-col items-normal justify-center">
       <div className="mb-6">
         <div className="mb-3 flex flex-wrap items-center gap-3 justify-between">
           <div className="flex items-center gap-2">
@@ -96,7 +96,7 @@ export function ProductOverview({
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           variant="outline"
-          className="md:h-12 md:p-0 p-3 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
+          className="md:h-12 md:p-0 p-3 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A] bg-primary"
         >
           <HeartIcon className="mr-2 h-5 w-5" />
           Save
