@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {PortalDropdown} from "@/components/site/user/portal-dropdown";  
 
 const navItems = [
   { label: "Browse Parts", href: "/search" },
@@ -52,6 +53,7 @@ export function UserHeader() {
 
           {/* Right: Icons */}
           <div className="flex items-center justify-end gap-4">
+            <PortalDropdown />
             <Dialog open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen}>
               <DialogTrigger asChild>
                 <Button
