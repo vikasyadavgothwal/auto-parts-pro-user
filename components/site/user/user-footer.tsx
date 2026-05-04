@@ -84,7 +84,7 @@ export const SiteFooter = () => {
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           {/* Left side */}
           <div className="flex flex-wrap items-center gap-6 text-sm text-white">
-            <span>© 2026 AutoPartsPro.</span>
+            <span>© 2026 Prisma Digital</span>
 
             <Link href="/privacy" className="hover:text-white">
               Privacy Policy
