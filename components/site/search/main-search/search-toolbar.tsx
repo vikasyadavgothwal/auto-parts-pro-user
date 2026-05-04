@@ -8,7 +8,8 @@ type SearchToolbarProps = {
   resultsCount: number;
   query: string;
   sortLabel: string;
-  onToggleFilters: () => void;
+  onOpenMobileFilters: () => void;
+  onToggleDesktopFilters: () => void;
 };
 
 export function SearchToolbar({
@@ -16,15 +17,25 @@ export function SearchToolbar({
   resultsCount,
   query,
   sortLabel,
-  onToggleFilters,
+  onOpenMobileFilters,
+  onToggleDesktopFilters,
 }: SearchToolbarProps) {
   return (
     <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <button
           type="button"
-          onClick={onToggleFilters}
-          className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
+          onClick={onOpenMobileFilters}
+          className="flex items-center gap-2 w-max rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626] xl:hidden"
+        >
+          <FilterSlidersIcon className="h-4 w-4" />
+          <span className="text-sm">Show Filters</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={onToggleDesktopFilters}
+          className="hidden items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626] xl:flex"
         >
           <FilterSlidersIcon className="h-4 w-4" />
           <span className="text-sm">

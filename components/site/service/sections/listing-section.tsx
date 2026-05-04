@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,6 +13,7 @@ import {
   RatingStarIcon,
   // ShieldCheckIcon,
 } from "@/components/icons/site-icons";
+import { MobileFilterDrawer } from "@/components/site/shared/mobile-filter-drawer";
 
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -168,9 +169,25 @@ function hasSelectedMatch(selectedItems: string[], availableItems: string[]) {
 
 export function ServicesListingSection() {
   const [showFilters, setShowFilters] = useState(true);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(() =>
     createInitialFilters(),
   );
+
+  useEffect(() => {
+    const desktopMediaQuery = window.matchMedia("(min-width: 1024px)");
+
+    function handleDesktopChange(event: MediaQueryListEvent) {
+      if (event.matches) {
+        setMobileFiltersOpen(false);
+      }
+    }
+
+    desktopMediaQuery.addEventListener("change", handleDesktopChange);
+
+    return () =>
+      desktopMediaQuery.removeEventListener("change", handleDesktopChange);
+  }, []);
 
   const filteredGarages = useMemo(
     () =>
@@ -216,11 +233,13 @@ export function ServicesListingSection() {
     <section className="mx-auto max-w-[1440px] px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-8 lg:flex-row">
         {showFilters ? (
-          <FiltersSidebar
-            filters={filters}
-            onClearFilters={handleClearFilters}
-            onFilterChange={handleFilterChange}
-          />
+          <div className="hidden lg:block">
+            <FiltersSidebar
+              filters={filters}
+              onClearFilters={handleClearFilters}
+              onFilterChange={handleFilterChange}
+            />
+          </div>
         ) : null}
 
         <div className="min-w-0 flex-1">
@@ -228,8 +247,17 @@ export function ServicesListingSection() {
             <div className="flex items-center gap-4">
               <button
                 type="button"
+                onClick={() => setMobileFiltersOpen(true)}
+                className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626] lg:hidden"
+              >
+                <FilterSlidersIcon className="h-4 w-4" />
+                <span className="text-sm">Show Filters</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setShowFilters((current) => !current)}
-                className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
+                className="hidden  items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626] lg:flex"
               >
                 <FilterSlidersIcon className="h-4 w-4" />
                 <span className="text-sm">
@@ -291,6 +319,26 @@ export function ServicesListingSection() {
           )}
         </div>
       </div>
+
+      <MobileFilterDrawer
+        open={mobileFiltersOpen}
+        onOpenChange={setMobileFiltersOpen}
+        title="Filters"
+        headerAction={
+          <button
+            type="button"
+            onClick={handleClearFilters}
+            className="text-sm text-[#DC2626] hover:underline"
+          >
+            Clear all
+          </button>
+        }
+      >
+        <ServiceFiltersContent
+          filters={filters}
+          onFilterChange={handleFilterChange}
+        />
+      </MobileFilterDrawer>
     </section>
   );
 }
@@ -341,24 +389,45 @@ function FiltersSidebar({
           </button>
         </div>
 
-        {filterSections.map((section, index) => (
-          <div key={section.key}>
-            <FilterGroup
-              title={section.title}
-              items={section.items}
-              checkedItems={filters[section.key]}
-              onCheckedChange={(item, checked) =>
-                onFilterChange(section.key, item, checked)
-              }
-            />
-
-            {index < filterSections.length - 1 ? (
-              <div className="my-6 border-t border-[#2A2A2A]" />
-            ) : null}
-          </div>
-        ))}
+        <ServiceFiltersContent
+          filters={filters}
+          onFilterChange={onFilterChange}
+        />
       </div>
     </aside>
+  );
+}
+
+function ServiceFiltersContent({
+  filters,
+  onFilterChange,
+}: {
+  filters: FilterState;
+  onFilterChange: (
+    filterKey: FilterKey,
+    item: string,
+    checked: boolean,
+  ) => void;
+}) {
+  return (
+    <>
+      {filterSections.map((section, index) => (
+        <div key={section.key}>
+          <FilterGroup
+            title={section.title}
+            items={section.items}
+            checkedItems={filters[section.key]}
+            onCheckedChange={(item, checked) =>
+              onFilterChange(section.key, item, checked)
+            }
+          />
+
+          {index < filterSections.length - 1 ? (
+            <div className="my-6 border-t border-[#2A2A2A]" />
+          ) : null}
+        </div>
+      ))}
+    </>
   );
 }
 

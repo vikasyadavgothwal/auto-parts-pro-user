@@ -51,8 +51,8 @@ function PartRequestCard({
   onRemove: (partId: number) => void;
 }) {
   return (
-    <Card className="rounded-xl bg-brand-surface p-6">
-      <div className="mb-4 flex items-center justify-between gap-4">
+    <Card className="rounded-xl bg-brand-surface p-4 sm:p-6">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <h4 className="font-medium text-white">Part #{partNumber}</h4>
 
         {canRemove ? (
@@ -60,7 +60,7 @@ function PartRequestCard({
             type="button"
             variant="ghost"
             onClick={() => onRemove(part.id)}
-            className="rounded-xl px-3 text-[#DC2626] hover:bg-[#DC2626]/10 hover:text-[#DC2626]"
+            className="h-10 w-full rounded-xl px-3 text-[#DC2626] hover:bg-[#DC2626]/10 hover:text-[#DC2626] sm:w-auto"
           >
             <CloseIcon className="h-4 w-4" />
             Remove
@@ -69,7 +69,7 @@ function PartRequestCard({
       </div>
 
       <div className="flex flex-col gap-6">
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-3">
           <div className="flex flex-col">
             <Label className="mb-2">Part Name / Description</Label>
             <Input
@@ -103,7 +103,7 @@ function PartRequestCard({
           </div>
         </div>
 
-        <div className="md:col-span-2">
+        <div>
           <Label className="mb-2">Additional Notes</Label>
           <Textarea
             name={`parts.${part.id}.requirements`}
@@ -120,12 +120,12 @@ function PartRequestCard({
 
 export function CompanyInformationSection() {
   return (
-    <Card className="rounded-2xl p-8">
-      <h2 className="mb-6 text-2xl font-thin text-white">
+    <Card className="rounded-2xl p-5 sm:p-6 lg:p-8">
+      <h2 className="mb-5 text-xl font-thin text-white sm:mb-6 sm:text-2xl">
         Company Information
       </h2>
 
-      <div className="grid gap-6 md:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
         {companyFields.map(([label, placeholder]) => (
           <TextField
             key={label}
@@ -141,12 +141,12 @@ export function CompanyInformationSection() {
 
 export function VehicleInformationSection() {
   return (
-    <Card className="rounded-2xl p-8">
-      <h2 className="mb-6 text-2xl font-thin text-white">
+    <Card className="rounded-2xl p-5 sm:p-6 lg:p-8">
+      <h2 className="mb-5 text-xl font-thin text-white sm:mb-6 sm:text-2xl">
         Vehicle Information
       </h2>
 
-      <div className="grid gap-6 md:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-5">
         <TextField label="VIN (Optional)" placeholder="1HGBH41JXMN109186" />
         {vehicleFields.map((field) => (
           <TextField
@@ -179,15 +179,17 @@ export function PartsNeededSection() {
   }
 
   return (
-    <Card className="rounded-2xl p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-semibold text-white">Parts Needed</h2>
+    <Card className="rounded-2xl p-5 sm:p-6 lg:p-8">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-xl font-semibold text-white sm:text-2xl">
+          Parts Needed
+        </h2>
 
         <Button
           type="button"
           variant="outline"
           onClick={handleAddPart}
-          className="rounded-xl border-primary/20 px-4 py-4 text-primary hover:bg-primary/10"
+          className="h-11 w-full rounded-xl border-primary/20 px-4 text-primary hover:bg-primary/10 sm:w-auto"
         >
           <PlusIcon className="h-4 w-4" />
           Add Part
@@ -211,7 +213,7 @@ export function PartsNeededSection() {
           Attach Documents (Optional)
         </Label>
 
-        <div className="cursor-pointer rounded-xl border-2 border-dashed border-border p-8 text-center transition-colors hover:border-primary">
+        <div className="cursor-pointer rounded-xl border-2 border-dashed border-border p-6 text-center transition-colors hover:border-primary sm:p-8">
           <UploadIcon className="mx-auto mb-3 h-8 w-8 text-[#9CA3AF]" />
           <p className="mb-1 text-brand-muted">
             Drop files here or click to upload
