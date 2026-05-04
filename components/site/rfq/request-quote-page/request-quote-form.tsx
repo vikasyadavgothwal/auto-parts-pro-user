@@ -7,15 +7,14 @@ import {
 
 export function RequestQuoteForm() {
   return (
-    <form className="space-y-8">
+    <form className="space-y-6 sm:space-y-8">
       <CompanyInformationSection />
       <VehicleInformationSection />
       <PartsNeededSection />
-
       <div className="flex justify-center">
         <Button
           type="submit"
-          className="rounded-full px-8 py-6  text-lg font-medium hover:bg-brand-primary-hover"
+          className="h-12 w-full rounded-full px-6 text-base font-medium hover:bg-brand-primary-hover sm:h-auto sm:w-auto sm:px-8 sm:py-6 sm:text-lg"
         >
           Submit Quote Request
         </Button>

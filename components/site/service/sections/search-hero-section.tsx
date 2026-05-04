@@ -18,7 +18,7 @@ export function SearchHeroSection() {
           </p>
         </div>
         <div className="mx-auto max-w-4xl">
-          <Card className="flex flex-col gap-2 p-2 md:flex-row rounded-full">
+          <Card className="flex flex-col gap-2 p-2 md:flex-row  md:rounded-full">
             <div className="flex flex-1 items-center gap-3 px-4">
               <WrenchIcon className="h-5 w-5 text-brand-muted" />
               <Input
