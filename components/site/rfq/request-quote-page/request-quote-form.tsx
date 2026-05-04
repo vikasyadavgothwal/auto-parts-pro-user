@@ -15,7 +15,7 @@ export function RequestQuoteForm() {
       <div className="flex justify-center">
         <Button
           type="submit"
-          className="rounded-xl px-10 py-8 rounded-md text-lg font-medium hover:bg-brand-primary-hover"
+          className="rounded-full px-8 py-6  text-lg font-medium hover:bg-brand-primary-hover"
         >
           Submit Quote Request
         </Button>

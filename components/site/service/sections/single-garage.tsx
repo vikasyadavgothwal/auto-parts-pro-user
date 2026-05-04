@@ -245,7 +245,7 @@ export function ServiceDetailPage() {
                             </h3>
 
                             {service.popular && (
-                              <Badge className="rounded bg-primary px-2 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary">
+                              <Badge className="rounded-full bg-primary px-2 py-1 text-xs font-semibold text-primary-foreground hover:bg-primary">
                                 POPULAR
                               </Badge>
                             )}
@@ -332,7 +332,7 @@ export function ServiceDetailPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-2xl border border-border bg-card shadow-none">
+            <Card className="rounded-2xl border-none bg-transparent shadow-none">
               <CardContent className="p-6 sm:p-8">
                 <h2 className="mb-6 text-2xl font-Inter text-foreground">
                   Gallery

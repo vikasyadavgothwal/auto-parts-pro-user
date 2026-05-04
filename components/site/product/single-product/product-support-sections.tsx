@@ -23,23 +23,26 @@ export function ProductSupportSections({
     <>
       <section>
         <Card className="mt-8 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] shadow-none">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <MessageIcon className="mt-1 h-6 w-6 shrink-0 text-[#DC2626]" />
+          <CardContent className="p-5 sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <MessageIcon className="mt-1 h-6 w-6 shrink-0 text-[#DC2626]" />
 
-              <div className="flex-1">
-                <h3 className="mb-2 text-lg font-semibold text-white">
-                  Need a better price or bulk order?
-                </h3>
+                <div className="min-w-0 flex-1">
+                  <h3 className="mb-2 text-base font-semibold leading-snug text-white sm:text-lg">
+                    Need a better price or bulk order?
+                  </h3>
 
-                <p className="mb-4 text-[#9CA3AF]">
-                  Request a custom quote from multiple suppliers. They&apos;ll
-                  compete for your business.
-                </p>
+                  <p className="text-sm text-[#9CA3AF] sm:text-base">
+                    Request a custom quote from multiple suppliers. They&apos;ll
+                    compete for your business.
+                  </p>
+                </div>
               </div>
+
               <Button
                 asChild
-                className="bg-primary rounded-full p-6 font-medium text-white hover:bg-[#B91C1C]"
+                className="h-12 w-full rounded-full bg-primary px-6 font-medium text-white hover:bg-[#B91C1C] sm:w-auto sm:shrink-0"
               >
                 <Link href="/rfq">Request Quote</Link>
               </Button>
@@ -90,7 +93,7 @@ export function ProductSupportSections({
 
             <Button
               asChild
-              className="bg-[#DC2626] p-6 font-medium text-white hover:bg-[#B91C1C]"
+              className="bg-[#DC2626] p-6 rounded-full font-medium text-white hover:bg-[#B91C1C]"
             >
               <Link href="/services" className="flex items-center gap-2">
                 <WrenchIcon className="h-5 w-5" />

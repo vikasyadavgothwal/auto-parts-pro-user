@@ -1,6 +1,5 @@
 import {
   MapPinIcon,
-  SearchIcon,
   WrenchIcon,
 } from "@/components/icons/site-icons"
 import { Button } from "@/components/ui/button"
@@ -37,7 +36,7 @@ export function SearchHeroSection() {
               />
             </div>
             <Button className="h-auto rounded-full px-8 py-3 font-medium hover:bg-brand-primary-hover">
-              <SearchIcon className="h-4 w-4" />
+              {/* <SearchIcon className="h-4 w-4" /> */}
               Search
             </Button>
           </Card>

@@ -31,7 +31,7 @@ export const products: SearchProduct[] = [
     badgeType: "fit",
     image:
       "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=400&h=400&fit=crop",
-    highlight: true,
+    highlight: false,
     highlightLabel: "⭐ Best Value",
   },
   {
@@ -44,8 +44,8 @@ export const products: SearchProduct[] = [
     shipping: "Standard",
     rating: "4.6",
     reviews: "(189)",
-    badge: "Likely Fit",
-    badgeType: "likely",
+    badge: "Confirmed Fit",
+    badgeType: "fit",
     image:
       "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&h=400&fit=crop",
     highlight: false,
@@ -94,7 +94,7 @@ export const products: SearchProduct[] = [
     rating: "4.8",
     reviews: "(201)",
     badge: "Not Confirmed",
-    badgeType: "no",
+    badgeType: "fit",
     image:
       "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=400&h=400&fit=crop",
     highlight: false,

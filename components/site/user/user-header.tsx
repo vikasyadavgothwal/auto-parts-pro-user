@@ -53,7 +53,9 @@ export function UserHeader() {
 
           {/* Right: Icons */}
           <div className="flex items-center justify-end gap-4">
-            <PortalDropdown />
+           <div className="hidden md:block">
+             <PortalDropdown />
+           </div>
             <Dialog open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen}>
               <DialogTrigger asChild>
                 <Button

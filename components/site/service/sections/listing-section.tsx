@@ -4,14 +4,14 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRightIcon,
+  // ArrowRightIcon,
   AwardIcon,
   Clock3Icon,
   DropdownChevronIcon,
   FilterSlidersIcon,
   MapPinIcon,
   RatingStarIcon,
-  ShieldCheckIcon,
+  // ShieldCheckIcon,
 } from "@/components/icons/site-icons";
 
 import { Badge } from "@/components/ui/badge";
@@ -565,7 +565,7 @@ function GarageCard({
               )}
             >
              Book Now
-              <ArrowRightIcon className="h-4 w-4" />
+              {/* <ArrowRightIcon className="h-4 w-4" /> */}
             </span>
           </div>
         </div>

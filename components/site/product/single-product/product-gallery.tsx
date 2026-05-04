@@ -21,13 +21,14 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
   return (
     <div>
       <Card className="mb-4 overflow-hidden rounded-xl border border-[#2A2A2A] bg-[#1A1A1A]">
-        <div className="relative aspect-square overflow-hidden rounded-xl">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
           <Image
             src={primaryImage}
             alt={title}
             fill
-            className="object-cover"
+            className="object-cover w-full h-full"
             priority
+            sizes="(max-width: 1024px) 100vw, 50vw"
           />
         </div>
       </Card>
@@ -55,6 +56,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
                   alt={`Product view ${index + 1}`}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 640px) 30vw, 12vw"
                 />
               </div>
             </button>
