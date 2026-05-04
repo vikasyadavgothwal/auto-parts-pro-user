@@ -4,6 +4,7 @@ import {
   FitmentLikelyIcon,
 } from "@/components/icons/site-icons";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
 type FilterOption = {
   label: string;
@@ -69,6 +70,48 @@ type FiltersSidebarProps = {
   prices: readonly string[];
 };
 
+type SearchFiltersPanelProps = FiltersSidebarProps & {
+  showHeader?: boolean;
+  className?: string;
+};
+
+export function SearchFiltersPanel({
+  brands,
+  prices,
+  showHeader = true,
+  className,
+}: SearchFiltersPanelProps) {
+  return (
+    <div className={cn(className)}>
+      {showHeader ? (
+        <div className="mb-6 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-white">Filters</h3>
+          <button type="button" className="text-sm text-[#DC2626] hover:underline">
+            Clear all
+          </button>
+        </div>
+      ) : null}
+
+      <FilterSection title="Fitment Status" options={fitmentOptions} />
+      <div className="my-6 border-t border-[#2A2A2A]" />
+
+      <FilterSection
+        title="Brand"
+        options={brands.map((brand) => ({ label: brand }))}
+      />
+      <div className="my-6 border-t border-[#2A2A2A]" />
+
+      <FilterSection
+        title="Price Range"
+        options={prices.map((price) => ({ label: price }))}
+      />
+      <div className="my-6 border-t border-[#2A2A2A]" />
+
+      <FilterSection title="Availability" options={availabilityOptions} />
+    </div>
+  );
+}
+
 export function FiltersSidebar({
   brands,
   prices,
@@ -76,29 +119,7 @@ export function FiltersSidebar({
   return (
     <aside className="w-full xl:w-70 xl:shrink-0 transition-all duration-300">
       <div className="rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] p-6 xl:sticky xl:top-28">
-        <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">Filters</h3>
-          <button type="button" className="text-sm text-[#DC2626] hover:underline">
-            Clear all
-          </button>
-        </div>
-
-        <FilterSection title="Fitment Status" options={fitmentOptions} />
-        <div className="my-6 border-t border-[#2A2A2A]" />
-
-        <FilterSection
-          title="Brand"
-          options={brands.map((brand) => ({ label: brand }))}
-        />
-        <div className="my-6 border-t border-[#2A2A2A]" />
-
-        <FilterSection
-          title="Price Range"
-          options={prices.map((price) => ({ label: price }))}
-        />
-        <div className="my-6 border-t border-[#2A2A2A]" />
-
-        <FilterSection title="Availability" options={availabilityOptions} />
+        <SearchFiltersPanel brands={brands} prices={prices} />
       </div>
     </aside>
   );
