@@ -144,7 +144,7 @@ export function CompareOffersSection({ offers }: CompareOffersSectionProps) {
             <Button
               asChild
               variant="outline"
-              className="rounded-full border-2 border-primary bg-white px-8 py-7 font-medium text-primary"
+              className="rounded-full border-2 border-primary bg-white px-8 py-6 font-medium text-primary"
             >
               <Link href="/request-quote">Request Custom Quote</Link>
             </Button>

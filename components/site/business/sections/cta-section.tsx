@@ -6,7 +6,7 @@ export function BusinessCTASection() {
 
       <div className="site-container relative z-10">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="mb-6 md:text-5xl text-3xl  font-bold text-white">
+          <h2 className="mb-6 md:text-[40px] text-3xl  font-bold text-white">
             Ready to Transform Your Business?
           </h2>
           <p className="mb-12 text-xl text-white/80">
