@@ -18,14 +18,16 @@ type VehicleChangeSectionProps = {
 export const VehicleChangeSection = ({
   title,
   description,
+  buttonLabel,
   vehicle,
 }: VehicleChangeSectionProps) => {
   const year = vehicle?.year ?? ""
   const make = vehicle?.make ?? ""
   const model = vehicle?.model ?? ""
   const vin = vehicle?.vin ?? ""
-  const showVehicleLine = year || make || model || vin
   const showDescription = Boolean(description?.trim())
+  const showVehicleLine = showDescription && (year || make || model || vin)
+  const showButton = Boolean(buttonLabel?.trim())
   const yearModel = `${year} ${make} ${model}`.trim()
 
   return (
@@ -62,7 +64,9 @@ export const VehicleChangeSection = ({
             </div>
           </div>
 
-            <Button className="px-6 py-5 rounded-xl">Change Vehicle</Button>
+            {showButton ? (
+              <Button className="px-6 py-5 rounded-xl">{buttonLabel}</Button>
+            ) : null}
         </div>
       </div>
     </div>
