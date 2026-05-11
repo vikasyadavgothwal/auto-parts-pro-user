@@ -12,11 +12,11 @@ export function SearchSection() {
         <div className="flex flex-col gap-4 md:flex-row">
           <div className="flex-1">
             <Label className="mb-2 block text-sm font-medium text-brand-muted">
-              Vehicle Identification Number (VIN)
+              Vehicle Identification Number (VIN) or Vehicle Part Number
             </Label>
             <Input
               type="text"
-              placeholder="Enter 17-digit Vehicle Identification Number (VIN) (e.g., 1HGBH41JXMN109186)"
+              placeholder="Enter 17-digit Vehicle Identification Number (VIN) (e.g., 1HGBH41JXMN109186) or Vehicle Part Number (e.g., ABC1234)"
               className="h-14 bg-brand-panel px-5 text-base rounded-sm"
             />
           </div>
