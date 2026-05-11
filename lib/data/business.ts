@@ -41,7 +41,7 @@ export const plans: BusinessPlan[] = [
     buttonText: "Start Free Trial",
     popular: true,
     features: [
-      "12% discount (on First 30 orders)",
+      "12% discount (on first 30 orders)",
       "Free 2-day shipping",
       "Priority phone support",
       "Advanced analytics",
