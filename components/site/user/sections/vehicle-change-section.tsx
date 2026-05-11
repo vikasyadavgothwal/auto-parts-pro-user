@@ -1,6 +1,33 @@
 import { FitmentConfirmedIcon } from "@/components/icons/site-icons"
 import { Button } from "@/components/ui/button"
-export const VehicleChangeSection = () => {
+
+type VehicleInfo = {
+  year?: string
+  make?: string
+  model?: string
+  vin?: string
+}
+
+type VehicleChangeSectionProps = {
+  title?: string
+  description?: string
+  buttonLabel?: string
+  vehicle?: VehicleInfo
+}
+
+export const VehicleChangeSection = ({
+  title,
+  description,
+  vehicle,
+}: VehicleChangeSectionProps) => {
+  const year = vehicle?.year ?? ""
+  const make = vehicle?.make ?? ""
+  const model = vehicle?.model ?? ""
+  const vin = vehicle?.vin ?? ""
+  const showVehicleLine = year || make || model || vin
+  const showDescription = Boolean(description?.trim())
+  const yearModel = `${year} ${make} ${model}`.trim()
+
   return (
     <div className=" backdrop-blur-xl">
       <div className="mx-auto max-w-[1440px] px-4 py-4 sm:px-4 sm:py-4 lg:px-4">
@@ -11,23 +38,31 @@ export const VehicleChangeSection = () => {
             </div>
 
             <div>
-              <h3 className="mb-1 text-lg font-semibold text-[#10B981]">
-                Confirmed Fitment
-              </h3>
-              <p className="mb-2 text-sm text-[#9CA3AF]">
-                This part is guaranteed to fit your vehicle
-              </p>
-              <div className="flex flex-wrap items-center gap-2 text-sm">
-                <span className="font-medium text-white">2018 Honda Accord</span>
-                <span className="text-[#4B5563]">•</span>
-                <span className="text-[#9CA3AF]">VIN: 1HGBH41JXMN109186</span>
-              </div>
+              {title ? (
+                <h3 className="mb-1 text-lg font-semibold text-[#10B981]">
+                  {title}
+                </h3>
+              ) : null}
+              {showDescription ? (
+                <p className="mb-2 text-sm text-[#9CA3AF]">{description}</p>
+              ) : null}
+              {showVehicleLine ? (
+                <div className="flex flex-wrap items-center gap-2 text-sm">
+                  {yearModel ? (
+                    <span className="font-medium text-white">{yearModel}</span>
+                  ) : null}
+                  {vin && yearModel ? (
+                    <span className="text-[#4B5563]">•</span>
+                  ) : null}
+                  {vin ? (
+                    <span className="text-[#9CA3AF]">{`VIN: ${vin}`}</span>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           </div>
 
-          <Button  className="px-6 py-5 rounded-xl">
-            Change Vehicle
-          </Button>
+            <Button className="px-6 py-5 rounded-xl">Change Vehicle</Button>
         </div>
       </div>
     </div>

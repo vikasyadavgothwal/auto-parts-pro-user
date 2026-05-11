@@ -1,22 +1,18 @@
 
 import {
   AnalyticsIcon,
-  CreditCardIcon,
-  SupportIcon,
-  ShieldCheckIcon,
   SparklesIcon,
   TimerIcon,
   TrendingIcon,
   UsersIcon,
-  ZapIcon,
   SellerPackageIcon,
 } from "@/components/icons/site-icons"
 import type { BusinessFeature } from "@/types/site/business"
 import type { BusinessPlan } from "@/types/site/business"
  export const fleetFeatures = [
   "Bulk ordering with custom pricing",
-  "Fleet-specific inventory management",
-  "Predictive maintenance alerts",
+  "Fleet-specific inventory management (Comming soon)",
+  "Predictive maintenance alerts (Comming soon)",
   "Multi-vehicle tracking",
   "Custom reporting & analytics",
   "Integration with fleet management software",
@@ -45,7 +41,7 @@ export const plans: BusinessPlan[] = [
     buttonText: "Start Free Trial",
     popular: true,
     features: [
-      "12% discount on all orders",
+      "12% discount (on First 30 orders)",
       "Free 2-day shipping",
       "Priority phone support",
       "Advanced analytics",
