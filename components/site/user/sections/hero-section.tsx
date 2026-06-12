@@ -1,8 +1,6 @@
-"use client"
-
 import { Badge } from "@/components/ui/badge"
+import Image from "next/image"
 import { features } from "@/lib/data/user"
-import { motion } from "framer-motion"
 import {
   getPublicText,
   type HomeBannerConfig,
@@ -10,81 +8,89 @@ import {
 
 export function HeroSection({ config }: { config?: HomeBannerConfig }) {
   const backgroundImage = getPublicText(config?.backgroundImage) || "/home.jpg"
+  const resolvedBackgroundImage = backgroundImage.startsWith("http")
+    ? backgroundImage
+    : backgroundImage.startsWith("/")
+      ? backgroundImage
+      : `/${backgroundImage}`
   const badgeText = getPublicText(config?.badgeText)
   const heading = getPublicText(config?.heading)
   const subheading = getPublicText(config?.subheading)
   const keyPoints = (config?.keyPoints ?? []).map(getPublicText).filter(Boolean)
+  const canOptimizeImage =
+    resolvedBackgroundImage.startsWith("/") ||
+    resolvedBackgroundImage.startsWith("https://images.unsplash.com/") ||
+    resolvedBackgroundImage.startsWith("https://plus.unsplash.com/")
 
-  if (!badgeText && !heading && !subheading && keyPoints.length === 0) {
+  if (
+    !backgroundImage &&
+    !badgeText &&
+    !heading &&
+    !subheading &&
+    keyPoints.length === 0
+  ) {
     return null
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2, 
-        delayChildren: 0.3,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-  }
-
   return (
-    <motion.section 
-      className="relative overflow-hidden"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      <div className="absolute inset-0">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${backgroundImage})` }}
-        />
+    <section className="relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        {canOptimizeImage ? (
+          <div className="absolute inset-0 h-full w-full relative">
+            <Image
+              src={resolvedBackgroundImage}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              fetchPriority="high"
+            />
+          </div>
+        ) : (
+          <img
+            src={resolvedBackgroundImage}
+            alt=""
+            loading="eager"
+            fetchPriority="high"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
         <div className="absolute inset-0 bg-black/24" />
       </div>
 
       <div className="site-container relative py-24">
         <div className="mb-16 max-w-3xl text-left">
           {badgeText ? (
-            <motion.div variants={itemVariants}>
+            <div>
               <Badge
                 variant="outline"
                 className="mb-6 rounded-full border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white"
               >
                 {badgeText}
               </Badge>
-            </motion.div>
+            </div>
           ) : null}
 
           {heading ? (
-            <motion.h1 
-              variants={itemVariants}
+            <h1
               className="mb-6 max-w-4xl text-[48px] font-bold leading-tight text-white"
             >
               {heading}
-            </motion.h1>
+            </h1>
           ) : null}
 
           {subheading ? (
-            <motion.p 
-              variants={itemVariants}
+            <p
               className="text-[20px] leading-relaxed text-white"
             >
               {subheading}
-            </motion.p>
+            </p>
           ) : null}
         </div>
 
         {keyPoints.length ? (
-          <motion.div 
-            variants={itemVariants}
+          <div
             className="mt-6 flex flex-col justify-start gap-6"
           >
             {keyPoints.map((point, index) => {
@@ -96,9 +102,9 @@ export function HeroSection({ config }: { config?: HomeBannerConfig }) {
                 </div>
               )
             })}
-          </motion.div>
+          </div>
         ) : null}
       </div>
-    </motion.section>
+    </section>
   )
 }

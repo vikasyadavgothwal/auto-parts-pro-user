@@ -1,6 +1,3 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
 import { BusinessSolutionsSection } from "@/components/site/user/sections/business-solutions-section";
 import { BenefitsSection } from "@/components/site/user/sections/benefits-section";
 import { CategoryTypesSection } from "@/components/site/user/sections/category-types-section";
@@ -9,12 +6,13 @@ import { FeaturedPartsSection } from "@/components/site/user/sections/featured-p
 import { HeroSection } from "@/components/site/user/sections/hero-section";
 import { ProcessSection } from "@/components/site/user/sections/process-section";
 import { SearchSection } from "@/components/site/user/sections/search-section";
-import { publicConfigContentQueryOptions } from "@/lib/public-content";
+import { type HomePageConfig } from "@/types/api/public-content";
 
-export function HomePageContent() {
-  const { data } = useQuery(publicConfigContentQueryOptions("home"));
-  const config = data?.data;
+type HomePageContentProps = {
+  config?: HomePageConfig;
+};
 
+export function HomePageContent({ config }: HomePageContentProps) {
   if (!config) {
     return null;
   }

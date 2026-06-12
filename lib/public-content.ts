@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { publicApiRequest } from "@/lib/api/client";
+import { apiInterpreter } from "@/lib/api/client";
 import type {
   LegalPublicContentSlug,
   ConfigPublicContentSlug,
@@ -27,6 +27,7 @@ import type {
   SectionPublicContentSlug,
   TextPair,
 } from "@/types/api/public-content";
+import type { ApiRequestOptions } from "@/types/api/client";
 
 const PUBLIC_CONTENT_PATH = "/api/v1/user/public-content";
 
@@ -76,15 +77,18 @@ const getErrorMessage = (payload: unknown, fallback: string) => {
 
 export async function fetchPublicContentBySlug<Slug extends PublicContentSlug>(
   slug: Slug,
-  init?: RequestInit,
+  init?: ApiRequestOptions<never>,
 ): Promise<PublicContentSuccess<Slug>> {
   const headers = new Headers(init?.headers);
   headers.set("Accept", "application/json");
-  const response = await publicApiRequest<PublicContentResponse<Slug>>(PUBLIC_CONTENT_PATH, {
-    ...init,
-    query: { slug },
-    headers,
-  });
+  const response = await apiInterpreter.public<PublicContentResponse<Slug>>(
+    PUBLIC_CONTENT_PATH,
+    {
+      query: { slug },
+      ...init,
+      headers,
+    },
+  );
 
   if (!response?.ok) {
     throw new Error(

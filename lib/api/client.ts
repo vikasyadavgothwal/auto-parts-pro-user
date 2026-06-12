@@ -156,3 +156,9 @@ export const privateApiRequest = <TResponse, TBody = never>(
   path: string,
   options: ApiRequestOptions<TBody> = {},
 ) => apiRequest<TResponse, TBody>(path, { ...options, scope: "private" });
+
+export const apiInterpreter = {
+  request: apiRequest,
+  public: publicApiRequest,
+  private: privateApiRequest,
+};
