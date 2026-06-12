@@ -11,10 +11,10 @@ import { publicConfigContentQueryOptions } from "@/lib/public-content";
 export function BusinessPageContent() {
   const { data } = useQuery(publicConfigContentQueryOptions("for-business"));
   const config = data?.data;
-
   if (!config) {
     return null;
   }
+
 
   return (
     <>

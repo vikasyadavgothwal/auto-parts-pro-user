@@ -1,6 +1,7 @@
 import { CheckIcon } from "@/components/icons/site-icons";
 import { SectionHeading } from "@/components/site/shared/section-heading";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   getPublicText,
   hasPublicText,
@@ -17,26 +18,30 @@ export function PricingSection({ config }: PricingSectionProps) {
   const plans = (config?.plans ?? [])
     .map((plan) => {
       const keyPoints = (plan.keyPoints ?? []).map(getPublicText).filter(Boolean);
-
       return {
         heading: getPublicText(plan.heading),
         subheading: getPublicText(plan.subheading),
         price: getPublicText(plan.price),
         duration: getPublicText(plan.duration),
+        buttonText: getPublicText(plan.buttonText),
+        mostPopular: Boolean(plan.mostPopular),
         keyPoints,
       };
     })
     .filter((plan) =>
       hasPublicText(plan.heading, plan.subheading, plan.price, plan.duration) ||
-      plan.keyPoints.length > 0,
+      plan.keyPoints.length > 0 ||
+      Boolean(plan.buttonText),
     );
 
   if (!hasPublicText(heading, subheading) && plans.length === 0) {
     return null;
   }
-
   return (
     <section id="pricing" className="bg-brand-surface py-10 md:py-24">
+      <div className="mx-auto mb-6 text-center text-sm font-semibold uppercase tracking-wide text-primary">
+        For Repair Shops
+      </div>
       <div className="site-container">
         {heading ? (
           <SectionHeading
@@ -55,8 +60,18 @@ export function PricingSection({ config }: PricingSectionProps) {
             {plans.map((plan, index) => (
               <Card
                 key={`${plan.heading}-${index}`}
-                className="relative flex h-full flex-col border-2 border-border p-8"
+                className={`relative flex h-full flex-col border-2 p-8 ${
+                  plan.mostPopular
+                    ? "border-primary/70 shadow-lg shadow-primary/10"
+                    : "border-border"
+                }`}
               >
+                {plan.mostPopular ? (
+                  <p className="mb-3 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-black w-fit">
+                    Most Popular
+                  </p>
+                ) : null}
+
                 {plan.heading ? (
                   <h3 className="mb-2 text-2xl font-bold text-white">
                     {plan.heading}
@@ -97,6 +112,21 @@ export function PricingSection({ config }: PricingSectionProps) {
                       </li>
                     ))}
                   </ul>
+                ) : null}
+
+                {plan.buttonText ? (
+                  <div className="mt-auto pt-2">
+                    <Button
+                      type="button"
+                      className={`w-full h-auto rounded-full py-4 ${
+                        plan.mostPopular
+                          ? "bg-primary text-white hover:bg-primary-hover hover:text-white"
+                          : "bg-black text-primary hover:bg-black/90"
+                      }`}
+                    >
+                      {plan.buttonText}
+                    </Button>
+                  </div>
                 ) : null}
               </Card>
             ))}

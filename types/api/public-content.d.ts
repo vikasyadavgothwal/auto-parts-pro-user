@@ -49,6 +49,7 @@ export type HomeEnterpriseCard = TextPair & {
 };
 
 export type HomeEnterpriseConfig = {
+  heading: string;
   cards: readonly HomeEnterpriseCard[];
 };
 
@@ -81,6 +82,8 @@ export type ForBusinessPlan = {
   subheading: string;
   price: string;
   duration: string;
+  buttonText: string;
+  mostPopular: boolean;
   keyPoints: readonly string[];
 };
 

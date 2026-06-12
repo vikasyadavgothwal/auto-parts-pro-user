@@ -5,6 +5,7 @@ import {
 import { Card } from "@/components/ui/card"
 import { solutions } from "@/lib/data/user"
 import {
+  hasPublicText,
   getPublicText,
   type HomeEnterpriseConfig,
 } from "@/lib/public-content"
@@ -14,6 +15,7 @@ export function BusinessSolutionsSection({
 }: {
   config?: HomeEnterpriseConfig
 }) {
+  const heading = getPublicText(config?.heading)
   const cards = (config?.cards ?? [])
     .map((card) => ({
       heading: getPublicText(card.heading),
@@ -26,13 +28,25 @@ export function BusinessSolutionsSection({
         card.heading || card.subheading || (card.buttonText && card.buttonLink),
     )
 
-  if (!cards.length) {
+  if (!hasPublicText(heading) && cards.length === 0) {
     return null
   }
 
   return (
     <section id="business" className="scroll-mt-20 bg-brand-surface md:py-24 py-10">
+
+      
       <div className="site-container">
+              <div className="mx-auto mb-6 text-center text-sm font-semibold uppercase tracking-wide text-primary">
+        Enterprise Solutions
+
+      </div>
+        {heading ? (
+          <h2 className="mb-10 text-3xl font-semibold text-white md:text-4xl text-center">
+            {heading}
+          </h2>
+        ) : null}
+
         <div className="grid gap-8 md:grid-cols-2">
           {cards.map((card, index) => {
             const Icon = solutions[index % solutions.length]?.icon
