@@ -86,14 +86,14 @@ export const SiteFooter = () => {
           <div className="flex flex-wrap items-center gap-6 text-sm text-white">
             <span>© 2026 Prisma Digital</span>
 
-            <Link href="/privacy" className="hover:text-white">
+            <Link href="/privacy-policy" className="hover:text-white">
               Privacy Policy
             </Link>
 
-            <Link href="/terms" className="hover:text-white">
+            <Link href="/terms-of-services" className="hover:text-white">
               Terms of services
             </Link>
-            <Link href="/terms" className="hover:text-white">
+            <Link href="/cookies-settings" className="hover:text-white">
               Cookies settings
             </Link>
           </div>

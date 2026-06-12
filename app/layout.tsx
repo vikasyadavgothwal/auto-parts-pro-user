@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site/user/user-footer";
 import { UserHeader } from "@/components/site/user/user-header";
 import "./globals.css";
@@ -19,9 +20,11 @@ export default function RootLayout({
       className="h-full bg-background antialiased"
     >
       <body className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
-        <UserHeader />
-        <div className="flex flex-1 flex-col">{children}</div>
-        <SiteFooter />
+        <Providers>
+          <UserHeader />
+          <div className="flex flex-1 flex-col">{children}</div>
+          <SiteFooter />
+        </Providers>
       </body>
     </html>
   );
