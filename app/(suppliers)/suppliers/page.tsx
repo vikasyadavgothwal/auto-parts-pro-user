@@ -1,13 +1,14 @@
-
-import type { Metadata } from "next";
 import { PublicSectionContentBoundary } from "@/components/site/public-content/public-section-content-boundary";
 import { SuppliersSection } from "@/components/site/suppliers/sections/suppliers-section";
-export const metadata: Metadata = {
-  title: "Suppliers | Auto Parts Pro",
-  description: "Supplier partner experience for Auto Parts Pro.",
-};
+import { getPublicContentMetadata } from "@/lib/public-seo";
 
 export const dynamic = "force-dynamic";
+
+export const generateMetadata = () =>
+  getPublicContentMetadata("suppliers", {
+    title: "Suppliers | Auto Parts Pro",
+    description: "Supplier partner experience for Auto Parts Pro.",
+  });
 
 export default function SuppliersPage() {
   return (

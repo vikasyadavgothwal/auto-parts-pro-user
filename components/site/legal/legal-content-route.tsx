@@ -3,6 +3,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+import { SeoCustomCode } from "@/components/site/seo/seo-custom-code";
 import {
   publicContentQueryOptions,
   type LegalPublicContentSlug,
@@ -15,11 +16,11 @@ export async function LegalContentRoute({
   slug: LegalPublicContentSlug;
 }) {
   const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(publicContentQueryOptions(slug));
+  const result = await queryClient.fetchQuery(publicContentQueryOptions(slug));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
+      <SeoCustomCode seo={result.seo} />
       <LegalContentPage slug={slug} />
     </HydrationBoundary>
   );

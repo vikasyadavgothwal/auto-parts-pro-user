@@ -140,6 +140,21 @@ export type PublicContentSection = {
 
 export type PublicSectionContent = PublicContentSection;
 
+export type PublicContentSeo = {
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  canonicalLink: string;
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: string;
+  ogImageKey: string;
+  noIndex: boolean;
+  noFollow: boolean;
+  customHeadCode: string;
+  customBodyCode: string;
+};
+
 export type PublicContentBySlug = {
   home: HomePageConfig;
   "for-business": ForBusinessPageConfig;
@@ -155,6 +170,7 @@ export type PublicContentSuccess<Slug extends PublicContentSlug = PublicContentS
   ok: true;
   slug: Slug;
   data: PublicContentBySlug[Slug];
+  seo: PublicContentSeo;
 };
 
 export type PublicContentError = {

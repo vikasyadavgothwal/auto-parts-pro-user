@@ -4,6 +4,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+import { SeoCustomCode } from "@/components/site/seo/seo-custom-code";
 import {
   publicContentBySlugQueryOptions,
   type PublicContentSlug,
@@ -17,11 +18,11 @@ export async function PublicContentBoundary({
   children: ReactNode;
 }) {
   const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(publicContentBySlugQueryOptions(slug));
+  const result = await queryClient.fetchQuery(publicContentBySlugQueryOptions(slug));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
+      <SeoCustomCode seo={result.seo} />
       {children}
     </HydrationBoundary>
   );
