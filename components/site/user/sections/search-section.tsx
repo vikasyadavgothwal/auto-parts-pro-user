@@ -13,25 +13,11 @@ export function SearchSection({ config }: { config?: TextPair }) {
   return (
     <section className="bg-brand-surface py-10">
       <div className="site-container">
-        {heading || subheading ? (
-          <div className="mb-8 text-center">
-            {heading ? (
-              <h2 className="text-3xl font-bold text-white md:text-4xl">
-                {heading}
-              </h2>
-            ) : null}
-            {subheading ? (
-              <p className="mx-auto mt-3 max-w-3xl text-lg text-brand-muted">
-                {subheading}
-              </p>
-            ) : null}
-          </div>
-        ) : null}
         <div className="flex flex-col gap-5">
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex-1">
               <Label className="mb-2 block text-sm font-medium text-brand-muted">
-                Vehicle Identification Number (VIN)
+                        {heading}
               </Label>
               <Input
                 type="text"
@@ -56,7 +42,7 @@ export function SearchSection({ config }: { config?: TextPair }) {
           <div className="flex flex-col gap-4 md:flex-row">
             <div className="flex-1">
               <Label className="mb-2 block text-sm font-medium text-brand-muted">
-                Vehicle Part Number
+                {subheading}
               </Label>
               <Input
                 type="text"

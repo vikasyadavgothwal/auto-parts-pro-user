@@ -72,8 +72,11 @@ export function FleetOperationsSection({ config }: FleetOperationsSectionProps) 
 
               {keyPoints.length > 0 ? (
                 <ul className="mb-8 space-y-4">
-                  {keyPoints.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3">
+                  {keyPoints.map((feature, featureIndex) => (
+                    <li
+                      key={`${feature}-${featureIndex}`}
+                      className="flex items-start gap-3"
+                    >
                       <CheckIcon className="mt-1 h-5 w-5 shrink-0 text-primary" />
                       <span className="text-[18px] text-brand-muted">
                         {feature}

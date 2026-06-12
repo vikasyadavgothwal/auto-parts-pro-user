@@ -87,8 +87,11 @@ export function PricingSection({ config }: PricingSectionProps) {
 
                 {plan.keyPoints.length > 0 ? (
                   <ul className="mb-2 space-y-4">
-                    {plan.keyPoints.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3">
+                    {plan.keyPoints.map((feature, featureIndex) => (
+                      <li
+                        key={`${feature}-${featureIndex}`}
+                        className="flex items-start gap-3"
+                      >
                         <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                         <span className="text-brand-muted">{feature}</span>
                       </li>

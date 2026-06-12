@@ -21,16 +21,7 @@ export function BenefitsSection({ config }: { config?: HomeWhyChooseUsConfig }) 
   return (
     <section className=" py-16">
       <div className="site-container">
-        {heading || subheading ? (
-          <div className="mx-auto mb-12 max-w-3xl text-center">
-            {heading ? (
-              <h2 className="text-4xl font-bold text-white">{heading}</h2>
-            ) : null}
-            {subheading ? (
-              <p className="mt-4 text-lg text-brand-muted">{subheading}</p>
-            ) : null}
-          </div>
-        ) : null}
+
         <div className="grid gap-8 md:grid-cols-3">
           {pairs.map((pair, index) => {
             const benefit = benefits[index % benefits.length]
