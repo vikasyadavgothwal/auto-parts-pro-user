@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import {
-  LEGAL_CONTENT_PAGE_COPY,
   publicContentQueryOptions,
   type LegalPublicContentSlug,
 } from "@/lib/public-content";
@@ -12,7 +11,6 @@ export function LegalContentPage({
 }: {
   slug: LegalPublicContentSlug;
 }) {
-  const page = LEGAL_CONTENT_PAGE_COPY[slug];
   const { data, error, isError, isLoading } = useQuery(
     publicContentQueryOptions(slug),
   );

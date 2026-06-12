@@ -1,60 +1,33 @@
 import { queryOptions } from "@tanstack/react-query";
-
-export type LegalPublicContentSlug =
-  | "privacy-policy"
-  | "terms-of-services"
-  | "cookies-settings";
-
-export type PublicContentSuccess = {
-  ok: true;
-  slug: LegalPublicContentSlug;
-  data: string;
-};
-
-export type PublicContentError = {
-  ok: false;
-  error: string;
-};
-
-export type PublicContentResponse = PublicContentSuccess | PublicContentError;
-
-export type LegalContentPageCopy = {
-  title: string;
-  eyebrow: string;
-  description: string;
-};
-
-export const LEGAL_CONTENT_PAGE_COPY: Record<
+import { publicApiRequest } from "@/lib/api/client";
+import type {
   LegalPublicContentSlug,
-  LegalContentPageCopy
-> = {
-  "privacy-policy": {
-    title: "Privacy Policy",
-    eyebrow: "Legal",
-    description:
-      "Review how Auto Parts Pro handles customer information, platform data, and privacy choices.",
-  },
-  "terms-of-services": {
-    title: "Terms of Services",
-    eyebrow: "Legal",
-    description:
-      "Read the service terms that govern Auto Parts Pro accounts, purchases, requests, and platform usage.",
-  },
-  "cookies-settings": {
-    title: "Cookies Settings",
-    eyebrow: "Preferences",
-    description:
-      "Review cookie usage, consent preferences, analytics controls, and related tracking settings.",
-  },
+  PublicContentBySlug,
+  PublicContentError,
+  PublicContentResponse,
+  PublicContentSlug,
+  PublicContentSuccess,
+  PublicSectionContent,
+  PublicSectionVisibility,
+  SectionPublicContentSlug,
+} from "@/types/api/public-content";
+
+const PUBLIC_CONTENT_PATH = "/api/v1/user/public-content";
+
+export type {
+  LegalPublicContentSlug,
+  PublicContentBySlug,
+  PublicContentError,
+  PublicContentResponse,
+  PublicContentSlug,
+  PublicContentSuccess,
+  PublicSectionContent,
+  PublicSectionVisibility,
+  SectionPublicContentSlug,
 };
 
-export const publicContentQueryKey = (slug: LegalPublicContentSlug) =>
+export const publicContentQueryKey = (slug: PublicContentSlug) =>
   ["public-content", slug] as const;
-
-const getPublicContentBaseUrl = () => {
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
-  return baseUrl ? baseUrl.replace(/\/+$/, "") : "http://localhost:3000";
-};
 
 const getErrorMessage = (payload: unknown, fallback: string) => {
   if (
@@ -69,32 +42,25 @@ const getErrorMessage = (payload: unknown, fallback: string) => {
   return fallback;
 };
 
-export async function fetchPublicContentBySlug(
-  slug: LegalPublicContentSlug,
+export async function fetchPublicContentBySlug<Slug extends PublicContentSlug>(
+  slug: Slug,
   init?: RequestInit,
-): Promise<PublicContentSuccess> {
-  const url = new URL("/api/v1/user/public-content", getPublicContentBaseUrl());
-  url.searchParams.set("slug", slug);
+): Promise<PublicContentSuccess<Slug>> {
   const headers = new Headers(init?.headers);
   headers.set("Accept", "application/json");
-
-  const response = await fetch(url, {
+  const response = await publicApiRequest<PublicContentResponse<Slug>>(PUBLIC_CONTENT_PATH, {
     ...init,
+    query: { slug },
     headers,
-    cache: "no-store",
   });
 
-  const payload = (await response
-    .json()
-    .catch(() => null)) as PublicContentResponse | null;
-
-  if (!response.ok || !payload?.ok) {
+  if (!response?.ok) {
     throw new Error(
-      getErrorMessage(payload, "Unable to load public page content."),
+      getErrorMessage(response, "Unable to load public page content."),
     );
   }
 
-  return payload;
+  return response;
 }
 
 export const publicContentQueryOptions = (slug: LegalPublicContentSlug) =>
@@ -103,3 +69,25 @@ export const publicContentQueryOptions = (slug: LegalPublicContentSlug) =>
     queryFn: ({ signal }) => fetchPublicContentBySlug(slug, { signal }),
     staleTime: 1000 * 60 * 5,
   });
+
+export const publicSectionContentQueryOptions = (
+  slug: SectionPublicContentSlug,
+) =>
+  queryOptions({
+    queryKey: publicContentQueryKey(slug),
+    queryFn: ({ signal }) => fetchPublicContentBySlug(slug, { signal }),
+    staleTime: 1000 * 60 * 5,
+  });
+
+export const getVisiblePublicSectionContent = (
+  content: PublicSectionContent | undefined,
+): PublicSectionVisibility => {
+  const heading = content?.heading.trim() ?? "";
+  const subheading = content?.subheading.trim() ?? "";
+
+  return {
+    heading,
+    subheading,
+    hasContent: Boolean(heading || subheading),
+  };
+};

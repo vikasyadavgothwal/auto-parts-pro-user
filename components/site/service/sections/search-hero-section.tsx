@@ -5,18 +5,17 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { PublicSectionIntro } from "@/components/site/public-content/public-section-intro"
 export function SearchHeroSection() {
   return (
     <section className="bg-gradient-to-b from-brand-panel to-brand-surface py-16">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-white sm:text-5xl">
-            Find Trusted Auto Services
-          </h1>
-          <p className="text-lg text-brand-muted sm:text-xl">
-            Book certified mechanics and garages near you
-          </p>
-        </div>
+        <PublicSectionIntro
+          slug="services"
+          wrapperClassName="mb-8 text-center"
+          headingClassName="mb-4 text-4xl font-bold text-white sm:text-5xl"
+          subheadingClassName="text-lg text-brand-muted sm:text-xl"
+        />
         <div className="mx-auto max-w-4xl">
           <Card className="flex flex-col gap-2 p-2 md:flex-row  md:rounded-full">
             <div className="flex flex-1 items-center gap-3 px-4">

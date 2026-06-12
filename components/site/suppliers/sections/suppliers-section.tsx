@@ -24,23 +24,18 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { suppliers } from "@/lib/data/suppliers"
+import { PublicSectionIntro } from "@/components/site/public-content/public-section-intro"
 
 export function SuppliersSection() {
   return (
     <main className="">
-      <div className="mb:mb-12 mb-5  bg-gradient-to-b from-brand-panel to-brand-surface py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
-              Find Trusted Auto Parts Suppliers
-            </h1>
-            <p className="text-base text-brand-muted sm:text-lg lg:text-xl">
-              Browse verified suppliers, compare trust scores, and get the best
-              parts for your vehicle
-            </p>
-          </div>
-        </div>
-      </div>
+      <PublicSectionIntro
+        slug="suppliers"
+        wrapperClassName="mb-5 bg-gradient-to-b from-brand-panel to-brand-surface py-16 md:mb-12"
+        contentClassName="mx-auto max-w-4xl px-4 text-center sm:px-6"
+        headingClassName="mb-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl"
+        subheadingClassName="text-base text-brand-muted sm:text-lg lg:text-xl"
+      />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <Card className="mb-8 p-4 sm:p-6">
