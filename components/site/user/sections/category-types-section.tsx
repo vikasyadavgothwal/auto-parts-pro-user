@@ -2,16 +2,24 @@ import Link from "next/link";
 import { SectionHeading } from "@/components/site/shared/section-heading";
 import { Card } from "@/components/ui/card";
 import { categories } from "@/lib/data/user";
-export function CategoryTypesSection() {
+import { getPublicText, type HomeCategoryConfig } from "@/lib/public-content";
+
+export function CategoryTypesSection({ config }: { config?: HomeCategoryConfig }) {
+  const heading = getPublicText(config?.heading);
+  const subheading = getPublicText(config?.subheading);
+  const bottomHeading = getPublicText(config?.bottomHeading);
+
   return (
     <section className="bg-brand-surface md:py-24 py-10">
       <div className="site-container">
-        <SectionHeading
-          eyebrow="Explore By Type"
-          title="Browse by Category"
-          description="Explore our extensive catalog of auto parts"
-          className="mb-16"
-        />
+        {heading || subheading ? (
+          <SectionHeading
+            eyebrow="Explore By Type"
+            title={heading}
+            description={subheading}
+            className="mb-16"
+          />
+        ) : null}
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
           {categories.map((category) => {
@@ -43,6 +51,12 @@ export function CategoryTypesSection() {
             );
           })}
         </div>
+
+        {bottomHeading ? (
+          <p className="mx-auto mt-10 max-w-3xl text-center text-lg font-medium text-white">
+            {bottomHeading}
+          </p>
+        ) : null}
       </div>
     </section>
   );

@@ -1,17 +1,19 @@
-import { BusinessCTASection } from "@/components/site/business/sections/cta-section"
-import { BusinessFeaturesSection } from "@/components/site/business/sections/features-section"
-import { FleetOperationsSection } from "@/components/site/business/sections/fleet-operations-section"
-import { BusinessHeroSection } from "@/components/site/business/sections/hero-section"
-import { PricingSection } from "@/components/site/business/sections/pricing-section"
+import { BusinessPageContent } from "@/components/site/business/business-page-content"
+import { PublicContentBoundary } from "@/components/site/public-content/public-content-boundary"
+import { getPublicContentMetadata } from "@/lib/public-seo"
+
+export const dynamic = "force-dynamic"
+
+export const generateMetadata = () =>
+  getPublicContentMetadata("for-business", {
+    title: "Business | Auto Parts Pro",
+    description: "Business procurement tools for repair shops and fleets.",
+  })
 
 export default function BusinessPage() {
   return (
-    <>
-      <BusinessHeroSection />
-      <BusinessFeaturesSection />
-      <PricingSection />
-      <FleetOperationsSection />
-      <BusinessCTASection />
-    </>
+    <PublicContentBoundary slug="for-business">
+      <BusinessPageContent />
+    </PublicContentBoundary>
   )
 }
