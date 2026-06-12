@@ -5,17 +5,32 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { products } from "@/lib/data/user"
+import {
+  getPublicText,
+  type HomeFeaturedPartsConfig,
+} from "@/lib/public-content"
 
-export function FeaturedPartsSection() {
+export function FeaturedPartsSection({
+  config,
+}: {
+  config?: HomeFeaturedPartsConfig
+}) {
+  const heading = getPublicText(config?.heading)
+  const subheading = getPublicText(config?.subheading)
+  const buttonText = getPublicText(config?.buttonText)
+  const buttonSlug = getPublicText(config?.buttonSlug)
+
   return (
     <section className="bg-brand-surface pb-10">
       <div className="site-container">
-        <SectionHeading
-          eyebrow="Featured Parts"
-          title="Top-Rated Products"
-          // description="Best-selling parts from verified suppliers"
-          className="mb-16"
-        />
+        {heading || subheading ? (
+          <SectionHeading
+            eyebrow="Featured Parts"
+            title={heading}
+            description={subheading}
+            className="mb-16"
+          />
+        ) : null}
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {products.map((product) => (
@@ -48,16 +63,18 @@ export function FeaturedPartsSection() {
           ))}
         </div>
 
-        <div className="my-12 text-center">
-          <Button
-            asChild
-            className="h-auto rounded-full px-8 py-4 text-base font-medium hover:bg-brand-primary-hover"
-          >
-            <Link href="/search">
-              <span>View All Parts</span>
-            </Link>
-          </Button>
-        </div>
+        {buttonText && buttonSlug ? (
+          <div className="my-12 text-center">
+            <Button
+              asChild
+              className="h-auto rounded-full px-8 py-4 text-base font-medium hover:bg-brand-primary-hover"
+            >
+              <Link href={buttonSlug}>
+                <span>{buttonText}</span>
+              </Link>
+            </Button>
+          </div>
+        ) : null}
       </div>
     </section>
   )

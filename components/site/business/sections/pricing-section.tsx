@@ -1,116 +1,104 @@
 import { CheckIcon } from "@/components/icons/site-icons";
-import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog";
 import { SectionHeading } from "@/components/site/shared/section-heading";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { plans } from "@/lib/data/business";
+import {
+  getPublicText,
+  hasPublicText,
+  type ForBusinessPricingConfig,
+} from "@/lib/public-content";
 
-export function PricingSection() {
+type PricingSectionProps = {
+  config?: ForBusinessPricingConfig;
+};
+
+export function PricingSection({ config }: PricingSectionProps) {
+  const heading = getPublicText(config?.heading);
+  const subheading = getPublicText(config?.subheading);
+  const plans = (config?.plans ?? [])
+    .map((plan) => {
+      const keyPoints = (plan.keyPoints ?? []).map(getPublicText).filter(Boolean);
+
+      return {
+        heading: getPublicText(plan.heading),
+        subheading: getPublicText(plan.subheading),
+        price: getPublicText(plan.price),
+        duration: getPublicText(plan.duration),
+        keyPoints,
+      };
+    })
+    .filter((plan) =>
+      hasPublicText(plan.heading, plan.subheading, plan.price, plan.duration) ||
+      plan.keyPoints.length > 0,
+    );
+
+  if (!hasPublicText(heading, subheading) && plans.length === 0) {
+    return null;
+  }
+
   return (
     <section id="pricing" className="bg-brand-surface py-10 md:py-24">
       <div className="site-container">
-        
-        {/* Heading */}
-        <div className="mb-16 text-center">
-          <span className="uppercase text-primary">
-            For Repair Shops
-          </span>
+        {heading ? (
+          <SectionHeading
+            title={heading}
+            description={subheading || undefined}
+            className="mb-16"
+          />
+        ) : subheading ? (
+          <p className="mx-auto mb-16 max-w-2xl text-center text-lg text-brand-muted">
+            {subheading}
+          </p>
+        ) : null}
 
-          <SectionHeading title="Plans That Scale With You" />
-        </div>
+        {plans.length > 0 ? (
+          <div className="grid gap-8 md:grid-cols-3">
+            {plans.map((plan, index) => (
+              <Card
+                key={`${plan.heading}-${index}`}
+                className="relative flex h-full flex-col border-2 border-border p-8"
+              >
+                {plan.heading ? (
+                  <h3 className="mb-2 text-2xl font-bold text-white">
+                    {plan.heading}
+                  </h3>
+                ) : null}
 
-        {/* Cards */}
-        <div className="grid gap-8 md:grid-cols-3">
-          {plans.map((plan) => (
-            <Card
-              key={plan.name}
-              className={`relative flex h-full flex-col p-8 ${
-                plan.popular
-                  ? "border-primary shadow-2xl shadow-primary/20"
-                  : "border-2 border-border"
-              }`}
-            >
-              
-              {/* Popular badge */}
-              {plan.popular && (
-                <Badge className="absolute left-1/2 -top-4 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-sm font-semibold text-primary-foreground">
-                  Most Popular
-                </Badge>
-              )}
+                {plan.subheading ? (
+                  <p className="mb-6 text-brand-muted">
+                    {plan.subheading}
+                  </p>
+                ) : null}
 
-              {/* Plan name */}
-              <h3 className="mb-2 text-2xl font-bold text-white">
-                {plan.name}
-              </h3>
+                {plan.price || plan.duration ? (
+                  <div className="mb-6">
+                    {plan.price ? (
+                      <span className="text-5xl font-bold text-white">
+                        {plan.price}
+                      </span>
+                    ) : null}
 
-              {/* Description */}
-              <p className="mb-6 text-brand-muted">
-                {plan.description}
-              </p>
+                    {plan.duration ? (
+                      <span className="text-brand-muted">
+                        {plan.duration}
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
 
-              {/* Price */}
-              <div className="mb-6">
-                <span className="text-5xl font-bold text-white">
-                  {plan.price}
-                </span>
-
-                {plan.suffix && (
-                  <span className="text-brand-muted">
-                    {plan.suffix}
-                  </span>
-                )}
-              </div>
-
-              {/* Features */}
-              <ul className="mb-8 space-y-4">
-                {plan.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-3"
-                  >
-                    <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-
-                    <span className="text-brand-muted">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* Button always at bottom */}
-              <div className="mt-auto">
-                {plan.buttonText === "Start Free Trial" ||
-                plan.buttonText === "Contact Sales" ? (
-                  <BusinessDemoDialogButton
-                    source={`Pricing ${plan.buttonText}`}
-                    className={`h-12 w-full rounded-xl font-medium ${
-                      plan.popular
-                        ? "hover:bg-brand-primary-hover"
-                        : "border border-border bg-brand-surface text-primary hover:bg-border"
-                    }`}
-                    variant={plan.popular ? "default" : "outline"}
-                  >
-                    {plan.buttonText}
-                  </BusinessDemoDialogButton>
-                ) : (
-                  <Button
-                    className={`h-12 w-full rounded-xl font-medium ${
-                      plan.popular
-                        ? "hover:bg-brand-primary-hover"
-                        : "border border-border bg-brand-surface text-primary hover:bg-border"
-                    }`}
-                    variant={plan.popular ? "default" : "outline"}
-                  >
-                    {plan.buttonText}
-                  </Button>
-                )}
-              </div>
-
-            </Card>
-          ))}
-        </div>
-
+                {plan.keyPoints.length > 0 ? (
+                  <ul className="mb-2 space-y-4">
+                    {plan.keyPoints.map((feature) => (
+                      <li key={feature} className="flex items-start gap-3">
+                        <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                        <span className="text-brand-muted">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </Card>
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   );

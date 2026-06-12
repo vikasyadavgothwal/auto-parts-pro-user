@@ -1,13 +1,6 @@
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import {
-  publicSectionContentQueryOptions,
-  type SectionPublicContentSlug,
-} from "@/lib/public-content";
+import type { SectionPublicContentSlug } from "@/lib/public-content";
+import { PublicContentBoundary } from "./public-content-boundary";
 
 export async function PublicSectionContentBoundary({
   slug,
@@ -16,13 +9,7 @@ export async function PublicSectionContentBoundary({
   slug: SectionPublicContentSlug;
   children: ReactNode;
 }) {
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(publicSectionContentQueryOptions(slug));
-
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      {children}
-    </HydrationBoundary>
+    <PublicContentBoundary slug={slug}>{children}</PublicContentBoundary>
   );
 }

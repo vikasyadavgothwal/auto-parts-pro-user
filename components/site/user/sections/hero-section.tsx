@@ -1,11 +1,24 @@
 "use client"
 
-import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { features } from "@/lib/data/user"
 import { motion } from "framer-motion"
+import {
+  getPublicText,
+  type HomeBannerConfig,
+} from "@/lib/public-content"
 
-export function HeroSection() {
+export function HeroSection({ config }: { config?: HomeBannerConfig }) {
+  const backgroundImage = getPublicText(config?.backgroundImage) || "/home.jpg"
+  const badgeText = getPublicText(config?.badgeText)
+  const heading = getPublicText(config?.heading)
+  const subheading = getPublicText(config?.subheading)
+  const keyPoints = (config?.keyPoints ?? []).map(getPublicText).filter(Boolean)
+
+  if (!badgeText && !heading && !subheading && keyPoints.length === 0) {
+    return null
+  }
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -30,62 +43,61 @@ export function HeroSection() {
       variants={containerVariants}
     >
       <div className="absolute inset-0">
-        <Image
-          src="/home.jpg"
-          alt=""
-          fill
-          preload
-          sizes="100vw"
-          className="object-cover"
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
         />
         <div className="absolute inset-0 bg-black/24" />
       </div>
 
       <div className="site-container relative py-24">
         <div className="mb-16 max-w-3xl text-left">
-          <motion.div variants={itemVariants}>
-            <Badge
-              variant="outline"
-              className="mb-6 rounded-full border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white"
+          {badgeText ? (
+            <motion.div variants={itemVariants}>
+              <Badge
+                variant="outline"
+                className="mb-6 rounded-full border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-white"
+              >
+                {badgeText}
+              </Badge>
+            </motion.div>
+          ) : null}
+
+          {heading ? (
+            <motion.h1 
+              variants={itemVariants}
+              className="mb-6 max-w-4xl text-[48px] font-bold leading-tight text-white"
             >
-              PREMIUM AUTO PARTS MARKETPLACE
-            </Badge>
-          </motion.div>
+              {heading}
+            </motion.h1>
+          ) : null}
 
-          <motion.h1 
-            variants={itemVariants}
-            className="mb-6 text-[48px] font-bold leading-tight text-white"
-          >
-            Find the Right Part,
-            <br />
-            <span className="text-white">Instantly</span>
-          </motion.h1>
-
-          <motion.p 
-            variants={itemVariants}
-            className="text-[20px] leading-relaxed text-white"
-          >
-            Access thousands of verified OEM and aftermarket parts from trusted
-            suppliers.
-            <br />
-            Search by VIN for guaranteed fitment.
-          </motion.p>
+          {subheading ? (
+            <motion.p 
+              variants={itemVariants}
+              className="text-[20px] leading-relaxed text-white"
+            >
+              {subheading}
+            </motion.p>
+          ) : null}
         </div>
 
-        <motion.div 
-          variants={itemVariants}
-          className="mt-6 flex flex-col justify-start gap-6"
-        >
-          {features.map((feature) => {
-            const Icon = feature.icon
-            return (
-              <div key={feature.title} className="flex items-center gap-3">
-                  <Icon className="h-5 w-5 text-white" />
-                <span className="text-sm text-white">{feature.title}</span>
-              </div>
-            )
-          })}
-        </motion.div>
+        {keyPoints.length ? (
+          <motion.div 
+            variants={itemVariants}
+            className="mt-6 flex flex-col justify-start gap-6"
+          >
+            {keyPoints.map((point, index) => {
+              const Icon = features[index % features.length]?.icon
+              return (
+                <div key={point} className="flex items-center gap-3">
+                  {Icon ? <Icon className="h-5 w-5 text-white" /> : null}
+                  <span className="text-sm text-white">{point}</span>
+                </div>
+              )
+            })}
+          </motion.div>
+        ) : null}
       </div>
     </motion.section>
   )

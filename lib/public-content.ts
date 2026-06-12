@@ -2,6 +2,21 @@ import { queryOptions } from "@tanstack/react-query";
 import { publicApiRequest } from "@/lib/api/client";
 import type {
   LegalPublicContentSlug,
+  ConfigPublicContentSlug,
+  ForBusinessBannerConfig,
+  ForBusinessBusinessSolutionsConfig,
+  ForBusinessCtaConfig,
+  ForBusinessFleetManagerConfig,
+  ForBusinessPageConfig,
+  ForBusinessPricingConfig,
+  HomeBannerConfig,
+  HomeCategoryConfig,
+  HomeCTAConfig,
+  HomeEnterpriseConfig,
+  HomeFeaturedPartsConfig,
+  HomePageConfig,
+  HomeProcessStep,
+  HomeWhyChooseUsConfig,
   PublicContentBySlug,
   PublicContentError,
   PublicContentResponse,
@@ -10,12 +25,28 @@ import type {
   PublicSectionContent,
   PublicSectionVisibility,
   SectionPublicContentSlug,
+  TextPair,
 } from "@/types/api/public-content";
 
 const PUBLIC_CONTENT_PATH = "/api/v1/user/public-content";
 
 export type {
   LegalPublicContentSlug,
+  ConfigPublicContentSlug,
+  ForBusinessBannerConfig,
+  ForBusinessBusinessSolutionsConfig,
+  ForBusinessCtaConfig,
+  ForBusinessFleetManagerConfig,
+  ForBusinessPageConfig,
+  ForBusinessPricingConfig,
+  HomeBannerConfig,
+  HomeCategoryConfig,
+  HomeCTAConfig,
+  HomeEnterpriseConfig,
+  HomeFeaturedPartsConfig,
+  HomePageConfig,
+  HomeProcessStep,
+  HomeWhyChooseUsConfig,
   PublicContentBySlug,
   PublicContentError,
   PublicContentResponse,
@@ -24,6 +55,7 @@ export type {
   PublicSectionContent,
   PublicSectionVisibility,
   SectionPublicContentSlug,
+  TextPair,
 };
 
 export const publicContentQueryKey = (slug: PublicContentSlug) =>
@@ -63,21 +95,31 @@ export async function fetchPublicContentBySlug<Slug extends PublicContentSlug>(
   return response;
 }
 
-export const publicContentQueryOptions = (slug: LegalPublicContentSlug) =>
-  queryOptions({
-    queryKey: publicContentQueryKey(slug),
-    queryFn: ({ signal }) => fetchPublicContentBySlug(slug, { signal }),
-    staleTime: 1000 * 60 * 5,
-  });
+export const publicContentQueryOptions = <Slug extends LegalPublicContentSlug>(
+  slug: Slug,
+) =>
+  publicContentBySlugQueryOptions(slug);
 
-export const publicSectionContentQueryOptions = (
-  slug: SectionPublicContentSlug,
+export const publicContentBySlugQueryOptions = <Slug extends PublicContentSlug>(
+  slug: Slug,
 ) =>
   queryOptions({
     queryKey: publicContentQueryKey(slug),
     queryFn: ({ signal }) => fetchPublicContentBySlug(slug, { signal }),
     staleTime: 1000 * 60 * 5,
   });
+
+export const publicSectionContentQueryOptions = <
+  Slug extends SectionPublicContentSlug,
+>(
+  slug: Slug,
+) => publicContentBySlugQueryOptions(slug);
+
+export const publicConfigContentQueryOptions = <
+  Slug extends ConfigPublicContentSlug,
+>(
+  slug: Slug,
+) => publicContentBySlugQueryOptions(slug);
 
 export const getVisiblePublicSectionContent = (
   content: PublicSectionContent | undefined,
@@ -91,3 +133,9 @@ export const getVisiblePublicSectionContent = (
     hasContent: Boolean(heading || subheading),
   };
 };
+
+export const getPublicText = (value: string | null | undefined) =>
+  value?.trim() ?? "";
+
+export const hasPublicText = (...values: Array<string | null | undefined>) =>
+  values.some((value) => Boolean(getPublicText(value)));
