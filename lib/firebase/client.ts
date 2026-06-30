@@ -7,6 +7,8 @@ import {
   type User,
 } from "firebase/auth";
 
+import type { UserAccountRole } from "@/types/api/user-auth";
+
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -32,16 +34,29 @@ export function getFirebaseClientAuth(): Auth {
   return getAuth(app);
 }
 
-const getVerificationContinueUrl = (): string => {
+const getVerificationContinueUrl = (
+  firebaseUid: string,
+  role?: UserAccountRole,
+): string => {
   const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   const siteUrl = configuredSiteUrl || window.location.origin;
+  const url = new URL("/auth/email-verified", siteUrl);
 
-  return new URL("/auth/email-verified", siteUrl).toString();
+  url.searchParams.set("uid", firebaseUid);
+
+  if (role) {
+    url.searchParams.set("role", role);
+  }
+
+  return url.toString();
 };
 
-export async function sendUserEmailVerification(user: User): Promise<void> {
+export async function sendUserEmailVerification(
+  user: User,
+  role?: UserAccountRole,
+): Promise<void> {
   const actionCodeSettings: ActionCodeSettings = {
-    url: getVerificationContinueUrl(),
+    url: getVerificationContinueUrl(user.uid, role),
     handleCodeInApp: false,
   };
 

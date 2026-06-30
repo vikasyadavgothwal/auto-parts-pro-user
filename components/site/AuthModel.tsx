@@ -37,16 +37,36 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FieldSeparator } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ApiRequestError } from "@/lib/api/client";
+import {
+  getPendingAccountRegistration,
+  setPendingAccountRegistration,
+  validateSignupDetails,
+} from "@/lib/account-registration";
 import {
   getFirebaseClientAuth,
   sendUserEmailVerification,
 } from "@/lib/firebase/client";
 import { establishApplicationSession } from "@/lib/user-auth";
+import type { UserAccountRole } from "@/types/api/user-auth";
 
 type AuthMode = "signin" | "signup";
-type AccountType = "buyer" | "supplier";
+type AccountType = UserAccountRole;
 type LoginMethod = "email" | "phone";
+
+const ACCOUNT_TYPE_DESCRIPTIONS: Record<AccountType, string> = {
+  Fleet: "Manage vehicles and source parts for your fleet.",
+  User: "Shop for parts for your personal vehicle.",
+  Garage: "Source parts for customer repairs and services.",
+  Supplier: "List and sell automotive parts.",
+};
 
 type AuthModalCardProps = {
   onClose?: () => void;
@@ -90,7 +110,7 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
   const [mode, setMode] = useState<AuthMode>("signin");
   const [loginMethod, setLoginMethod] = useState<LoginMethod>("email");
   const [showPassword, setShowPassword] = useState(false);
-  const [accountType, setAccountType] = useState<AccountType>("buyer");
+  const [accountType, setAccountType] = useState<AccountType>("User");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -120,8 +140,15 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
   const finishAuthentication = async (
     user: User,
     forceRefresh = false,
+    requestedRole?: AccountType,
+    requestedDisplayName?: string,
   ) => {
-    await establishApplicationSession(user, forceRefresh);
+    await establishApplicationSession(
+      user,
+      forceRefresh,
+      requestedRole,
+      requestedDisplayName,
+    );
     router.refresh();
     onClose?.();
   };
@@ -165,19 +192,12 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
         return;
       }
 
-      if (!acceptedTerms) {
-        throw new Error("Accept the Terms of Service and Privacy Policy.");
-      }
-
-      const displayName =
-        accountType === "buyer" ? fullName.trim() : businessName.trim();
-      if (!displayName) {
-        throw new Error(
-          accountType === "buyer"
-            ? "Enter your full name."
-            : "Enter your business name.",
-        );
-      }
+      const displayName = validateSignupDetails({
+        role: accountType,
+        fullName,
+        businessName,
+        acceptedTerms,
+      });
 
       const credential = await createUserWithEmailAndPassword(
         auth,
@@ -185,7 +205,12 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
         password,
       );
       await updateProfile(credential.user, { displayName });
-      await sendUserEmailVerification(credential.user);
+      setPendingAccountRegistration(
+        credential.user.uid,
+        accountType,
+        displayName,
+      );
+      await sendUserEmailVerification(credential.user, accountType);
       setVerificationUser(credential.user);
       setMode("signin");
       setPassword("");
@@ -201,7 +226,10 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
         throw new Error("Sign in with your email and password first.");
       }
 
-      await sendUserEmailVerification(verificationUser);
+      await sendUserEmailVerification(
+        verificationUser,
+        getPendingAccountRegistration(verificationUser.uid)?.role ?? accountType,
+      );
       setStatusMessage("A new verification email has been sent.");
     });
   };
@@ -226,13 +254,34 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
 
   const handleGoogleSignIn = () => {
     void runAuthAction(async () => {
+      const signupDisplayName =
+        mode === "signup"
+          ? validateSignupDetails({
+              role: accountType,
+              fullName,
+              businessName,
+              acceptedTerms,
+            })
+          : undefined;
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
       const credential = await signInWithPopup(
         getFirebaseClientAuth(),
         provider,
       );
-      await finishAuthentication(credential.user);
+      if (signupDisplayName) {
+        setPendingAccountRegistration(
+          credential.user.uid,
+          accountType,
+          signupDisplayName,
+        );
+      }
+      await finishAuthentication(
+        credential.user,
+        false,
+        signupDisplayName ? accountType : undefined,
+        signupDisplayName,
+      );
     });
   };
 
@@ -282,10 +331,10 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-5">
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
 
-      <Card className="relative mx-0 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl no-scrollbar md:mx-4">
+      <Card className="relative max-h-[calc(100dvh-1.5rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl no-scrollbar sm:max-h-[90vh]">
         <Button
           variant="ghost"
           size="icon"
@@ -455,47 +504,54 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
             </div>
           ) : (
             <form className="px-6 pb-8 sm:px-8" onSubmit={handleEmailSubmit}>
-              <div className="mb-6">
-                <Label className="mb-3 block text-sm font-medium text-foreground">
+              <div className="mb-6 space-y-2">
+                <Label
+                  htmlFor="account-type"
+                  className="block text-sm font-medium text-foreground"
+                >
                   Account Type
                 </Label>
-                <div className="grid grid-cols-2 gap-3">
-                  <AccountTypeButton
-                    active={accountType === "buyer"}
-                    icon={<UserIcon className="mx-auto mb-2 h-6 w-6" />}
-                    label="Buyer"
-                    description="Shop & repair"
-                    onClick={() => setAccountType("buyer")}
-                  />
-                  <AccountTypeButton
-                    active={accountType === "supplier"}
-                    icon={<BuildingIcon className="mx-auto mb-2 h-6 w-6" />}
-                    label="Supplier"
-                    description="Sell parts"
-                    onClick={() => setAccountType("supplier")}
-                  />
-                </div>
+                <Select
+                  value={accountType}
+                  onValueChange={(value) => setAccountType(value as AccountType)}
+                >
+                  <SelectTrigger
+                    id="account-type"
+                    className="h-12 w-full rounded-xl bg-background"
+                  >
+                    <SelectValue placeholder="Select account type" />
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectItem value="Fleet">Fleet</SelectItem>
+                    <SelectItem value="User">User</SelectItem>
+                    <SelectItem value="Garage">Garage</SelectItem>
+                    <SelectItem value="Supplier">Supplier</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs leading-5 text-brand-muted">
+                  {ACCOUNT_TYPE_DESCRIPTIONS[accountType]}
+                </p>
               </div>
 
               <AuthField
-                label={accountType === "buyer" ? "Full Name" : "Business Name"}
+                label={accountType === "User" ? "Full Name" : "Business Name"}
               >
                 <div className="relative">
-                  {accountType === "buyer" ? (
+                  {accountType === "User" ? (
                     <UserIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
                   ) : (
                     <BuildingIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
                   )}
                   <Input
-                    value={accountType === "buyer" ? fullName : businessName}
+                    value={accountType === "User" ? fullName : businessName}
                     onChange={(event) =>
-                      accountType === "buyer"
+                      accountType === "User"
                         ? setFullName(event.target.value)
                         : setBusinessName(event.target.value)
                     }
                     autoComplete="name"
                     placeholder={
-                      accountType === "buyer"
+                      accountType === "User"
                         ? "Enter your name"
                         : "Enter business name"
                     }
@@ -709,36 +765,6 @@ function GoogleButton({
       <GoogleBrandIcon className="h-5 w-5" />
       Continue with Google
     </Button>
-  );
-}
-
-function AccountTypeButton({
-  active,
-  icon,
-  label,
-  description,
-  onClick,
-}: {
-  active: boolean;
-  icon: React.ReactNode;
-  label: string;
-  description: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`rounded-xl border-2 p-4 transition-colors ${
-        active
-          ? "border-primary bg-primary/10 text-foreground"
-          : "border-border text-brand-muted hover:border-primary/50"
-      }`}
-    >
-      {icon}
-      <div className="text-sm font-medium">{label}</div>
-      <div className="mt-1 text-xs text-brand-muted">{description}</div>
-    </button>
   );
 }
 

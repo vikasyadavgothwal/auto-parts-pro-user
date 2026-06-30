@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { onAuthStateChanged, reload } from "firebase/auth";
 
 import { Button } from "@/components/ui/button";
+import {
+  readRegistrationFromSearch,
+  setPendingAccountRegistration,
+} from "@/lib/account-registration";
 import { getFirebaseClientAuth } from "@/lib/firebase/client";
 import { establishApplicationSession } from "@/lib/user-auth";
 
@@ -17,6 +21,13 @@ export function EmailVerifiedPage() {
 
   useEffect(() => {
     let active = true;
+    const registration = readRegistrationFromSearch(window.location.search);
+    if (registration) {
+      setPendingAccountRegistration(
+        registration.firebaseUid,
+        registration.role,
+      );
+    }
     const auth = getFirebaseClientAuth();
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!active) {
@@ -28,6 +39,11 @@ export function EmailVerifiedPage() {
         return;
       }
 
+      if (registration && registration.firebaseUid !== user.uid) {
+        setState("signin");
+        return;
+      }
+
       try {
         await reload(user);
         if (!user.emailVerified) {
@@ -35,7 +51,7 @@ export function EmailVerifiedPage() {
           return;
         }
 
-        await establishApplicationSession(user, true);
+        await establishApplicationSession(user, true, registration?.role);
         setState("authenticated");
         router.replace("/");
         router.refresh();

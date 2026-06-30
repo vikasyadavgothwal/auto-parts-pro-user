@@ -1,6 +1,11 @@
+export type UserAccountRole = "Fleet" | "User" | "Garage" | "Supplier";
+
 export type FirebaseSessionRequest = {
   firebaseIdToken: string;
   installationId: string;
+  requestedRole?: UserAccountRole;
+  requestedRoleUid?: string;
+  requestedDisplayName?: string;
 };
 
 export type UserAuthProfile = {

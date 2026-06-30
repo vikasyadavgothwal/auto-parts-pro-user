@@ -1,8 +1,13 @@
 import type { User } from "firebase/auth";
 
+import {
+  clearPendingAccountRegistration,
+  getPendingAccountRegistration,
+} from "@/lib/account-registration";
 import { apiInterpreter } from "@/lib/api/client";
 import type {
   FirebaseSessionRequest,
+  UserAccountRole,
   UserAuthApiResponse,
   UserAuthApiSuccess,
 } from "@/types/api/user-auth";
@@ -32,7 +37,17 @@ export function getInstallationId(): string {
 export async function establishApplicationSession(
   firebaseUser: User,
   forceRefresh = false,
+  requestedRole?: UserAccountRole,
+  requestedDisplayName?: string,
 ): Promise<UserAuthApiSuccess> {
+  const pendingRegistration = getPendingAccountRegistration(firebaseUser.uid);
+  const resolvedRole = requestedRole ?? pendingRegistration?.role;
+  const resolvedDisplayName =
+    requestedDisplayName?.trim() ||
+    (pendingRegistration && pendingRegistration.role === resolvedRole
+      ? pendingRegistration.displayName
+      : undefined) ||
+    (resolvedRole ? firebaseUser.displayName?.trim() : undefined);
   const firebaseIdToken = await firebaseUser.getIdToken(forceRefresh);
   const response = await apiInterpreter.public<
     UserAuthApiResponse,
@@ -43,12 +58,17 @@ export async function establishApplicationSession(
     body: {
       firebaseIdToken,
       installationId: getInstallationId(),
+      requestedRole: resolvedRole,
+      requestedRoleUid: resolvedRole ? firebaseUser.uid : undefined,
+      requestedDisplayName: resolvedDisplayName,
     },
   });
 
   if (!response.ok) {
     throw new Error(response.message);
   }
+
+  clearPendingAccountRegistration(firebaseUser.uid);
 
   return response;
 }
