@@ -8,20 +8,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { companyFields, vehicleFields } from "@/lib/data/request";
+const MAX_VEHICLE_YEAR = new Date().getFullYear() + 1;
 type TextFieldProps = {
+  name: string;
   label: string;
   placeholder?: string;
   required?: boolean;
   type?: HTMLInputTypeAttribute;
+  min?: number;
+  max?: number;
+  maxLength?: number;
 };
 type PartRequest = {
   id: number;
 };
 function TextField({
+  name,
   label,
   placeholder,
   required,
   type = "text",
+  min,
+  max,
+  maxLength,
 }: TextFieldProps) {
   return (
     <div>
@@ -30,8 +39,12 @@ function TextField({
       </Label>
 
       <Input
+        name={name}
         required={required}
         type={type}
+        min={min}
+        max={max}
+        maxLength={maxLength}
         placeholder={placeholder}
         className="h-12 rounded-xl bg-brand-surface px-4 text-base"
       />
@@ -74,8 +87,22 @@ function PartRequestCard({
             <Label className="mb-2">Part Name / Description</Label>
             <Input
               name={`parts.${part.id}.name`}
+              required
               placeholder="Front brake pads"
               aria-label={`Part ${partNumber} name`}
+              className="h-12 rounded-xl bg-brand-panel px-4 text-base"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <Label className="mb-2">Target Price (AED)</Label>
+            <Input
+              name={`parts.${part.id}.targetPrice`}
+              type="number"
+              min={0}
+              max={100000000}
+              step="0.01"
+              placeholder="0.00"
               className="h-12 rounded-xl bg-brand-panel px-4 text-base"
             />
           </div>
@@ -96,6 +123,9 @@ function PartRequestCard({
               name={`parts.${part.id}.quantity`}
               type="number"
               min={1}
+              max={10000}
+              step={1}
+              required
               defaultValue={1}
               aria-label={`Part ${partNumber} quantity`}
               className="h-12 rounded-xl bg-brand-panel px-4 text-base"
@@ -106,7 +136,7 @@ function PartRequestCard({
         <div>
           <Label className="mb-2">Additional Notes</Label>
           <Textarea
-            name={`parts.${part.id}.requirements`}
+            name={`parts.${part.id}.notes`}
             rows={2}
             placeholder="Any specific requirements or preferences..."
             aria-label={`Part ${partNumber} requirements`}
@@ -126,12 +156,14 @@ export function CompanyInformationSection() {
       </h2>
 
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-        {companyFields.map(([label, placeholder]) => (
+        {companyFields.map(([label, placeholder], index) => (
           <TextField
             key={label}
+            name={["companyName", "contactName", "email", "phone"][index]}
             label={label}
             placeholder={placeholder}
             required
+            type={index === 2 ? "email" : index === 3 ? "tel" : "text"}
           />
         ))}
       </div>
@@ -147,12 +179,17 @@ export function VehicleInformationSection() {
       </h2>
 
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-5">
-        <TextField label="VIN (Optional)" placeholder="1HGBH41JXMN109186" />
-        {vehicleFields.map((field) => (
+        <TextField name="vehicleVin" label="VIN (Optional)" placeholder="1HGBH41JXMN109186" maxLength={17} />
+        {vehicleFields.map((field, index) => (
           <TextField
             key={field.label}
+            name={["vehicleYear", "vehicleMake", "vehicleModel", "vehicleTrim"][index]}
             label={field.label}
             placeholder={field.placeholder}
+            required={index < 3}
+            type={index === 0 ? "number" : "text"}
+            min={index === 0 ? 1886 : undefined}
+            max={index === 0 ? MAX_VEHICLE_YEAR : undefined}
           />
         ))}
       </div>
@@ -221,6 +258,20 @@ export function PartsNeededSection() {
           <p className="text-sm text-brand-placeholder">
             PDF, PNG, JPG up to 10MB
           </p>
+          <Input
+            name="attachment"
+            type="file"
+            accept="application/pdf,image/png,image/jpeg"
+            onChange={(event) => {
+              const file = event.target.files?.[0]
+              event.target.setCustomValidity(
+                file && file.size > 10 * 1024 * 1024
+                  ? "Attachment must be 10 MB or smaller."
+                  : "",
+              )
+            }}
+            className="mx-auto mt-4 max-w-md bg-brand-panel"
+          />
         </div>
       </div>
     </Card>
