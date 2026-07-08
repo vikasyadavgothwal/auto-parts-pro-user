@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { type FormEvent, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useMutation } from "@tanstack/react-query"
@@ -34,6 +33,14 @@ const buildConfirmedFitmentUrl = (vehicle: VinSearchVehicle) => {
   return `/search?${params.toString()}`
 }
 
+const buildPartNumberSearchUrl = (partNumber: string) => {
+  const params = new URLSearchParams({
+    partNumber: partNumber.trim(),
+  })
+
+  return `/search?${params.toString()}`
+}
+
 export function SearchSection({ config }: { config?: TextPair }) {
   const router = useRouter()
   const heading = getPublicText(config?.heading)
@@ -41,6 +48,7 @@ export function SearchSection({ config }: { config?: TextPair }) {
   const vinLabel = heading || "Vehicle Identification Number (VIN)"
   const partNumberLabel = subheading || "Vehicle Part Number"
   const [vin, setVin] = useState("")
+  const [partNumber, setPartNumber] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
   const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false)
   const [confirmedVehicle, setConfirmedVehicle] =
@@ -78,6 +86,19 @@ export function SearchSection({ config }: { config?: TextPair }) {
     setErrorMessage("")
     setIsErrorDialogOpen(false)
     vinSearch.mutate(vin)
+  }
+
+  const onPartNumberSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const normalizedPartNumber = partNumber.trim()
+
+    if (!normalizedPartNumber) {
+      setErrorMessage("Enter a part number before searching.")
+      setIsErrorDialogOpen(true)
+      return
+    }
+
+    router.push(buildPartNumberSearchUrl(normalizedPartNumber))
   }
 
   const onConfirmVehicle = () => {
@@ -126,30 +147,34 @@ export function SearchSection({ config }: { config?: TextPair }) {
             </div>
           </form>
 
-          <div className="flex flex-col gap-4 md:flex-row">
+          <form
+            onSubmit={onPartNumberSubmit}
+            className="flex flex-col gap-4 md:flex-row"
+          >
             <div className="flex-1">
               <Label className="mb-2 block text-sm font-medium text-brand-muted">
                 {partNumberLabel}
               </Label>
               <Input
                 type="text"
+                value={partNumber}
+                onChange={(event) => setPartNumber(event.target.value)}
                 placeholder="Enter Vehicle Part Number (e.g., BP-1234)"
                 className="h-14 bg-brand-panel px-5 text-base rounded-sm"
+                autoComplete="off"
               />
             </div>
 
             <div className="flex items-end">
               <Button
-                asChild
+                type="submit"
                 className="h-14 w-full rounded-full px-8 text-base font-medium hover:bg-brand-primary-hover md:w-auto"
               >
-                <Link href="/search2">
-                  <SearchIcon className="size-5 text-white" />
-                  <span>Search</span>
-                </Link>
+                <SearchIcon className="size-5 text-white" />
+                <span>Search</span>
               </Button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
       <GlobalMessageDialog

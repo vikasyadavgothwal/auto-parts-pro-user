@@ -1,4 +1,5 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
+
 import Link from "next/link";
 import {
   FitmentConfirmedIcon,
@@ -39,11 +40,10 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
         <div className="grid gap-5 lg:grid-cols-[2.2fr_1fr_1fr_1.2fr_1.2fr] lg:items-center">
           <div className="flex items-center gap-4">
             <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-[#E5E7EB]">
-              <Image
+              <img
                 src={offer.logo}
                 alt={offer.seller}
-                fill
-                className="object-cover"
+                className="h-full w-full object-cover"
               />
             </div>
 
@@ -51,6 +51,11 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
               <h4 className="mb-1.5 font-semibold text-[#0F172A]">
                 {offer.seller}
               </h4>
+              {offer.vendorSku ? (
+                <p className="mb-1 text-xs text-[#64748B]">
+                  SKU: {offer.vendorSku}
+                </p>
+              ) : null}
 
               <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
                 <div className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-0.5 text-xs text-green-600">
@@ -68,6 +73,11 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
                   <span>({offer.reviews})</span>
                 </div>
               </div>
+              {offer.description ? (
+                <p className="mt-2 line-clamp-2 text-xs text-[#64748B]">
+                  {offer.description}
+                </p>
+              ) : null}
             </div>
           </div>
 
@@ -118,14 +128,22 @@ export function CompareOffersSection({ offers }: CompareOffersSectionProps) {
           Compare Offers
         </h2>
         <p className="text-base text-[#9CA3AF] sm:text-lg">
-          Choose from 4 verified suppliers — best offer highlighted
+          Choose from {offers.length} verified suppliers — best offer highlighted
         </p>
       </div>
 
       <div className="space-y-4">
-        {offers.map((offer) => (
-          <OfferCard key={offer.seller} offer={offer} />
-        ))}
+        {offers.length > 0 ? (
+          offers.map((offer) => (
+            <OfferCard key={offer.id ?? offer.seller} offer={offer} />
+          ))
+        ) : (
+          <Card className="rounded-2xl border border-[#E5E7EB] bg-white shadow-none">
+            <CardContent className="p-6 text-center text-[#64748B]">
+              No supplier currently has live stock for this product.
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <Card className="mt-8 rounded-2xl border border-[#E5E7EB] bg-gradient-to-br from-slate-50 to-blue-50 shadow-none">

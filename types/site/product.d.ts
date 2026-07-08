@@ -7,6 +7,8 @@ export type ProductHighlight = {
 }
 
 export type ProductOffer = {
+  id?: string
+  vendorSku?: string | null
   seller: string
   logo: string
   rating: number
@@ -17,6 +19,7 @@ export type ProductOffer = {
   shipping: string
   shippingTime: string
   recommended: boolean
+  description?: string | null
 }
 
 export type RatingStarsProps = {

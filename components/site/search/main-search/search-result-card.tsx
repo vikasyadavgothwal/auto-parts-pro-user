@@ -1,4 +1,8 @@
-import Image from "next/image";
+"use client";
+
+/* eslint-disable @next/next/no-img-element */
+
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   FitmentConfirmedIcon,
@@ -45,6 +49,15 @@ type SearchResultCardProps = {
 
 export function SearchResultCard({ product }: SearchResultCardProps) {
   const BadgeIcon = badgeIcons[product.badgeType];
+  const imageCandidates = useMemo(
+    () =>
+      Array.from(
+        new Set([...(product.images ?? []), product.image].filter(Boolean))
+      ),
+    [product.image, product.images]
+  );
+  const [imageIndex, setImageIndex] = useState(0);
+  const displayImage = imageCandidates[imageIndex] ?? product.image;
 
   return (
     <div className="group relative">
@@ -64,11 +77,17 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
         ) : null}
 
         <div className="relative aspect-square overflow-hidden bg-[#0A0A0A]">
-          <Image
-            src={product.image}
+          <img
+            src={displayImage}
             alt={product.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={() => {
+              setImageIndex((currentIndex) =>
+                currentIndex < imageCandidates.length - 1
+                  ? currentIndex + 1
+                  : currentIndex
+              );
+            }}
           />
 
           <div

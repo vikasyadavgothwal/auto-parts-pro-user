@@ -1,10 +1,5 @@
-import { SearchPage } from "@/components/site/search/main-search";
+import { redirect } from "next/navigation";
 
 export default function Search2() {
-  return (
-    <SearchPage
-      heading="Results Found"
-      buttonLabel="Change Vehicle"
-    />
-  );
+  redirect("/search");
 }

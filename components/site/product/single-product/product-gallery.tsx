@@ -1,7 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useState } from "react";
-import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
@@ -12,30 +13,45 @@ type ProductGalleryProps = {
 
 export function ProductGallery({ images, title }: ProductGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0);
-  const primaryImage = images[selectedImage] ?? images[0];
+  const [failedImages, setFailedImages] = useState<Set<string>>(
+    () => new Set()
+  );
+  const visibleImages = images.filter((image) => !failedImages.has(image));
+  const safeSelectedImage = Math.min(
+    selectedImage,
+    Math.max(visibleImages.length - 1, 0)
+  );
+  const primaryImage = visibleImages[safeSelectedImage] ?? visibleImages[0];
 
   if (!primaryImage) {
     return null;
   }
 
+  const markImageFailed = (image: string) => {
+    setFailedImages((currentFailedImages) => {
+      const nextFailedImages = new Set(currentFailedImages);
+      nextFailedImages.add(image);
+      return nextFailedImages;
+    });
+    setSelectedImage(0);
+  };
+
   return (
     <div>
       <Card className="mb-4 overflow-hidden rounded-xl border border-[#2A2A2A] bg-[#1A1A1A]">
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-          <Image
+          <img
             src={primaryImage}
             alt={title}
-            fill
-            className="object-cover w-full h-full"
-            priority
-            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="h-full w-full object-cover"
+            onError={() => markImageFailed(primaryImage)}
           />
         </div>
       </Card>
 
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
-        {images.map((image, index) => {
-          const isActive = selectedImage === index;
+        {visibleImages.map((image, index) => {
+          const isActive = safeSelectedImage === index;
 
           return (
             <button
@@ -51,12 +67,11 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
               )}
             >
               <div className="relative aspect-square">
-                <Image
+                <img
                   src={image}
                   alt={`Product view ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 30vw, 12vw"
+                  className="h-full w-full object-cover"
+                  onError={() => markImageFailed(image)}
                 />
               </div>
             </button>
