@@ -14,7 +14,7 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the URL printed by the dev server with your browser to see the result.
 
 ## Firebase User Authentication
 
@@ -28,8 +28,9 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
-NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
-NEXT_PUBLIC_SITE_URL=http://localhost:3001
+NEXT_PUBLIC_BACKEND_URL=<backend-origin>
+NEXT_PUBLIC_SITE_URL=<site-origin>
+FLEET_APP_URL=<fleet-app-origin>
 ```
 
 Add the deployed frontend hostname to Firebase Authentication's authorized

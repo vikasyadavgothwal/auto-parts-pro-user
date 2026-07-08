@@ -1,11 +1,15 @@
-const backendUrl = () =>
-  new URL(
-    "/api/v1/rfqs",
+const backendUrl = () => {
+  const baseUrl =
     process.env.PRIVATE_API_URL?.trim() ||
-      process.env.BACKEND_URL?.trim() ||
-      process.env.NEXT_PUBLIC_BACKEND_URL?.trim() ||
-      "http://localhost:3000",
-  )
+    process.env.BACKEND_URL?.trim() ||
+    process.env.NEXT_PUBLIC_BACKEND_URL?.trim()
+
+  if (!baseUrl) {
+    throw new Error("Missing API base URL. Set PRIVATE_API_URL, BACKEND_URL, or NEXT_PUBLIC_BACKEND_URL.")
+  }
+
+  return new URL("/api/v1/rfqs", baseUrl)
+}
 
 export async function POST(request: Request) {
   const headers = new Headers()

@@ -1,6 +1,12 @@
 import path from "node:path";
 import type { NextConfig } from "next";
 
+const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
+
+const fleetAppUrl = process.env.FLEET_APP_URL?.trim()
+  ? trimTrailingSlash(process.env.FLEET_APP_URL.trim())
+  : "";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   turbopack: {
@@ -19,14 +25,18 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
+    if (!fleetAppUrl) {
+      return [];
+    }
+
     return [
       {
         source: "/fleet",
-        destination: "http://localhost:3001/fleet",
+        destination: `${fleetAppUrl}/fleet`,
       },
       {
         source: "/fleet/:path*",
-        destination: "http://localhost:3001/fleet/:path*",
+        destination: `${fleetAppUrl}/fleet/:path*`,
       },
     ];
   },
