@@ -2,15 +2,25 @@
 
 import { useEffect, useState } from "react";
 import { MobileFilterDrawer } from "@/components/site/shared/mobile-filter-drawer";
-import { brands, prices, products } from "@/lib/data/search";
+import { brands, prices } from "@/lib/data/search";
+import type { SearchProduct } from "@/types/site/search";
 import { FiltersSidebar, SearchFiltersPanel } from "./filters-sidebar";
 import { SearchResultsGrid } from "./search-results-grid";
 import { SearchToolbar } from "./search-toolbar";
 
-const searchQuery = "Brake Pads";
 const defaultSortLabel = "Best Match";
 
-export function SearchContent() {
+type SearchContentProps = {
+  products: SearchProduct[];
+  queryLabel: string;
+  emptyMessage?: string;
+};
+
+export function SearchContent({
+  products,
+  queryLabel,
+  emptyMessage = "No matching products were found in the marketplace DB.",
+}: SearchContentProps) {
   const [showFilters, setShowFilters] = useState(true);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -42,14 +52,20 @@ export function SearchContent() {
           <SearchToolbar
             showFilters={showFilters}
             resultsCount={products.length}
-            query={searchQuery}
+            query={queryLabel}
             sortLabel={defaultSortLabel}
             onOpenMobileFilters={() => setMobileFiltersOpen(true)}
             onToggleDesktopFilters={() =>
               setShowFilters((current) => !current)
             }
           />
-          <SearchResultsGrid products={products} showFilters={showFilters} />
+          {products.length > 0 ? (
+            <SearchResultsGrid products={products} showFilters={showFilters} />
+          ) : (
+            <div className="rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] p-8 text-center text-[#9CA3AF]">
+              {emptyMessage}
+            </div>
+          )}
         </div>
       </div>
 

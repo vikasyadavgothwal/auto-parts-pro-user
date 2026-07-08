@@ -1,7 +1,7 @@
 export type SearchProductBadgeType = "fit" | "likely" | "no"
 
 export type SearchProduct = {
-  id: number
+  id: string | number
   href: string
   title: string
   partNo: string
@@ -13,6 +13,7 @@ export type SearchProduct = {
   badge: string
   badgeType: SearchProductBadgeType
   image: string
+  images?: string[]
   highlight: boolean
   highlightLabel?: string
   stockLabel?: string

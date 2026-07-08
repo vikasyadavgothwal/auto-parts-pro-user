@@ -1,14 +1,61 @@
-import { productImages, keyFeatures, highlights, offers } from "@/lib/data/product";
+import {
+  highlights,
+  keyFeatures as fallbackKeyFeatures,
+  offers as fallbackOffers,
+  productImages as fallbackProductImages,
+} from "@/lib/data/product";
+import { marketplaceOffersToProductOffers } from "@/lib/marketplace";
+import type {
+  MarketplaceProductDetail,
+  MarketplaceSelectedVendorContent,
+} from "@/types/site/marketplace";
 import { CompareOffersSection } from "./compare-offers-section";
 import { ProductGallery } from "./product-gallery";
-import {
-  installationBenefits,
-  singleProduct,
-} from "./product-content";
+import { installationBenefits, singleProduct } from "./product-content";
 import { ProductOverview } from "./product-overview";
 import { ProductSupportSections } from "./product-support-sections";
 
-export function AutoPartsMarketplacePage() {
+type AutoPartsMarketplacePageProps = {
+  product?: MarketplaceProductDetail;
+};
+
+const supplierProductInfoItems = (
+  content: MarketplaceSelectedVendorContent,
+): Array<{ label: string; value: string | null }> => {
+  const rows: Array<[string, string | null]> = [
+    ["Short Description", content.shortDescription],
+    ["Description", content.longDescription],
+    ["Manufacturer Part Number (MPN)", content.manufacturerPartNumber],
+    ["Status", content.status],
+  ];
+
+  return rows.map(([label, value]) => ({ label, value }));
+}
+
+const supplierProductBadges = (
+  content: MarketplaceSelectedVendorContent,
+): Array<{ label: string; value: string | null }> => [
+  { label: "Grade", value: content.grade },
+  { label: "Condition", value: content.condition },
+]
+
+export function AutoPartsMarketplacePage({
+  product,
+}: AutoPartsMarketplacePageProps) {
+  const productImages = product?.images ?? fallbackProductImages;
+  const title = product?.title ?? singleProduct.title;
+  const partNumber = product?.partNumber ?? singleProduct.partNumber;
+  const selectedVendorContent = product?.selectedVendorContent;
+  const supplierProductInfo = selectedVendorContent
+    ? supplierProductInfoItems(selectedVendorContent)
+    : undefined;
+  const productInfoBadges = selectedVendorContent
+    ? supplierProductBadges(selectedVendorContent)
+    : undefined;
+  const keyFeatures = product?.keyFeatures ?? fallbackKeyFeatures;
+  const keyFeaturesTitle = selectedVendorContent ? undefined : "Key Features";
+  const offers = product ? marketplaceOffersToProductOffers(product) : fallbackOffers;
+
   return (
     <main className="min-h-full bg-[#0A0A0A] text-white">
       <div className="h-10" />
@@ -16,15 +63,18 @@ export function AutoPartsMarketplacePage() {
         <div className="mb-14 grid gap-8 lg:grid-cols-2 lg:gap-12">
           <ProductGallery
             images={productImages}
-            title={singleProduct.title}
+            title={title}
           />
 
           <ProductOverview
-            title={singleProduct.title}
-            partNumber={singleProduct.partNumber}
-            rating={singleProduct.rating}
-            reviewCount={singleProduct.reviewCount}
+            title={title}
+            partNumber={partNumber}
+            rating={4.8}
+            reviewCount={offers.length}
             keyFeatures={keyFeatures}
+            keyFeaturesTitle={keyFeaturesTitle}
+            productInfoRows={supplierProductInfo}
+            productInfoBadges={productInfoBadges}
             highlights={highlights}
           />
         </div>
