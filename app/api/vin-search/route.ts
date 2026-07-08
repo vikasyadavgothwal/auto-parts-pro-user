@@ -9,9 +9,13 @@ const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
 
 const getBackendBaseUrl = () => {
   const value =
-    process.env.BACKEND_URL ||
-    process.env.NEXT_PUBLIC_BACKEND_URL ||
-    "http://localhost:3000";
+    process.env.BACKEND_URL?.trim() ||
+    process.env.NEXT_PUBLIC_BACKEND_URL?.trim() ||
+    "";
+
+  if (!value) {
+    throw new Error("Missing API base URL. Set BACKEND_URL or NEXT_PUBLIC_BACKEND_URL.");
+  }
 
   return trimTrailingSlash(value);
 };

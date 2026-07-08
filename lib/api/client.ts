@@ -21,23 +21,29 @@ export class ApiRequestError extends Error {
 
 const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
 
-const getEnvValue = (key: string) => {
-  const value = process.env[key];
+const getEnvValue = (value: string | undefined) => {
   return value ? value.trim() : "";
+};
+
+const requireApiBaseUrl = (value: string, envNames: string) => {
+  if (!value) {
+    throw new Error(`Missing API base URL. Set ${envNames} in your environment.`);
+  }
+
+  return trimTrailingSlash(value);
 };
 
 const getPublicApiBaseUrl = () => {
   const value =
-    getEnvValue("NEXT_PUBLIC_BACKEND_URL") ||
-    getEnvValue("BACKEND_URL") ||
-    "http://localhost:3000";
-  return trimTrailingSlash(value);
+    getEnvValue(process.env.NEXT_PUBLIC_BACKEND_URL) ||
+    getEnvValue(process.env.BACKEND_URL);
+  return requireApiBaseUrl(value, "NEXT_PUBLIC_BACKEND_URL or BACKEND_URL");
 };
 
 const getPrivateApiBaseUrl = () => {
   const value =
-    getEnvValue("NEXT_PUBLIC_PRIVATE_BACKEND_URL") ||
-    getEnvValue("PRIVATE_API_URL") ||
+    getEnvValue(process.env.NEXT_PUBLIC_PRIVATE_BACKEND_URL) ||
+    getEnvValue(process.env.PRIVATE_API_URL) ||
     getPublicApiBaseUrl();
   return trimTrailingSlash(value);
 };
