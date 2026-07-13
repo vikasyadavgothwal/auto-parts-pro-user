@@ -45,10 +45,10 @@ export function RequestQuoteForm() {
         ? "Company name must contain at least 2 characters."
         : contactName.length < 2
           ? "Contact name must contain at least 2 characters."
-          : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-            ? "Enter a valid email address."
-            : !/^[+\d][\d\s()-]{6,20}$/.test(phone)
-              ? "Enter a valid phone number."
+            : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+              ? "Enter a valid email address."
+              : !/^\+\d{8,18}$/.test(phone)
+                ? "Enter a valid phone number with country code."
               : vin && !/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)
                 ? "VIN must contain exactly 17 valid characters."
                 : !Number.isInteger(year) || year < 1886 || year > currentYear + 1

@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog";
 import { Button } from "@/components/ui/button";
+import { getBusinessQueryType } from "@/lib/business-query-cta";
 import {
   getPublicText,
   hasPublicText,
@@ -17,8 +19,10 @@ export function BusinessCTASection({ config }: BusinessCTASectionProps) {
   const primaryButtonLink = getPublicText(config?.primaryButtonLink);
   const secondaryButtonText = getPublicText(config?.secondaryButtonText);
   const secondaryButtonLink = getPublicText(config?.secondaryButtonLink);
-  const hasPrimaryButton = Boolean(primaryButtonText && primaryButtonLink);
-  const hasSecondaryButton = Boolean(secondaryButtonText && secondaryButtonLink);
+  const primaryQueryType = getBusinessQueryType(primaryButtonText);
+  const secondaryQueryType = getBusinessQueryType(secondaryButtonText);
+  const hasPrimaryButton = Boolean(primaryButtonText && (primaryButtonLink || primaryQueryType));
+  const hasSecondaryButton = Boolean(secondaryButtonText && (secondaryButtonLink || secondaryQueryType));
 
   if (
     !hasPublicText(heading, subheading) &&
@@ -47,22 +51,43 @@ export function BusinessCTASection({ config }: BusinessCTASectionProps) {
           {hasPrimaryButton || hasSecondaryButton ? (
             <div className="flex flex-wrap justify-center gap-4">
               {hasPrimaryButton ? (
-                <Button
-                  asChild
-                  className="h-auto rounded-full bg-white px-8 py-4 text-lg font-medium text-primary hover:bg-gray-100"
-                >
-                  <Link href={primaryButtonLink}>{primaryButtonText}</Link>
-                </Button>
+                primaryQueryType ? (
+                  <BusinessDemoDialogButton
+                    queryType={primaryQueryType}
+                    source={primaryButtonText}
+                    className="h-auto rounded-full bg-white px-8 py-4 text-lg font-medium text-primary hover:bg-gray-100"
+                  >
+                    {primaryButtonText}
+                  </BusinessDemoDialogButton>
+                ) : (
+                  <Button
+                    asChild
+                    className="h-auto rounded-full bg-white px-8 py-4 text-lg font-medium text-primary hover:bg-gray-100"
+                  >
+                    <Link href={primaryButtonLink}>{primaryButtonText}</Link>
+                  </Button>
+                )
               ) : null}
 
               {hasSecondaryButton ? (
-                <Button
-                  asChild
-                  variant="outline"
-                  className="h-auto rounded-full border-2 border-white bg-transparent px-8 py-4 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
-                >
-                  <Link href={secondaryButtonLink}>{secondaryButtonText}</Link>
-                </Button>
+                secondaryQueryType ? (
+                  <BusinessDemoDialogButton
+                    queryType={secondaryQueryType}
+                    source={secondaryButtonText}
+                    variant="outline"
+                    className="h-auto rounded-full border-2 border-white bg-transparent px-8 py-4 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
+                  >
+                    {secondaryButtonText}
+                  </BusinessDemoDialogButton>
+                ) : (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-auto rounded-full border-2 border-white bg-transparent px-8 py-4 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
+                  >
+                    <Link href={secondaryButtonLink}>{secondaryButtonText}</Link>
+                  </Button>
+                )
               ) : null}
             </div>
           ) : null}

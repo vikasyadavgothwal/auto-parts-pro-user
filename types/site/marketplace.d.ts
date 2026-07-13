@@ -83,6 +83,7 @@ export type MarketplaceSearchResponse = {
   query: {
     partNumber: string | null
     vin: string | null
+    modelId: string | null
     year: string | null
     make: string | null
     model: string | null

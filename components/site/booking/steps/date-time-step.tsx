@@ -6,8 +6,10 @@ import { BookingStepFrame } from "@/components/site/booking/booking-step-frame";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { bookingAvailableDates, bookingTimeSlots } from "@/lib/data/booking";
+import type { BookingDateOption } from "@/types/site/booking";
 
 type DateTimeStepProps = {
+  dates?: readonly BookingDateOption[];
   onSelectDate: (date: string) => void;
   onSelectTime: (time: string) => void;
   selectedDate: string;
@@ -15,6 +17,7 @@ type DateTimeStepProps = {
 };
 
 export function DateTimeStep({
+  dates = bookingAvailableDates,
   onSelectDate,
   onSelectTime,
   selectedDate,
@@ -35,7 +38,7 @@ export function DateTimeStep({
         </h3>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {bookingAvailableDates.map((dateOption) => (
+          {dates.map((dateOption) => (
             <Card
               key={dateOption.date}
               onClick={() => onSelectDate(dateOption.date)}

@@ -6,6 +6,7 @@ import { ShoppingCartIcon, UserIcon } from "@/components/icons/site-icons";
 import {AuthModalCard} from "@/components/site/AuthModel";
 import { BrandLogo } from "@/components/site/shared/brand-logo"
 import { Button } from "@/components/ui/button";
+import { dashboardUrlForRole, getCurrentUser } from "@/lib/current-user";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,22 @@ const navItems = [
 
 export function UserHeader() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isDashboardLoading, setIsDashboardLoading] = useState(false);
+
+  const goToActiveDashboard = async () => {
+    setIsDashboardLoading(true);
+    try {
+      const user = await getCurrentUser();
+      if (!user) {
+        setIsAuthModalOpen(true);
+        return;
+      }
+
+      window.location.href = dashboardUrlForRole(user.activeRole);
+    } finally {
+      setIsDashboardLoading(false);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-white-surface">
@@ -78,12 +95,17 @@ export function UserHeader() {
                   </DialogDescription>
                 </DialogHeader>
 
-                <AuthModalCard onClose={() => setIsAuthModalOpen(false)} />
+                <AuthModalCard
+                  onAuthenticated={goToActiveDashboard}
+                  onClose={() => setIsAuthModalOpen(false)}
+                />
               </DialogContent>
             </Dialog>
 
             <Button
               type="button"
+              disabled={isDashboardLoading}
+              onClick={goToActiveDashboard}
               className="h-auto rounded-xl p-2.5 text-white hover:bg-brand-primary-hover"
               aria-label="Shopping cart"
             >

@@ -2,15 +2,18 @@ import { ClockIcon } from "@/components/icons/site-icons";
 import { BookingStepFrame } from "@/components/site/booking/booking-step-frame";
 import { Card, CardContent } from "@/components/ui/card";
 import { bookingServices } from "@/lib/data/booking";
+import type { BookingService } from "@/types/site/booking";
 
 type ServiceStepProps = {
   onSelectService: (serviceId: string) => void;
   selectedServiceId: string;
+  services?: readonly BookingService[];
 };
 
 export function ServiceStep({
   onSelectService,
   selectedServiceId,
+  services = bookingServices,
 }: ServiceStepProps) {
   return (
     <BookingStepFrame stepId="service">
@@ -19,8 +22,9 @@ export function ServiceStep({
       </h2>
       <p className="mb-8 text-brand-muted">Choose the service you need</p>
 
-      <div className="space-y-4">
-        {bookingServices.map((service) => (
+      {services.length ? (
+        <div className="space-y-4">
+          {services.map((service) => (
           <Card
             key={service.id}
             onClick={() => onSelectService(service.id)}
@@ -50,14 +54,19 @@ export function ServiceStep({
 
                 <div className="ml-6 text-right">
                   <div className="text-2xl font-bold text-primary">
-                    AED {service.price}
+                    {service.currency ?? "AED"} {service.price.toFixed(2)}
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-border bg-card p-6 text-brand-muted">
+          This garage has not added active services yet.
+        </div>
+      )}
     </BookingStepFrame>
   );
 }

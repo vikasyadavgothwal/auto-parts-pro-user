@@ -73,6 +73,15 @@ const normalizeVinRecord = (
     "model",
   ]);
 
+  const modelId = getTextByFieldAliases(value, [
+    "model_id",
+    "modelId",
+    "Model id",
+    "Id",
+    "id",
+    "vehicle_id",
+  ]);
+
   if (!fullVin || !modelYearFromVin || !epc) {
     return null;
   }
@@ -81,6 +90,7 @@ const normalizeVinRecord = (
     fullVin,
     modelYearFromVin,
     epc,
+    ...(modelId ? { modelId } : {}),
   };
 };
 

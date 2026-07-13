@@ -35,6 +35,9 @@ FLEET_APP_URL=<fleet-app-origin>
 
 Add the deployed frontend hostname to Firebase Authentication's authorized
 domains. Phone authentication also requires the Firebase reCAPTCHA flow.
+Google sign-in uses the Firebase Google provider, so the Google OAuth client
+must be configured in the Firebase project. Do not place the OAuth client secret
+in frontend environment variables or source code.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

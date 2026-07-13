@@ -1,7 +1,5 @@
-import {ServiceDetailPage} from "@/components/site/service/sections/single-garage";
+import { redirect } from "next/navigation";
 
 export default function ServiceDetail() {
-  return (
-    <ServiceDetailPage />
-  )
+  redirect("/services");
 }

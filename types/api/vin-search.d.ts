@@ -6,6 +6,7 @@ export type VinSearchVehicle = {
   fullVin: string;
   modelYearFromVin: string;
   epc: string;
+  modelId?: string;
 }
 
 export type VinSearchSuccess = {
@@ -36,6 +37,12 @@ export type VinSearchApiRecord = {
   "make name"?: unknown;
   epc?: unknown;
   model?: unknown;
+  model_id?: unknown;
+  modelId?: unknown;
+  "Model id"?: unknown;
+  Id?: unknown;
+  id?: unknown;
+  vehicle_id?: unknown;
 }
 
 export type VinSearchBackendResponse = {

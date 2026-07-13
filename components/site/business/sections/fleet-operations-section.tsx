@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { CheckIcon } from "@/components/icons/site-icons";
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { getBusinessQueryType } from "@/lib/business-query-cta";
 import { metrics } from "@/lib/data/business";
 import { cn } from "@/lib/utils";
 import {
@@ -21,7 +23,8 @@ export function FleetOperationsSection({ config }: FleetOperationsSectionProps) 
   const keyPoints = (config?.keyPoints ?? []).map(getPublicText).filter(Boolean);
   const buttonText = getPublicText(config?.buttonText);
   const buttonLink = getPublicText(config?.buttonLink);
-  const hasButton = Boolean(buttonText && buttonLink);
+  const buttonQueryType = getBusinessQueryType(buttonText);
+  const hasButton = Boolean(buttonText && (buttonLink || buttonQueryType));
   const cards = (config?.cards ?? [])
     .map((card, index) => ({
       topHeading: getPublicText(card.topHeading),
@@ -87,12 +90,22 @@ export function FleetOperationsSection({ config }: FleetOperationsSectionProps) 
               ) : null}
 
               {hasButton ? (
-                <Button
-                  asChild
-                  className="w-full md:w-auto h-auto rounded-full px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
-                >
-                  <Link href={buttonLink}>{buttonText}</Link>
-                </Button>
+                buttonQueryType ? (
+                  <BusinessDemoDialogButton
+                    queryType={buttonQueryType}
+                    source={buttonText}
+                    className="w-full md:w-auto h-auto rounded-full px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+                  >
+                    {buttonText}
+                  </BusinessDemoDialogButton>
+                ) : (
+                  <Button
+                    asChild
+                    className="w-full md:w-auto h-auto rounded-full px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+                  >
+                    <Link href={buttonLink}>{buttonText}</Link>
+                  </Button>
+                )
               ) : null}
             </div>
           ) : null}

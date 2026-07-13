@@ -37,6 +37,36 @@ export const bookingServices = [
   },
 ] satisfies readonly BookingService[];
 
+const formatDateValue = (date: Date) => date.toISOString().slice(0, 10);
+
+const formatDateLabel = (date: Date, offset: number) => {
+  if (offset === 0) return "Today";
+  if (offset === 1) return "Tomorrow";
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+export const getBookingAvailableDates = (): BookingDateOption[] => {
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+
+  return Array.from({ length: 5 }, (_, offset) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + offset);
+
+    return {
+      date: formatDateValue(date),
+      label: formatDateLabel(date, offset),
+      availability: offset === 0 || offset === 4 ? "limited" : "available",
+    };
+  });
+};
+
+export const bookingAvailableDates = getBookingAvailableDates();
+
 export const bookingVehicles = [
   {
     id: "1",
@@ -53,14 +83,6 @@ export const bookingVehicles = [
     vin: "4T1B11HK1LU345678",
   },
 ] satisfies readonly BookingVehicle[];
-
-export const bookingAvailableDates = [
-  { date: "2026-03-28", label: "Today", availability: "limited" },
-  { date: "2026-03-29", label: "Tomorrow", availability: "available" },
-  { date: "2026-03-30", label: "Mon, Mar 30", availability: "available" },
-  { date: "2026-03-31", label: "Tue, Mar 31", availability: "available" },
-  { date: "2026-04-01", label: "Wed, Apr 1", availability: "limited" },
-] as const satisfies readonly BookingDateOption[];
 
 export const bookingTimeSlots = {
   morning: ["9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM"],

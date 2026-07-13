@@ -57,6 +57,7 @@ export const formatPrice = (price: number | null, currency = "AED") =>
 export async function searchMarketplaceProducts(params: {
   partNumber?: string | null
   vin?: string | null
+  modelId?: string | null
   year?: string | null
   make?: string | null
   model?: string | null

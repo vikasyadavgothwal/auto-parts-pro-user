@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { CountryPhoneInput } from "@/components/site/shared/country-phone-input";
 import { companyFields, vehicleFields } from "@/lib/data/request";
 const MAX_VEHICLE_YEAR = new Date().getFullYear() + 1;
 type TextFieldProps = {
@@ -149,6 +150,9 @@ function PartRequestCard({
 }
 
 export function CompanyInformationSection() {
+  const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
   return (
     <Card className="rounded-2xl p-5 sm:p-6 lg:p-8">
       <h2 className="mb-5 text-xl font-thin text-white sm:mb-6 sm:text-2xl">
@@ -156,16 +160,28 @@ export function CompanyInformationSection() {
       </h2>
 
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-        {companyFields.map(([label, placeholder], index) => (
+        {companyFields.slice(0, 3).map(([label, placeholder], index) => (
           <TextField
             key={label}
             name={["companyName", "contactName", "email", "phone"][index]}
             label={label}
             placeholder={placeholder}
             required
-            type={index === 2 ? "email" : index === 3 ? "tel" : "text"}
+            type={index === 2 ? "email" : "text"}
           />
         ))}
+        <CountryPhoneInput
+          id="rfq-phone"
+          name="phone"
+          label={companyFields[3]?.[0] ?? "Phone *"}
+          countryCode={phoneCountryCode}
+          phoneNumber={phoneNumber}
+          onCountryCodeChange={setPhoneCountryCode}
+          onPhoneNumberChange={setPhoneNumber}
+          labelClassName="text-sm font-medium text-white"
+          selectClassName="bg-brand-surface text-white"
+          inputClassName="bg-brand-surface px-4 text-base text-white"
+        />
       </div>
     </Card>
   );
