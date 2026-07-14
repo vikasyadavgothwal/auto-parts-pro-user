@@ -7,12 +7,17 @@ import { HeroSection } from "@/components/site/user/sections/hero-section";
 import { ProcessSection } from "@/components/site/user/sections/process-section";
 import { SearchSection } from "@/components/site/user/sections/search-section";
 import { type HomePageConfig } from "@/types/api/public-content";
+import type { MarketplaceProductSummary } from "@/types/site/marketplace";
 
 type HomePageContentProps = {
   config?: HomePageConfig;
+  featuredProducts?: MarketplaceProductSummary[];
 };
 
-export function HomePageContent({ config }: HomePageContentProps) {
+export function HomePageContent({
+  config,
+  featuredProducts = [],
+}: HomePageContentProps) {
   if (!config) {
     return null;
   }
@@ -23,7 +28,10 @@ export function HomePageContent({ config }: HomePageContentProps) {
       <SearchSection config={config.search} />
       <BenefitsSection config={config.whyChooseUs} />
       <CategoryTypesSection config={config.category} />
-      <FeaturedPartsSection config={config.featuredParts} />
+      <FeaturedPartsSection
+        config={config.featuredParts}
+        products={featuredProducts}
+      />
       <ProcessSection steps={config.process?.steps} />
       <BusinessSolutionsSection config={config.enterpriseSolutions} />
       <CTASection config={config.cta} />

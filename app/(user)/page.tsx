@@ -2,6 +2,7 @@ import { QueryClient } from "@tanstack/react-query"
 
 import { SeoCustomCode } from "@/components/site/seo/seo-custom-code"
 import { HomePageContent } from "@/components/site/user/home-page-content"
+import { searchMarketplaceProducts } from "@/lib/marketplace"
 import { publicConfigContentQueryOptions } from "@/lib/public-content"
 import { getPublicContentMetadata } from "@/lib/public-seo"
 
@@ -15,12 +16,18 @@ export const generateMetadata = () =>
 
 export default async function UserPage() {
   const queryClient = new QueryClient()
-  const pageContent = await queryClient.fetchQuery(publicConfigContentQueryOptions("home"))
+  const [pageContent, featuredProductsResult] = await Promise.all([
+    queryClient.fetchQuery(publicConfigContentQueryOptions("home")),
+    searchMarketplaceProducts({ limit: 12 }).catch(() => null),
+  ])
 
   return (
     <>
       <SeoCustomCode seo={pageContent?.seo} />
-      <HomePageContent config={pageContent?.data} />
+      <HomePageContent
+        config={pageContent?.data}
+        featuredProducts={featuredProductsResult?.products ?? []}
+      />
     </>
   )
 }
