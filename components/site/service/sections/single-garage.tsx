@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AddServiceToCartButton } from "@/components/site/cart/add-service-to-cart-button";
 import {
   AwardIcon,
   CalendarIcon,
@@ -318,16 +319,29 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
                             <div className="mb-3 text-2xl font-bold text-primary">
                               {formatGaragePrice(service.price, service.currency)}
                             </div>
-                            <Button
-                              asChild
-                              className="w-full bg-primary px-6 py-5 text-sm font-medium text-primary-foreground hover:bg-brand-primary-hover sm:w-auto"
-                            >
-                              <Link
-                                href={`/booking?garageId=${encodeURIComponent(garage.id)}&serviceId=${encodeURIComponent(service.id)}`}
+                            <div className="flex flex-col gap-2 sm:items-end">
+                              <Button
+                                asChild
+                                className="w-full bg-primary px-6 py-5 text-sm font-medium text-primary-foreground hover:bg-brand-primary-hover sm:w-auto"
                               >
-                                Book Now
-                              </Link>
-                            </Button>
+                                <Link
+                                  href={`/booking?garageId=${encodeURIComponent(garage.id)}&serviceId=${encodeURIComponent(service.id)}`}
+                                >
+                                  Book Now
+                                </Link>
+                              </Button>
+                              <AddServiceToCartButton
+                                garageId={garage.id}
+                                garageName={garage.name}
+                                serviceId={service.id}
+                                serviceName={service.name}
+                                category={service.category}
+                                durationMinutes={service.durationMinutes}
+                                price={service.price}
+                                currency={service.currency}
+                                className="w-full border-border bg-background px-6 py-5 text-sm font-medium text-foreground hover:border-primary hover:bg-background sm:w-auto"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>

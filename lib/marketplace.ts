@@ -130,12 +130,18 @@ export const marketplaceOffersToProductOffers = (
 ): ProductOffer[] =>
   product.offers.map((offer) => ({
     id: offer.id,
+    productId: product.partUid,
+    productTitle: product.title,
+    productImage: product.image,
+    partNumber: product.partNumber,
     vendorSku: offer.vendorSku,
     seller: offer.supplierName,
     logo: offer.supplierLogo || offer.images[0] || DEFAULT_SUPPLIER_LOGO,
     rating: 4.8,
     reviews: 0,
     price: formatPrice(offer.price, offer.currency),
+    unitPrice: offer.price,
+    currency: offer.currency,
     condition: offer.condition || "New",
     stock: offer.stockLabel,
     shipping: offer.leadTime ? "Supplier lead time" : "Supplier delivery",

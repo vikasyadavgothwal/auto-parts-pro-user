@@ -1,13 +1,11 @@
 import {
   CircleCheckIcon,
-  HeartIcon,
-  ShareIcon,
   SellerPackageIcon,
 } from "@/components/icons/site-icons";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ProductHighlight } from "@/types/site/product";
+import { ProductActions } from "./product-actions";
 import { RatingStars } from "./rating-stars";
 
 type ProductInfoRow = {
@@ -21,6 +19,7 @@ type ProductInfoBadge = {
 };
 
 type ProductOverviewProps = {
+  partUid?: string;
   title: string;
   partNumber: string;
   rating: number;
@@ -33,6 +32,7 @@ type ProductOverviewProps = {
 };
 
 export function ProductOverview({
+  partUid,
   title,
   partNumber,
   rating,
@@ -175,22 +175,7 @@ export function ProductOverview({
         ))}
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Button
-          variant="outline"
-          className="md:h-12 md:p-0 p-3 flex-1 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A] bg-primary"
-        >
-          <HeartIcon className="mr-2 h-5 w-5" />
-          Save
-        </Button>
-        <Button
-          variant="outline"
-          className="h-12 flex-1 md:p-0 p-3 border-[#2A2A2A] bg-[#1A1A1A] text-white hover:border-[#DC2626] hover:bg-[#1A1A1A]"
-        >
-          <ShareIcon className="mr-2 h-5 w-5" />
-          Share
-        </Button>
-      </div>
+      <ProductActions partUid={partUid} title={title} />
     </div>
   );
 }

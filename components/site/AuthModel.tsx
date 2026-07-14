@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  type FormEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
 import {
@@ -55,6 +50,7 @@ import {
   validateSignupDetails,
 } from "@/lib/account-registration";
 import {
+  getFirebaseAuthDiagnostics,
   getFirebaseClientAuth,
   sendUserEmailVerification,
 } from "@/lib/firebase/client";
@@ -81,6 +77,10 @@ type AuthModalCardProps = {
 };
 
 const getAuthErrorMessage = (error: unknown): string => {
+  const diagnostics = getFirebaseAuthDiagnostics();
+  const origin =
+    diagnostics.origin === "server" ? "this domain" : diagnostics.origin;
+
   if (
     error instanceof Error &&
     error.message.includes("reCAPTCHA has already been rendered")
@@ -98,6 +98,10 @@ const getAuthErrorMessage = (error: unknown): string => {
       : "Unable to authenticate. Please try again.";
   }
 
+  if (error.code.startsWith("auth/requests-from-referer-")) {
+    return `Firebase blocked requests from ${origin}. Add ${origin}/* to the Google Cloud API key HTTP referrers for this Firebase project's Web API key.`;
+  }
+
   const messages: Record<string, string> = {
     "auth/email-already-in-use": "An account already exists with this email.",
     "auth/invalid-credential": "The email or password is incorrect.",
@@ -105,15 +109,16 @@ const getAuthErrorMessage = (error: unknown): string => {
     "auth/app-not-authorized":
       "This domain is not authorized for Firebase Authentication.",
     "auth/captcha-check-failed": "Phone verification failed. Try again.",
-    "auth/code-expired": "The verification code has expired. Request a new code.",
+    "auth/code-expired":
+      "The verification code has expired. Request a new code.",
     "auth/credential-already-in-use":
       "This phone number is already linked to another account.",
-    "auth/invalid-phone-number": "Enter a valid phone number with country code.",
+    "auth/invalid-phone-number":
+      "Enter a valid phone number with country code.",
     "auth/invalid-verification-code": "The verification code is incorrect.",
     "auth/missing-app-credential":
       "Phone verification could not start. Refresh the page and try again.",
-    "auth/invalid-app-credential":
-      "Phone verification could not start. Check the authorized domain in Firebase.",
+    "auth/invalid-app-credential": `Phone verification is blocked for ${origin}. Add this domain in Firebase Auth Authorized domains and, if your Firebase API key is restricted, add ${origin}/* in Google Cloud API key HTTP referrers.`,
     "auth/missing-phone-number": "Enter your phone number with country code.",
     "auth/network-request-failed":
       "Network error while contacting Firebase. Check your connection and try again.",
@@ -125,8 +130,7 @@ const getAuthErrorMessage = (error: unknown): string => {
     "auth/too-many-requests": "Too many attempts. Please try again later.",
     "auth/unauthorized-continue-uri":
       "The verification redirect domain is not authorized in Firebase.",
-    "auth/invalid-continue-uri":
-      "The verification redirect URL is not valid.",
+    "auth/invalid-continue-uri": "The verification redirect URL is not valid.",
     "auth/weak-password": "Choose a stronger password.",
     "auth/web-storage-unsupported":
       "This browser is blocking Firebase storage. Enable cookies/storage and try again.",
@@ -138,11 +142,28 @@ const getAuthErrorMessage = (error: unknown): string => {
   );
 };
 
+const logFirebaseAuthError = (error: unknown) => {
+  if (
+    error instanceof FirebaseError &&
+    (error.code === "auth/invalid-app-credential" ||
+      error.code.startsWith("auth/requests-from-referer-"))
+  ) {
+    console.warn("Firebase phone auth app verifier rejected", {
+      ...getFirebaseAuthDiagnostics(),
+      code: error.code,
+      message: error.message,
+    });
+  }
+};
+
 const isVerifiedAccountRoleRequired = (error: unknown) =>
   error instanceof Error &&
   error.message === VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE;
 
-export function AuthModalCard({ onAuthenticated, onClose }: AuthModalCardProps) {
+export function AuthModalCard({
+  onAuthenticated,
+  onClose,
+}: AuthModalCardProps) {
   const router = useRouter();
   const recaptchaVerifier = useRef<RecaptchaVerifier | null>(null);
   const [mode, setMode] = useState<AuthMode>("signin");
@@ -174,14 +195,17 @@ export function AuthModalCard({ onAuthenticated, onClose }: AuthModalCardProps) 
     };
   }, []);
 
-  const getPhoneRecaptchaVerifier = () => {
-    if (recaptchaVerifier.current) {
-      return recaptchaVerifier.current;
-    }
+  const clearPhoneRecaptchaVerifier = () => {
+    recaptchaVerifier.current?.clear();
+    recaptchaVerifier.current = null;
+    document.getElementById("firebase-phone-recaptcha")?.replaceChildren();
+  };
 
+  const getPhoneRecaptchaVerifier = () => {
+    clearPhoneRecaptchaVerifier();
     const verifier = new RecaptchaVerifier(
       getFirebaseClientAuth(),
-      "firebase-phone-submit",
+      "firebase-phone-recaptcha",
       { size: "invisible" },
     );
     recaptchaVerifier.current = verifier;
@@ -245,6 +269,7 @@ export function AuthModalCard({ onAuthenticated, onClose }: AuthModalCardProps) 
     try {
       await action();
     } catch (error) {
+      logFirebaseAuthError(error);
       setErrorMessage(getAuthErrorMessage(error));
     } finally {
       setIsSubmitting(false);
@@ -313,7 +338,8 @@ export function AuthModalCard({ onAuthenticated, onClose }: AuthModalCardProps) 
 
       await sendUserEmailVerification(
         verificationUser,
-        getPendingAccountRegistration(verificationUser.uid)?.role ?? accountType,
+        getPendingAccountRegistration(verificationUser.uid)?.role ??
+          accountType,
       );
       setStatusMessage("A new verification email has been sent.");
     });
@@ -354,7 +380,9 @@ export function AuthModalCard({ onAuthenticated, onClose }: AuthModalCardProps) 
 
       const credential = await signInWithPopup(auth, provider);
       if (signupDisplayName) {
-        await updateProfile(credential.user, { displayName: signupDisplayName });
+        await updateProfile(credential.user, {
+          displayName: signupDisplayName,
+        });
         setPendingAccountRegistration(
           credential.user.uid,
           accountType,
@@ -379,11 +407,17 @@ export function AuthModalCard({ onAuthenticated, onClose }: AuthModalCardProps) 
         throw new Error("Enter a valid phone number.");
       }
 
-      const result = await signInWithPhoneNumber(
-        getFirebaseClientAuth(),
-        buildInternationalPhoneNumber(phoneCountryCode, phoneNumber),
-        getPhoneRecaptchaVerifier(),
-      );
+      let result: ConfirmationResult;
+      try {
+        result = await signInWithPhoneNumber(
+          getFirebaseClientAuth(),
+          buildInternationalPhoneNumber(phoneCountryCode, phoneNumber),
+          getPhoneRecaptchaVerifier(),
+        );
+      } catch (error) {
+        clearPhoneRecaptchaVerifier();
+        throw error;
+      }
       setConfirmationResult(result);
       setStatusMessage("Verification code sent.");
     });
@@ -477,24 +511,27 @@ export function AuthModalCard({ onAuthenticated, onClose }: AuthModalCardProps) 
 
             {!pendingVerifiedUser ? (
               <div className="flex gap-2 rounded-xl border border-border bg-background p-1">
-              <ModeButton
-                active={mode === "signin"}
-                onClick={() => selectMode("signin")}
-              >
-                Sign In
-              </ModeButton>
-              <ModeButton
-                active={mode === "signup"}
-                onClick={() => selectMode("signup")}
-              >
-                Sign Up
-              </ModeButton>
+                <ModeButton
+                  active={mode === "signin"}
+                  onClick={() => selectMode("signin")}
+                >
+                  Sign In
+                </ModeButton>
+                <ModeButton
+                  active={mode === "signup"}
+                  onClick={() => selectMode("signup")}
+                >
+                  Sign Up
+                </ModeButton>
               </div>
             ) : null}
           </div>
 
           {pendingVerifiedUser ? (
-            <form className="px-6 pb-8 sm:px-8" onSubmit={handleCompleteVerifiedAccount}>
+            <form
+              className="px-6 pb-8 sm:px-8"
+              onSubmit={handleCompleteVerifiedAccount}
+            >
               <AccountSetupFields
                 accountType={accountType}
                 fullName={fullName}
@@ -597,8 +634,8 @@ export function AuthModalCard({ onAuthenticated, onClose }: AuthModalCardProps) 
                     inputClassName="bg-background"
                     selectClassName="bg-background"
                   />
+                  <div id="firebase-phone-recaptcha" />
                   <Button
-                    id="firebase-phone-submit"
                     type="submit"
                     disabled={isSubmitting}
                     className="mt-5 h-12 w-full rounded-xl"
@@ -759,9 +796,7 @@ function AccountSetupFields({
         </p>
       </div>
 
-      <AuthField
-        label={accountType === "User" ? "Full Name" : "Business Name"}
-      >
+      <AuthField label={accountType === "User" ? "Full Name" : "Business Name"}>
         <div className="relative">
           {accountType === "User" ? (
             <UserIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
@@ -777,9 +812,7 @@ function AccountSetupFields({
             }
             autoComplete="name"
             placeholder={
-              accountType === "User"
-                ? "Enter your name"
-                : "Enter business name"
+              accountType === "User" ? "Enter your name" : "Enter business name"
             }
             className="h-12 bg-background pl-12"
             required
@@ -838,7 +871,11 @@ function EmailForm({
         disabled={isSubmitting}
         className="h-12 w-full rounded-xl"
       >
-        {isSubmitting ? "Signing In..." : mode === "signin" ? "Sign In" : "Continue"}
+        {isSubmitting
+          ? "Signing In..."
+          : mode === "signin"
+            ? "Sign In"
+            : "Continue"}
       </Button>
     </form>
   );

@@ -67,6 +67,7 @@ export function AutoPartsMarketplacePage({
           />
 
           <ProductOverview
+            partUid={product?.partUid}
             title={title}
             partNumber={partNumber}
             rating={4.8}
