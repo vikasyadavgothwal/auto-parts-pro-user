@@ -5,6 +5,7 @@ import {
   publicContentQueryOptions,
   type LegalPublicContentSlug,
 } from "@/lib/public-content";
+import { sanitizePublicHtml } from "@/lib/sanitize-public-html";
 
 export function LegalContentPage({
   slug,
@@ -15,6 +16,7 @@ export function LegalContentPage({
     publicContentQueryOptions(slug),
   );
   const html = data?.data?.trim();
+  const sanitizedHtml = html ? sanitizePublicHtml(html) : "";
 
   return (
     <main className="bg-background text-foreground">
@@ -28,8 +30,8 @@ export function LegalContentPage({
                 ? error.message
                 : "Unable to load this page content."}
             </p>
-          ) : html ? (
-            <div dangerouslySetInnerHTML={{ __html: html }} />
+          ) : sanitizedHtml ? (
+            <div dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />
           ) : (
             <p className="text-brand-muted">No content available.</p>
           )}
