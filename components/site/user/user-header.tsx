@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { ShoppingCartIcon, UserIcon } from "@/components/icons/site-icons";
-import { AuthModalCard } from "@/components/site/AuthModel";
+import { AuthModalCard } from "@/components/site/AuthModal";
 import { useSiteCart } from "@/components/site/cart/cart-provider";
 import { BrandLogo } from "@/components/site/shared/brand-logo";
 import { Button } from "@/components/ui/button";

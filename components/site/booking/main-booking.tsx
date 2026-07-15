@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "motion/react";
-import { AuthModalCard } from "@/components/site/AuthModel";
+import { AuthModalCard } from "@/components/site/AuthModal";
 import { BookingActions } from "@/components/site/booking/booking-actions";
 import { BookingConfirmation } from "@/components/site/booking/booking-confirmation";
 import { BOOKING_INITIAL_SELECTION } from "@/components/site/booking/config";
@@ -119,7 +119,19 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   };
 
   useEffect(() => {
-    void refreshCurrentUser();
+    let isActive = true;
+
+    void getCurrentUser().then((user) => {
+      if (!isActive) return;
+      setCurrentUser(user);
+      setVehicles(user ? readUserVehiclesFromStorage() : []);
+      applyUserDefaults(user);
+      setHasCheckedAuth(true);
+    });
+
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const setSelectionValue = <Key extends keyof BookingSelection>(

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 
-import { AuthModalCard } from "@/components/site/AuthModel";
+import { AuthModalCard } from "@/components/site/AuthModal";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

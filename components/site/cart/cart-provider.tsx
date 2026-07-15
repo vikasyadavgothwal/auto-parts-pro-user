@@ -12,7 +12,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { AuthModalCard } from "@/components/site/AuthModel";
+import { AuthModalCard } from "@/components/site/AuthModal";
 import {
   Dialog,
   DialogContent,
