@@ -2,11 +2,7 @@ import type {
   ProductHighlight,
   ProductOffer,
 } from "@/types/site/product";
-import {
-  CheckCircleIcon,
-  ShieldIcon,
-  TruckIcon,
-} from "@/components/icons/site-icons";
+import { ShieldIcon, TruckIcon } from "@/components/icons/site-icons";
 
 export const productImages = [
   "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=1200&h=1200&fit=crop",

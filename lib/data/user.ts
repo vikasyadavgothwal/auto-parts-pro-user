@@ -7,8 +7,6 @@ import {
   PackageIcon,
   CogIcon,
   BatteryIcon,
-  GaugeIcon,
-  CarFrontIcon,
   ZapIcon,
   Clock3Icon,
 } from "@/components/icons/site-icons";

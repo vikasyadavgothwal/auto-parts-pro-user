@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
+import { AddProductToCartButton } from "@/components/site/cart/add-product-to-cart-button";
 import {
   FitmentConfirmedIcon,
   ShieldIcon,
@@ -103,16 +104,14 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
           </div>
 
           <div>
-            <Button
+            <AddProductToCartButton
+              offer={offer}
               className={cn(
-                "h-12 w-full rounded-full font-medium",
                 offer.recommended
                   ? "bg-primary text-white"
-                  : "bg-primary text-white  border border-gray-200",
+                  : "border border-gray-200 bg-primary text-white",
               )}
-            >
-             {offer.recommended ? "Add to Cart" : "Select Offer"}
-            </Button>
+            />
           </div>
         </div>
       </CardContent>

@@ -3,24 +3,30 @@ import { BookingStepFrame } from "@/components/site/booking/booking-step-frame";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type {
+  BookingCustomerVehicle,
   BookingDateOption,
   BookingService,
-  BookingVehicle,
 } from "@/types/site/booking";
 
 type ReviewStepProps = {
+  error?: string;
+  garageName?: string;
+  isSubmitting?: boolean;
   selectedDate?: BookingDateOption;
   selectedService?: BookingService;
   selectedTime: string;
-  selectedVehicle?: BookingVehicle;
+  customerVehicle: BookingCustomerVehicle;
   onConfirm: () => void;
 };
 
 export function ReviewStep({
+  error,
+  garageName,
+  isSubmitting = false,
   selectedDate,
   selectedService,
   selectedTime,
-  selectedVehicle,
+  customerVehicle,
   onConfirm,
 }: ReviewStepProps) {
   return (
@@ -36,6 +42,15 @@ export function ReviewStep({
         <CardContent className="p-8">
           <div className="space-y-6">
             <div>
+              <h3 className="mb-2 text-sm font-semibold text-brand-muted">
+                Garage
+              </h3>
+              <div className="text-lg font-semibold text-foreground">
+                {garageName}
+              </div>
+            </div>
+
+            <div className="border-t border-border pt-6">
               <h3 className="mb-2 text-sm font-semibold text-brand-muted">
                 Service
               </h3>
@@ -58,12 +73,15 @@ export function ReviewStep({
                 Vehicle
               </h3>
               <div className="text-lg font-semibold text-foreground">
-                {selectedVehicle?.year} {selectedVehicle?.make}{" "}
-                {selectedVehicle?.model}
+                {[customerVehicle.year, customerVehicle.make, customerVehicle.model]
+                  .filter(Boolean)
+                  .join(" ")}
               </div>
-              <div className="mt-1 text-sm text-brand-muted">
-                VIN: {selectedVehicle?.vin}
-              </div>
+              {customerVehicle.vin ? (
+                <div className="mt-1 text-sm text-brand-muted">
+                  VIN: {customerVehicle.vin}
+                </div>
+              ) : null}
             </div>
 
             <div className="border-t border-border pt-6">
@@ -84,7 +102,8 @@ export function ReviewStep({
                   Total
                 </span>
                 <span className="text-3xl font-bold text-primary">
-                  AED {selectedService?.price}
+                  {selectedService?.currency ?? "AED"}{" "}
+                  {selectedService?.price.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -92,11 +111,18 @@ export function ReviewStep({
         </CardContent>
       </Card>
 
+      {error ? (
+        <div className="mb-4 rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-primary">
+          {error}
+        </div>
+      ) : null}
+
       <Button
         onClick={onConfirm}
+        disabled={isSubmitting}
         className="h-14 w-full rounded-xl bg-primary text-lg text-primary-foreground hover:bg-brand-primary-hover"
       >
-        Confirm Booking
+        {isSubmitting ? "Confirming..." : "Confirm Booking"}
       </Button>
     </BookingStepFrame>
   );

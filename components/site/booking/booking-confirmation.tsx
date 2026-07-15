@@ -6,22 +6,27 @@ import { BOOKING_ROUTES } from "@/components/site/booking/config";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type {
+  BookingCustomerVehicle,
   BookingDateOption,
+  GarageBookingResult,
   BookingService,
-  BookingVehicle,
 } from "@/types/site/booking";
 type BookingConfirmationProps = {
+  booking?: GarageBookingResult | null;
+  garageName?: string;
   selectedDate?: BookingDateOption;
   selectedService?: BookingService;
   selectedTime: string;
-  selectedVehicle?: BookingVehicle;
+  customerVehicle: BookingCustomerVehicle;
   onBookAnother: () => void;
 };
 export function BookingConfirmation({
+  booking,
+  garageName,
   selectedDate,
   selectedService,
   selectedTime,
-  selectedVehicle,
+  customerVehicle,
   onBookAnother,
 }: BookingConfirmationProps) {
   return (
@@ -55,6 +60,20 @@ export function BookingConfirmation({
 
                 <div className="space-y-3">
                   <div className="flex justify-between gap-4">
+                    <span className="text-brand-muted">Booking ID</span>
+                    <span className="text-right font-medium text-foreground">
+                      {booking?.publicId}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between gap-4">
+                    <span className="text-brand-muted">Garage</span>
+                    <span className="text-right font-medium text-foreground">
+                      {garageName}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between gap-4">
                     <span className="text-brand-muted">Service</span>
                     <span className="text-right font-medium text-foreground">
                       {selectedService?.name}
@@ -64,8 +83,9 @@ export function BookingConfirmation({
                   <div className="flex justify-between gap-4">
                     <span className="text-brand-muted">Vehicle</span>
                     <span className="text-right font-medium text-foreground">
-                      {selectedVehicle?.year} {selectedVehicle?.make}{" "}
-                      {selectedVehicle?.model}
+                      {[customerVehicle.year, customerVehicle.make, customerVehicle.model]
+                        .filter(Boolean)
+                        .join(" ")}
                     </span>
                   </div>
 
@@ -79,7 +99,8 @@ export function BookingConfirmation({
                   <div className="flex justify-between gap-4 border-t border-border pt-3">
                     <span className="text-brand-muted">Total</span>
                     <span className="text-xl font-bold text-primary">
-                      AED {selectedService?.price}
+                      {selectedService?.currency ?? "AED"}{" "}
+                      {selectedService?.price.toFixed(2)}
                     </span>
                   </div>
                 </div>

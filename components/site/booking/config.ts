@@ -10,12 +10,20 @@ export const BOOKING_ROUTES = {
 export const BOOKING_INITIAL_SELECTION: BookingSelection = {
   serviceId: "",
   vehicleId: "",
+  customerName: "",
+  customerEmail: "",
+  customerPhone: "",
+  vehicleYear: "",
+  vehicleMake: "",
+  vehicleModel: "",
+  vehicleVin: "",
+  notes: "",
   date: "",
   time: "",
 };
 export const BOOKING_STEP_LABELS: Record<BookingActiveStep, string> = {
   service: "Select Service",
-  vehicle: "Select Vehicle",
+  vehicle: "Your Details",
   datetime: "Date & Time",
   review: "Review",
 };

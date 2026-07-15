@@ -11,8 +11,8 @@ import type { BusinessFeature } from "@/types/site/business"
 import type { BusinessPlan } from "@/types/site/business"
  export const fleetFeatures = [
   "Bulk ordering with custom pricing",
-  "Fleet-specific inventory management (Comming soon)",
-  "Predictive maintenance alerts (Comming soon)",
+  "Fleet-specific inventory management (Coming soon)",
+  "Predictive maintenance alerts (Coming soon)",
   "Multi-vehicle tracking",
   "Custom reporting & analytics",
   "Integration with fleet management software",

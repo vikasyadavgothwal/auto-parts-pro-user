@@ -7,8 +7,20 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { CountryPhoneInput } from "@/components/site/shared/country-phone-input";
 import { companyFields, vehicleFields } from "@/lib/data/request";
 const MAX_VEHICLE_YEAR = new Date().getFullYear() + 1;
+export type RfqVehicleOption = {
+  id: string;
+  label: string;
+  vin: string;
+  year: string;
+  make: string;
+  model: string;
+  trim?: string;
+  mileage?: string;
+};
+
 type TextFieldProps = {
   name: string;
   label: string;
@@ -149,6 +161,9 @@ function PartRequestCard({
 }
 
 export function CompanyInformationSection() {
+  const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
+  const [phoneNumber, setPhoneNumber] = useState("");
+
   return (
     <Card className="rounded-2xl p-5 sm:p-6 lg:p-8">
       <h2 className="mb-5 text-xl font-thin text-white sm:mb-6 sm:text-2xl">
@@ -156,43 +171,126 @@ export function CompanyInformationSection() {
       </h2>
 
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-        {companyFields.map(([label, placeholder], index) => (
+        {companyFields.slice(0, 3).map(([label, placeholder], index) => (
           <TextField
             key={label}
             name={["companyName", "contactName", "email", "phone"][index]}
             label={label}
             placeholder={placeholder}
             required
-            type={index === 2 ? "email" : index === 3 ? "tel" : "text"}
+            type={index === 2 ? "email" : "text"}
           />
         ))}
+        <CountryPhoneInput
+          id="rfq-phone"
+          name="phone"
+          label={companyFields[3]?.[0] ?? "Phone *"}
+          countryCode={phoneCountryCode}
+          phoneNumber={phoneNumber}
+          onCountryCodeChange={setPhoneCountryCode}
+          onPhoneNumberChange={setPhoneNumber}
+          labelClassName="text-sm font-medium text-white"
+          selectClassName="bg-brand-surface text-white"
+          inputClassName="bg-brand-surface px-4 text-base text-white"
+        />
       </div>
     </Card>
   );
 }
 
-export function VehicleInformationSection() {
+export function VehicleInformationSection({
+  accountRole,
+  vehicles,
+  selectedVehicleId,
+  isLoadingVehicles,
+  dashboardVehiclesUrl,
+  onVehicleChange,
+}: {
+  accountRole?: string | null;
+  vehicles: RfqVehicleOption[];
+  selectedVehicleId: string;
+  isLoadingVehicles: boolean;
+  dashboardVehiclesUrl: string;
+  onVehicleChange: (vehicleId: string) => void;
+}) {
+  const selectedVehicle = vehicles.find((vehicle) => vehicle.id === selectedVehicleId);
+  const usesSavedVehicles = accountRole === "User" || accountRole === "Fleet";
+
   return (
     <Card className="rounded-2xl p-5 sm:p-6 lg:p-8">
       <h2 className="mb-5 text-xl font-thin text-white sm:mb-6 sm:text-2xl">
         Vehicle Information
       </h2>
 
-      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-5">
-        <TextField name="vehicleVin" label="VIN (Optional)" placeholder="1HGBH41JXMN109186" maxLength={17} />
-        {vehicleFields.map((field, index) => (
-          <TextField
-            key={field.label}
-            name={["vehicleYear", "vehicleMake", "vehicleModel", "vehicleTrim"][index]}
-            label={field.label}
-            placeholder={field.placeholder}
-            required={index < 3}
-            type={index === 0 ? "number" : "text"}
-            min={index === 0 ? 1886 : undefined}
-            max={index === 0 ? MAX_VEHICLE_YEAR : undefined}
-          />
-        ))}
-      </div>
+      {usesSavedVehicles ? (
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="rfq-saved-vehicle" className="mb-2 block text-sm font-medium text-white">
+              {accountRole === "Fleet" ? "Fleet Vehicle *" : "Saved Vehicle *"}
+            </Label>
+            {isLoadingVehicles ? (
+              <p className="rounded-xl border border-border bg-brand-surface px-4 py-3 text-sm text-brand-muted">
+                Loading saved vehicles...
+              </p>
+            ) : vehicles.length ? (
+              <select
+                id="rfq-saved-vehicle"
+                value={selectedVehicleId}
+                onChange={(event) => onVehicleChange(event.target.value)}
+                required
+                className="h-12 w-full rounded-xl border border-border bg-brand-surface px-4 text-base text-white outline-none transition-colors focus-visible:border-primary"
+              >
+                <option value="">Select a vehicle</option>
+                {vehicles.map((vehicle) => (
+                  <option key={vehicle.id} value={vehicle.id}>
+                    {vehicle.label}
+                    {vehicle.vin ? ` - ${vehicle.vin}` : ""}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="space-y-3 rounded-xl border border-border bg-brand-surface p-4 text-sm text-brand-muted">
+                <p>
+                  {accountRole === "Fleet"
+                    ? "No fleet vehicles are saved yet. Add a fleet vehicle before submitting an RFQ."
+                    : "No saved vehicles are available yet. Add a vehicle before submitting an RFQ."}
+                </p>
+                <a
+                  href={dashboardVehiclesUrl}
+                  className="inline-flex h-10 items-center rounded-xl bg-primary px-4 font-medium text-white hover:bg-brand-primary-hover"
+                >
+                  Add vehicle
+                </a>
+              </div>
+            )}
+          </div>
+
+          {selectedVehicle ? (
+            <div className="grid gap-3 rounded-xl border border-border bg-brand-surface p-4 text-sm text-brand-muted sm:grid-cols-2 lg:grid-cols-4">
+              <p><span className="text-white">Year:</span> {selectedVehicle.year || "-"}</p>
+              <p><span className="text-white">Make:</span> {selectedVehicle.make || "-"}</p>
+              <p><span className="text-white">Model:</span> {selectedVehicle.model || "-"}</p>
+              <p><span className="text-white">VIN:</span> {selectedVehicle.vin || "-"}</p>
+            </div>
+          ) : null}
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-5">
+          <TextField name="vehicleVin" label="VIN (Optional)" placeholder="1HGBH41JXMN109186" maxLength={17} />
+          {vehicleFields.map((field, index) => (
+            <TextField
+              key={field.label}
+              name={["vehicleYear", "vehicleMake", "vehicleModel", "vehicleTrim"][index]}
+              label={field.label}
+              placeholder={field.placeholder}
+              required={index < 3}
+              type={index === 0 ? "number" : "text"}
+              min={index === 0 ? 1886 : undefined}
+              max={index === 0 ? MAX_VEHICLE_YEAR : undefined}
+            />
+          ))}
+        </div>
+      )}
     </Card>
   );
 }

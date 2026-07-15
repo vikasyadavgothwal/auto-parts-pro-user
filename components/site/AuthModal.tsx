@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  type FormEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
 import {
@@ -14,8 +9,8 @@ import {
   RecaptchaVerifier,
   reload,
   signInWithEmailAndPassword,
-  signInWithPhoneNumber,
   signInWithPopup,
+  signInWithPhoneNumber,
   updateProfile,
   type ConfirmationResult,
   type User,
@@ -28,7 +23,6 @@ import {
   EyeIcon,
   LockIcon,
   MailIcon,
-  PhoneIcon,
   UserIcon,
 } from "@/components/icons/site-icons";
 import { Button } from "@/components/ui/button";
@@ -37,6 +31,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FieldSeparator } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  buildInternationalPhoneNumber,
+  CountryPhoneInput,
+  isValidNationalPhoneNumber,
+} from "@/components/site/shared/country-phone-input";
 import {
   Select,
   SelectContent,
@@ -51,6 +50,7 @@ import {
   validateSignupDetails,
 } from "@/lib/account-registration";
 import {
+  getFirebaseAuthDiagnostics,
   getFirebaseClientAuth,
   sendUserEmailVerification,
 } from "@/lib/firebase/client";
@@ -68,11 +68,26 @@ const ACCOUNT_TYPE_DESCRIPTIONS: Record<AccountType, string> = {
   Supplier: "List and sell automotive parts.",
 };
 
+const VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE =
+  "Choose an account type to finish creating your account";
+
 type AuthModalCardProps = {
+  onAuthenticated?: () => void;
   onClose?: () => void;
 };
 
 const getAuthErrorMessage = (error: unknown): string => {
+  const diagnostics = getFirebaseAuthDiagnostics();
+  const origin =
+    diagnostics.origin === "server" ? "this domain" : diagnostics.origin;
+
+  if (
+    error instanceof Error &&
+    error.message.includes("reCAPTCHA has already been rendered")
+  ) {
+    return "Phone verification is already initialized. Refresh the page and try again.";
+  }
+
   if (error instanceof ApiRequestError) {
     return error.message;
   }
@@ -83,28 +98,72 @@ const getAuthErrorMessage = (error: unknown): string => {
       : "Unable to authenticate. Please try again.";
   }
 
+  if (error.code.startsWith("auth/requests-from-referer-")) {
+    return `Firebase blocked requests from ${origin}. Add ${origin}/* to the Google Cloud API key HTTP referrers for this Firebase project's Web API key.`;
+  }
+
   const messages: Record<string, string> = {
     "auth/email-already-in-use": "An account already exists with this email.",
     "auth/invalid-credential": "The email or password is incorrect.",
     "auth/invalid-email": "Enter a valid email address.",
-    "auth/invalid-phone-number": "Enter a valid phone number with country code.",
+    "auth/app-not-authorized":
+      "This domain is not authorized for Firebase Authentication.",
+    "auth/captcha-check-failed": "Phone verification failed. Try again.",
+    "auth/code-expired":
+      "The verification code has expired. Request a new code.",
+    "auth/credential-already-in-use":
+      "This phone number is already linked to another account.",
+    "auth/invalid-phone-number":
+      "Enter a valid phone number with country code.",
     "auth/invalid-verification-code": "The verification code is incorrect.",
+    "auth/missing-app-credential":
+      "Phone verification could not start. Refresh the page and try again.",
+    "auth/invalid-app-credential": `Phone verification is blocked for ${origin}. Add this domain in Firebase Auth Authorized domains and, if your Firebase API key is restricted, add ${origin}/* in Google Cloud API key HTTP referrers.`,
     "auth/missing-phone-number": "Enter your phone number with country code.",
+    "auth/network-request-failed":
+      "Network error while contacting Firebase. Check your connection and try again.",
     "auth/operation-not-allowed":
-      "This sign-in method is not enabled in Firebase Authentication.",
+      "Phone sign-in is not enabled for this Firebase project.",
     "auth/popup-closed-by-user": "Google sign-in was cancelled.",
+    "auth/quota-exceeded":
+      "Firebase SMS quota is exceeded. Try again later or use a test phone number.",
     "auth/too-many-requests": "Too many attempts. Please try again later.",
     "auth/unauthorized-continue-uri":
       "The verification redirect domain is not authorized in Firebase.",
-    "auth/invalid-continue-uri":
-      "The verification redirect URL is not valid.",
+    "auth/invalid-continue-uri": "The verification redirect URL is not valid.",
     "auth/weak-password": "Choose a stronger password.",
+    "auth/web-storage-unsupported":
+      "This browser is blocking Firebase storage. Enable cookies/storage and try again.",
   };
 
-  return messages[error.code] ?? "Unable to authenticate. Please try again.";
+  return (
+    messages[error.code] ??
+    `${error.message || "Unable to authenticate. Please try again."} (${error.code})`
+  );
 };
 
-export function AuthModalCard({ onClose }: AuthModalCardProps) {
+const logFirebaseAuthError = (error: unknown) => {
+  if (
+    error instanceof FirebaseError &&
+    (error.code === "auth/invalid-app-credential" ||
+      error.code.startsWith("auth/requests-from-referer-"))
+  ) {
+    console.warn("Firebase phone auth app verifier rejected", {
+      ...getFirebaseAuthDiagnostics(),
+      code: error.code,
+      message: error.message,
+    });
+  }
+};
+
+const isVerifiedAccountRoleRequired = (error: unknown) =>
+  error instanceof Error &&
+  error.message === VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE;
+
+export function AuthModalCard({
+  onAuthenticated,
+  onClose,
+}: AuthModalCardProps) {
   const router = useRouter();
   const recaptchaVerifier = useRef<RecaptchaVerifier | null>(null);
   const [mode, setMode] = useState<AuthMode>("signin");
@@ -115,12 +174,16 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [verificationUser, setVerificationUser] = useState<User | null>(null);
+  const [pendingVerifiedUser, setPendingVerifiedUser] = useState<User | null>(
+    null,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
@@ -131,6 +194,23 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
       recaptchaVerifier.current = null;
     };
   }, []);
+
+  const clearPhoneRecaptchaVerifier = () => {
+    recaptchaVerifier.current?.clear();
+    recaptchaVerifier.current = null;
+    document.getElementById("firebase-phone-recaptcha")?.replaceChildren();
+  };
+
+  const getPhoneRecaptchaVerifier = () => {
+    clearPhoneRecaptchaVerifier();
+    const verifier = new RecaptchaVerifier(
+      getFirebaseClientAuth(),
+      "firebase-phone-recaptcha",
+      { size: "invisible" },
+    );
+    recaptchaVerifier.current = verifier;
+    return verifier;
+  };
 
   const resetFeedback = () => {
     setErrorMessage("");
@@ -150,7 +230,36 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
       requestedDisplayName,
     );
     router.refresh();
+    onAuthenticated?.();
     onClose?.();
+  };
+
+  const finishVerifiedProviderAuthentication = async (
+    user: User,
+    forceRefresh = true,
+    requestedRole?: AccountType,
+    requestedDisplayName?: string,
+  ) => {
+    try {
+      await finishAuthentication(
+        user,
+        forceRefresh,
+        requestedRole,
+        requestedDisplayName,
+      );
+    } catch (error) {
+      if (!requestedRole && isVerifiedAccountRoleRequired(error)) {
+        setPendingVerifiedUser(user);
+        setVerificationUser(null);
+        setConfirmationResult(null);
+        setOtp("");
+        setMode("signup");
+        setStatusMessage(VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE);
+        return;
+      }
+
+      throw error;
+    }
   };
 
   const runAuthAction = async (action: () => Promise<void>) => {
@@ -160,6 +269,7 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
     try {
       await action();
     } catch (error) {
+      logFirebaseAuthError(error);
       setErrorMessage(getAuthErrorMessage(error));
     } finally {
       setIsSubmitting(false);
@@ -188,7 +298,7 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
         }
 
         setVerificationUser(null);
-        await finishAuthentication(credential.user, true);
+        await finishVerifiedProviderAuthentication(credential.user, true);
         return;
       }
 
@@ -228,7 +338,8 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
 
       await sendUserEmailVerification(
         verificationUser,
-        getPendingAccountRegistration(verificationUser.uid)?.role ?? accountType,
+        getPendingAccountRegistration(verificationUser.uid)?.role ??
+          accountType,
       );
       setStatusMessage("A new verification email has been sent.");
     });
@@ -254,6 +365,9 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
 
   const handleGoogleSignIn = () => {
     void runAuthAction(async () => {
+      const auth = getFirebaseClientAuth();
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
       const signupDisplayName =
         mode === "signup"
           ? validateSignupDetails({
@@ -263,22 +377,22 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
               acceptedTerms,
             })
           : undefined;
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
-      const credential = await signInWithPopup(
-        getFirebaseClientAuth(),
-        provider,
-      );
+
+      const credential = await signInWithPopup(auth, provider);
       if (signupDisplayName) {
+        await updateProfile(credential.user, {
+          displayName: signupDisplayName,
+        });
         setPendingAccountRegistration(
           credential.user.uid,
           accountType,
           signupDisplayName,
         );
       }
-      await finishAuthentication(
+
+      await finishVerifiedProviderAuthentication(
         credential.user,
-        false,
+        true,
         signupDisplayName ? accountType : undefined,
         signupDisplayName,
       );
@@ -289,22 +403,21 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
     event.preventDefault();
 
     void runAuthAction(async () => {
-      if (!phoneNumber.trim().startsWith("+")) {
-        throw new Error("Enter the phone number with country code, for example +1.");
+      if (!isValidNationalPhoneNumber(phoneNumber)) {
+        throw new Error("Enter a valid phone number.");
       }
 
-      recaptchaVerifier.current?.clear();
-      const verifier = new RecaptchaVerifier(
-        getFirebaseClientAuth(),
-        "firebase-phone-submit",
-        { size: "invisible" },
-      );
-      recaptchaVerifier.current = verifier;
-      const result = await signInWithPhoneNumber(
-        getFirebaseClientAuth(),
-        phoneNumber.trim(),
-        verifier,
-      );
+      let result: ConfirmationResult;
+      try {
+        result = await signInWithPhoneNumber(
+          getFirebaseClientAuth(),
+          buildInternationalPhoneNumber(phoneCountryCode, phoneNumber),
+          getPhoneRecaptchaVerifier(),
+        );
+      } catch (error) {
+        clearPhoneRecaptchaVerifier();
+        throw error;
+      }
       setConfirmationResult(result);
       setStatusMessage("Verification code sent.");
     });
@@ -319,7 +432,37 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
       }
 
       const credential = await confirmationResult.confirm(otp.trim());
-      await finishAuthentication(credential.user);
+      await finishVerifiedProviderAuthentication(credential.user, true);
+    });
+  };
+
+  const handleCompleteVerifiedAccount = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    void runAuthAction(async () => {
+      if (!pendingVerifiedUser) {
+        throw new Error("Sign in with Google or phone first.");
+      }
+
+      const displayName = validateSignupDetails({
+        role: accountType,
+        fullName,
+        businessName,
+        acceptedTerms,
+      });
+
+      await updateProfile(pendingVerifiedUser, { displayName });
+      setPendingAccountRegistration(
+        pendingVerifiedUser.uid,
+        accountType,
+        displayName,
+      );
+      await finishAuthentication(
+        pendingVerifiedUser,
+        true,
+        accountType,
+        displayName,
+      );
     });
   };
 
@@ -327,6 +470,7 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
     setMode(nextMode);
     setLoginMethod("email");
     setVerificationUser(null);
+    setPendingVerifiedUser(null);
     resetFeedback();
   };
 
@@ -350,32 +494,66 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
           <div className="p-6 pb-6 sm:p-8 sm:pb-6">
             <div className="mb-6 text-center">
               <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
-                {mode === "signin" ? "Welcome Back" : "Get Started"}
+                {pendingVerifiedUser
+                  ? "Finish Account Setup"
+                  : mode === "signin"
+                    ? "Welcome Back"
+                    : "Get Started"}
               </h2>
               <p className="text-brand-muted">
-                {mode === "signin"
-                  ? "Sign in to access your account"
-                  : "Create your account to continue"}
+                {pendingVerifiedUser
+                  ? "Choose how you want to use AutoPartsPro."
+                  : mode === "signin"
+                    ? "Sign in to access your account"
+                    : "Create your account to continue"}
               </p>
             </div>
 
-            <div className="flex gap-2 rounded-xl border border-border bg-background p-1">
-              <ModeButton
-                active={mode === "signin"}
-                onClick={() => selectMode("signin")}
-              >
-                Sign In
-              </ModeButton>
-              <ModeButton
-                active={mode === "signup"}
-                onClick={() => selectMode("signup")}
-              >
-                Sign Up
-              </ModeButton>
-            </div>
+            {!pendingVerifiedUser ? (
+              <div className="flex gap-2 rounded-xl border border-border bg-background p-1">
+                <ModeButton
+                  active={mode === "signin"}
+                  onClick={() => selectMode("signin")}
+                >
+                  Sign In
+                </ModeButton>
+                <ModeButton
+                  active={mode === "signup"}
+                  onClick={() => selectMode("signup")}
+                >
+                  Sign Up
+                </ModeButton>
+              </div>
+            ) : null}
           </div>
 
-          {mode === "signin" ? (
+          {pendingVerifiedUser ? (
+            <form
+              className="px-6 pb-8 sm:px-8"
+              onSubmit={handleCompleteVerifiedAccount}
+            >
+              <AccountSetupFields
+                accountType={accountType}
+                fullName={fullName}
+                businessName={businessName}
+                acceptedTerms={acceptedTerms}
+                onAccountTypeChange={setAccountType}
+                onFullNameChange={setFullName}
+                onBusinessNameChange={setBusinessName}
+                onAcceptedTermsChange={setAcceptedTerms}
+              />
+
+              <AuthFeedback error={errorMessage} status={statusMessage} />
+
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="h-12 w-full rounded-xl"
+              >
+                {isSubmitting ? "Creating Account..." : "Create Account"}
+              </Button>
+            </form>
+          ) : mode === "signin" ? (
             <div className="px-6 pb-8 sm:px-8">
               <div className="mb-5 grid grid-cols-2 gap-2 rounded-xl border border-border bg-background p-1">
                 <ModeButton
@@ -446,22 +624,18 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
                 </form>
               ) : (
                 <form onSubmit={handleSendOtp}>
-                  <AuthField label="Phone Number">
-                    <div className="relative">
-                      <PhoneIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
-                      <Input
-                        type="tel"
-                        value={phoneNumber}
-                        onChange={(event) => setPhoneNumber(event.target.value)}
-                        autoComplete="tel"
-                        placeholder="+1 555 123 4567"
-                        className="h-12 bg-background pl-12"
-                        required
-                      />
-                    </div>
-                  </AuthField>
+                  <CountryPhoneInput
+                    id="auth-phone-number"
+                    label="Phone Number"
+                    countryCode={phoneCountryCode}
+                    phoneNumber={phoneNumber}
+                    onCountryCodeChange={setPhoneCountryCode}
+                    onPhoneNumberChange={setPhoneNumber}
+                    inputClassName="bg-background"
+                    selectClassName="bg-background"
+                  />
+                  <div id="firebase-phone-recaptcha" />
                   <Button
-                    id="firebase-phone-submit"
                     type="submit"
                     disabled={isSubmitting}
                     className="mt-5 h-12 w-full rounded-xl"
@@ -504,62 +678,16 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
             </div>
           ) : (
             <form className="px-6 pb-8 sm:px-8" onSubmit={handleEmailSubmit}>
-              <div className="mb-6 space-y-2">
-                <Label
-                  htmlFor="account-type"
-                  className="block text-sm font-medium text-foreground"
-                >
-                  Account Type
-                </Label>
-                <Select
-                  value={accountType}
-                  onValueChange={(value) => setAccountType(value as AccountType)}
-                >
-                  <SelectTrigger
-                    id="account-type"
-                    className="h-12 w-full rounded-xl bg-background"
-                  >
-                    <SelectValue placeholder="Select account type" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    <SelectItem value="Fleet">Fleet</SelectItem>
-                    <SelectItem value="User">User</SelectItem>
-                    <SelectItem value="Garage">Garage</SelectItem>
-                    <SelectItem value="Supplier">Supplier</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-xs leading-5 text-brand-muted">
-                  {ACCOUNT_TYPE_DESCRIPTIONS[accountType]}
-                </p>
-              </div>
-
-              <AuthField
-                label={accountType === "User" ? "Full Name" : "Business Name"}
-              >
-                <div className="relative">
-                  {accountType === "User" ? (
-                    <UserIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
-                  ) : (
-                    <BuildingIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
-                  )}
-                  <Input
-                    value={accountType === "User" ? fullName : businessName}
-                    onChange={(event) =>
-                      accountType === "User"
-                        ? setFullName(event.target.value)
-                        : setBusinessName(event.target.value)
-                    }
-                    autoComplete="name"
-                    placeholder={
-                      accountType === "User"
-                        ? "Enter your name"
-                        : "Enter business name"
-                    }
-                    className="h-12 bg-background pl-12"
-                    required
-                  />
-                </div>
-              </AuthField>
+              <AccountSetupFields
+                accountType={accountType}
+                fullName={fullName}
+                businessName={businessName}
+                acceptedTerms={acceptedTerms}
+                onAccountTypeChange={setAccountType}
+                onFullNameChange={setFullName}
+                onBusinessNameChange={setBusinessName}
+                onAcceptedTermsChange={setAcceptedTerms}
+              />
 
               <EmailFields
                 email={email}
@@ -569,19 +697,6 @@ export function AuthModalCard({ onClose }: AuthModalCardProps) {
                 onPasswordChange={setPassword}
                 onTogglePassword={() => setShowPassword((value) => !value)}
               />
-
-              <div className="mb-6 flex items-start gap-3">
-                <Checkbox
-                  id="terms"
-                  checked={acceptedTerms}
-                  onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
-                  className="mt-1"
-                />
-                <Label htmlFor="terms" className="text-sm leading-6 text-brand-muted">
-                  I agree to the Terms of Service and Privacy Policy
-                </Label>
-              </div>
-
               <AuthFeedback error={errorMessage} status={statusMessage} />
 
               <Button
@@ -631,6 +746,95 @@ function ModeButton({
   );
 }
 
+function AccountSetupFields({
+  accountType,
+  fullName,
+  businessName,
+  acceptedTerms,
+  onAccountTypeChange,
+  onFullNameChange,
+  onBusinessNameChange,
+  onAcceptedTermsChange,
+}: {
+  accountType: AccountType;
+  fullName: string;
+  businessName: string;
+  acceptedTerms: boolean;
+  onAccountTypeChange: (value: AccountType) => void;
+  onFullNameChange: (value: string) => void;
+  onBusinessNameChange: (value: string) => void;
+  onAcceptedTermsChange: (value: boolean) => void;
+}) {
+  return (
+    <>
+      <div className="mb-6 space-y-2">
+        <Label
+          htmlFor="account-type"
+          className="block text-sm font-medium text-foreground"
+        >
+          Account Type
+        </Label>
+        <Select
+          value={accountType}
+          onValueChange={(value) => onAccountTypeChange(value as AccountType)}
+        >
+          <SelectTrigger
+            id="account-type"
+            className="h-12 w-full rounded-xl bg-background"
+          >
+            <SelectValue placeholder="Select account type" />
+          </SelectTrigger>
+          <SelectContent position="popper">
+            <SelectItem value="Fleet">Fleet</SelectItem>
+            <SelectItem value="User">User</SelectItem>
+            <SelectItem value="Garage">Garage</SelectItem>
+            <SelectItem value="Supplier">Supplier</SelectItem>
+          </SelectContent>
+        </Select>
+        <p className="text-xs leading-5 text-brand-muted">
+          {ACCOUNT_TYPE_DESCRIPTIONS[accountType]}
+        </p>
+      </div>
+
+      <AuthField label={accountType === "User" ? "Full Name" : "Business Name"}>
+        <div className="relative">
+          {accountType === "User" ? (
+            <UserIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
+          ) : (
+            <BuildingIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
+          )}
+          <Input
+            value={accountType === "User" ? fullName : businessName}
+            onChange={(event) =>
+              accountType === "User"
+                ? onFullNameChange(event.target.value)
+                : onBusinessNameChange(event.target.value)
+            }
+            autoComplete="name"
+            placeholder={
+              accountType === "User" ? "Enter your name" : "Enter business name"
+            }
+            className="h-12 bg-background pl-12"
+            required
+          />
+        </div>
+      </AuthField>
+
+      <div className="mb-6 flex items-start gap-3">
+        <Checkbox
+          id="terms"
+          checked={acceptedTerms}
+          onCheckedChange={(checked) => onAcceptedTermsChange(checked === true)}
+          className="mt-1"
+        />
+        <Label htmlFor="terms" className="text-sm leading-6 text-brand-muted">
+          I agree to the Terms of Service and Privacy Policy
+        </Label>
+      </div>
+    </>
+  );
+}
+
 function EmailForm({
   mode,
   email,
@@ -667,7 +871,11 @@ function EmailForm({
         disabled={isSubmitting}
         className="h-12 w-full rounded-xl"
       >
-        {isSubmitting ? "Signing In..." : mode === "signin" ? "Sign In" : "Continue"}
+        {isSubmitting
+          ? "Signing In..."
+          : mode === "signin"
+            ? "Sign In"
+            : "Continue"}
       </Button>
     </form>
   );

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { SparklesIcon } from "@/components/icons/site-icons";
 
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getBusinessQueryType } from "@/lib/business-query-cta";
 import {
   getPublicText,
   hasPublicText,
@@ -22,8 +24,10 @@ export function BusinessHeroSection({ config }: BusinessHeroSectionProps) {
   const primaryButtonLink = getPublicText(config?.primaryButtonLink);
   const secondaryButtonText = getPublicText(config?.secondaryButtonText);
   const secondaryButtonLink = getPublicText(config?.secondaryButtonLink);
-  const hasPrimaryButton = Boolean(primaryButtonText && primaryButtonLink);
-  const hasSecondaryButton = Boolean(secondaryButtonText && secondaryButtonLink);
+  const primaryQueryType = getBusinessQueryType(primaryButtonText);
+  const secondaryQueryType = getBusinessQueryType(secondaryButtonText);
+  const hasPrimaryButton = Boolean(primaryButtonText && (primaryButtonLink || primaryQueryType));
+  const hasSecondaryButton = Boolean(secondaryButtonText && (secondaryButtonLink || secondaryQueryType));
 
   if (
     !hasPublicText(badgeText, heading, redHeading, subheading) &&
@@ -64,22 +68,43 @@ export function BusinessHeroSection({ config }: BusinessHeroSectionProps) {
           {hasPrimaryButton || hasSecondaryButton ? (
             <div className="flex flex-wrap justify-center gap-4">
               {hasPrimaryButton ? (
-                <Button
-                  asChild
-                  className="h-auto rounded-full px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
-                >
-                  <Link href={primaryButtonLink}>{primaryButtonText}</Link>
-                </Button>
+                primaryQueryType ? (
+                  <BusinessDemoDialogButton
+                    queryType={primaryQueryType}
+                    source={primaryButtonText}
+                    className="h-auto rounded-full px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+                  >
+                    {primaryButtonText}
+                  </BusinessDemoDialogButton>
+                ) : (
+                  <Button
+                    asChild
+                    className="h-auto rounded-full px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
+                  >
+                    <Link href={primaryButtonLink}>{primaryButtonText}</Link>
+                  </Button>
+                )
               ) : null}
 
               {hasSecondaryButton ? (
-                <Button
-                  asChild
-                  variant="outline"
-                  className="h-auto rounded-full border-border bg-brand-panel px-8 py-4 text-lg font-medium text-white hover:border-primary hover:bg-transparent"
-                >
-                  <Link href={secondaryButtonLink}>{secondaryButtonText}</Link>
-                </Button>
+                secondaryQueryType ? (
+                  <BusinessDemoDialogButton
+                    queryType={secondaryQueryType}
+                    source={secondaryButtonText}
+                    variant="outline"
+                    className="h-auto rounded-full border-border bg-brand-panel px-8 py-4 text-lg font-medium text-white hover:border-primary hover:bg-transparent"
+                  >
+                    {secondaryButtonText}
+                  </BusinessDemoDialogButton>
+                ) : (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-auto rounded-full border-border bg-brand-panel px-8 py-4 text-lg font-medium text-white hover:border-primary hover:bg-transparent"
+                  >
+                    <Link href={secondaryButtonLink}>{secondaryButtonText}</Link>
+                  </Button>
+                )
               ) : null}
             </div>
           ) : null}

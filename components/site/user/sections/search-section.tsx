@@ -30,12 +30,16 @@ const buildConfirmedFitmentUrl = (vehicle: VinSearchVehicle) => {
     make: vehicle.epc,
   })
 
+  if (vehicle.modelId) {
+    params.set("modelId", vehicle.modelId)
+  }
+
   return `/search?${params.toString()}`
 }
 
-const buildPartNumberSearchUrl = (partNumber: string) => {
+const buildPartSearchUrl = (query: string) => {
   const params = new URLSearchParams({
-    partNumber: partNumber.trim(),
+    q: query.trim(),
   })
 
   return `/search?${params.toString()}`
@@ -46,7 +50,7 @@ export function SearchSection({ config }: { config?: TextPair }) {
   const heading = getPublicText(config?.heading)
   const subheading = getPublicText(config?.subheading)
   const vinLabel = heading || "Vehicle Identification Number (VIN)"
-  const partNumberLabel = subheading || "Vehicle Part Number"
+  const partNumberLabel = subheading || "Part Number, OEM Number, or Part Name"
   const [vin, setVin] = useState("")
   const [partNumber, setPartNumber] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
@@ -93,12 +97,12 @@ export function SearchSection({ config }: { config?: TextPair }) {
     const normalizedPartNumber = partNumber.trim()
 
     if (!normalizedPartNumber) {
-      setErrorMessage("Enter a part number before searching.")
+      setErrorMessage("Enter a part number, OEM number, or part name before searching.")
       setIsErrorDialogOpen(true)
       return
     }
 
-    router.push(buildPartNumberSearchUrl(normalizedPartNumber))
+    router.push(buildPartSearchUrl(normalizedPartNumber))
   }
 
   const onConfirmVehicle = () => {
@@ -159,7 +163,7 @@ export function SearchSection({ config }: { config?: TextPair }) {
                 type="text"
                 value={partNumber}
                 onChange={(event) => setPartNumber(event.target.value)}
-                placeholder="Enter Vehicle Part Number (e.g., BP-1234)"
+                placeholder="Enter part number, OEM number, or part name"
                 className="h-14 bg-brand-panel px-5 text-base rounded-sm"
                 autoComplete="off"
               />
@@ -206,6 +210,9 @@ export function SearchSection({ config }: { config?: TextPair }) {
                 value={confirmedVehicle.modelYearFromVin}
               />
               <InfoRow label="Make name" value={formattedMake} />
+              {confirmedVehicle.modelId ? (
+                <InfoRow label="Model id" value={confirmedVehicle.modelId} />
+              ) : null}
             </div>
           ) : null}
 

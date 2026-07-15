@@ -27,6 +27,7 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
   const partNumber = getSearchParam(params, "partNumber").trim();
   const textQuery = getSearchParam(params, "q").trim();
   const confirmedVin = getSearchParam(params, "vin").trim();
+  const confirmedModelId = getSearchParam(params, "modelId").trim();
   const confirmedYear = getSearchParam(params, "year").trim();
   const confirmedMake = getSearchParam(params, "make").trim();
   const confirmedModel = getSearchParam(params, "model").trim();
@@ -42,6 +43,7 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
   const result = await searchMarketplaceProducts({
     partNumber,
     vin: confirmedVin,
+    modelId: confirmedModelId,
     year: confirmedYear,
     make: confirmedMake,
     model: confirmedModel,
@@ -58,15 +60,17 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
     textQuery ||
     "available parts";
   const heading = partNumber
-    ? "Part Number Results"
+    ? "Part Search Results"
     : confirmedVin
       ? "Confirmed Fitment"
       : "Results Found";
   const description = confirmedVin
     ? "Parts below are matched against the vehicle fitment data saved in the database."
     : partNumber
-      ? "Exact part-number matches from the marketplace database."
-      : undefined;
+      ? "Part number, OEM number, and part name matches from the marketplace database."
+      : textQuery
+        ? "Part number, OEM number, and part name matches from the marketplace database."
+        : undefined;
 
   return (
     <SearchPage
@@ -77,9 +81,11 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
       products={products}
       queryLabel={queryLabel}
       emptyMessage={
-        partNumber
-          ? "This part number was not found in the marketplace database."
-          : "No mapped supplier products were found for this search."
+        partNumber || textQuery
+          ? "No part number, OEM number, or part name matches were found in the marketplace database."
+          : confirmedVin
+            ? "No database parts are linked to this VIN yet."
+            : "No mapped supplier products were found for this search."
       }
     />
   );

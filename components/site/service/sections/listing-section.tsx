@@ -1,26 +1,24 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
-  // ArrowRightIcon,
   AwardIcon,
   Clock3Icon,
   DropdownChevronIcon,
   FilterSlidersIcon,
   MapPinIcon,
   RatingStarIcon,
-  // ShieldCheckIcon,
 } from "@/components/icons/site-icons";
 import { MobileFilterDrawer } from "@/components/site/shared/mobile-filter-drawer";
 
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { garages } from "@/lib/data/service";
+import { formatGaragePrice } from "@/lib/public-garages";
+import type { PublicGarageSummary } from "@/types/site/garages";
 
 type FilterKey =
   | "serviceTypes"
@@ -30,16 +28,27 @@ type FilterKey =
 
 type FilterState = Record<FilterKey, string[]>;
 
-type GarageFilterDetails = {
-  availability: string[];
-  certifications: string[];
-  nextAvailable: string;
+type GaragePagination = {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+};
+
+type ServicesListingSectionProps = {
+  garages: PublicGarageSummary[];
+  pagination: GaragePagination;
+  searchParams: {
+    q: string;
+    service: string;
+    location: string;
+  };
 };
 
 const checkboxClassName =
-  "h-4 w-4  data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500";
+  "h-4 w-4 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500";
 
-const serviceTypeOptions = [
+const fallbackServiceTypeOptions = [
   "Oil Change",
   "Brake Service",
   "Tire Rotation",
@@ -52,7 +61,7 @@ const serviceTypeOptions = [
 
 const availabilityOptions = ["Available Today", "Available This Week"];
 
-const certificationOptions = [
+const fallbackCertificationOptions = [
   "ASE Certified",
   "AAA Approved",
   "Manufacturer Certified",
@@ -65,86 +74,20 @@ const priceRangeOptions = [
   "Over AED 200",
 ];
 
-const garageFilterDetails: Record<string, GarageFilterDetails> = {
-  "1": {
-    availability: ["Available Today", "Available This Week"],
-    certifications: ["ASE", "BOSH"],
-    nextAvailable: "Today at 2:00 PM",
-  },
-  "2": {
-    availability: ["Available This Week"],
-    certifications: ["ASE", "BOSH"],
-    nextAvailable: "This week",
-  },
-  "3": {
-    availability: ["Available Today", "Available This Week"],
-    certifications:["ASE", "BOSH"],
-    nextAvailable: "Today at 4:30 PM",
-  },
-  "4": {
-    availability: ["Available Today", "Available This Week"],
-    certifications: ["ASE", "BOSH"],
-    nextAvailable: "Today at 1:15 PM",
-  },
-};
-
-const defaultGarageFilterDetails: GarageFilterDetails = {
-  availability: ["Available Today", "Available This Week"],
-  certifications: [],
-  nextAvailable: "Today at 2:00 PM",
-};
-
-const filterSections: {
-  key: FilterKey;
-  title: string;
-  items: string[];
-}[] = [
-  {
-    key: "serviceTypes",
-    title: "Service Type",
-    items: serviceTypeOptions,
-  },
-  {
-    key: "availability",
-    title: "Availability",
-    items: availabilityOptions,
-  },
-  {
-    key: "certifications",
-    title: "Certifications",
-    items: certificationOptions,
-  },
-  {
-    key: "priceRanges",
-    title: "Price Range",
-    items: priceRangeOptions,
-  },
-];
-
 const createInitialFilters = (): FilterState => ({
-  serviceTypes: [],
-  availability: ["Available Today"],
-  certifications: [],
-  priceRanges: [],
-});
-
-const createEmptyFilters = (): FilterState => ({
   serviceTypes: [],
   availability: [],
   certifications: [],
   priceRanges: [],
 });
 
-function getGarageFilterDetails(garageId: string) {
-  return garageFilterDetails[garageId] ?? defaultGarageFilterDetails;
+function getPriceValue(price: number | null) {
+  return typeof price === "number" ? price : Number.NaN;
 }
 
-function getPriceValue(price: string) {
-  return Number(price.replace(/[^0-9.]/g, ""));
-}
-
-function matchesPriceRange(price: string, priceRange: string) {
+function matchesPriceRange(price: number | null, priceRange: string) {
   const priceValue = getPriceValue(price);
+  if (!Number.isFinite(priceValue)) return false;
 
   switch (priceRange) {
     case "Under AED 50":
@@ -167,7 +110,24 @@ function hasSelectedMatch(selectedItems: string[], availableItems: string[]) {
   );
 }
 
-export function ServicesListingSection() {
+function paginationHref(
+  page: number,
+  searchParams: ServicesListingSectionProps["searchParams"],
+) {
+  const params = new URLSearchParams();
+  if (searchParams.q) params.set("q", searchParams.q);
+  if (searchParams.service) params.set("service", searchParams.service);
+  if (searchParams.location) params.set("location", searchParams.location);
+  if (page > 1) params.set("page", String(page));
+  const query = params.toString();
+  return query ? `/services?${query}` : "/services";
+}
+
+export function ServicesListingSection({
+  garages,
+  pagination,
+  searchParams,
+}: ServicesListingSectionProps) {
   const [showFilters, setShowFilters] = useState(true);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(() =>
@@ -189,22 +149,66 @@ export function ServicesListingSection() {
       desktopMediaQuery.removeEventListener("change", handleDesktopChange);
   }, []);
 
+  const serviceTypeOptions = useMemo(() => {
+    const values = garages.flatMap((garage) => garage.specialties);
+    return values.length
+      ? Array.from(new Set(values))
+      : fallbackServiceTypeOptions;
+  }, [garages]);
+
+  const certificationOptions = useMemo(() => {
+    const values = garages.flatMap((garage) => garage.certifications);
+    return values.length
+      ? Array.from(new Set(values))
+      : fallbackCertificationOptions;
+  }, [garages]);
+
+  const filterSections: {
+    key: FilterKey;
+    title: string;
+    items: string[];
+  }[] = useMemo(
+    () => [
+      {
+        key: "serviceTypes",
+        title: "Service Type",
+        items: serviceTypeOptions,
+      },
+      {
+        key: "availability",
+        title: "Availability",
+        items: availabilityOptions,
+      },
+      {
+        key: "certifications",
+        title: "Certifications",
+        items: certificationOptions,
+      },
+      {
+        key: "priceRanges",
+        title: "Price Range",
+        items: priceRangeOptions,
+      },
+    ],
+    [certificationOptions, serviceTypeOptions],
+  );
+
   const filteredGarages = useMemo(
     () =>
       garages.filter((garage) => {
-        const details = getGarageFilterDetails(garage.id);
+        const availability = ["Available Today", "Available This Week"];
 
         return (
           hasSelectedMatch(filters.serviceTypes, garage.specialties) &&
-          hasSelectedMatch(filters.availability, details.availability) &&
-          hasSelectedMatch(filters.certifications, details.certifications) &&
+          hasSelectedMatch(filters.availability, availability) &&
+          hasSelectedMatch(filters.certifications, garage.certifications) &&
           (filters.priceRanges.length === 0 ||
             filters.priceRanges.some((priceRange) =>
-              matchesPriceRange(garage.price, priceRange),
+              matchesPriceRange(garage.startingPrice, priceRange),
             ))
         );
       }),
-    [filters],
+    [filters, garages],
   );
 
   function handleFilterChange(
@@ -226,7 +230,7 @@ export function ServicesListingSection() {
   }
 
   function handleClearFilters() {
-    setFilters(createEmptyFilters());
+    setFilters(createInitialFilters());
   }
 
   return (
@@ -236,6 +240,7 @@ export function ServicesListingSection() {
           <div className="hidden lg:block">
             <FiltersSidebar
               filters={filters}
+              sections={filterSections}
               onClearFilters={handleClearFilters}
               onFilterChange={handleFilterChange}
             />
@@ -243,7 +248,7 @@ export function ServicesListingSection() {
         ) : null}
 
         <div className="min-w-0 flex-1">
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-6 flex justify-between">
             <div className="flex items-center gap-4">
               <button
                 type="button"
@@ -257,7 +262,7 @@ export function ServicesListingSection() {
               <button
                 type="button"
                 onClick={() => setShowFilters((current) => !current)}
-                className="hidden  items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626] lg:flex"
+                className="hidden items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626] lg:flex"
               >
                 <FilterSlidersIcon className="h-4 w-4" />
                 <span className="text-sm">
@@ -270,10 +275,13 @@ export function ServicesListingSection() {
                 <span className="font-medium text-white">
                   {filteredGarages.length}
                 </span>{" "}
-                garages near you
+                of{" "}
+                <span className="font-medium text-white">
+                  {pagination.total}
+                </span>{" "}
+                garages
               </p>
             </div>
-
             <div className="flex items-center gap-3">
               <span className="text-sm text-brand-muted">Sort by:</span>
               <button
@@ -286,35 +294,35 @@ export function ServicesListingSection() {
             </div>
           </div>
 
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"></div>
+
           {filteredGarages.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
-              {filteredGarages.map((garage) => (
-                <GarageCard
-                  key={garage.id}
-                  {...garage}
-                  availability={getGarageFilterDetails(garage.id).availability}
-                  certifications={
-                    getGarageFilterDetails(garage.id).certifications
-                  }
-                  nextAvailable={getGarageFilterDetails(garage.id).nextAvailable}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
+                {filteredGarages.map((garage) => (
+                  <GarageCard key={garage.id} garage={garage} />
+                ))}
+              </div>
+
+              <PaginationControls
+                pagination={pagination}
+                searchParams={searchParams}
+              />
+            </>
           ) : (
             <Card className="p-8 text-center">
               <h3 className="text-xl font-semibold text-white">
-                No garages match these filters
+                No garages match this search
               </h3>
               <p className="mt-2 text-sm text-brand-muted">
-                Clear filters to see all available garages near you.
+                Try a different garage name, city, service, or filter.
               </p>
-              <Button
-                type="button"
-                onClick={handleClearFilters}
-                className="mt-5 rounded-xl hover:bg-brand-primary-hover"
+              <Link
+                href="/services"
+                className={cn(buttonVariants(), "mt-5 rounded-xl")}
               >
-                Clear filters
-              </Button>
+                Clear search
+              </Link>
             </Card>
           )}
         </div>
@@ -336,6 +344,7 @@ export function ServicesListingSection() {
       >
         <ServiceFiltersContent
           filters={filters}
+          sections={filterSections}
           onFilterChange={handleFilterChange}
         />
       </MobileFilterDrawer>
@@ -364,10 +373,12 @@ function GarageRatingStars({ rating }: { rating: string }) {
 
 function FiltersSidebar({
   filters,
+  sections,
   onClearFilters,
   onFilterChange,
 }: {
   filters: FilterState;
+  sections: { key: FilterKey; title: string; items: string[] }[];
   onClearFilters: () => void;
   onFilterChange: (
     filterKey: FilterKey,
@@ -391,6 +402,7 @@ function FiltersSidebar({
 
         <ServiceFiltersContent
           filters={filters}
+          sections={sections}
           onFilterChange={onFilterChange}
         />
       </div>
@@ -400,9 +412,11 @@ function FiltersSidebar({
 
 function ServiceFiltersContent({
   filters,
+  sections,
   onFilterChange,
 }: {
   filters: FilterState;
+  sections: { key: FilterKey; title: string; items: string[] }[];
   onFilterChange: (
     filterKey: FilterKey,
     item: string,
@@ -411,7 +425,7 @@ function ServiceFiltersContent({
 }) {
   return (
     <>
-      {filterSections.map((section, index) => (
+      {sections.map((section, index) => (
         <div key={section.key}>
           <FilterGroup
             title={section.title}
@@ -422,7 +436,7 @@ function ServiceFiltersContent({
             }
           />
 
-          {index < filterSections.length - 1 ? (
+          {index < sections.length - 1 ? (
             <div className="my-6 border-t border-[#2A2A2A]" />
           ) : null}
         </div>
@@ -477,69 +491,106 @@ function FilterGroup({
   );
 }
 
-function GarageCard({
-  title,
-  rating,
-  reviews,
-  price,
-  distance,
-  address,
-  image,
-  specialties,
-  availability,
-  certifications,
-  nextAvailable,
+function PaginationControls({
+  pagination,
+  searchParams,
 }: {
-  id: string;
-  title: string;
-  rating: string;
-  reviews: string;
-  price: string;
-  distance: string;
-  address: string;
-  image: string;
-  specialties: string[];
-  availability: string[];
-  certifications: string[];
-  nextAvailable: string;
+  pagination: GaragePagination;
+  searchParams: ServicesListingSectionProps["searchParams"];
 }) {
-  const isAvailableToday = availability.includes("Available Today");
-  const garageCertifications =
-    certifications.length > 0 ? certifications : ["Verified Garage"];
-  const isTopRated = Number(rating) >= 4.9;
+  if (pagination.totalPages <= 1) return null;
+
+  const pages = Array.from(
+    { length: pagination.totalPages },
+    (_, index) => index + 1,
+  );
+
+  return (
+    <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+      <Link
+        href={paginationHref(Math.max(1, pagination.page - 1), searchParams)}
+        aria-disabled={pagination.page <= 1}
+        className={cn(
+          buttonVariants({ variant: "outline" }),
+          "rounded-xl border-[#2A2A2A] bg-[#1A1A1A] text-white",
+          pagination.page <= 1 && "pointer-events-none opacity-50",
+        )}
+      >
+        Previous
+      </Link>
+
+      {pages.map((page) => (
+        <Link
+          key={page}
+          href={paginationHref(page, searchParams)}
+          className={cn(
+            buttonVariants({
+              variant: page === pagination.page ? "default" : "outline",
+            }),
+            "rounded-xl",
+            page !== pagination.page &&
+              "border-[#2A2A2A] bg-[#1A1A1A] text-white",
+          )}
+        >
+          {page}
+        </Link>
+      ))}
+
+      <Link
+        href={paginationHref(
+          Math.min(pagination.totalPages, pagination.page + 1),
+          searchParams,
+        )}
+        aria-disabled={pagination.page >= pagination.totalPages}
+        className={cn(
+          buttonVariants({ variant: "outline" }),
+          "rounded-xl border-[#2A2A2A] bg-[#1A1A1A] text-white",
+          pagination.page >= pagination.totalPages &&
+            "pointer-events-none opacity-50",
+        )}
+      >
+        Next
+      </Link>
+    </div>
+  );
+}
+
+function GarageCard({ garage }: { garage: PublicGarageSummary }) {
+  const price = formatGaragePrice(garage.startingPrice, garage.currency);
+  const certifications =
+    garage.certifications.length > 0
+      ? garage.certifications
+      : ["Verified Garage"];
+  const image =
+    garage.image ||
+    "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=900&h=675&fit=crop";
+  const location = [
+    garage.address,
+    garage.city,
+    garage.state,
+    garage.country,
+    garage.pincode,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <div className="group relative">
       <Link
-        href="/garage"
-        className={cn(
-          "block h-full overflow-hidden rounded-xl border-2 bg-[#1A1A1A] transition-all",
-          isTopRated
-            ? "border-[#DC2626]/60 shadow-xl shadow-[#DC2626]/10"
-            : "border-[#2A2A2A] hover:border-[#DC2626]/50 hover:shadow-xl hover:shadow-[#DC2626]/10",
-        )}
+        href={`/garage/${encodeURIComponent(garage.id)}`}
+        className="block h-full overflow-hidden rounded-xl border-2 border-[#2A2A2A] bg-[#1A1A1A] transition-all hover:border-[#DC2626]/50 hover:shadow-xl hover:shadow-[#DC2626]/10"
       >
         <div className="relative aspect-[4/3] overflow-hidden bg-[#0A0A0A]">
-          <Image
-            src={image}
-            alt={title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          <div
+            className="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
+            style={{ backgroundImage: `url("${image}")` }}
+            aria-label={garage.name}
           />
 
           <div className="absolute top-4 left-4 flex items-center gap-2 rounded-xl border border-[#10B981]/30 bg-[#10B981] px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
             <Clock3Icon className="h-4 w-4" />
-            <span>
-              {isAvailableToday ? "Verified" : "Next Slot This Week"}
-            </span>
+            <span>Verified</span>
           </div>
-
-          {/* {isTopRated ? (
-            <div className="absolute top-4 right-4 rounded-xl bg-gradient-to-r from-[#DC2626] to-[#B91C1C] px-3 py-1.5 text-xs font-semibold text-white shadow-lg">
-              Top Rated
-            </div>
-          ) : null} */}
 
           <div className="absolute bottom-4 left-4 rounded-xl border border-white/10 bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
             Starting at {price}
@@ -549,7 +600,7 @@ function GarageCard({
         <div className="p-6">
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              {garageCertifications.map((certification, index) => (
+              {certifications.slice(0, 3).map((certification, index) => (
                 <Badge
                   key={`${certification}-${index}`}
                   variant="secondary"
@@ -561,35 +612,41 @@ function GarageCard({
             </div>
 
             <div className="flex items-center gap-2">
-              <GarageRatingStars rating={rating} />
-              <span className="text-sm font-medium text-white">{rating}</span>
-              <span className="text-sm text-[#9CA3AF]">({reviews})</span>
+              <GarageRatingStars rating="4.9" />
+              <span className="text-sm font-medium text-white">4.9</span>
+              <span className="text-sm text-[#9CA3AF]">(328)</span>
             </div>
           </div>
 
           <h3 className="mb-2 line-clamp-2 text-xl font-semibold text-white transition-colors group-hover:text-[#DC2626]">
-            {title}
+            {garage.name}
           </h3>
 
           <div className="mb-4 flex items-center gap-2 text-sm text-[#9CA3AF]">
             <MapPinIcon className="h-4 w-4 shrink-0" />
             <span className="line-clamp-1">
-              {distance} • {address}
+              {location || "Location not added"}
             </span>
           </div>
-          <span className="mb-2 block text-sm font-medium  text-[#9CA3AF]">
+
+          <span className="mb-2 block text-sm font-medium text-[#9CA3AF]">
             Specialties:
           </span>
           <div className="mb-4 flex flex-wrap gap-2">
-            {specialties.slice(0, 3).map((specialty) => (
-              <Badge
-                key={specialty}
-                variant="secondary"
-                className="rounded-md border border-[#2A2A2A] bg-[#2A2A2A] px-3 py-1 text-xs text-white"
-              >
-                {specialty}
-              </Badge>
-            ))}
+            {(garage.specialties.length
+              ? garage.specialties
+              : ["General Service"]
+            )
+              .slice(0, 3)
+              .map((specialty) => (
+                <Badge
+                  key={specialty}
+                  variant="secondary"
+                  className="rounded-md border border-[#2A2A2A] bg-[#2A2A2A] px-3 py-1 text-xs text-white"
+                >
+                  {specialty}
+                </Badge>
+              ))}
           </div>
 
           <Card className="mb-4 rounded-xl border border-[#2A2A2A] bg-[#0A0A0A] shadow-none">
@@ -599,7 +656,9 @@ function GarageCard({
                   <AwardIcon className="h-3.5 w-3.5" />
                   <span>Jobs</span>
                 </div>
-                <div className="font-semibold text-white">2,340+</div>
+                <div className="font-semibold text-white">
+                  {garage.jobCompletedNumber.toLocaleString()}+
+                </div>
               </div>
 
               <div>
@@ -607,34 +666,30 @@ function GarageCard({
                   <Clock3Icon className="h-3.5 w-3.5" />
                   <span>Response</span>
                 </div>
-                <div className="font-semibold text-white">&lt; 15 min</div>
+                <div className="font-semibold text-white">
+                  {garage.responseTime || "Contact"}
+                </div>
               </div>
 
               <div>
-                <div className="mb-1 text-xs text-[#9CA3AF]">Next slot</div>
+                <div className="mb-1 text-xs text-[#9CA3AF]">Experience</div>
                 <div className="font-semibold text-[#10B981]">
-                  {nextAvailable}
+                  {garage.yearsExperience} yrs
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <div className="flex items-center justify-between border-t border-[#2A2A2A] pt-4">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2 ">
-                <p className="text-2xl font-bold text-white">{price}</p>
-                <p className="text-xs text-[#9CA3AF]">Starting at</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <p className="text-2xl font-bold text-white">{price}</p>
+              <p className="text-xs text-[#9CA3AF]">Starting at</p>
             </div>
 
             <span
-              className={cn(
-                buttonVariants(),
-                "rounded-xl px-5 py-5 text-sm",
-              )}
+              className={cn(buttonVariants(), "rounded-xl px-5 py-5 text-sm")}
             >
-             Book Now
-              {/* <ArrowRightIcon className="h-4 w-4" /> */}
+              Book Now
             </span>
           </div>
         </div>

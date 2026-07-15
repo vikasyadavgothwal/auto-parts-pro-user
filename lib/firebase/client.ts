@@ -34,6 +34,17 @@ export function getFirebaseClientAuth(): Auth {
   return getAuth(app);
 }
 
+export function getFirebaseAuthDiagnostics() {
+  return {
+    origin: typeof window === "undefined" ? "server" : window.location.origin,
+    authDomain: firebaseConfig.authDomain ?? "",
+    projectId: firebaseConfig.projectId ?? "",
+    apiKeyHint: firebaseConfig.apiKey
+      ? `${firebaseConfig.apiKey.slice(0, 6)}...${firebaseConfig.apiKey.slice(-4)}`
+      : "",
+  };
+}
+
 const getVerificationContinueUrl = (
   firebaseUid: string,
   role?: UserAccountRole,

@@ -1,7 +1,9 @@
 import { CheckIcon } from "@/components/icons/site-icons";
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog";
 import { SectionHeading } from "@/components/site/shared/section-heading";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getBusinessQueryType } from "@/lib/business-query-cta";
 import {
   getPublicText,
   hasPublicText,
@@ -116,16 +118,30 @@ export function PricingSection({ config }: PricingSectionProps) {
 
                 {plan.buttonText ? (
                   <div className="mt-auto pt-2">
-                    <Button
-                      type="button"
-                      className={`w-full h-auto rounded-full py-4 ${
-                        plan.mostPopular
-                          ? "bg-primary text-white hover:bg-primary-hover hover:text-white"
-                          : "bg-black text-primary hover:bg-black/90"
-                      }`}
-                    >
-                      {plan.buttonText}
-                    </Button>
+                    {getBusinessQueryType(plan.buttonText) ? (
+                      <BusinessDemoDialogButton
+                        queryType={getBusinessQueryType(plan.buttonText) ?? "General"}
+                        source={plan.buttonText}
+                        className={`w-full h-auto rounded-full py-4 ${
+                          plan.mostPopular
+                            ? "bg-primary text-white hover:bg-primary-hover hover:text-white"
+                            : "bg-black text-primary hover:bg-black/90"
+                        }`}
+                      >
+                        {plan.buttonText}
+                      </BusinessDemoDialogButton>
+                    ) : (
+                      <Button
+                        type="button"
+                        className={`w-full h-auto rounded-full py-4 ${
+                          plan.mostPopular
+                            ? "bg-primary text-white hover:bg-primary-hover hover:text-white"
+                            : "bg-black text-primary hover:bg-black/90"
+                        }`}
+                      >
+                        {plan.buttonText}
+                      </Button>
+                    )}
                   </div>
                 ) : null}
               </Card>
