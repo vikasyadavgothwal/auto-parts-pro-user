@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AddServiceToCartButton } from "@/components/site/cart/add-service-to-cart-button";
 import {
   AwardIcon,
   CalendarIcon,
@@ -330,17 +329,6 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
                                   Book Now
                                 </Link>
                               </Button>
-                              <AddServiceToCartButton
-                                garageId={garage.id}
-                                garageName={garage.name}
-                                serviceId={service.id}
-                                serviceName={service.name}
-                                category={service.category}
-                                durationMinutes={service.durationMinutes}
-                                price={service.price}
-                                currency={service.currency}
-                                className="w-full border-border bg-background px-6 py-5 text-sm font-medium text-foreground hover:border-primary hover:bg-background sm:w-auto"
-                              />
                             </div>
                           </div>
                         </div>
