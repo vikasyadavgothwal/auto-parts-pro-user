@@ -495,23 +495,21 @@ export function AuthModalCard({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-5">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-
-      <Card className="relative max-h-[calc(100dvh-1.5rem)] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl no-scrollbar sm:max-h-[90vh]">
+    <div className="w-full min-w-0">
+      <Card className="relative max-h-[calc(100dvh-1rem)] w-full min-w-0 max-w-md overflow-x-hidden overflow-y-auto rounded-xl border border-border bg-card shadow-2xl no-scrollbar sm:max-h-[90vh] sm:rounded-2xl">
         <Button
           variant="ghost"
           size="icon"
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 z-10 h-8 w-8 rounded-xl bg-border text-brand-muted hover:bg-input hover:text-foreground"
+          className="absolute right-3 top-3 z-10 h-9 w-9 rounded-xl bg-border text-brand-muted hover:bg-input hover:text-foreground sm:right-4 sm:top-4 sm:h-8 sm:w-8"
           aria-label="Close authentication"
         >
           <CloseIcon className="h-5 w-5" />
         </Button>
 
         <CardContent className="p-0">
-          <div className="p-6 pb-6 sm:p-8 sm:pb-6">
+          <div className="p-4 pb-5 pr-14 sm:p-8 sm:pb-6 sm:pr-14">
             <div className="mb-6 text-center">
               <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
                 {pendingVerifiedUser
@@ -549,18 +547,20 @@ export function AuthModalCard({
 
           {pendingVerifiedUser ? (
             <form
-              className="px-6 pb-8 sm:px-8"
+              className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8"
               onSubmit={handleCompleteVerifiedAccount}
             >
               <AccountSetupFields
                 accountType={accountType}
                 fullName={fullName}
                 businessName={businessName}
-                acceptedTerms={acceptedTerms}
                 onAccountTypeChange={setAccountType}
                 onFullNameChange={setFullName}
                 onBusinessNameChange={setBusinessName}
-                onAcceptedTermsChange={setAcceptedTerms}
+              />
+              <TermsAgreement
+                checked={acceptedTerms}
+                onCheckedChange={setAcceptedTerms}
               />
 
               <AuthFeedback error={errorMessage} status={statusMessage} />
@@ -574,42 +574,41 @@ export function AuthModalCard({
               </Button>
             </form>
           ) : mode === "signin" ? (
-            <div className="px-6 pb-8 sm:px-8">
-              <div className="mb-5 grid grid-cols-2 gap-2 rounded-xl border border-border bg-background p-1">
-                <ModeButton
-                  active={loginMethod === "email"}
-                  onClick={() => {
-                    setLoginMethod("email");
-                    resetFeedback();
-                  }}
-                >
-                  Email
-                </ModeButton>
-                <ModeButton
-                  active={loginMethod === "phone"}
-                  onClick={() => {
-                    setLoginMethod("phone");
-                    resetFeedback();
-                  }}
-                >
-                  Phone OTP
-                </ModeButton>
-              </div>
-
+            <div className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8">
               {loginMethod === "email" ? (
-                <EmailForm
-                  mode={mode}
-                  email={email}
-                  password={password}
-                  showPassword={showPassword}
-                  isSubmitting={isSubmitting}
-                  onEmailChange={setEmail}
-                  onPasswordChange={setPassword}
-                  onTogglePassword={() => setShowPassword((value) => !value)}
-                  onSubmit={handleEmailSubmit}
-                />
+                <>
+                  <EmailForm
+                    mode={mode}
+                    email={email}
+                    password={password}
+                    showPassword={showPassword}
+                    isSubmitting={isSubmitting}
+                    onEmailChange={setEmail}
+                    onPasswordChange={setPassword}
+                    onTogglePassword={() =>
+                      setShowPassword((value) => !value)
+                    }
+                    onSubmit={handleEmailSubmit}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isSubmitting}
+                    onClick={() => {
+                      setLoginMethod("phone");
+                      resetFeedback();
+                    }}
+                    className="mt-3 h-11 w-full rounded-xl border-border bg-background"
+                  >
+                    Sign in with mobile OTP
+                  </Button>
+                </>
               ) : confirmationResult ? (
                 <form onSubmit={handleVerifyOtp}>
+                  <AuthMethodHeading
+                    title="Verify your mobile"
+                    description="Enter the one-time code sent to your phone."
+                  />
                   <AuthField label="Verification Code">
                     <Input
                       value={otp}
@@ -630,20 +629,38 @@ export function AuthModalCard({
                   </Button>
                   <Button
                     type="button"
-                    variant="link"
+                    variant="ghost"
                     disabled={isSubmitting}
                     onClick={() => {
                       setConfirmationResult(null);
                       setOtp("");
                       resetFeedback();
                     }}
-                    className="mt-2 w-full"
+                    className="mt-2 w-full rounded-xl text-brand-muted"
                   >
                     Use another phone number
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="link"
+                    disabled={isSubmitting}
+                    onClick={() => {
+                      setLoginMethod("email");
+                      setConfirmationResult(null);
+                      setOtp("");
+                      resetFeedback();
+                    }}
+                    className="w-full"
+                  >
+                    Use email and password instead
                   </Button>
                 </form>
               ) : (
                 <form onSubmit={handleSendOtp}>
+                  <AuthMethodHeading
+                    title="Sign in with mobile"
+                    description="We’ll send a secure one-time code to your phone."
+                  />
                   <CountryPhoneInput
                     id="auth-phone-number"
                     label="Phone Number"
@@ -661,6 +678,18 @@ export function AuthModalCard({
                     className="mt-5 h-12 w-full rounded-xl"
                   >
                     {isSubmitting ? "Sending..." : "Send Verification Code"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="link"
+                    disabled={isSubmitting}
+                    onClick={() => {
+                      setLoginMethod("email");
+                      resetFeedback();
+                    }}
+                    className="mt-2 w-full"
+                  >
+                    Use email and password instead
                   </Button>
                 </form>
               )}
@@ -697,16 +726,17 @@ export function AuthModalCard({
               />
             </div>
           ) : (
-            <form className="px-6 pb-8 sm:px-8" onSubmit={handleEmailSubmit}>
+            <form
+              className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8"
+              onSubmit={handleEmailSubmit}
+            >
               <AccountSetupFields
                 accountType={accountType}
                 fullName={fullName}
                 businessName={businessName}
-                acceptedTerms={acceptedTerms}
                 onAccountTypeChange={setAccountType}
                 onFullNameChange={setFullName}
                 onBusinessNameChange={setBusinessName}
-                onAcceptedTermsChange={setAcceptedTerms}
               />
 
               <EmailFields
@@ -716,6 +746,10 @@ export function AuthModalCard({
                 onEmailChange={setEmail}
                 onPasswordChange={setPassword}
                 onTogglePassword={() => setShowPassword((value) => !value)}
+              />
+              <TermsAgreement
+                checked={acceptedTerms}
+                onCheckedChange={setAcceptedTerms}
               />
               <AuthFeedback error={errorMessage} status={statusMessage} />
 
@@ -770,24 +804,20 @@ function AccountSetupFields({
   accountType,
   fullName,
   businessName,
-  acceptedTerms,
   onAccountTypeChange,
   onFullNameChange,
   onBusinessNameChange,
-  onAcceptedTermsChange,
 }: {
   accountType: AccountType;
   fullName: string;
   businessName: string;
-  acceptedTerms: boolean;
   onAccountTypeChange: (value: AccountType) => void;
   onFullNameChange: (value: string) => void;
   onBusinessNameChange: (value: string) => void;
-  onAcceptedTermsChange: (value: boolean) => void;
 }) {
   return (
     <>
-      <div className="mb-6 space-y-2">
+      <div className="mb-5 min-w-0 space-y-2 sm:mb-6">
         <Label
           htmlFor="account-type"
           className="block text-sm font-medium text-foreground"
@@ -800,7 +830,7 @@ function AccountSetupFields({
         >
           <SelectTrigger
             id="account-type"
-            className="h-12 w-full rounded-xl bg-background"
+            className="h-12 w-full min-w-0 rounded-xl bg-background"
           >
             <SelectValue placeholder="Select account type" />
           </SelectTrigger>
@@ -817,7 +847,7 @@ function AccountSetupFields({
       </div>
 
       <AuthField label={accountType === "User" ? "Full Name" : "Business Name"}>
-        <div className="relative">
+        <div className="relative min-w-0">
           {accountType === "User" ? (
             <UserIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
           ) : (
@@ -840,18 +870,45 @@ function AccountSetupFields({
         </div>
       </AuthField>
 
-      <div className="mb-6 flex items-start gap-3">
-        <Checkbox
-          id="terms"
-          checked={acceptedTerms}
-          onCheckedChange={(checked) => onAcceptedTermsChange(checked === true)}
-          className="mt-1"
-        />
-        <Label htmlFor="terms" className="text-sm leading-6 text-brand-muted">
-          I agree to the Terms of Service and Privacy Policy
-        </Label>
-      </div>
     </>
+  );
+}
+
+function TermsAgreement({
+  checked,
+  onCheckedChange,
+}: {
+  checked: boolean;
+  onCheckedChange: (value: boolean) => void;
+}) {
+  return (
+    <div className="mb-5 flex min-w-0 items-start gap-3 rounded-xl border border-border bg-background/60 p-3 sm:mb-6 sm:p-4">
+      <Checkbox
+        id="terms"
+        checked={checked}
+        onCheckedChange={(value) => onCheckedChange(value === true)}
+        className="mt-0.5 shrink-0"
+      />
+      <Label
+        htmlFor="terms"
+        className="min-w-0 flex-1  break-words text-sm leading-5 text-brand-muted sm:leading-6"
+      >
+        I agree to the{" "}
+        <a
+          href="/terms"
+          className="whitespace-normal break-words font-medium text-primary underline-offset-4 hover:underline"
+        >
+          Terms and Conditions
+        </a>{" "}
+        and{" "}
+        <a
+          href="/privacy"
+          className="whitespace-normal break-words font-medium text-primary underline-offset-4 hover:underline"
+        >
+          Privacy Policy
+        </a>
+      </Label>
+    </div>
   );
 }
 
@@ -960,6 +1017,21 @@ function EmailFields({
   );
 }
 
+function AuthMethodHeading({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="mb-5 min-w-0 rounded-xl border border-border bg-background/60 p-3 sm:p-4">
+      <p className="font-semibold text-foreground">{title}</p>
+      <p className="mt-1 text-sm leading-5 text-brand-muted">{description}</p>
+    </div>
+  );
+}
+
 function AuthField({
   label,
   children,
@@ -968,7 +1040,7 @@ function AuthField({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mb-4 space-y-2">
+    <div className="mb-4 min-w-0 space-y-2">
       <Label className="text-sm font-medium text-foreground">{label}</Label>
       {children}
     </div>
