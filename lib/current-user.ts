@@ -49,19 +49,19 @@ export const dashboardUrlForRole = (role: string | null | undefined) => {
   const urls: Record<UserAccountRole, string> = {
     User: envUrl(
       process.env.NEXT_PUBLIC_USER_DASHBOARD_URL,
-      "http://localhost:3002/user_dashboard",
+      "https://user.websitedesignersdubai.ae/user_dashboard",
     ),
     Supplier: envUrl(
       process.env.NEXT_PUBLIC_SUPPLIER_DASHBOARD_URL,
-      "http://localhost:3004/dashboard",
+      "https://supplier.websitedesignersdubai.ae/dashboard",
     ),
     Garage: envUrl(
       process.env.NEXT_PUBLIC_GARAGE_DASHBOARD_URL,
-      "http://localhost:3003/garage_dashboard",
+      "https://garage.websitedesignersdubai.ae/garage_dashboard",
     ),
     Fleet: envUrl(
       process.env.NEXT_PUBLIC_FLEET_DASHBOARD_URL,
-      "http://localhost:4001/fleet",
+      "https://fleet.websitedesignersdubai.ae/fleet",
     ),
   };
 
