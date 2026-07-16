@@ -882,7 +882,7 @@ function TermsAgreement({
   onCheckedChange: (value: boolean) => void;
 }) {
   return (
-    <div className="mb-5 flex min-w-0 items-start gap-3 rounded-xl border border-border bg-background/60 p-3 sm:mb-6 sm:p-4">
+    <div className="mb-5 grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)] items-start gap-2.5 rounded-xl border border-border bg-background/60 p-3 sm:mb-6 sm:gap-3 sm:p-4">
       <Checkbox
         id="terms"
         checked={checked}
@@ -891,19 +891,19 @@ function TermsAgreement({
       />
       <Label
         htmlFor="terms"
-        className="min-w-0 flex-1  break-words text-sm leading-5 text-brand-muted sm:leading-6"
+        className="block min-w-0 max-w-full whitespace-normal break-words text-xs leading-5 text-brand-muted sm:text-sm sm:leading-6"
       >
         I agree to the{" "}
         <a
           href="/terms"
-          className="whitespace-normal break-words font-medium text-primary underline-offset-4 hover:underline"
+          className="inline whitespace-normal break-words font-medium text-primary underline-offset-4 hover:underline"
         >
           Terms and Conditions
         </a>{" "}
         and{" "}
         <a
           href="/privacy"
-          className="whitespace-normal break-words font-medium text-primary underline-offset-4 hover:underline"
+          className="inline whitespace-normal break-words font-medium text-primary underline-offset-4 hover:underline"
         >
           Privacy Policy
         </a>
