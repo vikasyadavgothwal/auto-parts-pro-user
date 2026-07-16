@@ -4,7 +4,6 @@ import {
   clearPendingAccountRegistration,
   getPendingAccountRegistration,
 } from "@/lib/account-registration";
-import { apiInterpreter } from "@/lib/api/client";
 import type {
   FirebaseSessionRequest,
   PasswordSessionRequest,
@@ -15,6 +14,29 @@ import type {
 
 const USER_LOGIN_PATH = "/api/auth/login";
 const INSTALLATION_ID_KEY = "auto-parts-pro-installation-id";
+
+const requestApplicationSession = async (
+  body: FirebaseSessionRequest | PasswordSessionRequest,
+): Promise<UserAuthApiResponse> => {
+  const response = await fetch(USER_LOGIN_PATH, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  const payload = (await response.json().catch(() => null)) as
+    | UserAuthApiResponse
+    | null;
+
+  if (!payload) {
+    throw new Error(`Login request failed with status ${response.status}`);
+  }
+
+  return payload;
+};
 
 const createInstallationId = (): string => {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -50,19 +72,12 @@ export async function establishApplicationSession(
       : undefined) ||
     (resolvedRole ? firebaseUser.displayName?.trim() : undefined);
   const firebaseIdToken = await firebaseUser.getIdToken(forceRefresh);
-  const response = await apiInterpreter.public<
-    UserAuthApiResponse,
-    FirebaseSessionRequest
-  >(USER_LOGIN_PATH, {
-    method: "POST",
-    credentials: "include",
-    body: {
-      firebaseIdToken,
-      installationId: getInstallationId(),
-      requestedRole: resolvedRole,
-      requestedRoleUid: resolvedRole ? firebaseUser.uid : undefined,
-      requestedDisplayName: resolvedDisplayName,
-    },
+  const response = await requestApplicationSession({
+    firebaseIdToken,
+    installationId: getInstallationId(),
+    requestedRole: resolvedRole,
+    requestedRoleUid: resolvedRole ? firebaseUser.uid : undefined,
+    requestedDisplayName: resolvedDisplayName,
   });
 
   if (!response.ok) {
@@ -78,17 +93,10 @@ export async function establishPasswordApplicationSession(
   email: string,
   password: string,
 ): Promise<UserAuthApiSuccess> {
-  const response = await apiInterpreter.public<
-    UserAuthApiResponse,
-    PasswordSessionRequest
-  >(USER_LOGIN_PATH, {
-    method: "POST",
-    credentials: "include",
-    body: {
-      email: email.trim(),
-      password,
-      installationId: getInstallationId(),
-    },
+  const response = await requestApplicationSession({
+    email: email.trim(),
+    password,
+    installationId: getInstallationId(),
   });
 
   if (!response.ok) {
