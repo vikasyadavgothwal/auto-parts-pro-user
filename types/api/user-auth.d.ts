@@ -8,6 +8,12 @@ export type FirebaseSessionRequest = {
   requestedDisplayName?: string;
 };
 
+export type PasswordSessionRequest = {
+  email: string;
+  password: string;
+  installationId: string;
+};
+
 export type UserAuthProfile = {
   id: string;
   firebaseUid: string | null;

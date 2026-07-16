@@ -7,12 +7,13 @@ import {
 import { apiInterpreter } from "@/lib/api/client";
 import type {
   FirebaseSessionRequest,
+  PasswordSessionRequest,
   UserAccountRole,
   UserAuthApiResponse,
   UserAuthApiSuccess,
 } from "@/types/api/user-auth";
 
-const USER_LOGIN_PATH = "/api/v1/user/auth/login";
+const USER_LOGIN_PATH = "/api/auth/login";
 const INSTALLATION_ID_KEY = "auto-parts-pro-installation-id";
 
 const createInstallationId = (): string => {
@@ -69,6 +70,30 @@ export async function establishApplicationSession(
   }
 
   clearPendingAccountRegistration(firebaseUser.uid);
+
+  return response;
+}
+
+export async function establishPasswordApplicationSession(
+  email: string,
+  password: string,
+): Promise<UserAuthApiSuccess> {
+  const response = await apiInterpreter.public<
+    UserAuthApiResponse,
+    PasswordSessionRequest
+  >(USER_LOGIN_PATH, {
+    method: "POST",
+    credentials: "include",
+    body: {
+      email: email.trim(),
+      password,
+      installationId: getInstallationId(),
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(response.message);
+  }
 
   return response;
 }

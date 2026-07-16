@@ -54,7 +54,10 @@ import {
   getFirebaseClientAuth,
   sendUserEmailVerification,
 } from "@/lib/firebase/client";
-import { establishApplicationSession } from "@/lib/user-auth";
+import {
+  establishApplicationSession,
+  establishPasswordApplicationSession,
+} from "@/lib/user-auth";
 import type { UserAccountRole } from "@/types/api/user-auth";
 
 type AuthMode = "signin" | "signup";
@@ -234,6 +237,13 @@ export function AuthModalCard({
     onClose?.();
   };
 
+  const finishPasswordAuthentication = async () => {
+    await establishPasswordApplicationSession(email, password);
+    router.refresh();
+    onAuthenticated?.();
+    onClose?.();
+  };
+
   const finishVerifiedProviderAuthentication = async (
     user: User,
     forceRefresh = true,
@@ -283,11 +293,21 @@ export function AuthModalCard({
       const auth = getFirebaseClientAuth();
 
       if (mode === "signin") {
-        const credential = await signInWithEmailAndPassword(
-          auth,
-          email.trim(),
-          password,
-        );
+        let credential;
+        try {
+          credential = await signInWithEmailAndPassword(
+            auth,
+            email.trim(),
+            password,
+          );
+        } catch (firebaseError) {
+          try {
+            await finishPasswordAuthentication();
+            return;
+          } catch {
+            throw firebaseError;
+          }
+        }
         await reload(credential.user);
 
         if (!credential.user.emailVerified) {
