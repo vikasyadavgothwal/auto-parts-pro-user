@@ -52,7 +52,7 @@ export function ProductOverview({
   const shortDescription = productInfoValue("Short Description");
   const description = productInfoValue("Description");
   const productSpecs = (productInfoRows ?? []).filter((row) =>
-    ["Manufacturer Part Number (MPN)", "Status"].includes(row.label),
+    ["Manufacturer Part Number (MPN)"].includes(row.label),
   );
 
   return (

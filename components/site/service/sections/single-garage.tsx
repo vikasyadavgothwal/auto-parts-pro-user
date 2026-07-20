@@ -12,7 +12,6 @@ import {
   ShieldIcon,
 } from "@/components/icons/site-icons";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatGaragePrice } from "@/lib/public-garages";
 import { galleryImages as fallbackGalleryImages } from "@/lib/data/service";
@@ -166,14 +165,6 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
                   Book Appointment
                 </Link>
 
-                <div className="mt-4 text-center">
-                  <Button
-                    variant="ghost"
-                    className="text-sm text-brand-muted hover:bg-transparent hover:text-foreground"
-                  >
-                    Request Custom Quote
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </div>
@@ -319,16 +310,12 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
                               {formatGaragePrice(service.price, service.currency)}
                             </div>
                             <div className="flex flex-col gap-2 sm:items-end">
-                              <Button
-                                asChild
-                                className="w-full bg-primary px-6 py-5 text-sm font-medium text-primary-foreground hover:bg-brand-primary-hover sm:w-auto"
+                              <Link
+                                className="inline-flex w-full items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-brand-primary-hover sm:w-auto"
+                                href={`/booking?garageId=${encodeURIComponent(garage.id)}&serviceId=${encodeURIComponent(service.id)}`}
                               >
-                                <Link
-                                  href={`/booking?garageId=${encodeURIComponent(garage.id)}&serviceId=${encodeURIComponent(service.id)}`}
-                                >
-                                  Book Now
-                                </Link>
-                              </Button>
+                                Book Now
+                              </Link>
                             </div>
                           </div>
                         </div>

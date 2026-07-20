@@ -91,7 +91,7 @@ export function UserHeader() {
 
                 <DialogContent
                   showCloseButton={false}
-                  className="max-w-[calc(100%-2rem)] border-0 bg-transparent p-0 text-inherit shadow-none ring-0 sm:max-w-md"
+                  className="max-w-[calc(100%-1rem)] border-0 bg-transparent p-0 text-inherit shadow-none ring-0 sm:max-w-lg"
                 >
                   <DialogHeader className="sr-only">
                     <DialogTitle>Account Authentication</DialogTitle>

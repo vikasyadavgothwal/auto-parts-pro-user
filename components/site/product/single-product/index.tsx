@@ -26,7 +26,6 @@ const supplierProductInfoItems = (
     ["Short Description", content.shortDescription],
     ["Description", content.longDescription],
     ["Manufacturer Part Number (MPN)", content.manufacturerPartNumber],
-    ["Status", content.status],
   ];
 
   return rows.map(([label, value]) => ({ label, value }));

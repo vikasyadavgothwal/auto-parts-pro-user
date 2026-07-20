@@ -48,9 +48,8 @@ const buildPartSearchUrl = (query: string) => {
 export function SearchSection({ config }: { config?: TextPair }) {
   const router = useRouter()
   const heading = getPublicText(config?.heading)
-  const subheading = getPublicText(config?.subheading)
   const vinLabel = heading || "Vehicle Identification Number (VIN)"
-  const partNumberLabel = subheading || "Part Number, OEM Number, or Part Name"
+  const partNumberLabel = "Part Number, OEM Number, or Part Name"
   const [vin, setVin] = useState("")
   const [partNumber, setPartNumber] = useState("")
   const [errorMessage, setErrorMessage] = useState("")

@@ -24,6 +24,32 @@ const getSetCookieHeaders = (headers: Headers): string[] => {
   return combinedValue ? [combinedValue] : [];
 };
 
+const cookieHeaderFromSetCookie = (values: string[]) =>
+  values
+    .map((value) => value.split(";", 1)[0]?.trim())
+    .filter(Boolean)
+    .join("; ");
+
+const revokeTemporarySession = async (
+  issuedCookies: string[],
+  request: Request,
+) => {
+  const cookie = cookieHeaderFromSetCookie(issuedCookies);
+  if (!cookie) return;
+
+  await fetch(new URL("/api/v1/user/auth/logout", backendUrl()), {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      accept: "application/json",
+      cookie,
+      ...(request.headers.get("user-agent")
+        ? { "user-agent": request.headers.get("user-agent")! }
+        : {}),
+    },
+  }).catch(() => undefined);
+};
+
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
@@ -43,7 +69,24 @@ export async function POST(request: Request) {
     body: await request.text(),
   });
 
-  const response = new Response(await backend.arrayBuffer(), {
+  const payloadBuffer = await backend.arrayBuffer();
+  const payload = JSON.parse(new TextDecoder().decode(payloadBuffer)) as {
+    ok?: boolean;
+    user?: { activeRole?: string; roles?: string[] };
+  };
+  const issuedCookies = getSetCookieHeaders(backend.headers);
+  const isPublicWebsiteUser = Boolean(
+    backend.ok &&
+      payload.ok &&
+      payload.user?.activeRole === "User" &&
+      payload.user.roles?.includes("User"),
+  );
+
+  if (backend.ok && payload.ok && !isPublicWebsiteUser) {
+    await revokeTemporarySession(issuedCookies, request);
+  }
+
+  const response = new Response(payloadBuffer, {
     status: backend.status,
     headers: {
       "content-type": backend.headers.get("content-type") ?? "application/json",
@@ -51,8 +94,10 @@ export async function POST(request: Request) {
   });
   const retryAfter = backend.headers.get("retry-after");
   if (retryAfter) response.headers.set("retry-after", retryAfter);
-  for (const value of getSetCookieHeaders(backend.headers)) {
-    response.headers.append("set-cookie", value);
+  if (isPublicWebsiteUser) {
+    for (const value of issuedCookies) {
+      response.headers.append("set-cookie", value);
+    }
   }
   return response;
 }

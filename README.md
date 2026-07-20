@@ -37,6 +37,16 @@ NEXT_PUBLIC_FLEET_DASHBOARD_URL=<fleet-dashboard-url>
 FLEET_APP_URL=<fleet-app-origin>
 ```
 
+The public website signup supports User, Fleet, Garage, and Supplier account
+selection. User accounts continue to the User Dashboard with the shared
+HttpOnly session; other roles are redirected to their matching dashboard.
+
+When the public website runs on `localhost` (including `127.0.0.1` or `::1`),
+successful email and Google authentication always redirect to the matching
+local dashboard: User `3002`, Garage `3003`, Supplier `3004`, and Fleet `4001`.
+Configured `NEXT_PUBLIC_*_DASHBOARD_URL` values continue to control redirects
+on deployed hostnames.
+
 Add the deployed frontend hostname to Firebase Authentication's authorized
 domains. Phone authentication also requires the Firebase reCAPTCHA flow.
 Google sign-in uses the Firebase Google provider, so the Google OAuth client

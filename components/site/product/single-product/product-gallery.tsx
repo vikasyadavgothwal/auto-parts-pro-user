@@ -16,7 +16,9 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
   const [failedImages, setFailedImages] = useState<Set<string>>(
     () => new Set()
   );
-  const visibleImages = images.filter((image) => !failedImages.has(image));
+  const visibleImages = images
+    .slice(0, 5)
+    .filter((image) => !failedImages.has(image));
   const safeSelectedImage = Math.min(
     selectedImage,
     Math.max(visibleImages.length - 1, 0)
@@ -49,7 +51,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
         </div>
       </Card>
 
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-4 gap-2 sm:gap-4">
         {visibleImages.map((image, index) => {
           const isActive = safeSelectedImage === index;
 

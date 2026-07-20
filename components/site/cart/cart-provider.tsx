@@ -20,7 +20,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { getCurrentUser } from "@/lib/current-user";
+import {
+  dashboardUrlForRole,
+  getCurrentUser,
+  logoutCurrentUser,
+} from "@/lib/current-user";
 import type { UserAuthProfile } from "@/types/api/user-auth";
 
 type CartItemBase = {
@@ -231,9 +235,12 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
         };
       }
       if (activeUser.activeRole !== "User") {
+        const dashboardUrl = dashboardUrlForRole(activeUser.activeRole);
+        await logoutCurrentUser();
+        window.location.assign(dashboardUrl);
         return {
           ok: false,
-          message: "Cart is available only for User accounts.",
+          message: "Redirecting to your dashboard...",
         };
       }
 
@@ -419,7 +426,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       <Dialog open={isAuthOpen} onOpenChange={setIsAuthOpen}>
         <DialogContent
           showCloseButton={false}
-          className="max-w-[calc(100%-2rem)] border-0 bg-transparent p-0 text-inherit shadow-none ring-0 sm:max-w-md"
+          className="max-w-[calc(100%-1rem)] border-0 bg-transparent p-0 text-inherit shadow-none ring-0 sm:max-w-lg"
         >
           <DialogHeader className="sr-only">
             <DialogTitle>Sign in to use cart</DialogTitle>

@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/current-user";
 import { getBookingAvailableDates, bookingStepOrder } from "@/lib/data/booking";
 import {
-  readUserVehiclesFromStorage,
   type UserVehicleRecord,
 } from "@/lib/user-vehicles";
 import type {
@@ -39,6 +38,12 @@ type BookingResponse = {
   ok: boolean;
   message?: string;
   booking?: GarageBookingResult;
+};
+
+type UserVehiclesResponse = {
+  ok: boolean;
+  vehicles?: UserVehicleRecord[];
+  message?: string;
 };
 
 const servicePrice = (price: number) => price / 100;
@@ -66,9 +71,11 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   );
   const initialService = services.some((service) => service.id === initialServiceId)
     ? initialServiceId
-    : services[0]?.id ?? "";
+    : "";
   const availableDates = useMemo(() => getBookingAvailableDates(), []);
-  const [step, setStep] = useState<BookingStep>("service");
+  const [step, setStep] = useState<BookingStep>(
+    initialService ? "vehicle" : "service",
+  );
   const [selection, setSelection] = useState<BookingSelection>({
     ...BOOKING_INITIAL_SELECTION,
     serviceId: initialService,
@@ -77,6 +84,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [vehicles, setVehicles] = useState<UserVehicleRecord[]>([]);
+  const [isLoadingVehicles, setIsLoadingVehicles] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] =
@@ -109,10 +117,35 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
     }));
   };
 
+  const loadUserVehicles = async () => {
+    setIsLoadingVehicles(true);
+    try {
+      const response = await fetch("/api/user/vehicles?page=1&pageSize=50", {
+        method: "GET",
+        cache: "no-store",
+        credentials: "include",
+        headers: { accept: "application/json" },
+      });
+      const payload = (await response.json()) as UserVehiclesResponse;
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.message || "Unable to load your saved cars");
+      }
+      setVehicles(payload.vehicles ?? []);
+    } catch (error) {
+      setVehicles([]);
+      setSubmitError(
+        error instanceof Error ? error.message : "Unable to load your saved cars",
+      );
+    } finally {
+      setIsLoadingVehicles(false);
+    }
+  };
+
   const refreshCurrentUser = async () => {
     const user = await getCurrentUser();
     setCurrentUser(user);
-    setVehicles(user ? readUserVehiclesFromStorage() : []);
+    if (user?.roles.includes("User")) await loadUserVehicles();
+    else setVehicles([]);
     applyUserDefaults(user);
     setHasCheckedAuth(true);
     return user;
@@ -124,7 +157,8 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
     void getCurrentUser().then((user) => {
       if (!isActive) return;
       setCurrentUser(user);
-      setVehicles(user ? readUserVehiclesFromStorage() : []);
+      if (user?.roles.includes("User")) void loadUserVehicles();
+      else setVehicles([]);
       applyUserDefaults(user);
       setHasCheckedAuth(true);
     });
@@ -336,6 +370,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           <VehicleStep
             selection={selection}
             vehicles={vehicles}
+            isLoading={isLoadingVehicles}
             onChange={setSelectionValue}
             onSelectVehicle={handleSelectVehicle}
           />

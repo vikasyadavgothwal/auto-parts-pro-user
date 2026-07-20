@@ -335,12 +335,12 @@ export function RequestQuoteForm() {
       <Dialog open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen}>
         <DialogContent
           showCloseButton={false}
-          className="max-w-[calc(100%-2rem)] border-0 bg-transparent p-0 text-inherit shadow-none ring-0 sm:max-w-md"
+          className="max-w-[calc(100%-1rem)] border-0 bg-transparent p-0 text-inherit shadow-none ring-0 sm:max-w-lg"
         >
           <DialogHeader className="sr-only">
             <DialogTitle>Sign in to submit RFQ</DialogTitle>
             <DialogDescription>
-              Sign in or create a User or Fleet account to submit this RFQ.
+              Sign in or create a User account to submit this RFQ.
             </DialogDescription>
           </DialogHeader>
           <AuthModalCard

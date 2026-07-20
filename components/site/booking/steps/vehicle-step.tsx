@@ -12,6 +12,7 @@ import type { BookingSelection } from "@/types/site/booking";
 type VehicleStepProps = {
   selection: BookingSelection;
   vehicles: readonly UserVehicleRecord[];
+  isLoading: boolean;
   onChange: <Key extends keyof BookingSelection>(
     key: Key,
     value: BookingSelection[Key],
@@ -22,6 +23,7 @@ type VehicleStepProps = {
 export function VehicleStep({
   selection,
   vehicles,
+  isLoading,
   onChange,
   onSelectVehicle,
 }: VehicleStepProps) {
@@ -54,7 +56,11 @@ export function VehicleStep({
             <h3 className="mb-3 text-sm font-semibold text-foreground">
               Your cars
             </h3>
-            {vehicles.length ? (
+            {isLoading ? (
+              <div className="rounded-xl border border-border bg-background p-4 text-sm text-brand-muted">
+                Loading your saved cars...
+              </div>
+            ) : vehicles.length ? (
               <div className="grid gap-3 md:grid-cols-2">
                 {vehicles.map((vehicle) => (
                   <button
@@ -91,7 +97,7 @@ export function VehicleStep({
               </div>
             ) : (
               <div className="rounded-xl border border-border bg-background p-4 text-sm text-brand-muted">
-                No saved cars found. Add a car in your user dashboard, then return to booking.
+                No saved cars found in your account. Add a car in your user dashboard, then return to booking.
               </div>
             )}
           </div>

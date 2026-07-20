@@ -54,7 +54,7 @@ export function AddProductToCartButton({
         className={cn("h-12 w-full rounded-full font-medium", className)}
       >
         <ShoppingCart className="mr-2 h-4 w-4" />
-        {pending ? "Adding..." : offer.recommended ? "Add to Cart" : "Select Offer"}
+        {pending ? "Adding..." : "Add to Cart"}
       </Button>
       {message ? (
         <p className="text-center text-xs text-[#64748B]">{message}</p>

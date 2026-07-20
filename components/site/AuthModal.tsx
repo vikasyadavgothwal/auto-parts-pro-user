@@ -8,6 +8,7 @@ import {
   GoogleAuthProvider,
   RecaptchaVerifier,
   reload,
+  signOut,
   signInWithEmailAndPassword,
   signInWithPopup,
   signInWithPhoneNumber,
@@ -32,17 +33,17 @@ import { FieldSeparator } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  buildInternationalPhoneNumber,
-  CountryPhoneInput,
-  isValidNationalPhoneNumber,
-} from "@/components/site/shared/country-phone-input";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  buildInternationalPhoneNumber,
+  CountryPhoneInput,
+  isValidNationalPhoneNumber,
+} from "@/components/site/shared/country-phone-input";
 import { ApiRequestError } from "@/lib/api/client";
 import {
   getPendingAccountRegistration,
@@ -58,6 +59,7 @@ import {
   establishApplicationSession,
   establishPasswordApplicationSession,
 } from "@/lib/user-auth";
+import { dashboardUrlForRole } from "@/lib/current-user";
 import type { UserAccountRole } from "@/types/api/user-auth";
 
 type AuthMode = "signin" | "signup";
@@ -65,10 +67,10 @@ type AccountType = UserAccountRole;
 type LoginMethod = "email" | "phone";
 
 const ACCOUNT_TYPE_DESCRIPTIONS: Record<AccountType, string> = {
+  User: "Shop for parts and manage your personal vehicles.",
   Fleet: "Manage vehicles and source parts for your fleet.",
-  User: "Shop for parts for your personal vehicle.",
-  Garage: "Source parts for customer repairs and services.",
-  Supplier: "List and sell automotive parts.",
+  Garage: "Manage repair services and customer bookings.",
+  Supplier: "List inventory and respond to buyer RFQs.",
 };
 
 const VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE =
@@ -226,19 +228,29 @@ export function AuthModalCard({
     requestedRole?: AccountType,
     requestedDisplayName?: string,
   ) => {
-    await establishApplicationSession(
+    const session = await establishApplicationSession(
       user,
       forceRefresh,
       requestedRole,
       requestedDisplayName,
     );
+    if (session.user.activeRole !== "User") {
+      await signOut(getFirebaseClientAuth()).catch(() => undefined);
+      window.location.assign(dashboardUrlForRole(session.user.activeRole));
+      return;
+    }
     router.refresh();
     onAuthenticated?.();
     onClose?.();
   };
 
   const finishPasswordAuthentication = async () => {
-    await establishPasswordApplicationSession(email, password);
+    const session = await establishPasswordApplicationSession(email, password);
+    if (session.user.activeRole !== "User") {
+      await signOut(getFirebaseClientAuth()).catch(() => undefined);
+      window.location.assign(dashboardUrlForRole(session.user.activeRole));
+      return;
+    }
     router.refresh();
     onAuthenticated?.();
     onClose?.();
@@ -388,17 +400,20 @@ export function AuthModalCard({
       const auth = getFirebaseClientAuth();
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
-      const signupDisplayName =
-        mode === "signup"
-          ? validateSignupDetails({
-              role: accountType,
-              fullName,
-              businessName,
-              acceptedTerms,
-            })
-          : undefined;
+      if (mode === "signup" && !acceptedTerms) {
+        throw new Error("Accept the Terms of Service and Privacy Policy.");
+      }
 
       const credential = await signInWithPopup(auth, provider);
+      const signupDisplayName = mode === "signup"
+        ? validateSignupDetails({
+            role: accountType,
+            fullName: fullName.trim() || credential.user.displayName || "",
+            businessName:
+              businessName.trim() || credential.user.displayName || "",
+            acceptedTerms,
+          })
+        : undefined;
       if (signupDisplayName) {
         await updateProfile(credential.user, {
           displayName: signupDisplayName,
@@ -496,7 +511,7 @@ export function AuthModalCard({
 
   return (
     <div className="w-full min-w-0">
-      <Card className="relative max-h-[calc(100dvh-1rem)] w-full min-w-0 max-w-md overflow-x-hidden overflow-y-auto rounded-xl border border-border bg-card shadow-2xl no-scrollbar sm:max-h-[90vh] sm:rounded-2xl">
+      <Card className="relative max-h-[calc(100dvh-1rem)] w-full min-w-0 max-w-lg overflow-x-hidden overflow-y-auto rounded-2xl border border-border/80 bg-card shadow-[0_24px_80px_rgba(0,0,0,0.35)] no-scrollbar sm:max-h-[90vh] sm:rounded-3xl">
         <Button
           variant="ghost"
           size="icon"
@@ -509,7 +524,7 @@ export function AuthModalCard({
         </Button>
 
         <CardContent className="p-0">
-          <div className="p-4 pb-5 pr-14 sm:p-8 sm:pb-6 sm:pr-14">
+          <div className="border-b border-border/70 bg-gradient-to-b from-primary/10 to-transparent p-5 pb-6 pr-14 sm:p-8 sm:pb-7 sm:pr-14">
             <div className="mb-6 text-center">
               <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
                 {pendingVerifiedUser
@@ -520,7 +535,7 @@ export function AuthModalCard({
               </h2>
               <p className="text-brand-muted">
                 {pendingVerifiedUser
-                  ? "Choose how you want to use AutoPartsPro."
+                  ? "Choose the account type that matches how you use AutoPartsPro."
                   : mode === "signin"
                     ? "Sign in to access your account"
                     : "Create your account to continue"}
@@ -817,26 +832,20 @@ function AccountSetupFields({
 }) {
   return (
     <>
-      <div className="mb-5 min-w-0 space-y-2 sm:mb-6">
-        <Label
-          htmlFor="account-type"
-          className="block text-sm font-medium text-foreground"
-        >
+      <div className="mb-5 min-w-0 space-y-2">
+        <Label htmlFor="account-type" className="text-sm font-medium text-foreground">
           Account Type
         </Label>
         <Select
           value={accountType}
           onValueChange={(value) => onAccountTypeChange(value as AccountType)}
         >
-          <SelectTrigger
-            id="account-type"
-            className="h-12 w-full min-w-0 rounded-xl bg-background"
-          >
+          <SelectTrigger id="account-type" className="h-12 w-full rounded-xl bg-background">
             <SelectValue placeholder="Select account type" />
           </SelectTrigger>
           <SelectContent position="popper">
-            <SelectItem value="Fleet">Fleet</SelectItem>
             <SelectItem value="User">User</SelectItem>
+            <SelectItem value="Fleet">Fleet</SelectItem>
             <SelectItem value="Garage">Garage</SelectItem>
             <SelectItem value="Supplier">Supplier</SelectItem>
           </SelectContent>
@@ -855,15 +864,11 @@ function AccountSetupFields({
           )}
           <Input
             value={accountType === "User" ? fullName : businessName}
-            onChange={(event) =>
-              accountType === "User"
-                ? onFullNameChange(event.target.value)
-                : onBusinessNameChange(event.target.value)
-            }
+            onChange={(event) => accountType === "User"
+              ? onFullNameChange(event.target.value)
+              : onBusinessNameChange(event.target.value)}
             autoComplete="name"
-            placeholder={
-              accountType === "User" ? "Enter your name" : "Enter business name"
-            }
+            placeholder={accountType === "User" ? "Enter your full name" : "Enter business name"}
             className="h-12 bg-background pl-12"
             required
           />
@@ -882,7 +887,7 @@ function TermsAgreement({
   onCheckedChange: (value: boolean) => void;
 }) {
   return (
-    <div className="mb-5 grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)] items-start gap-2.5 rounded-xl border border-border bg-background/60 p-3 sm:mb-6 sm:gap-3 sm:p-4">
+    <div className="mb-5 flex w-full min-w-0 items-start gap-3 rounded-xl border border-border bg-background/70 p-4 text-left shadow-sm sm:mb-6">
       <Checkbox
         id="terms"
         checked={checked}
@@ -891,7 +896,7 @@ function TermsAgreement({
       />
       <Label
         htmlFor="terms"
-        className="block min-w-0 max-w-full whitespace-normal break-words text-xs leading-5 text-brand-muted sm:text-sm sm:leading-6"
+        className="block min-w-0 flex-1 whitespace-normal break-words text-left text-xs leading-5 text-brand-muted sm:text-sm sm:leading-6"
       >
         I agree to the{" "}
         <a
