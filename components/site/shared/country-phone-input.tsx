@@ -28,6 +28,9 @@ export const buildInternationalPhoneNumber = (
   phoneNumber: string,
 ) => `${countryCode}${normalizePhoneDigits(phoneNumber)}`;
 
+export const isValidInternationalPhoneNumber = (value: string) =>
+  /^\+[1-9]\d{6,14}$/.test(value);
+
 type CountryPhoneInputProps = {
   id: string;
   label?: string;

@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   CountryPhoneInput,
-  isValidNationalPhoneNumber,
+  isValidInternationalPhoneNumber,
 } from "@/components/site/shared/country-phone-input";
 import type { BusinessQueryType } from "@/lib/business-query-cta";
 
@@ -102,7 +102,7 @@ export function BusinessDemoDialogButton({
       setError("Enter a valid email address.");
       return;
     }
-    if (!isValidNationalPhoneNumber(phone) || !/^\+\d{8,18}$/.test(phoneNumber)) {
+    if (!isValidInternationalPhoneNumber(phoneNumber)) {
       setError("Enter a valid phone number with country code.");
       return;
     }
