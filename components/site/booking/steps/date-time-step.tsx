@@ -14,6 +14,8 @@ type DateTimeStepProps = {
   onSelectTime: (time: string) => void;
   selectedDate: string;
   selectedTime: string;
+  unavailableTimes?: readonly string[];
+  isLoadingAvailability?: boolean;
 };
 
 export function DateTimeStep({
@@ -22,7 +24,10 @@ export function DateTimeStep({
   onSelectTime,
   selectedDate,
   selectedTime,
+  unavailableTimes = [],
+  isLoadingAvailability = false,
 }: DateTimeStepProps) {
+  const unavailable = new Set(unavailableTimes);
   return (
     <BookingStepFrame stepId="datetime">
       <h2 className="mb-2 text-3xl font-bold text-foreground">
@@ -80,15 +85,18 @@ export function DateTimeStep({
                   {slots.map((time) => (
                     <Button
                       key={time}
+                      disabled={isLoadingAvailability || unavailable.has(time)}
                       onClick={() => onSelectTime(time)}
                       variant="outline"
                       className={`rounded-xl border-2 py-6 font-medium transition-all ${
-                        selectedTime === time
+                        unavailable.has(time)
+                          ? "cursor-not-allowed border-border bg-muted text-brand-muted opacity-50"
+                          : selectedTime === time
                           ? "border-primary bg-primary text-primary-foreground hover:bg-brand-primary-hover"
                           : "border-border bg-card text-foreground hover:border-primary/50 hover:bg-card"
                       }`}
                     >
-                      {time}
+                      {time}{unavailable.has(time) ? " · Booked" : ""}
                     </Button>
                   ))}
                 </div>

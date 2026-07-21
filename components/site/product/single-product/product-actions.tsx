@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { HeartIcon, ShareIcon } from "@/components/icons/site-icons";
 import { Button } from "@/components/ui/button";
-import { getCurrentUser } from "@/lib/current-user";
+import { getCurrentUser, siteAuthenticatedFetch } from "@/lib/current-user";
 
 type SavedStatusPayload = {
   ok?: boolean;
@@ -45,7 +45,7 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
       setCanSave(Boolean(partUid && isUser));
       if (!partUid || !isUser) return;
 
-      const response = await fetch(
+      const response = await siteAuthenticatedFetch(
         `/api/saved-parts?partUid=${encodeURIComponent(partUid)}`,
         { credentials: "include", cache: "no-store" },
       );
@@ -66,7 +66,7 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
     setPending(true);
     setMessage("");
     try {
-      const response = await fetch("/api/saved-parts", {
+      const response = await siteAuthenticatedFetch("/api/saved-parts", {
         method: saved ? "DELETE" : "POST",
         credentials: "include",
         headers: { "content-type": "application/json" },

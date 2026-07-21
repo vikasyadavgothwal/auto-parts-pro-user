@@ -1,3 +1,10 @@
+import type { NextRequest } from "next/server"
+
+const accessCookieName =
+  process.env.USER_ACCESS_COOKIE_NAME ?? "user_access_token"
+const refreshCookieName =
+  process.env.USER_REFRESH_COOKIE_NAME ?? "user_refresh_token"
+
 const backendUrl = () => {
   const baseUrl =
     process.env.PRIVATE_API_URL?.trim() ||
@@ -20,7 +27,18 @@ const getSetCookieHeaders = (headers: Headers): string[] => {
   return enhancedHeaders.getSetCookie?.() ?? (headers.get("set-cookie") ? [headers.get("set-cookie")!] : [])
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const hasAccessSession = Boolean(request.cookies.get(accessCookieName)?.value)
+  const hasRefreshSession = Boolean(request.cookies.get(refreshCookieName)?.value)
+
+  if (!hasAccessSession && !hasRefreshSession) {
+    return Response.json({
+      ok: true,
+      authenticated: false,
+      user: null,
+    })
+  }
+
   const headers = new Headers({ accept: "application/json" })
   const cookie = request.headers.get("cookie")
   if (cookie) headers.set("cookie", cookie)

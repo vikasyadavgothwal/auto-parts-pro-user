@@ -17,6 +17,7 @@ type ReviewStepProps = {
   selectedTime: string;
   customerVehicle: BookingCustomerVehicle;
   onConfirm: () => void;
+  advancePercentage?: number;
 };
 
 export function ReviewStep({
@@ -28,6 +29,7 @@ export function ReviewStep({
   selectedTime,
   customerVehicle,
   onConfirm,
+  advancePercentage = 10,
 }: ReviewStepProps) {
   return (
     <BookingStepFrame stepId="review">
@@ -65,6 +67,12 @@ export function ReviewStep({
                   <ClockIcon className="h-4 w-4" />
                   {selectedService?.duration}
                 </span>
+              </div>
+            </div>
+            <div className="border-t border-border pt-6">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-foreground">Advance payment ({advancePercentage}%)</span>
+                <span className="font-bold text-primary">{selectedService?.currency ?? "AED"} {(((selectedService?.price ?? 0) * advancePercentage) / 100).toFixed(2)}</span>
               </div>
             </div>
 
@@ -122,7 +130,7 @@ export function ReviewStep({
         disabled={isSubmitting}
         className="h-14 w-full rounded-xl bg-primary text-lg text-primary-foreground hover:bg-brand-primary-hover"
       >
-        {isSubmitting ? "Confirming..." : "Confirm Booking"}
+        {isSubmitting ? "Processing payment..." : "Pay Advance & Book Service"}
       </Button>
     </BookingStepFrame>
   );

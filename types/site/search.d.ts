@@ -17,4 +17,8 @@ export type SearchProduct = {
   highlight: boolean
   highlightLabel?: string
   stockLabel?: string
+  brandName?: string | null
+  unitPrice?: number | null
+  totalStock?: number
+  offerCount?: number
 }

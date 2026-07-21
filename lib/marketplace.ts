@@ -123,6 +123,10 @@ export const marketplaceProductToSearchProduct = (
       : product.offerCount === 0
         ? "No supplier stock"
         : undefined,
+  brandName: product.brandName,
+  unitPrice: product.minPrice,
+  totalStock: product.totalStock,
+  offerCount: product.offerCount,
 })
 
 export const marketplaceOffersToProductOffers = (

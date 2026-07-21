@@ -14,7 +14,15 @@ import { ReviewStep } from "@/components/site/booking/steps/review-step";
 import { ServiceStep } from "@/components/site/booking/steps/service-step";
 import { VehicleStep } from "@/components/site/booking/steps/vehicle-step";
 import { Button } from "@/components/ui/button";
-import { getCurrentUser } from "@/lib/current-user";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { getCurrentUser, siteAuthenticatedFetch } from "@/lib/current-user";
 import { getBookingAvailableDates, bookingStepOrder } from "@/lib/data/booking";
 import {
   type UserVehicleRecord,
@@ -38,6 +46,14 @@ type BookingResponse = {
   ok: boolean;
   message?: string;
   booking?: GarageBookingResult;
+  payment?: { percentage: number; amount: number; currency: string; status: "succeeded" };
+};
+
+type AvailabilityResponse = {
+  ok: boolean;
+  unavailableTimes?: string[];
+  advancePercentage?: number;
+  message?: string;
 };
 
 type UserVehiclesResponse = {
@@ -89,6 +105,11 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] =
     useState<GarageBookingResult | null>(null);
+  const [pendingConfirmedBooking, setPendingConfirmedBooking] = useState<GarageBookingResult | null>(null);
+  const [paymentReceipt, setPaymentReceipt] = useState<BookingResponse["payment"]>(undefined);
+  const [unavailableTimes, setUnavailableTimes] = useState<string[]>([]);
+  const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
+  const [advancePercentage, setAdvancePercentage] = useState(10);
   const selectedService = services.find(
     (service) => service.id === selection.serviceId,
   );
@@ -120,7 +141,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const loadUserVehicles = async () => {
     setIsLoadingVehicles(true);
     try {
-      const response = await fetch("/api/user/vehicles?page=1&pageSize=50", {
+      const response = await siteAuthenticatedFetch("/api/user/vehicles?page=1&pageSize=50", {
         method: "GET",
         cache: "no-store",
         credentials: "include",
@@ -167,6 +188,30 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
       isActive = false;
     };
   }, []);
+
+  useEffect(() => {
+    if (!garage?.id || !selection.serviceId || !selection.date) {
+      return;
+    }
+    let active = true;
+    const params = new URLSearchParams({ garageId: garage.id, serviceId: selection.serviceId, bookingDate: selection.date });
+    void fetch(`/api/garage-bookings?${params}`, { cache: "no-store" })
+      .then(async (response) => {
+        const payload = await response.json() as AvailabilityResponse;
+        if (!response.ok || !payload.ok) throw new Error(payload.message || "Unable to load available times");
+        if (!active) return;
+        setUnavailableTimes(payload.unavailableTimes ?? []);
+        setAdvancePercentage(payload.advancePercentage ?? 10);
+        setSelection((current) =>
+          (payload.unavailableTimes ?? []).includes(current.time)
+            ? { ...current, time: "" }
+            : current,
+        );
+      })
+      .catch((error) => { if (active) setSubmitError(error instanceof Error ? error.message : "Unable to load available times"); })
+      .finally(() => { if (active) setIsLoadingAvailability(false); });
+    return () => { active = false; };
+  }, [garage?.id, selection.serviceId, selection.date]);
 
   const setSelectionValue = <Key extends keyof BookingSelection>(
     key: Key,
@@ -215,7 +260,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
     setSubmitError("");
 
     try {
-      const response = await fetch("/api/garage-bookings", {
+      const response = await siteAuthenticatedFetch("/api/garage-bookings", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -232,12 +277,12 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
       });
       const payload = (await response.json()) as BookingResponse;
 
-      if (!response.ok || !payload.ok || !payload.booking) {
+      if (!response.ok || !payload.ok || !payload.booking || !payload.payment) {
         throw new Error(payload.message || "Unable to confirm booking");
       }
 
-      setConfirmedBooking(payload.booking);
-      setStep("confirmed");
+      setPendingConfirmedBooking(payload.booking);
+      setPaymentReceipt(payload.payment);
     } catch (error) {
       setSubmitError(
         error instanceof Error ? error.message : "Unable to confirm booking",
@@ -360,9 +405,10 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           <ServiceStep
             services={services}
             selectedServiceId={selection.serviceId}
-            onSelectService={(serviceId) =>
-              setSelectionValue("serviceId", serviceId)
-            }
+            onSelectService={(serviceId) => {
+              if (selection.date) setIsLoadingAvailability(true);
+              setSelectionValue("serviceId", serviceId);
+            }}
           />
         );
       case "vehicle":
@@ -381,8 +427,13 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
             dates={availableDates}
             selectedDate={selection.date}
             selectedTime={selection.time}
-            onSelectDate={(date) => setSelectionValue("date", date)}
+            onSelectDate={(date) => {
+              setIsLoadingAvailability(true);
+              setSelectionValue("date", date);
+            }}
             onSelectTime={(time) => setSelectionValue("time", time)}
+            unavailableTimes={unavailableTimes}
+            isLoadingAvailability={isLoadingAvailability}
           />
         );
       case "review":
@@ -396,6 +447,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
             selectedTime={selection.time}
             customerVehicle={customerVehicle}
             onConfirm={handleConfirm}
+            advancePercentage={advancePercentage}
           />
         );
     }
@@ -439,6 +491,24 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           />
         )}
       </div>
+      <Dialog open={Boolean(paymentReceipt && pendingConfirmedBooking)} onOpenChange={() => undefined}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Payment Successful</DialogTitle>
+            <DialogDescription>
+              {paymentReceipt?.percentage}% advance payment of {paymentReceipt?.currency} {paymentReceipt?.amount.toFixed(2)} was successful.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => {
+              setConfirmedBooking(pendingConfirmedBooking);
+              setPendingConfirmedBooking(null);
+              setPaymentReceipt(undefined);
+              setStep("confirmed");
+            }}>OK</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

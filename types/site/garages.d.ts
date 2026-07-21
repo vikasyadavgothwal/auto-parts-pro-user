@@ -44,6 +44,8 @@ export type PublicGarageSummary = {
   currency: string
   ratingAverage: number
   reviewCount: number
+  availableToday: boolean
+  availableThisWeek: boolean
 }
 
 export type PublicGarageDetail = PublicGarageSummary & {

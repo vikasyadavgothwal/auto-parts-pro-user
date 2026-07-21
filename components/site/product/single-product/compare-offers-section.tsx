@@ -1,17 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 
-import Link from "next/link";
 import { AddProductToCartButton } from "@/components/site/cart/add-product-to-cart-button";
 import {
   FitmentConfirmedIcon,
   ShieldIcon,
   TruckIcon,
 } from "@/components/icons/site-icons";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { ProductOffer } from "@/types/site/product";
 import { RatingStars } from "./rating-stars";
+import { RequestCustomQuoteButton } from "./request-custom-quote-button";
 
 type CompareOffersSectionProps = {
   offers: readonly ProductOffer[];
@@ -158,13 +157,7 @@ export function CompareOffersSection({ offers }: CompareOffersSectionProps) {
               </p>
             </div>
 
-            <Button
-              asChild
-              variant="outline"
-              className="rounded-full border-2 border-primary bg-white px-8 py-6 font-medium text-primary"
-            >
-              <Link href="/request-quote">Request Custom Quote</Link>
-            </Button>
+            <RequestCustomQuoteButton />
           </div>
         </CardContent>
       </Card>

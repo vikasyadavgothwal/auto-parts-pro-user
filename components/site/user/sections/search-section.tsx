@@ -113,7 +113,7 @@ export function SearchSection({ config }: { config?: TextPair }) {
   }
 
   return (
-    <section className="bg-brand-surface py-10">
+    <section id="vehicle-search" className="scroll-mt-24 bg-brand-surface py-10">
       <div className="site-container">
         <div className="flex flex-col gap-5">
           <form

@@ -1,5 +1,6 @@
 import { FitmentConfirmedIcon } from "@/components/icons/site-icons"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 type VehicleInfo = {
   year?: string
@@ -13,6 +14,7 @@ type VehicleChangeSectionProps = {
   description?: string
   buttonLabel?: string
   vehicle?: VehicleInfo
+  buttonHref?: string
 }
 
 export const VehicleChangeSection = ({
@@ -20,6 +22,7 @@ export const VehicleChangeSection = ({
   description,
   buttonLabel,
   vehicle,
+  buttonHref = "/#vehicle-search",
 }: VehicleChangeSectionProps) => {
   const year = vehicle?.year ?? ""
   const make = vehicle?.make ?? ""
@@ -65,7 +68,7 @@ export const VehicleChangeSection = ({
           </div>
 
             {showButton ? (
-              <Button className="px-6 py-5 rounded-xl">{buttonLabel}</Button>
+              <Button asChild className="px-6 py-5 rounded-xl"><Link href={buttonHref}>{buttonLabel}</Link></Button>
             ) : null}
         </div>
       </div>

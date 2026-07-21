@@ -43,7 +43,7 @@ export const SiteFooter = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/suppliers" className="hover:text-white">
+                  <Link href="/business" className="hover:text-white">
                     For Business
                   </Link>
                 </li>

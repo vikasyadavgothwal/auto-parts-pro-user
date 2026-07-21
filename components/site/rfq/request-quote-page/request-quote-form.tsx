@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { dashboardUrlForRole, getCurrentUser } from "@/lib/current-user";
+import { dashboardUrlForRole, getCurrentUser, siteAuthenticatedFetch } from "@/lib/current-user";
 import type { UserAuthProfile } from "@/types/api/user-auth";
 import {
   CompanyInformationSection,
@@ -117,7 +117,7 @@ export function RequestQuoteForm() {
         return;
       }
 
-      const response = await fetch(vehicleEndpoint, {
+      const response = await siteAuthenticatedFetch(vehicleEndpoint, {
         method: "GET",
         cache: "no-store",
         credentials: "include",
@@ -294,7 +294,7 @@ export function RequestQuoteForm() {
     setError("");
     setMessage("");
     try {
-      const response = await fetch("/api/rfqs", {
+      const response = await siteAuthenticatedFetch("/api/rfqs", {
         method: "POST",
         body,
         credentials: "include",

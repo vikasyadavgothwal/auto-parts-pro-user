@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   AwardIcon,
   Clock3Icon,
-  DropdownChevronIcon,
   FilterSlidersIcon,
   MapPinIcon,
   RatingStarIcon,
@@ -27,6 +26,7 @@ type FilterKey =
   | "priceRanges";
 
 type FilterState = Record<FilterKey, string[]>;
+type GarageSort = "best" | "rating" | "price-low" | "price-high" | "experience";
 
 type GaragePagination = {
   page: number;
@@ -133,6 +133,7 @@ export function ServicesListingSection({
   const [filters, setFilters] = useState<FilterState>(() =>
     createInitialFilters(),
   );
+  const [sort, setSort] = useState<GarageSort>("best");
 
   useEffect(() => {
     const desktopMediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -193,10 +194,12 @@ export function ServicesListingSection({
     [certificationOptions, serviceTypeOptions],
   );
 
-  const filteredGarages = useMemo(
-    () =>
-      garages.filter((garage) => {
-        const availability = ["Available Today", "Available This Week"];
+  const filteredGarages = useMemo(() => {
+      const filtered = garages.filter((garage) => {
+        const availability = [
+          ...(garage.availableToday ? ["Available Today"] : []),
+          ...(garage.availableThisWeek ? ["Available This Week"] : []),
+        ];
 
         return (
           hasSelectedMatch(filters.serviceTypes, garage.specialties) &&
@@ -207,9 +210,13 @@ export function ServicesListingSection({
               matchesPriceRange(garage.startingPrice, priceRange),
             ))
         );
-      }),
-    [filters, garages],
-  );
+      });
+      if (sort === "rating") return [...filtered].sort((a, b) => b.ratingAverage - a.ratingAverage || b.reviewCount - a.reviewCount);
+      if (sort === "price-low") return [...filtered].sort((a, b) => (a.startingPrice ?? Number.POSITIVE_INFINITY) - (b.startingPrice ?? Number.POSITIVE_INFINITY));
+      if (sort === "price-high") return [...filtered].sort((a, b) => (b.startingPrice ?? Number.NEGATIVE_INFINITY) - (a.startingPrice ?? Number.NEGATIVE_INFINITY));
+      if (sort === "experience") return [...filtered].sort((a, b) => b.yearsExperience - a.yearsExperience);
+      return filtered;
+    }, [filters, garages, sort]);
 
   function handleFilterChange(
     filterKey: FilterKey,
@@ -284,13 +291,7 @@ export function ServicesListingSection({
             </div>
             <div className="flex items-center gap-3">
               <span className="text-sm text-brand-muted">Sort by:</span>
-              <button
-                type="button"
-                className="flex items-center gap-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-white transition-colors hover:border-[#DC2626]"
-              >
-                <span className="text-sm">Best Match</span>
-                <DropdownChevronIcon className="h-4 w-4" />
-              </button>
+              <select aria-label="Sort garages" value={sort} onChange={(event) => setSort(event.target.value as GarageSort)} className="rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] px-4 py-2 text-sm text-white outline-none hover:border-[#DC2626] focus:border-[#DC2626]"><option value="best">Best Match</option><option value="rating">Highest Rated</option><option value="price-low">Price: Low to High</option><option value="price-high">Price: High to Low</option><option value="experience">Most Experienced</option></select>
             </div>
           </div>
 
@@ -352,7 +353,7 @@ export function ServicesListingSection({
   );
 }
 
-function GarageRatingStars({ rating }: { rating: string }) {
+function GarageRatingStars({ rating }: { rating: number }) {
   const filledStars = Math.round(Number(rating));
 
   return (
@@ -612,9 +613,9 @@ function GarageCard({ garage }: { garage: PublicGarageSummary }) {
             </div>
 
             <div className="flex items-center gap-2">
-              <GarageRatingStars rating="4.9" />
-              <span className="text-sm font-medium text-white">4.9</span>
-              <span className="text-sm text-[#9CA3AF]">(328)</span>
+              <GarageRatingStars rating={garage.ratingAverage} />
+              <span className="text-sm font-medium text-white">{garage.ratingAverage.toFixed(1)}</span>
+              <span className="text-sm text-[#9CA3AF]">({garage.reviewCount})</span>
             </div>
           </div>
 

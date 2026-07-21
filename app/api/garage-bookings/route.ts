@@ -15,6 +15,17 @@ const backendUrl = () => {
 
 export const dynamic = "force-dynamic"
 
+export async function GET(request: Request) {
+  const source = new URL(request.url)
+  const url = backendUrl()
+  url.search = source.search
+  const response = await fetch(url, { method: "GET", cache: "no-store", headers: { accept: "application/json" } })
+  return new Response(await response.arrayBuffer(), {
+    status: response.status,
+    headers: { "content-type": response.headers.get("content-type") ?? "application/json" },
+  })
+}
+
 export async function POST(request: Request) {
   const headers = new Headers({ accept: "application/json" })
   const contentType = request.headers.get("content-type")

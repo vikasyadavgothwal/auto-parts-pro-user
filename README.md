@@ -41,6 +41,10 @@ The public website signup supports User, Fleet, Garage, and Supplier account
 selection. User accounts continue to the User Dashboard with the shared
 HttpOnly session; other roles are redirected to their matching dashboard.
 
+The main website automatically refreshes an expired short-lived backend access
+token through `/api/auth/refresh` and retries authenticated marketplace actions
+once. Users remain signed in while their refresh session is valid.
+
 When the public website runs on `localhost` (including `127.0.0.1` or `::1`),
 successful email and Google authentication always redirect to the matching
 local dashboard: User `3002`, Garage `3003`, Supplier `3004`, and Fleet `4001`.

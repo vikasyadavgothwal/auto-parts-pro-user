@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import {
   createContext,
   useCallback,
@@ -24,6 +23,7 @@ import {
   dashboardUrlForRole,
   getCurrentUser,
   logoutCurrentUser,
+  siteAuthenticatedFetch,
 } from "@/lib/current-user";
 import type { UserAuthProfile } from "@/types/api/user-auth";
 
@@ -318,7 +318,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       setIsCheckingOut(true);
       setNotice("");
       try {
-        const response = await fetch("/api/orders", {
+        const response = await siteAuthenticatedFetch("/api/orders", {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -353,8 +353,9 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
           typeof payload.summary?.totalAmount === "number"
             ? ` Total: AED ${payload.summary.totalAmount.toFixed(2)}.`
             : "";
-        toast.success(
-          `Your order has been confirmed. ${orderCount} order${orderCount === 1 ? "" : "s"} created.${totalAmount}`,
+        window.alert("Payment Successful");
+        window.alert(
+          `${orderCount} order${orderCount === 1 ? "" : "s"} created successfully.${totalAmount}`,
         );
       } catch (error) {
         setNotice(

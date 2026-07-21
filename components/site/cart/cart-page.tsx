@@ -17,6 +17,7 @@ import {
   useSiteCart,
 } from "@/components/site/cart/cart-provider";
 import { Button } from "@/components/ui/button";
+import { siteAuthenticatedFetch } from "@/lib/current-user";
 
 type UserAddress = {
   id: string;
@@ -155,7 +156,7 @@ export function CartPage() {
   useEffect(() => {
     if (user?.activeRole !== "User") return;
     let mounted = true;
-    fetch("/api/user/addresses", {
+    siteAuthenticatedFetch("/api/user/addresses", {
       method: "GET",
       credentials: "include",
       cache: "no-store",
@@ -216,7 +217,7 @@ export function CartPage() {
 
     setIsSavingAddress(true);
     try {
-      const response = await fetch("/api/user/addresses", {
+      const response = await siteAuthenticatedFetch("/api/user/addresses", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -692,8 +693,8 @@ export function CartPage() {
                       className="rounded-xl px-4"
                     >
                       {isCheckingOut
-                        ? "Creating orders..."
-                        : `Place product order${productItems.length === 1 ? "" : "s"}`}
+                        ? "Processing dummy payment..."
+                        : `Pay & place order${productItems.length === 1 ? "" : "s"}`}
                     </Button>
                   ) : null}
                   <Button
