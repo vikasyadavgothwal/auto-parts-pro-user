@@ -22,9 +22,9 @@ export const SiteFooter = () => {
           <div className="grid grid-cols-2">
             {/* Quick Links */}
             <div>
-              <h4 className="mb-4 text-md font-semibold uppercase tracking-wider">
+              <h2 className="mb-4 text-md font-semibold uppercase tracking-wider">
                 Quick Links
-              </h4>
+              </h2>
 
               <ul className="space-y-2 text-white">
                 <li>
@@ -52,9 +52,9 @@ export const SiteFooter = () => {
 
             {/* Support */}
             <div>
-              <h4 className="mb-4 text-md font-semibold uppercase tracking-wider">
+              <h2 className="mb-4 text-md font-semibold uppercase tracking-wider">
                 Support
-              </h4>
+              </h2>
 
               <ul className="space-y-2 text-white">
                 <li>

@@ -23,7 +23,7 @@ export function HomePageContent({
   }
 
   return (
-    <>
+    <main>
       <HeroSection config={config.banner} />
       <SearchSection config={config.search} />
       <BenefitsSection config={config.whyChooseUs} />
@@ -35,6 +35,6 @@ export function HomePageContent({
       <ProcessSection steps={config.process?.steps} />
       <BusinessSolutionsSection config={config.enterpriseSolutions} />
       <CTASection config={config.cta} />
-    </>
+    </main>
   );
 }

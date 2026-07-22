@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "plus.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "auto-parts-pro.s3.eu-north-1.amazonaws.com",
+      },
     ],
   },
   async rewrites() {

@@ -37,7 +37,7 @@ export function BusinessSolutionsSection({
 
       
       <div className="site-container">
-              <div className="mx-auto mb-6 text-center text-sm font-semibold uppercase tracking-wide text-primary">
+              <div className="mx-auto mb-6 text-center text-sm font-semibold uppercase tracking-wide text-red-400">
         Enterprise Solutions
 
       </div>
@@ -77,7 +77,7 @@ export function BusinessSolutionsSection({
                 {card.buttonText && card.buttonLink ? (
                   <Link
                     href={card.buttonLink}
-                    className="inline-flex items-center gap-2 font-medium text-primary hover:underline"
+                    className="inline-flex items-center gap-2 font-medium text-red-400 hover:text-red-300 hover:underline"
                   >
                     {card.buttonText}
                     <ArrowRightIcon className="h-4 w-4" />

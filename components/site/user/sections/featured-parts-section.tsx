@@ -1,6 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
-
 import Link from "next/link"
+import Image from "next/image"
 import { SectionHeading } from "@/components/site/shared/section-heading"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -50,9 +49,11 @@ export function FeaturedPartsSection({
               >
                 <Card className="h-full overflow-hidden rounded-sm border-border bg-brand-panel transition-all hover:border-primary">
                   <div className="relative aspect-[4/3] overflow-hidden bg-border">
-                    <img
+                    <Image
                       src={product.image}
                       alt={product.title}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
 
@@ -72,7 +73,7 @@ export function FeaturedPartsSection({
                         ? "1 verified supplier"
                         : `${product.offerCount} verified suppliers`}
                     </p>
-                    <p className="mt-2 text-lg font-inter text-primary">
+                    <p className="mt-2 text-lg font-inter text-red-400">
                       {formatPrice(product.minPrice, product.currency)}
                     </p>
                   </div>

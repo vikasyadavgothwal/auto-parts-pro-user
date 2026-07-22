@@ -41,7 +41,7 @@ export function PricingSection({ config }: PricingSectionProps) {
   }
   return (
     <section id="pricing" className="bg-brand-surface py-10 md:py-24">
-      <div className="mx-auto mb-6 text-center text-sm font-semibold uppercase tracking-wide text-primary">
+      <div className="mx-auto mb-6 text-center text-sm font-semibold uppercase tracking-wide text-red-400">
         For Repair Shops
       </div>
       <div className="site-container">
