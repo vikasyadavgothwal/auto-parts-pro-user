@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { CheckCircle2 } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -16,9 +17,11 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
   dashboardUrlForRole,
   getCurrentUser,
@@ -63,6 +66,11 @@ type AddCartItemInput =
 type CartActionResult = {
   ok: boolean;
   message: string;
+};
+
+type CheckoutSuccessDialog = {
+  orderCount: number;
+  totalAmount: number | null;
 };
 
 type SiteCartContextValue = {
@@ -188,6 +196,8 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [checkoutSuccess, setCheckoutSuccess] =
+    useState<CheckoutSuccessDialog | null>(null);
 
   const refreshUser = useCallback(async () => {
     const nextUser = await getCurrentUser();
@@ -349,14 +359,13 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
 
         const orderCount =
           payload.summary?.orderCount ?? payload.orders?.length ?? 1;
-        const totalAmount =
-          typeof payload.summary?.totalAmount === "number"
-            ? ` Total: AED ${payload.summary.totalAmount.toFixed(2)}.`
-            : "";
-        window.alert("Payment Successful");
-        window.alert(
-          `${orderCount} order${orderCount === 1 ? "" : "s"} created successfully.${totalAmount}`,
-        );
+        setCheckoutSuccess({
+          orderCount,
+          totalAmount:
+            typeof payload.summary?.totalAmount === "number"
+              ? payload.summary.totalAmount
+              : null,
+        });
       } catch (error) {
         setNotice(
           error instanceof Error ? error.message : "Unable to create orders.",
@@ -442,6 +451,50 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
             }}
             onClose={() => setIsAuthOpen(false)}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={Boolean(checkoutSuccess)}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) setCheckoutSuccess(null);
+        }}
+      >
+        <DialogContent className="border border-border bg-brand-surface text-white shadow-2xl sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-2 flex size-12 items-center justify-center rounded-full border border-brand-success/25 bg-brand-success/10 text-brand-success">
+              <CheckCircle2 className="size-6" />
+            </div>
+            <DialogTitle className="text-xl text-white">
+              Payment Successful
+            </DialogTitle>
+            <DialogDescription className="text-brand-muted">
+              {checkoutSuccess
+                ? `${checkoutSuccess.orderCount} order${
+                    checkoutSuccess.orderCount === 1 ? "" : "s"
+                  } created successfully.`
+                : "Your order was created successfully."}
+            </DialogDescription>
+          </DialogHeader>
+
+          {checkoutSuccess?.totalAmount != null ? (
+            <div className="rounded-xl border border-border bg-background/40 px-4 py-3 text-center">
+              <p className="text-xs text-brand-muted">Paid amount</p>
+              <p className="mt-1 text-2xl font-semibold text-white">
+                AED {checkoutSuccess.totalAmount.toFixed(2)}
+              </p>
+            </div>
+          ) : null}
+
+          <DialogFooter className="bg-transparent sm:justify-center">
+            <Button
+              type="button"
+              onClick={() => setCheckoutSuccess(null)}
+              className="w-full hover:bg-brand-primary-hover sm:w-auto"
+            >
+              Continue
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </SiteCartContext.Provider>

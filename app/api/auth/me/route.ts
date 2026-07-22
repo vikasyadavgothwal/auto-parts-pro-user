@@ -22,9 +22,25 @@ const backendUrl = () => {
 
 export const dynamic = "force-dynamic"
 
-const getSetCookieHeaders = (headers: Headers): string[] => {
-  const enhancedHeaders = headers as Headers & { getSetCookie?: () => string[] }
-  return enhancedHeaders.getSetCookie?.() ?? (headers.get("set-cookie") ? [headers.get("set-cookie")!] : [])
+const cookieDomainForRequest = (request: NextRequest) => {
+  const configuredDomain = process.env.USER_COOKIE_DOMAIN?.trim()
+  if (configuredDomain) return configuredDomain
+
+  const hostname = request.nextUrl.hostname.toLowerCase()
+  return hostname.endsWith(".websitedesignersdubai.ae")
+    ? ".websitedesignersdubai.ae"
+    : ""
+}
+
+const clearUserCookieValues = (request: NextRequest) => {
+  const domain = cookieDomainForRequest(request)
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : ""
+  const domainAttribute = domain ? `; Domain=${domain}` : ""
+
+  return [accessCookieName, refreshCookieName].map(
+    (name) =>
+      `${name}=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict${secure}${domainAttribute}`,
+  )
 }
 
 export async function GET(request: NextRequest) {
@@ -62,22 +78,15 @@ export async function GET(request: NextRequest) {
   )
 
   if (response.ok && payload.ok && !isPublicWebsiteUser) {
-    const logoutResponse = await fetch(new URL("/api/v1/user/auth/logout", backendUrl()), {
-      method: "POST",
-      cache: "no-store",
-      headers: {
-        accept: "application/json",
-        ...(cookie ? { cookie } : {}),
-      },
+    const mainResponse = Response.json({
+      ok: true,
+      authenticated: false,
+      user: null,
     })
-    const clearedResponse = Response.json(
-      { ok: false, success: false, message: "Use your role dashboard to sign in." },
-      { status: 401 },
-    )
-    for (const value of getSetCookieHeaders(logoutResponse.headers)) {
-      clearedResponse.headers.append("set-cookie", value)
+    for (const value of clearUserCookieValues(request)) {
+      mainResponse.headers.append("set-cookie", value)
     }
-    return clearedResponse
+    return mainResponse
   }
 
   return new Response(body, {
