@@ -23,7 +23,7 @@ export const BusinessHeader = () => {
           </div>
           {/* Desktop Actions */}
           <div className="hidden items-center gap-4 md:flex">
-            <Button variant="ghost" className="text-brand-muted hover:text-white">Sign In</Button>
+            <Button variant="ghost" className="text-brand-muted hover:text-white">Sign in</Button>
             <Button className="rounded-xl text-white hover:bg-brand-primary-hover">Get Started</Button>
           </div>
           {/* Mobile Menu Toggle */}
@@ -42,7 +42,7 @@ export const BusinessHeader = () => {
           <Link href="/rfq" className="text-brand-muted hover:text-white">Request Quote</Link>
           <Link href="/business" className="font-medium text-[#DC2626]">For Business</Link>
           <hr className="border-border" />
-          <Button variant="ghost" className="justify-start">Sign In</Button>
+          <Button variant="ghost" className="justify-start">Sign in</Button>
           <Button>Get Started</Button>
         </nav>
       )}

@@ -29,7 +29,7 @@ export function ServiceHeader() {
               variant="ghost"
               className="px-5 py-2.5 text-brand-muted hover:text-white"
             >
-              Sign In
+              Sign in
             </Button>
           </div>
         </div>
