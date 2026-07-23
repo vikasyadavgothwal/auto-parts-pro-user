@@ -54,6 +54,8 @@ export function AutoPartsMarketplacePage({
   const keyFeatures = product?.keyFeatures ?? fallbackKeyFeatures;
   const keyFeaturesTitle = selectedVendorContent ? undefined : "Key Features";
   const offers = product ? marketplaceOffersToProductOffers(product) : fallbackOffers;
+  const ratingAverage = product?.ratingAverage ?? 0;
+  const reviewCount = product?.reviewCount ?? 0;
 
   return (
     <main className="min-h-full bg-[#0A0A0A] text-white">
@@ -69,8 +71,8 @@ export function AutoPartsMarketplacePage({
             partUid={product?.partUid}
             title={title}
             partNumber={partNumber}
-            rating={4.8}
-            reviewCount={offers.length}
+            rating={ratingAverage}
+            reviewCount={reviewCount}
             keyFeatures={keyFeatures}
             keyFeaturesTitle={keyFeaturesTitle}
             productInfoRows={supplierProductInfo}

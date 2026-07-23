@@ -6,7 +6,7 @@ const envUrl = (value: string | undefined, fallback: string) =>
   trimTrailingSlash(value?.trim() || fallback);
 
 const localDashboardUrls: Record<DashboardRole, string> = {
-  User: "http://localhost:3002/user_dashboard",
+  User: "/user_dashboard",
   Supplier: "http://localhost:3004/dashboard",
   Garage: "http://localhost:3003/garage_dashboard",
   Fleet: "http://localhost:4001/fleet",
@@ -25,10 +25,7 @@ export const dashboardUrlForRole = (
   }
 
   const urls: Record<DashboardRole, string> = {
-    User: envUrl(
-      process.env.NEXT_PUBLIC_USER_DASHBOARD_URL,
-      "https://user.websitedesignersdubai.ae/user_dashboard",
-    ),
+    User: "/user_dashboard",
     Supplier: envUrl(
       process.env.NEXT_PUBLIC_SUPPLIER_DASHBOARD_URL,
       "https://supplier.websitedesignersdubai.ae/dashboard",

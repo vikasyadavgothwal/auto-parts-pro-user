@@ -195,6 +195,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [notice, setNotice] = useState("");
+  const [addedCartItemTitle, setAddedCartItemTitle] = useState("");
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] =
     useState<CheckoutSuccessDialog | null>(null);
@@ -271,10 +272,10 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
         );
       });
       setNotice(`${input.title} added to cart.`);
-      router.push("/cart");
+      setAddedCartItemTitle(input.title);
       return { ok: true, message: "Added to cart." };
     },
-    [refreshUser, router, user],
+    [refreshUser, user],
   );
 
   const updateQuantity = useCallback((itemId: string, quantity: number) => {
@@ -451,6 +452,50 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
             }}
             onClose={() => setIsAuthOpen(false)}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={Boolean(addedCartItemTitle)}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) setAddedCartItemTitle("");
+        }}
+      >
+        <DialogContent className="border border-border bg-brand-surface text-white shadow-2xl sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-2 flex size-12 items-center justify-center rounded-full border border-brand-success/25 bg-brand-success/10 text-brand-success">
+              <CheckCircle2 className="size-6" />
+            </div>
+            <DialogTitle className="text-xl text-white">
+              Product added to cart
+            </DialogTitle>
+            <DialogDescription className="text-brand-muted">
+              {addedCartItemTitle
+                ? `${addedCartItemTitle} was added successfully.`
+                : "The product was added successfully."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="bg-transparent sm:justify-center">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setAddedCartItemTitle("")}
+              className="w-full border-border text-white hover:bg-background/60 sm:w-auto"
+            >
+              Continue shopping
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                setAddedCartItemTitle("");
+                router.push("/cart");
+              }}
+              className="w-full hover:bg-brand-primary-hover sm:w-auto"
+            >
+              View cart
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 

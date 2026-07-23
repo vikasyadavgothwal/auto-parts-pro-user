@@ -68,7 +68,7 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
                 <div className="flex items-center gap-1">
                   <RatingStars rating={offer.rating} size="h-3 w-3" />
                   <span className="font-medium text-[#0F172A]">
-                    {offer.rating}
+                    {offer.reviews ? offer.rating.toFixed(1) : "No ratings"}
                   </span>
                   <span>({offer.reviews})</span>
                 </div>
@@ -98,7 +98,11 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
             <TruckIcon className="h-4 w-4 text-[#64748B]" />
             <div>
               <div className="font-medium">{offer.shipping}</div>
-              <div className="text-xs text-[#64748B]">{offer.shippingTime}</div>
+              <div className="text-xs text-[#64748B]">
+                {offer.deliveryDate
+                  ? `${offer.deliveryDate} (${offer.shippingTime})`
+                  : offer.shippingTime}
+              </div>
             </div>
           </div>
 

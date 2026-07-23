@@ -31,6 +31,7 @@ NEXT_PUBLIC_FIREBASE_APP_ID=
 NEXT_PUBLIC_BACKEND_URL=<backend-origin>
 NEXT_PUBLIC_SITE_URL=<site-origin>
 NEXT_PUBLIC_USER_DASHBOARD_URL=<user-dashboard-url>
+USER_DASHBOARD_APP_URL=<internal-or-deployed-user-dashboard-origin>
 NEXT_PUBLIC_SUPPLIER_DASHBOARD_URL=<supplier-dashboard-url>
 NEXT_PUBLIC_GARAGE_DASHBOARD_URL=<garage-dashboard-url>
 NEXT_PUBLIC_FLEET_DASHBOARD_URL=<fleet-dashboard-url>
@@ -40,6 +41,12 @@ FLEET_APP_URL=<fleet-app-origin>
 The public website signup supports User, Fleet, Garage, and Supplier account
 selection. User accounts continue to the User Dashboard with the shared
 HttpOnly session; other roles are redirected to their matching dashboard.
+
+The main website serves the User Dashboard on the same public domain under
+`/user_dashboard`. Set `USER_DASHBOARD_APP_URL` to the origin where the
+`user_dashboard` app is running so the public website can rewrite that path to
+the dashboard service. Local development defaults this upstream to
+`http://localhost:3002`.
 
 The main website automatically refreshes an expired short-lived backend access
 token through `/api/auth/refresh` and retries authenticated marketplace actions
@@ -110,6 +117,7 @@ Detected or documented variables:
 - `NEXT_PUBLIC_SITE_URL`
 - `SITE_URL`
 - `NEXT_PUBLIC_USER_DASHBOARD_URL`
+- `USER_DASHBOARD_APP_URL`
 - `NEXT_PUBLIC_SUPPLIER_DASHBOARD_URL`
 - `NEXT_PUBLIC_GARAGE_DASHBOARD_URL`
 - `NEXT_PUBLIC_FLEET_DASHBOARD_URL`

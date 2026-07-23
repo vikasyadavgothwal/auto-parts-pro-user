@@ -23,9 +23,11 @@ export type ProductOffer = {
   stock: string
   shipping: string
   shippingTime: string
+  deliveryDate?: string | null
   recommended: boolean
   description?: string | null
 }
+
 
 export type RatingStarsProps = {
   rating: number

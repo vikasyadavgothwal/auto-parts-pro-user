@@ -6,6 +6,11 @@ const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
 const fleetAppUrl = process.env.FLEET_APP_URL?.trim()
   ? trimTrailingSlash(process.env.FLEET_APP_URL.trim())
   : "";
+const userDashboardAppUrl = process.env.USER_DASHBOARD_APP_URL?.trim()
+  ? trimTrailingSlash(process.env.USER_DASHBOARD_APP_URL.trim())
+  : process.env.NODE_ENV === "production"
+    ? ""
+    : "http://localhost:3002";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -29,11 +34,21 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    if (!fleetAppUrl) {
-      return [];
-    }
-
     return [
+      ...(userDashboardAppUrl
+        ? [
+            {
+              source: "/user_dashboard",
+              destination: `${userDashboardAppUrl}/user_dashboard`,
+            },
+            {
+              source: "/user_dashboard/:path*",
+              destination: `${userDashboardAppUrl}/user_dashboard/:path*`,
+            },
+          ]
+        : []),
+      ...(fleetAppUrl
+        ? [
       {
         source: "/fleet",
         destination: `${fleetAppUrl}/fleet`,
@@ -42,6 +57,8 @@ const nextConfig: NextConfig = {
         source: "/fleet/:path*",
         destination: `${fleetAppUrl}/fleet/:path*`,
       },
+          ]
+        : []),
     ];
   },
 };

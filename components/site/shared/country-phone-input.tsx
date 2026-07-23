@@ -72,7 +72,7 @@ export function CountryPhoneInput({
         </Label>
       ) : null}
       {name ? <input type="hidden" name={name} value={fullPhoneNumber} /> : null}
-      <div className="flex min-w-0">
+      <div className="grid min-w-0 grid-cols-[minmax(9.5rem,auto)_minmax(0,1fr)]">
         <select
           aria-label="Country code"
           value={countryCode}
@@ -80,6 +80,7 @@ export function CountryPhoneInput({
           onChange={(event) => onCountryCodeChange(event.target.value)}
           className={cn(
             "h-12 w-32 shrink-0 rounded-l-xl border border-input bg-input px-3 text-sm text-foreground outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50",
+            "w-full min-w-0",
             selectClassName,
           )}
         >
@@ -104,7 +105,7 @@ export function CountryPhoneInput({
           minLength={6}
           maxLength={14}
           placeholder="Phone number"
-          className={cn("h-12 min-w-0 rounded-l-none border-l-0", inputClassName)}
+          className={cn("h-12 min-w-0 rounded-l-none border-l-0 px-3", inputClassName)}
         />
       </div>
     </div>

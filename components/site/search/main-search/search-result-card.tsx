@@ -31,14 +31,20 @@ const badgeIcons: Record<SearchProductBadgeType, typeof FitmentConfirmedIcon> =
     no: FitmentRejectedIcon,
   };
 
-function SearchRatingStars() {
+function SearchRatingStars({ rating }: { rating: number }) {
+  const filledStars = Math.floor(rating);
   return (
     <div className="flex">
-      <RatingStarIcon filled className="h-4 w-4 text-[#F59E0B]" />
-      <RatingStarIcon filled className="h-4 w-4 text-[#F59E0B]" />
-      <RatingStarIcon filled className="h-4 w-4 text-[#F59E0B]" />
-      <RatingStarIcon filled className="h-4 w-4 text-[#F59E0B]" />
-      <RatingStarIcon className="h-4 w-4 text-[#2A2A2A]" />
+      {Array.from({ length: 5 }).map((_, index) => {
+        const filled = index < filledStars;
+        return (
+          <RatingStarIcon
+            key={index}
+            filled={filled}
+            className={`h-4 w-4 ${filled ? "text-[#F59E0B]" : "text-[#2A2A2A]"}`}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -58,6 +64,8 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
   );
   const [imageIndex, setImageIndex] = useState(0);
   const displayImage = imageCandidates[imageIndex] ?? product.image;
+  const ratingValue = product.rating ? Number(product.rating) : null;
+  const hasReviews = typeof ratingValue === "number" && Number.isFinite(ratingValue) && Boolean(product.reviews);
 
   return (
     <div className="group relative">
@@ -115,13 +123,17 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
               <SellerPackageIcon className="h-4 w-4 text-[#9CA3AF]" />
               <span className="text-sm text-[#9CA3AF]">{product.seller}</span>
             </div>
-            <div className=" flex items-center gap-2">
-              <SearchRatingStars />
-              <span className="text-sm font-medium text-white">
-                {product.rating}
-              </span>
-              <span className="text-sm text-[#9CA3AF]">{product.reviews}</span>
-            </div>
+            {hasReviews ? (
+              <div className="flex items-center gap-2">
+                <SearchRatingStars rating={ratingValue} />
+                <span className="text-sm font-medium text-white">
+                  {product.rating}
+                </span>
+                <span className="text-sm text-[#9CA3AF]">
+                  {product.reviews}
+                </span>
+              </div>
+            ) : null}
           </div>
 
           <h3 className="mb-2 line-clamp-2 text-lg font-semibold text-white transition-colors group-hover:text-[#DC2626]">

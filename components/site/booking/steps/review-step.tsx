@@ -17,8 +17,24 @@ type ReviewStepProps = {
   selectedTime: string;
   customerVehicle: BookingCustomerVehicle;
   onConfirm: () => void;
-  advancePercentage?: number;
+  advance?: {
+    mode: "percentage" | "fixed";
+    value: number;
+  };
 };
+
+const advanceAmount = (
+  price: number,
+  advance: NonNullable<ReviewStepProps["advance"]>,
+) =>
+  advance.mode === "fixed"
+    ? Math.min(price, advance.value)
+    : (price * advance.value) / 100;
+
+const advanceLabel = (advance: NonNullable<ReviewStepProps["advance"]>) =>
+  advance.mode === "fixed"
+    ? "Advance payment"
+    : `Advance payment (${advance.value}%)`;
 
 export function ReviewStep({
   error,
@@ -29,7 +45,7 @@ export function ReviewStep({
   selectedTime,
   customerVehicle,
   onConfirm,
-  advancePercentage = 10,
+  advance = { mode: "percentage", value: 10 },
 }: ReviewStepProps) {
   return (
     <BookingStepFrame stepId="review">
@@ -71,8 +87,10 @@ export function ReviewStep({
             </div>
             <div className="border-t border-border pt-6">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-foreground">Advance payment ({advancePercentage}%)</span>
-                <span className="font-bold text-primary">{selectedService?.currency ?? "AED"} {(((selectedService?.price ?? 0) * advancePercentage) / 100).toFixed(2)}</span>
+                <span className="font-semibold text-foreground">
+                  {advanceLabel(advance)}
+                </span>
+                <span className="font-bold text-primary">{selectedService?.currency ?? "AED"} {advanceAmount(selectedService?.price ?? 0, advance).toFixed(2)}</span>
               </div>
             </div>
 

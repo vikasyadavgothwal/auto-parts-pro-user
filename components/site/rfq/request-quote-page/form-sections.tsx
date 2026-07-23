@@ -30,9 +30,17 @@ type TextFieldProps = {
   min?: number;
   max?: number;
   maxLength?: number;
+  value?: string;
+  onChange?: (value: string) => void;
 };
 type PartRequest = {
   id: number;
+  vin?: string;
+  partName?: string;
+  partNumber?: string;
+  quantity?: number;
+  targetPrice?: string;
+  notes?: string;
 };
 function TextField({
   name,
@@ -43,6 +51,8 @@ function TextField({
   min,
   max,
   maxLength,
+  value,
+  onChange,
 }: TextFieldProps) {
   return (
     <div>
@@ -57,6 +67,8 @@ function TextField({
         min={min}
         max={max}
         maxLength={maxLength}
+        value={value}
+        onChange={onChange ? (event) => onChange(event.target.value) : undefined}
         placeholder={placeholder}
         className="h-12 rounded-xl bg-brand-surface px-4 text-base"
       />
@@ -96,10 +108,29 @@ function PartRequestCard({
       <div className="flex flex-col gap-6">
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-3">
           <div className="flex flex-col">
+            <Label className="mb-2">Different Vehicle VIN</Label>
+            <Input
+              name={`parts.${part.id}.vin`}
+              maxLength={17}
+              defaultValue={part.vin ?? ""}
+              placeholder="Leave blank to use selected vehicle"
+              aria-label={`Part ${partNumber} vehicle VIN`}
+              className="h-12 rounded-xl bg-brand-panel px-4 uppercase text-base"
+              onChange={(event) => {
+                event.currentTarget.value = event.currentTarget.value
+                  .toUpperCase()
+                  .replace(/[^A-HJ-NPR-Z0-9]/g, "")
+                  .slice(0, 17);
+              }}
+            />
+          </div>
+
+          <div className="flex flex-col">
             <Label className="mb-2">Part Name / Description</Label>
             <Input
               name={`parts.${part.id}.name`}
               required
+              defaultValue={part.partName ?? ""}
               placeholder="Front brake pads"
               aria-label={`Part ${partNumber} name`}
               className="h-12 rounded-xl bg-brand-panel px-4 text-base"
@@ -115,6 +146,7 @@ function PartRequestCard({
               max={100000000}
               step="0.01"
               placeholder="0.00"
+              defaultValue={part.targetPrice ?? ""}
               className="h-12 rounded-xl bg-brand-panel px-4 text-base"
             />
           </div>
@@ -124,6 +156,7 @@ function PartRequestCard({
             <Input
               name={`parts.${part.id}.partNumber`}
               placeholder="BC1259"
+              defaultValue={part.partNumber ?? ""}
               aria-label={`Part ${partNumber} part number`}
               className="h-12 rounded-xl bg-brand-panel px-4 text-base"
             />
@@ -138,7 +171,7 @@ function PartRequestCard({
               max={10000}
               step={1}
               required
-              defaultValue={1}
+              defaultValue={part.quantity ?? 1}
               aria-label={`Part ${partNumber} quantity`}
               className="h-12 rounded-xl bg-brand-panel px-4 text-base"
             />
@@ -151,6 +184,7 @@ function PartRequestCard({
             name={`parts.${part.id}.notes`}
             rows={2}
             placeholder="Any specific requirements or preferences..."
+            defaultValue={part.notes ?? ""}
             aria-label={`Part ${partNumber} requirements`}
             className="resize-none rounded-xl bg-brand-panel px-4 py-3 text-base"
           />
@@ -160,9 +194,29 @@ function PartRequestCard({
   );
 }
 
-export function CompanyInformationSection() {
-  const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
-  const [phoneNumber, setPhoneNumber] = useState("");
+export function CompanyInformationSection({
+  companyName,
+  contactName,
+  email,
+  phoneCountryCode,
+  phoneNumber,
+  onCompanyNameChange,
+  onContactNameChange,
+  onEmailChange,
+  onPhoneCountryCodeChange,
+  onPhoneNumberChange,
+}: {
+  companyName: string;
+  contactName: string;
+  email: string;
+  phoneCountryCode: string;
+  phoneNumber: string;
+  onCompanyNameChange: (value: string) => void;
+  onContactNameChange: (value: string) => void;
+  onEmailChange: (value: string) => void;
+  onPhoneCountryCodeChange: (value: string) => void;
+  onPhoneNumberChange: (value: string) => void;
+}) {
 
   return (
     <Card className="rounded-2xl p-5 sm:p-6 lg:p-8">
@@ -171,24 +225,17 @@ export function CompanyInformationSection() {
       </h2>
 
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-        {companyFields.slice(0, 3).map(([label, placeholder], index) => (
-          <TextField
-            key={label}
-            name={["companyName", "contactName", "email", "phone"][index]}
-            label={label}
-            placeholder={placeholder}
-            required
-            type={index === 2 ? "email" : "text"}
-          />
-        ))}
+        <TextField name="companyName" label={companyFields[0]?.[0] ?? "Company Name"} placeholder={companyFields[0]?.[1]} required value={companyName} onChange={onCompanyNameChange} />
+        <TextField name="contactName" label={companyFields[1]?.[0] ?? "Contact Name"} placeholder={companyFields[1]?.[1]} required value={contactName} onChange={onContactNameChange} />
+        <TextField name="email" label={companyFields[2]?.[0] ?? "Email"} placeholder={companyFields[2]?.[1]} required type="email" value={email} onChange={onEmailChange} />
         <CountryPhoneInput
           id="rfq-phone"
           name="phone"
           label={companyFields[3]?.[0] ?? "Phone *"}
           countryCode={phoneCountryCode}
           phoneNumber={phoneNumber}
-          onCountryCodeChange={setPhoneCountryCode}
-          onPhoneNumberChange={setPhoneNumber}
+          onCountryCodeChange={onPhoneCountryCodeChange}
+          onPhoneNumberChange={onPhoneNumberChange}
           labelClassName="text-sm font-medium text-white"
           selectClassName="bg-brand-surface text-white"
           inputClassName="bg-brand-surface px-4 text-base text-white"
@@ -226,7 +273,7 @@ export function VehicleInformationSection({
         <div className="space-y-4">
           <div>
             <Label htmlFor="rfq-saved-vehicle" className="mb-2 block text-sm font-medium text-white">
-              {accountRole === "Fleet" ? "Fleet Vehicle *" : "Saved Vehicle *"}
+              {accountRole === "Fleet" ? "Fleet Vehicle" : "Saved Vehicle"}
             </Label>
             {isLoadingVehicles ? (
               <p className="rounded-xl border border-border bg-brand-surface px-4 py-3 text-sm text-brand-muted">
@@ -237,7 +284,6 @@ export function VehicleInformationSection({
                 id="rfq-saved-vehicle"
                 value={selectedVehicleId}
                 onChange={(event) => onVehicleChange(event.target.value)}
-                required
                 className="h-12 w-full rounded-xl border border-border bg-brand-surface px-4 text-base text-white outline-none transition-colors focus-visible:border-primary"
               >
                 <option value="">Select a vehicle</option>
@@ -252,8 +298,8 @@ export function VehicleInformationSection({
               <div className="space-y-3 rounded-xl border border-border bg-brand-surface p-4 text-sm text-brand-muted">
                 <p>
                   {accountRole === "Fleet"
-                    ? "No fleet vehicles are saved yet. Add a fleet vehicle before submitting an RFQ."
-                    : "No saved vehicles are available yet. Add a vehicle before submitting an RFQ."}
+                    ? "No fleet vehicles are saved yet. You can still enter a valid VIN on each part."
+                    : "No saved vehicles are available yet. You can still enter a valid VIN on each part."}
                 </p>
                 <a
                   href={dashboardVehiclesUrl}
@@ -273,6 +319,9 @@ export function VehicleInformationSection({
               <p><span className="text-white">VIN:</span> {selectedVehicle.vin || "-"}</p>
             </div>
           ) : null}
+          <p className="text-sm text-brand-muted">
+            The selected vehicle applies to every part unless you enter a different VIN on a part. If no vehicle is selected, every part must include a valid VIN.
+          </p>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-5">
@@ -295,7 +344,15 @@ export function VehicleInformationSection({
   );
 }
 
-export function PartsNeededSection() {
+export type ImportedRfqPart = Omit<PartRequest, "id">;
+
+export function PartsNeededSection({
+  isImporting,
+  onImportFile,
+}: {
+  isImporting: boolean;
+  onImportFile: (file: File) => Promise<ImportedRfqPart[]>;
+}) {
   const nextPartId = useRef(2);
   const [parts, setParts] = useState<PartRequest[]>([{ id: 1 }]);
 
@@ -303,6 +360,23 @@ export function PartsNeededSection() {
     const id = nextPartId.current;
     nextPartId.current += 1;
     setParts((currentParts) => [...currentParts, { id }]);
+  }
+
+  async function handleImportFile(file: File | undefined) {
+    if (!file) return;
+    try {
+      const importedParts = await onImportFile(file);
+      nextPartId.current = Date.now() + importedParts.length + 1;
+      setParts(
+        importedParts.map((part, index) => ({
+          ...part,
+          id: Date.now() + index,
+          notes: part.notes ?? "",
+        })),
+      );
+    } catch {
+      // Parent form owns the visible import error message.
+    }
   }
 
   function handleRemovePart(partId: number) {
@@ -331,6 +405,42 @@ export function PartsNeededSection() {
         </Button>
       </div>
 
+      <label className="mb-6 block cursor-pointer rounded-xl border-2 border-dashed border-border p-6 transition-colors hover:border-primary">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <UploadIcon className="h-8 w-8 text-[#9CA3AF]" />
+          <div className="flex-1">
+            <h3 className="mb-1 text-lg font-semibold text-white">
+              Import CSV or Excel
+            </h3>
+            <p className="text-sm text-brand-muted">
+              Columns: VIN No, Quantity, Target Price, Part Number, Part Name
+            </p>
+          </div>
+          <span className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-medium text-white">
+            {isImporting ? "Importing..." : "Choose File"}
+          </span>
+          <input
+            type="file"
+            className="sr-only"
+            accept=".csv,.xlsx,.xls"
+            disabled={isImporting}
+            onChange={(event) => {
+              void handleImportFile(event.target.files?.[0]);
+              event.currentTarget.value = "";
+            }}
+          />
+        </div>
+      </label>
+      <div className="mb-6 flex justify-end">
+        <a
+          href="/templates/rfq-import-template.csv"
+          download="rfq-import-template.csv"
+          className="text-sm font-medium text-primary hover:underline"
+        >
+          Download sample RFQ CSV
+        </a>
+      </div>
+
       <div className="space-y-4">
         {parts.map((part, index) => (
           <PartRequestCard
@@ -343,35 +453,6 @@ export function PartsNeededSection() {
         ))}
       </div>
 
-      <div className="mt-6">
-        <Label className="mb-2 block text-sm font-medium text-white">
-          Attach Documents (Optional)
-        </Label>
-
-        <div className="cursor-pointer rounded-xl border-2 border-dashed border-border p-6 text-center transition-colors hover:border-primary sm:p-8">
-          <UploadIcon className="mx-auto mb-3 h-8 w-8 text-[#9CA3AF]" />
-          <p className="mb-1 text-brand-muted">
-            Drop files here or click to upload
-          </p>
-          <p className="text-sm text-brand-placeholder">
-            PDF, PNG, JPG up to 10MB
-          </p>
-          <Input
-            name="attachment"
-            type="file"
-            accept="application/pdf,image/png,image/jpeg"
-            onChange={(event) => {
-              const file = event.target.files?.[0]
-              event.target.setCustomValidity(
-                file && file.size > 10 * 1024 * 1024
-                  ? "Attachment must be 10 MB or smaller."
-                  : "",
-              )
-            }}
-            className="mx-auto mt-4 max-w-md bg-brand-panel"
-          />
-        </div>
-      </div>
     </Card>
   );
 }

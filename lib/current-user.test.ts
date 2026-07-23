@@ -15,7 +15,7 @@ afterEach(() => {
 
 describe("dashboardUrlForRole", () => {
   it.each([
-    ["User", "http://localhost:3002/user_dashboard"],
+    ["User", "/user_dashboard"],
     ["Supplier", "http://localhost:3004/dashboard"],
     ["Garage", "http://localhost:3003/garage_dashboard"],
     ["Fleet", "http://localhost:4001/fleet"],
@@ -28,19 +28,19 @@ describe("dashboardUrlForRole", () => {
 
   it("recognizes loopback addresses as local development", () => {
     expect(dashboardUrlForRole("User", "127.0.0.1")).toBe(
-      "http://localhost:3002/user_dashboard",
+      "/user_dashboard",
     );
     expect(dashboardUrlForRole("User", "::1")).toBe(
-      "http://localhost:3002/user_dashboard",
+      "/user_dashboard",
     );
   });
 
-  it("keeps configured dashboard URLs outside localhost", () => {
+  it("keeps User dashboard on the public-site origin", () => {
     process.env.NEXT_PUBLIC_USER_DASHBOARD_URL =
       "https://dashboard.example.com/user_dashboard/";
 
     expect(dashboardUrlForRole("User", "autoparts.example.com")).toBe(
-      "https://dashboard.example.com/user_dashboard",
+      "/user_dashboard",
     );
   });
 });

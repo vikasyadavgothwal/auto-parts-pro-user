@@ -42,16 +42,29 @@ type BookingPageProps = {
   initialServiceId?: string;
 };
 
+type BookingAdvance = {
+  mode: "percentage" | "fixed";
+  value: number;
+};
+
 type BookingResponse = {
   ok: boolean;
   message?: string;
   booking?: GarageBookingResult;
-  payment?: { percentage: number; amount: number; currency: string; status: "succeeded" };
+  payment?: {
+    mode: BookingAdvance["mode"];
+    value: number;
+    percentage: number | null;
+    amount: number;
+    currency: string;
+    status: "succeeded";
+  };
 };
 
 type AvailabilityResponse = {
   ok: boolean;
   unavailableTimes?: string[];
+  advance?: BookingAdvance;
   advancePercentage?: number;
   message?: string;
 };
@@ -109,7 +122,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const [paymentReceipt, setPaymentReceipt] = useState<BookingResponse["payment"]>(undefined);
   const [unavailableTimes, setUnavailableTimes] = useState<string[]>([]);
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
-  const [advancePercentage, setAdvancePercentage] = useState(10);
+  const [advance, setAdvance] = useState<BookingAdvance>({ mode: "percentage", value: 10 });
   const selectedService = services.find(
     (service) => service.id === selection.serviceId,
   );
@@ -201,7 +214,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
         if (!response.ok || !payload.ok) throw new Error(payload.message || "Unable to load available times");
         if (!active) return;
         setUnavailableTimes(payload.unavailableTimes ?? []);
-        setAdvancePercentage(payload.advancePercentage ?? 10);
+        setAdvance(payload.advance ?? { mode: "percentage", value: payload.advancePercentage ?? 10 });
         setSelection((current) =>
           (payload.unavailableTimes ?? []).includes(current.time)
             ? { ...current, time: "" }
@@ -447,7 +460,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
             selectedTime={selection.time}
             customerVehicle={customerVehicle}
             onConfirm={handleConfirm}
-            advancePercentage={advancePercentage}
+            advance={advance}
           />
         );
     }
@@ -496,7 +509,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           <DialogHeader>
             <DialogTitle>Payment Successful</DialogTitle>
             <DialogDescription>
-              {paymentReceipt?.percentage}% advance payment of {paymentReceipt?.currency} {paymentReceipt?.amount.toFixed(2)} was successful.
+              Advance payment of {paymentReceipt?.currency} {paymentReceipt?.amount.toFixed(2)} was successful.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

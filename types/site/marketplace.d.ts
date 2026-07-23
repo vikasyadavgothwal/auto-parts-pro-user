@@ -41,6 +41,8 @@ export type MarketplaceOffer = {
   stockLabel: string
   leadTime: string | null
   condition: string
+  ratingAverage: number
+  reviewCount: number
   recommended: boolean
   images: string[]
   content: MarketplaceVendorContent
@@ -66,6 +68,8 @@ export type MarketplaceProductSummary = {
   totalStock: number
   minPrice: number | null
   currency: string
+  ratingAverage: number
+  reviewCount: number
   badge: string
   badgeType: MarketplaceBadgeType
   fitments: MarketplaceFitment[]
@@ -74,6 +78,8 @@ export type MarketplaceProductSummary = {
 export type MarketplaceProductDetail = MarketplaceProductSummary & {
   contentSourceSupplierId: string | null
   selectedVendorContent: MarketplaceSelectedVendorContent | null
+  ratingAverage: number
+  reviewCount: number
   offers: MarketplaceOffer[]
 }
 

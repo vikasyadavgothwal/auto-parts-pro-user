@@ -8,8 +8,8 @@ export type SearchProduct = {
   seller: string
   price: string
   shipping: string
-  rating: string
-  reviews: string
+  rating?: string
+  reviews?: string
   badge: string
   badgeType: SearchProductBadgeType
   image: string

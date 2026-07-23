@@ -54,6 +54,64 @@ export const formatPrice = (price: number | null, currency = "AED") =>
     ? `${currency} ${price.toFixed(2)}`
     : "View offers"
 
+const numberWords: Record<string, number> = {
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ten: 10,
+}
+
+const leadTimeDays = (value: string | null | undefined) => {
+  const normalized = value?.trim().toLowerCase()
+  if (!normalized) return null
+
+  if (/more than one month|over one month|above one month/.test(normalized)) {
+    return 31
+  }
+
+  const numericValues = Array.from(
+    normalized.matchAll(/\d+(?:\.\d+)?/g),
+    (match) => Number.parseFloat(match[0]),
+  ).filter(Number.isFinite)
+  const wordValues = Object.entries(numberWords)
+    .filter(([word]) => new RegExp(`\\b${word}\\b`).test(normalized))
+    .map(([, number]) => number)
+  const values = [...numericValues, ...wordValues]
+  if (!values.length) return null
+
+  const longestValue = Math.max(...values)
+  const multiplier = /month/.test(normalized)
+    ? 30
+    : /week/.test(normalized)
+      ? 7
+      : /hour/.test(normalized)
+        ? 1 / 24
+        : 1
+
+  return Math.max(1, Math.ceil(longestValue * multiplier))
+}
+
+export const formatDeliveryDateFromLeadTime = (
+  value: string | null | undefined,
+) => {
+  const days = leadTimeDays(value)
+  if (!days) return null
+
+  const deliveryDate = new Date()
+  deliveryDate.setDate(deliveryDate.getDate() + days)
+
+  return deliveryDate.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+  })
+}
+
 export async function searchMarketplaceProducts(params: {
   partNumber?: string | null
   vin?: string | null
@@ -109,8 +167,8 @@ export const marketplaceProductToSearchProduct = (
       : `${product.offerCount} verified suppliers`,
   price: formatPrice(product.minPrice, product.currency),
   shipping: product.offerCount > 0 ? "Compare offers" : "No live offers",
-  rating: "4.8",
-  reviews: `(${product.offerCount} offers)`,
+  rating: product.reviewCount ? product.ratingAverage.toFixed(1) : undefined,
+  reviews: product.reviewCount ? `(${product.reviewCount})` : undefined,
   badge: product.badge,
   badgeType: product.badgeType,
   image: product.image,
@@ -141,15 +199,16 @@ export const marketplaceOffersToProductOffers = (
     vendorSku: offer.vendorSku,
     seller: offer.supplierName,
     logo: offer.supplierLogo || offer.images[0] || DEFAULT_SUPPLIER_LOGO,
-    rating: 4.8,
-    reviews: 0,
+    rating: offer.ratingAverage || 0,
+    reviews: offer.reviewCount,
     price: formatPrice(offer.price, offer.currency),
     unitPrice: offer.price,
     currency: offer.currency,
     condition: offer.condition || "New",
     stock: offer.stockLabel,
-    shipping: offer.leadTime ? "Supplier lead time" : "Supplier delivery",
+    shipping: offer.leadTime ? "Delivery date" : "Supplier delivery",
     shippingTime: offer.leadTime || "Confirm at checkout",
+    deliveryDate: formatDeliveryDateFromLeadTime(offer.leadTime),
     recommended: offer.recommended,
     description:
       offer.content.longDescription ||

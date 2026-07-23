@@ -1,10 +1,20 @@
 import Link from "next/link"
+import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog"
 import { Button } from "@/components/ui/button"
 import {
   getPublicText,
   hasPublicText,
   type HomeCTAConfig,
 } from "@/lib/public-content"
+
+const isStartShoppingCta = (value: string) =>
+  /start\s+shop(?:ping)?|shop\s+now|browse\s+parts/i.test(value)
+
+const isSupportCta = (value: string) =>
+  /talk\s+to\s+support|support|contact\s+support/i.test(value)
+
+const ctaHref = (label: string, href: string) =>
+  isStartShoppingCta(label) ? "/search" : href
 
 export function CTASection({ config }: { config?: HomeCTAConfig }) {
   const heading = getPublicText(config?.heading)
@@ -43,22 +53,48 @@ export function CTASection({ config }: { config?: HomeCTAConfig }) {
           ) : null}
           <div className="flex flex-wrap items-center justify-center gap-4">
             {hasPrimaryButton ? (
-              <Button
-                asChild
-                variant="outline"
-                className="h-auto rounded-full bg-white border border-white px-8 py-4 text-lg font-medium text-primary  hover:bg-white/90 hover:text-primary"
-              >
-                <Link href={primaryButtonLink}>{primaryButtonText}</Link>
-              </Button>
+              isSupportCta(primaryButtonText) ? (
+                <BusinessDemoDialogButton
+                  queryType="Contact"
+                  source="Home CTA Support"
+                  variant="outline"
+                  className="h-auto rounded-full bg-white border border-white px-8 py-4 text-lg font-medium text-primary hover:bg-white/90 hover:text-primary"
+                >
+                  {primaryButtonText}
+                </BusinessDemoDialogButton>
+              ) : (
+                <Button
+                  asChild
+                  variant="outline"
+                  className="h-auto rounded-full bg-white border border-white px-8 py-4 text-lg font-medium text-primary hover:bg-white/90 hover:text-primary"
+                >
+                  <Link href={ctaHref(primaryButtonText, primaryButtonLink)}>
+                    {primaryButtonText}
+                  </Link>
+                </Button>
+              )
             ) : null}
             {hasSecondaryButton ? (
-              <Button
-                asChild
-                variant="outline"
-                className="h-auto rounded-full border-2 border-white bg-primary px-8 py-4 text-lg font-medium text-white hover:bg-white/20 hover:text-white"
-              >
-                <Link href={secondaryButtonLink}>{secondaryButtonText}</Link>
-              </Button>
+              isSupportCta(secondaryButtonText) ? (
+                <BusinessDemoDialogButton
+                  queryType="Contact"
+                  source="Home CTA Support"
+                  variant="outline"
+                  className="h-auto rounded-full border-2 border-white bg-primary px-8 py-4 text-lg font-medium text-white hover:bg-white/20 hover:text-white"
+                >
+                  {secondaryButtonText}
+                </BusinessDemoDialogButton>
+              ) : (
+                <Button
+                  asChild
+                  variant="outline"
+                  className="h-auto rounded-full border-2 border-white bg-primary px-8 py-4 text-lg font-medium text-white hover:bg-white/20 hover:text-white"
+                >
+                  <Link href={ctaHref(secondaryButtonText, secondaryButtonLink)}>
+                    {secondaryButtonText}
+                  </Link>
+                </Button>
+              )
             ) : null}
           </div>
         </div>

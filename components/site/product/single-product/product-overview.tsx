@@ -66,7 +66,9 @@ export function ProductOverview({
           <div className=" flex flex-wrap  items-center gap-4">
             <div className="flex items-center gap-2">
               <RatingStars rating={rating} />
-              <span className="text-lg font-semibold text-white">{rating}</span>
+              <span className="text-lg font-semibold text-white">
+                {reviewCount ? rating.toFixed(1) : "No ratings"}
+              </span>
               <span className="text-sm text-[#9CA3AF]">
                 ({reviewCount} reviews)
               </span>
