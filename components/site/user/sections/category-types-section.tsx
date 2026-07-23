@@ -31,11 +31,6 @@ export function CategoryTypesSection({ config }: { config?: HomeCategoryConfig }
                   <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-primary/20 bg-primary/10 transition-colors group-hover:bg-primary/20">
                     {Icon ? (
                       <Icon className="h-6 w-6 text-primary" />
-                    ) : category.svg ? (
-                      <div
-                        className="h-6 w-6 text-primary"
-                        dangerouslySetInnerHTML={{ __html: category.svg }}
-                      />
                     ) : null}
                   </div>
 

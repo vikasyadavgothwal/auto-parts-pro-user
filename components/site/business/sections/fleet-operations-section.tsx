@@ -30,7 +30,7 @@ export function FleetOperationsSection({ config }: FleetOperationsSectionProps) 
       topHeading: getPublicText(card.topHeading),
       heading: getPublicText(card.heading),
       growthText: getPublicText(card.growthText),
-      svg: metrics[index % metrics.length].svg,
+      Icon: metrics[index % metrics.length].icon,
     }))
     .filter((card) => hasPublicText(card.topHeading, card.heading, card.growthText));
   const hasTextColumn =
@@ -134,10 +134,7 @@ export function FleetOperationsSection({ config }: FleetOperationsSectionProps) 
                             </span>
                           ) : null}
 
-                          <div
-                            className="h-8 w-8 text-[#DC2626] md:h-10 md:w-10"
-                            dangerouslySetInnerHTML={{ __html: card.svg }}
-                          />
+                          <card.Icon className="h-8 w-8 text-[#DC2626] md:h-10 md:w-10" />
                         </div>
 
                         {card.heading ? (

@@ -3,7 +3,6 @@ import type { AppIconComponent } from "@/types/icons"
 export type ProductHighlight = {
   icon?: AppIconComponent
   label: string
-  svg?: string
 }
 
 export type ProductOffer = {

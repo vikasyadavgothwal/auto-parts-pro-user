@@ -154,7 +154,7 @@ export function ProductOverview({
       )}
 
       <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-        {highlights.map(({ icon: Icon, label, svg }) => (
+        {highlights.map(({ icon: Icon, label }) => (
           <Card
             key={label}
             className="rounded-xl border border-[#2A2A2A] bg-[#1A1A1A]"
@@ -162,11 +162,6 @@ export function ProductOverview({
             <CardContent className="flex flex-col justify-center p-4 text-center">
               {Icon ? (
                 <Icon className="mx-auto mb-2 h-8 w-8 text-[#DC2626]" />
-              ) : svg ? (
-                <div
-                  className="mx-auto mb-2 h-8 w-8 text-[#DC2626]"
-                  dangerouslySetInnerHTML={{ __html: svg }}
-                />
               ) : null}
 
               <span className="text-sm text-[#9CA3AF]">{label}</span>

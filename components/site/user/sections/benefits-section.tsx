@@ -32,16 +32,15 @@ export function BenefitsSection({ config }: { config?: HomeWhyChooseUsConfig }) 
           </div>
         ) : null}
         <div className="grid gap-8 md:grid-cols-3">
-          {pairs.map((pair, index) => {
-            const benefit = benefits[index % benefits.length]
+              {pairs.map((pair, index) => {
+                const benefit = benefits[index % benefits.length]
+                const Icon = benefit?.icon
 
-            return (
-              <div key={`${pair.heading}-${index}`} className="text-center">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
-                  {benefit?.svg ? (
-                    <div dangerouslySetInnerHTML={{ __html: benefit.svg }} />
-                  ) : null}
-                </div>
+                return (
+                  <div key={`${pair.heading}-${index}`} className="text-center">
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
+                      {Icon ? <Icon className="h-8 w-8 text-primary" /> : null}
+                    </div>
 
                 {pair.heading ? (
                   <h3 className="mb-2 text-xl font-semibold text-white">

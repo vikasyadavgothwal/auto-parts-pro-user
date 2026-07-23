@@ -95,6 +95,21 @@ const clearUserCookieValues = (request: Request) => {
   );
 };
 
+const parseJsonPayload = (body: ArrayBuffer, contentType: string | null) => {
+  if (!contentType?.toLowerCase().includes("application/json")) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(new TextDecoder().decode(body)) as {
+      ok?: boolean;
+      user?: { activeRole?: string; roles?: string[] };
+    };
+  } catch {
+    return null;
+  }
+};
+
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
@@ -115,11 +130,24 @@ export async function POST(request: Request) {
   });
 
   const payloadBuffer = await backend.arrayBuffer();
-  const payload = JSON.parse(new TextDecoder().decode(payloadBuffer)) as {
-    ok?: boolean;
-    user?: { activeRole?: string; roles?: string[] };
-  };
+  const payload = parseJsonPayload(
+    payloadBuffer,
+    backend.headers.get("content-type"),
+  );
   const issuedCookies = getSetCookieHeaders(backend.headers);
+
+  if (!payload) {
+    return Response.json(
+      {
+        ok: false,
+        success: false,
+        message:
+          "Backend login endpoint did not return JSON. Check NEXT_PUBLIC_BACKEND_URL or BACKEND_URL points to auto_parts_admin.",
+      },
+      { status: 502 },
+    );
+  }
+
   const response = new Response(payloadBuffer, {
     status: backend.status,
     headers: {

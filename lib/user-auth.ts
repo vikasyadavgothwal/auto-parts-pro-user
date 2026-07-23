@@ -13,7 +13,6 @@ import type {
 } from "@/types/api/user-auth";
 
 const USER_LOGIN_PATH = "/api/auth/login";
-const INSTALLATION_ID_KEY = "auto-parts-pro-installation-id";
 
 const requestApplicationSession = async (
   body: FirebaseSessionRequest | PasswordSessionRequest,
@@ -38,25 +37,6 @@ const requestApplicationSession = async (
   return payload;
 };
 
-const createInstallationId = (): string => {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
-  }
-
-  return `device-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-};
-
-export function getInstallationId(): string {
-  const existing = window.localStorage.getItem(INSTALLATION_ID_KEY);
-  if (existing) {
-    return existing;
-  }
-
-  const installationId = createInstallationId();
-  window.localStorage.setItem(INSTALLATION_ID_KEY, installationId);
-  return installationId;
-}
-
 export async function establishApplicationSession(
   firebaseUser: User,
   forceRefresh = false,
@@ -74,7 +54,6 @@ export async function establishApplicationSession(
   const firebaseIdToken = await firebaseUser.getIdToken(forceRefresh);
   const response = await requestApplicationSession({
     firebaseIdToken,
-    installationId: getInstallationId(),
     requestedRole: resolvedRole,
     requestedRoleUid: resolvedRole ? firebaseUser.uid : undefined,
     requestedDisplayName: resolvedDisplayName,
@@ -96,7 +75,6 @@ export async function establishPasswordApplicationSession(
   const response = await requestApplicationSession({
     email: email.trim(),
     password,
-    installationId: getInstallationId(),
   });
 
   if (!response.ok) {
