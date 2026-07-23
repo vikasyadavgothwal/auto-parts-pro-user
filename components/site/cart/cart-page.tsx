@@ -7,6 +7,7 @@ import { CartEmptyState } from "@/components/site/cart/cart-empty-state";
 import { CartHeader } from "@/components/site/cart/cart-header";
 import { CartItemList } from "@/components/site/cart/cart-item-list";
 import { CartPromoCode } from "@/components/site/cart/cart-promo-code";
+import { CartServiceSelector } from "@/components/site/cart/cart-service-selector";
 import {
   CartSummary,
   type AddressFieldErrors,
@@ -95,7 +96,11 @@ export function CartPage() {
     isCheckingOut,
     subtotal,
     productSubtotal,
+    serviceAdvanceSubtotal,
+    payableSubtotal,
+    garageAdvance,
     productItems,
+    serviceItems,
     updateQuantity,
     removeItem,
     clearCart,
@@ -246,11 +251,16 @@ export function CartPage() {
                 onUpdateQuantity={updateQuantity}
                 onRemoveItem={removeItem}
               />
+              {productItems.length ? <CartServiceSelector /> : null}
               <CartPromoCode />
               <CartSummary
                 productItemCount={productItems.length}
+                serviceItemCount={serviceItems.length}
                 subtotal={subtotal}
                 productSubtotal={productSubtotal}
+                serviceAdvanceSubtotal={serviceAdvanceSubtotal}
+                payableSubtotal={payableSubtotal}
+                garageAdvance={garageAdvance}
                 selectedAddressId={selectedAddressId}
                 addresses={addresses}
                 showAddressForm={showAddressForm}

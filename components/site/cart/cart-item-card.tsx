@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Minus, Plus, Trash2 } from "lucide-react";
 
 import {
@@ -28,7 +27,9 @@ export function CartItemCard({
             {item.type === "product" ? "Product" : "Service"}
           </span>
           <span className="text-sm font-semibold text-white">
-            {formatCartPrice(item.unitPrice, item.currency)}
+            {item.type === "service"
+              ? `${formatCartPrice(item.unitPrice, item.currency)} service price`
+              : formatCartPrice(item.unitPrice, item.currency)}
           </span>
         </div>
         <h2 className="line-clamp-2 font-semibold text-white">
@@ -69,13 +70,9 @@ export function CartItemCard({
         ) : null}
 
         {item.type === "service" ? (
-          <Button asChild className="h-9 rounded-xl px-3">
-            <Link
-              href={`/booking?garageId=${encodeURIComponent(item.garageId)}&serviceId=${encodeURIComponent(item.serviceId)}`}
-            >
-              Book service
-            </Link>
-          </Button>
+          <span className="max-w-44 text-right text-xs leading-5 text-brand-muted">
+            Advance charged at checkout. Slot after part delivery.
+          </span>
         ) : null}
 
         <Button

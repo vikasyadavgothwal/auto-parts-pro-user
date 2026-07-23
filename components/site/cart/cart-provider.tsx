@@ -70,7 +70,13 @@ type CartActionResult = {
 
 type CheckoutSuccessDialog = {
   orderCount: number;
+  serviceBookingCount: number;
   totalAmount: number | null;
+};
+
+type GarageAdvanceSetting = {
+  mode: "percentage" | "fixed";
+  value: number;
 };
 
 type SiteCartContextValue = {
@@ -81,7 +87,11 @@ type SiteCartContextValue = {
   isCheckingOut: boolean;
   subtotal: number;
   productSubtotal: number;
+  serviceAdvanceSubtotal: number;
+  payableSubtotal: number;
+  garageAdvance: GarageAdvanceSetting;
   productItems: ProductCartItem[];
+  serviceItems: ServiceCartItem[];
   openCart: () => void;
   addItem: (item: AddCartItemInput) => Promise<CartActionResult>;
   updateQuantity: (itemId: string, quantity: number) => void;
@@ -188,6 +198,19 @@ const readStoredItems = (userId: string): SiteCartItem[] => {
   }
 };
 
+const calculateServiceAdvance = (
+  servicePrice: number | null,
+  quantity: number,
+  setting: GarageAdvanceSetting,
+) => {
+  if (typeof servicePrice !== "number") return 0;
+  const perService =
+    setting.mode === "fixed"
+      ? Math.min(servicePrice, setting.value)
+      : (servicePrice * setting.value) / 100;
+  return perService * quantity;
+};
+
 export function SiteCartProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<UserAuthProfile | null>(null);
@@ -195,8 +218,15 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [notice, setNotice] = useState("");
-  const [addedCartItemTitle, setAddedCartItemTitle] = useState("");
+  const [addedCartItem, setAddedCartItem] = useState<{
+    title: string;
+    type: SiteCartItem["type"];
+  } | null>(null);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [garageAdvance, setGarageAdvance] = useState<GarageAdvanceSetting>({
+    mode: "percentage",
+    value: 10,
+  });
   const [checkoutSuccess, setCheckoutSuccess] =
     useState<CheckoutSuccessDialog | null>(null);
 
@@ -222,6 +252,26 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       .finally(() => {
         if (isMounted) setIsLoaded(true);
       });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/garage-booking-advance", {
+      cache: "no-store",
+      headers: { accept: "application/json" },
+    })
+      .then(async (response) => {
+        const payload = (await response.json().catch(() => null)) as
+          | { ok?: boolean; advance?: GarageAdvanceSetting }
+          | null;
+        if (isMounted && response.ok && payload?.ok && payload.advance) {
+          setGarageAdvance(payload.advance);
+        }
+      })
+      .catch(() => undefined);
     return () => {
       isMounted = false;
     };
@@ -272,7 +322,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
         );
       });
       setNotice(`${input.title} added to cart.`);
-      setAddedCartItemTitle(input.title);
+      setAddedCartItem({ title: input.title, type: input.type });
       return { ok: true, message: "Added to cart." };
     },
     [refreshUser, user],
@@ -319,6 +369,28 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
     [productItems],
   );
 
+  const serviceItems = useMemo(
+    () =>
+      items.filter((item): item is ServiceCartItem => item.type === "service"),
+    [items],
+  );
+
+  const serviceAdvanceSubtotal = useMemo(
+    () =>
+      serviceItems.reduce(
+        (total, item) =>
+          total +
+          calculateServiceAdvance(item.unitPrice, item.quantity, garageAdvance),
+        0,
+      ),
+    [garageAdvance, serviceItems],
+  );
+
+  const payableSubtotal = useMemo(
+    () => productSubtotal + serviceAdvanceSubtotal,
+    [productSubtotal, serviceAdvanceSubtotal],
+  );
+
   const checkoutProducts = useCallback(
     async (addressId: string) => {
       if (!productItems.length || isCheckingOut) return;
@@ -338,6 +410,13 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
               supplierPartId: item.offerId,
               quantity: item.quantity,
             })),
+            services: serviceItems.map((item) => ({
+              garageId: item.garageId,
+              serviceId: item.serviceId,
+              quantity: item.quantity,
+              notes:
+                "Slot will be selected after the product order is delivered.",
+            })),
             addressId,
           }),
         });
@@ -346,14 +425,19 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
           message?: string;
           order?: { publicId?: string } | null;
           orders?: Array<{ publicId?: string }>;
-          summary?: { orderCount?: number; totalAmount?: number };
+          summary?: {
+            orderCount?: number;
+            serviceBookingCount?: number;
+            totalAmount?: number;
+          };
         } | null;
         if (!response.ok || !payload?.ok) {
           throw new Error(payload?.message ?? "Unable to create orders.");
         }
-        const checkedOutProductIds = new Set(
-          productItems.map((item) => item.id),
-        );
+        const checkedOutProductIds = new Set([
+          ...productItems.map((item) => item.id),
+          ...serviceItems.map((item) => item.id),
+        ]);
         setItems((current) =>
           current.filter((item) => !checkedOutProductIds.has(item.id)),
         );
@@ -362,6 +446,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
           payload.summary?.orderCount ?? payload.orders?.length ?? 1;
         setCheckoutSuccess({
           orderCount,
+          serviceBookingCount: payload.summary?.serviceBookingCount ?? 0,
           totalAmount:
             typeof payload.summary?.totalAmount === "number"
               ? payload.summary.totalAmount
@@ -375,7 +460,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
         setIsCheckingOut(false);
       }
     },
-    [isCheckingOut, productItems],
+    [isCheckingOut, productItems, serviceItems],
   );
 
   const subtotal = useMemo(
@@ -400,7 +485,11 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       isCheckingOut,
       subtotal,
       productSubtotal,
+      serviceAdvanceSubtotal,
+      payableSubtotal,
+      garageAdvance,
       productItems,
+      serviceItems,
       openCart: () => {
         setNotice("");
         router.push("/cart");
@@ -422,6 +511,10 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       notice,
       productItems,
       productSubtotal,
+      serviceAdvanceSubtotal,
+      serviceItems,
+      payableSubtotal,
+      garageAdvance,
       removeItem,
       router,
       subtotal,
@@ -456,9 +549,9 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       </Dialog>
 
       <Dialog
-        open={Boolean(addedCartItemTitle)}
+        open={Boolean(addedCartItem)}
         onOpenChange={(nextOpen) => {
-          if (!nextOpen) setAddedCartItemTitle("");
+          if (!nextOpen) setAddedCartItem(null);
         }}
       >
         <DialogContent className="border border-border bg-brand-surface text-white shadow-2xl sm:max-w-md">
@@ -467,12 +560,14 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
               <CheckCircle2 className="size-6" />
             </div>
             <DialogTitle className="text-xl text-white">
-              Product added to cart
+              {addedCartItem?.type === "service"
+                ? "Service added to cart"
+                : "Product added to cart"}
             </DialogTitle>
             <DialogDescription className="text-brand-muted">
-              {addedCartItemTitle
-                ? `${addedCartItemTitle} was added successfully.`
-                : "The product was added successfully."}
+              {addedCartItem
+                ? `${addedCartItem.title} was added successfully.`
+                : "The item was added successfully."}
             </DialogDescription>
           </DialogHeader>
 
@@ -480,7 +575,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => setAddedCartItemTitle("")}
+              onClick={() => setAddedCartItem(null)}
               className="w-full border-border text-white hover:bg-background/60 sm:w-auto"
             >
               Continue shopping
@@ -488,7 +583,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
             <Button
               type="button"
               onClick={() => {
-                setAddedCartItemTitle("");
+                setAddedCartItem(null);
                 router.push("/cart");
               }}
               className="w-full hover:bg-brand-primary-hover sm:w-auto"
@@ -517,6 +612,12 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
               {checkoutSuccess
                 ? `${checkoutSuccess.orderCount} order${
                     checkoutSuccess.orderCount === 1 ? "" : "s"
+                  }${
+                    checkoutSuccess.serviceBookingCount
+                      ? ` and ${checkoutSuccess.serviceBookingCount} service booking${
+                          checkoutSuccess.serviceBookingCount === 1 ? "" : "s"
+                        }`
+                      : ""
                   } created successfully.`
                 : "Your order was created successfully."}
             </DialogDescription>

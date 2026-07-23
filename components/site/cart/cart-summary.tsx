@@ -46,8 +46,15 @@ const FieldError = ({ message }: { message?: string }) =>
 
 type CartSummaryProps = {
   productItemCount: number;
+  serviceItemCount: number;
   subtotal: number;
   productSubtotal: number;
+  serviceAdvanceSubtotal: number;
+  payableSubtotal: number;
+  garageAdvance: {
+    mode: "percentage" | "fixed";
+    value: number;
+  };
   selectedAddressId: string;
   addresses: UserAddress[];
   showAddressForm: boolean;
@@ -72,8 +79,12 @@ type CartSummaryProps = {
 
 export function CartSummary({
   productItemCount,
+  serviceItemCount,
   subtotal,
   productSubtotal,
+  serviceAdvanceSubtotal,
+  payableSubtotal,
+  garageAdvance,
   selectedAddressId,
   addresses,
   showAddressForm,
@@ -348,13 +359,28 @@ export function CartSummary({
 
       <div className="flex flex-col gap-3 rounded-xl border border-border bg-brand-panel p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm text-brand-muted">Estimated subtotal</p>
+          <p className="text-sm text-brand-muted">Payable now</p>
           <p className="text-2xl font-bold text-white">
-            AED {subtotal.toFixed(2)}
+            AED {payableSubtotal.toFixed(2)}
           </p>
           {productItemCount ? (
             <p className="mt-1 text-sm text-brand-muted">
               Product checkout total: AED {productSubtotal.toFixed(2)}
+            </p>
+          ) : null}
+          {serviceItemCount ? (
+            <p className="mt-1 text-sm text-brand-muted">
+              Service advance due now: AED {serviceAdvanceSubtotal.toFixed(2)}
+              {garageAdvance.mode === "percentage"
+                ? ` (${garageAdvance.value}% advance)`
+                : ` (fixed AED ${garageAdvance.value.toFixed(2)} advance)`}
+            </p>
+          ) : null}
+          {serviceItemCount ? (
+            <p className="mt-1 text-sm text-brand-muted">
+              Service list price in cart value: AED{" "}
+              {(subtotal - productSubtotal).toFixed(2)}. Slot selection unlocks
+              after part delivery.
             </p>
           ) : null}
         </div>

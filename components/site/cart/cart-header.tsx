@@ -12,7 +12,7 @@ export function CartHeader() {
           Cart
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-brand-muted">
-          Pending products and services you added before checkout or booking.
+          Products and optional garage services ready for checkout.
         </p>
       </div>
       <Button
