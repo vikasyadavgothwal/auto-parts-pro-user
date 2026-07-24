@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { ShoppingCartIcon, UserIcon } from "@/components/icons/site-icons";
 import { AuthModalCard } from "@/components/site/AuthModal";
@@ -53,6 +54,12 @@ export function UserHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-white-surface">
+      <Suspense fallback={null}>
+        <AuthQuerySignInOpener
+          disabled={Boolean(user)}
+          onOpen={() => setIsAuthModalOpen(true)}
+        />
+      </Suspense>
       <div className="site-container-wide">
         <div className="grid h-20 grid-cols-[auto_1fr_auto] items-center gap-4">
           {/* Left: Logo */}
@@ -147,4 +154,29 @@ export function UserHeader() {
       </div>
     </header>
   );
+}
+
+function AuthQuerySignInOpener({
+  disabled,
+  onOpen,
+}: {
+  disabled: boolean;
+  onOpen: () => void;
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (disabled || searchParams.get("auth") !== "signin") return;
+    queueMicrotask(onOpen);
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.delete("auth");
+    router.replace(
+      nextParams.size ? `${pathname}?${nextParams.toString()}` : pathname,
+      { scroll: false },
+    );
+  }, [disabled, onOpen, pathname, router, searchParams]);
+
+  return null;
 }

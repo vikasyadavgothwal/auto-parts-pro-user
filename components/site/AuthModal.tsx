@@ -160,7 +160,6 @@ export function AuthModalCard({
   const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
-  const [resetOtpSent, setResetOtpSent] = useState(false);
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -498,39 +497,11 @@ export function AuthModalCard({
       });
       const message = await readApiMessage(response);
       if (!response.ok) {
-        throw new Error(message || "Unable to send password reset OTP");
+        throw new Error(message || "Unable to send password reset link");
       }
-      setResetOtpSent(true);
       setOtp("");
       setPassword("");
-      setStatusMessage(message || "Password reset OTP sent to your email");
-    });
-  };
-
-  const handleResetPassword = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    void runAuthAction(async () => {
-      const response = await fetch("/api/auth/password-reset/verify", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          email: email.trim(),
-          otp: otp.trim(),
-          password,
-        }),
-      });
-      const message = await readApiMessage(response);
-      if (!response.ok) {
-        throw new Error(message || "Unable to reset password");
-      }
-      setMode("signin");
-      setResetOtpSent(false);
-      setOtp("");
-      setPassword("");
-      setStatusMessage(
-        message || "Password reset successfully. Sign in with your new password.",
-      );
+      setStatusMessage(message || "Password reset link sent to your email");
     });
   };
 
@@ -539,7 +510,6 @@ export function AuthModalCard({
     setLoginMethod("email");
     setVerificationUser(null);
     setPendingVerifiedUser(null);
-    setResetOtpSent(false);
     setOtp("");
     resetFeedback();
   };
@@ -676,17 +646,11 @@ export function AuthModalCard({
           ) : mode === "reset" ? (
             <AuthResetPassword
               email={email}
-              otp={otp}
-              password={password}
-              otpSent={resetOtpSent}
               isSubmitting={isSubmitting}
               errorMessage={errorMessage}
               statusMessage={statusMessage}
               onEmailChange={setEmail}
-              onOtpChange={setOtp}
-              onPasswordChange={setPassword}
               onRequestOtp={handleRequestPasswordResetOtp}
-              onResetPassword={handleResetPassword}
               onBackToSignIn={() => selectMode("signin")}
             />
           ) : (
