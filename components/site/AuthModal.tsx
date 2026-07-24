@@ -23,6 +23,7 @@ import { AuthLoginEmail } from "@/components/site/auth/auth-login-email";
 import { AuthLoginPhoneSend } from "@/components/site/auth/auth-login-phone-send";
 import { AuthLoginPhoneVerify } from "@/components/site/auth/auth-login-phone-verify";
 import { AuthRegister } from "@/components/site/auth/auth-register";
+import { AuthResetPassword } from "@/components/site/auth/auth-reset-password";
 import type { AccountType } from "@/components/site/auth/auth-shared";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -47,7 +48,7 @@ import {
 } from "@/lib/user-auth";
 import { dashboardUrlForRole } from "@/lib/current-user";
 
-type AuthMode = "signin" | "signup";
+type AuthMode = "signin" | "signup" | "reset";
 type LoginMethod = "email" | "phone";
 
 const VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE =
@@ -159,6 +160,7 @@ export function AuthModalCard({
   const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
+  const [resetOtpSent, setResetOtpSent] = useState(false);
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -478,11 +480,67 @@ export function AuthModalCard({
     });
   };
 
+  const readApiMessage = async (response: Response) => {
+    const payload = (await response.json().catch(() => null)) as
+      | { message?: string }
+      | null;
+    return payload?.message;
+  };
+
+  const handleRequestPasswordResetOtp = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    void runAuthAction(async () => {
+      const response = await fetch("/api/auth/password-reset/request", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const message = await readApiMessage(response);
+      if (!response.ok) {
+        throw new Error(message || "Unable to send password reset OTP");
+      }
+      setResetOtpSent(true);
+      setOtp("");
+      setPassword("");
+      setStatusMessage(message || "Password reset OTP sent to your email");
+    });
+  };
+
+  const handleResetPassword = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    void runAuthAction(async () => {
+      const response = await fetch("/api/auth/password-reset/verify", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          otp: otp.trim(),
+          password,
+        }),
+      });
+      const message = await readApiMessage(response);
+      if (!response.ok) {
+        throw new Error(message || "Unable to reset password");
+      }
+      setMode("signin");
+      setResetOtpSent(false);
+      setOtp("");
+      setPassword("");
+      setStatusMessage(
+        message || "Password reset successfully. Sign in with your new password.",
+      );
+    });
+  };
+
   const selectMode = (nextMode: AuthMode) => {
     setMode(nextMode);
     setLoginMethod("email");
     setVerificationUser(null);
     setPendingVerifiedUser(null);
+    setResetOtpSent(false);
+    setOtp("");
     resetFeedback();
   };
 
@@ -506,6 +564,8 @@ export function AuthModalCard({
               <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
                 {pendingVerifiedUser
                   ? "Finish Account Setup"
+                  : mode === "reset"
+                    ? "Reset Password"
                   : mode === "signin"
                     ? "Welcome Back"
                     : "Get Started"}
@@ -513,6 +573,8 @@ export function AuthModalCard({
               <p className="text-brand-muted">
                 {pendingVerifiedUser
                   ? "Choose the account type that matches how you use AutoPartsPro."
+                  : mode === "reset"
+                    ? "Verify your email before changing your password"
                   : mode === "signin"
                     ? "Sign in to access your account"
                     : "Create your account to continue"}
@@ -573,6 +635,7 @@ export function AuthModalCard({
                 onCheckVerification={handleCheckVerification}
                 onResendVerification={handleResendVerification}
                 onGoogleSignIn={handleGoogleSignIn}
+                onResetPassword={() => selectMode("reset")}
               />
             ) : confirmationResult ? (
               <AuthLoginPhoneVerify
@@ -610,6 +673,22 @@ export function AuthModalCard({
                 }}
               />
             )
+          ) : mode === "reset" ? (
+            <AuthResetPassword
+              email={email}
+              otp={otp}
+              password={password}
+              otpSent={resetOtpSent}
+              isSubmitting={isSubmitting}
+              errorMessage={errorMessage}
+              statusMessage={statusMessage}
+              onEmailChange={setEmail}
+              onOtpChange={setOtp}
+              onPasswordChange={setPassword}
+              onRequestOtp={handleRequestPasswordResetOtp}
+              onResetPassword={handleResetPassword}
+              onBackToSignIn={() => selectMode("signin")}
+            />
           ) : (
             <AuthRegister
               accountType={accountType}

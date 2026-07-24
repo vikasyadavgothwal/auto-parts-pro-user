@@ -26,6 +26,7 @@ export function AuthLoginEmail({
   onCheckVerification,
   onResendVerification,
   onGoogleSignIn,
+  onResetPassword,
 }: {
   email: string;
   password: string;
@@ -42,8 +43,8 @@ export function AuthLoginEmail({
   onCheckVerification: () => void;
   onResendVerification: () => void;
   onGoogleSignIn: () => void;
+  onResetPassword: () => void;
 }) {
-  // FIX: Extracted existing email login view without changing handlers.
   return (
     <div className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8">
       <EmailForm
@@ -65,6 +66,15 @@ export function AuthLoginEmail({
         className="mt-3 h-11 w-full rounded-xl border-border bg-background"
       >
         Sign in with mobile OTP
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        disabled={isSubmitting}
+        onClick={onResetPassword}
+        className="mt-2 h-10 w-full rounded-xl text-brand-muted"
+      >
+        Forgot password?
       </Button>
 
       <AuthFeedback error={errorMessage} status={statusMessage} />
