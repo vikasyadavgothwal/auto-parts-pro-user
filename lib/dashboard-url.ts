@@ -8,8 +8,8 @@ const envUrl = (value: string | undefined, fallback: string) =>
 const localDashboardUrls: Record<DashboardRole, string> = {
   User: "/user_dashboard",
   Supplier: "http://localhost:3004/dashboard",
-  Garage: "http://localhost:3003/garage_dashboard",
-  Fleet: "http://localhost:4001/fleet",
+  Garage: "http://localhost:3003/dashboard",
+  Fleet: "http://localhost:4001/dashboard",
 };
 
 const localHostnames = new Set(["localhost", "127.0.0.1", "::1"]);
@@ -32,11 +32,11 @@ export const dashboardUrlForRole = (
     ),
     Garage: envUrl(
       process.env.NEXT_PUBLIC_GARAGE_DASHBOARD_URL,
-      "https://garage.websitedesignersdubai.ae/garage_dashboard",
+      "https://garage.websitedesignersdubai.ae/dashboard",
     ),
     Fleet: envUrl(
       process.env.NEXT_PUBLIC_FLEET_DASHBOARD_URL,
-      "https://fleet.websitedesignersdubai.ae/fleet",
+      "https://fleet.websitedesignersdubai.ae/dashboard",
     ),
   };
 
