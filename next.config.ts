@@ -33,6 +33,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/services-page",
+        destination: "/services",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       ...(userDashboardAppUrl
