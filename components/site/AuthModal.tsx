@@ -40,6 +40,7 @@ import {
 import {
   getFirebaseAuthDiagnostics,
   getFirebaseClientAuth,
+  sendUserPasswordResetEmail,
   sendUserEmailVerification,
 } from "@/lib/firebase/client";
 import {
@@ -499,9 +500,10 @@ export function AuthModalCard({
       if (!response.ok) {
         throw new Error(message || "Unable to send password reset link");
       }
+      await sendUserPasswordResetEmail(email.trim());
       setOtp("");
       setPassword("");
-      setStatusMessage(message || "Password reset link sent to your email");
+      setStatusMessage("Password reset link sent by Firebase.");
     });
   };
 

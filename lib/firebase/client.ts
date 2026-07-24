@@ -1,6 +1,7 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   getAuth,
+  sendPasswordResetEmail,
   sendEmailVerification,
   type ActionCodeSettings,
   type Auth,
@@ -72,4 +73,18 @@ export async function sendUserEmailVerification(
   };
 
   await sendEmailVerification(user, actionCodeSettings);
+}
+
+export async function sendUserPasswordResetEmail(email: string): Promise<void> {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || window.location.origin;
+  const actionCodeSettings: ActionCodeSettings = {
+    url: `${siteUrl.replace(/\/+$/, "")}/reset-password`,
+    handleCodeInApp: true,
+  };
+
+  await sendPasswordResetEmail(
+    getFirebaseClientAuth(),
+    email,
+    actionCodeSettings,
+  );
 }

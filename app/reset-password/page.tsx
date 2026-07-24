@@ -3,6 +3,7 @@
 import { Suspense, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
 import { LockIcon } from "@/components/icons/site-icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,11 +12,13 @@ import {
   AuthField,
   AuthMethodHeading,
 } from "@/components/site/auth/auth-shared";
+import { getFirebaseClientAuth } from "@/lib/firebase/client";
 
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token")?.trim() ?? "";
+  const oobCode = searchParams.get("oobCode")?.trim() ?? "";
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -27,7 +30,7 @@ function ResetPasswordForm() {
     setErrorMessage("");
     setStatusMessage("");
 
-    if (!token) {
+    if (!token && !oobCode) {
       setErrorMessage("Password reset link is invalid or expired.");
       return;
     }
@@ -42,21 +45,26 @@ function ResetPasswordForm() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/auth/password-reset/verify", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ token, password }),
-      });
-      const payload = (await response.json().catch(() => null)) as
-        | { message?: string }
-        | null;
-      if (!response.ok) {
-        throw new Error(payload?.message || "Unable to reset password.");
+      let successMessage = "Password reset successfully. Opening sign in...";
+      if (oobCode) {
+        const auth = getFirebaseClientAuth();
+        await verifyPasswordResetCode(auth, oobCode);
+        await confirmPasswordReset(auth, oobCode, password);
+      } else {
+        const response = await fetch("/api/auth/password-reset/verify", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ token, password }),
+        });
+        const payload = (await response.json().catch(() => null)) as
+          | { message?: string }
+          | null;
+        if (!response.ok) {
+          throw new Error(payload?.message || "Unable to reset password.");
+        }
+        successMessage = payload?.message || successMessage;
       }
-      setStatusMessage(
-        payload?.message ||
-          "Password reset successfully. Opening sign in...",
-      );
+      setStatusMessage(successMessage);
       setPassword("");
       setConfirmPassword("");
       window.setTimeout(() => router.replace("/?auth=signin"), 900);
