@@ -77,9 +77,10 @@ export async function sendUserEmailVerification(
 
 export async function sendUserPasswordResetEmail(email: string): Promise<void> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || window.location.origin;
+  const continueUrl = `${siteUrl.replace(/\/+$/, "")}/?auth=signin`;
   const actionCodeSettings: ActionCodeSettings = {
-    url: `${siteUrl.replace(/\/+$/, "")}/reset-password`,
-    handleCodeInApp: true,
+    url: continueUrl,
+    handleCodeInApp: false,
   };
 
   await sendPasswordResetEmail(
