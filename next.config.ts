@@ -9,7 +9,7 @@ const fleetAppUrl = process.env.FLEET_APP_URL?.trim()
 const userDashboardAppUrl = process.env.USER_DASHBOARD_APP_URL?.trim()
   ? trimTrailingSlash(process.env.USER_DASHBOARD_APP_URL.trim())
   : process.env.NODE_ENV === "production"
-    ? ""
+    ? "https://user.websitedesignersdubai.ae"
     : "http://localhost:3002";
 
 const nextConfig: NextConfig = {
