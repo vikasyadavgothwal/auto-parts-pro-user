@@ -198,6 +198,41 @@ const readStoredItems = (userId: string): SiteCartItem[] => {
   }
 };
 
+const removeStoredItems = (userId: string) => {
+  try {
+    window.localStorage.removeItem(`${storagePrefix}:${userId}`);
+  } catch {
+    // Ignore local migration cleanup failures.
+  }
+};
+
+const readDbCartItems = async () => {
+  const response = await siteAuthenticatedFetch("/api/user/cart", {
+    method: "GET",
+    credentials: "include",
+    cache: "no-store",
+    headers: { accept: "application/json" },
+  });
+  const payload = (await response.json().catch(() => null)) as
+    | { ok?: boolean; items?: unknown }
+    | null;
+  if (!response.ok || !payload?.ok || !Array.isArray(payload.items)) {
+    return [];
+  }
+  return payload.items
+    .map(normalizeStoredItem)
+    .filter((item): item is SiteCartItem => Boolean(item));
+};
+
+const replaceDbCartItems = async (items: SiteCartItem[]) => {
+  await siteAuthenticatedFetch("/api/user/cart", {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
+  });
+};
+
 const calculateServiceAdvance = (
   servicePrice: number | null,
   quantity: number,
@@ -215,6 +250,9 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [user, setUser] = useState<UserAuthProfile | null>(null);
   const [items, setItems] = useState<SiteCartItem[]>([]);
+  const [cartLoadedForUserId, setCartLoadedForUserId] = useState<string | null>(
+    null,
+  );
   const [isLoaded, setIsLoaded] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [notice, setNotice] = useState("");
@@ -233,9 +271,13 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
   const refreshUser = useCallback(async () => {
     const nextUser = await getCurrentUser();
     setUser(nextUser);
-    setItems(
-      nextUser?.activeRole === "User" ? readStoredItems(nextUser.id) : [],
-    );
+    setCartLoadedForUserId(null);
+    if (nextUser?.activeRole !== "User") {
+      setItems([]);
+      return nextUser;
+    }
+    setItems(await readDbCartItems());
+    setCartLoadedForUserId(nextUser.id);
     return nextUser;
   }, []);
 
@@ -245,9 +287,28 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       .then((nextUser) => {
         if (!isMounted) return;
         setUser(nextUser);
-        setItems(
-          nextUser?.activeRole === "User" ? readStoredItems(nextUser.id) : [],
-        );
+        if (nextUser?.activeRole !== "User") {
+          setItems([]);
+          setCartLoadedForUserId(null);
+          return;
+        }
+        void readDbCartItems()
+          .then(async (dbItems) => {
+            if (!isMounted) return;
+            const localItems = readStoredItems(nextUser.id);
+            const nextItems = dbItems.length ? dbItems : localItems;
+            setItems(nextItems);
+            setCartLoadedForUserId(nextUser.id);
+            if (!dbItems.length && localItems.length) {
+              await replaceDbCartItems(localItems).catch(() => undefined);
+            }
+            removeStoredItems(nextUser.id);
+          })
+          .catch(() => {
+            if (!isMounted) return;
+            setItems(readStoredItems(nextUser.id));
+            setCartLoadedForUserId(nextUser.id);
+          });
       })
       .finally(() => {
         if (isMounted) setIsLoaded(true);
@@ -279,11 +340,9 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isLoaded || !user || user.activeRole !== "User") return;
-    window.localStorage.setItem(
-      `${storagePrefix}:${user.id}`,
-      JSON.stringify(items),
-    );
-  }, [isLoaded, items, user]);
+    if (cartLoadedForUserId !== user.id) return;
+    void replaceDbCartItems(items).catch(() => undefined);
+  }, [cartLoadedForUserId, isLoaded, items, user]);
 
   const addItem = useCallback(
     async (input: AddCartItemInput): Promise<CartActionResult> => {

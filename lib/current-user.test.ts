@@ -17,8 +17,8 @@ describe("dashboardUrlForRole", () => {
   it.each([
     ["User", "/user_dashboard"],
     ["Supplier", "http://localhost:3004/dashboard"],
-    ["Garage", "http://localhost:3003/garage_dashboard"],
-    ["Fleet", "http://localhost:4001/fleet"],
+    ["Garage", "http://localhost:3003/dashboard"],
+    ["Fleet", "http://localhost:4001/dashboard"],
   ])("routes local %s sign-in to its local dashboard", (role, expectedUrl) => {
     process.env.NEXT_PUBLIC_USER_DASHBOARD_URL =
       "https://user.websitedesignersdubai.ae/user_dashboard";
