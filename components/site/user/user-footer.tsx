@@ -59,7 +59,7 @@ export const SiteFooter = () => {
               <ul className="space-y-2 text-white">
                 <li>
                   <Link href="/help" className="hover:text-white">
-                    971 000 0000
+                    Contact Number: +971585008555
                   </Link>
                 </li>
                 <li>
@@ -69,7 +69,7 @@ export const SiteFooter = () => {
                 </li>
                 <li>
                   <Link href="/returns" className="hover:text-white">
-                    Dubai, Lorem Lipsum Eslopsum
+                    Address: Abu Dhabi, Abu Dhabi 147712
                   </Link>
                 </li>
               </ul>
@@ -84,7 +84,7 @@ export const SiteFooter = () => {
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           {/* Left side */}
           <div className="flex flex-wrap items-center gap-6 text-sm text-white">
-            <span>© 2026 Prisma Digital</span>
+            <span>© 2026 DALEEL MUSAFFAH MARKETING SERVICES - SOLE PROPRIETORSHIP L.L.C.</span>
 
             <Link href="/privacy-policy" className="hover:text-white">
               Privacy Policy
