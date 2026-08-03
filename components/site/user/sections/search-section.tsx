@@ -21,6 +21,9 @@ import { lookupVin } from "@/lib/vin-search"
 import { GlobalMessageDialog } from "@/components/site/shared/global-message-dialog"
 import type { VinSearchVehicle } from "@/types/api/vin-search"
 
+const VIN_MAX_LENGTH = 17
+const PART_SEARCH_MAX_LENGTH = 120
+
 const buildConfirmedFitmentUrl = (vehicle: VinSearchVehicle) => {
   const params = new URLSearchParams({
     fitment: "confirmed",
@@ -88,7 +91,13 @@ export function SearchSection({ config }: { config?: TextPair }) {
     event.preventDefault()
     setErrorMessage("")
     setIsErrorDialogOpen(false)
-    vinSearch.mutate(vin)
+    const normalizedVin = vin.trim().toUpperCase()
+    if (normalizedVin.length !== VIN_MAX_LENGTH) {
+      setErrorMessage("VIN must contain exactly 17 valid characters.")
+      setIsErrorDialogOpen(true)
+      return
+    }
+    vinSearch.mutate(normalizedVin)
   }
 
   const onPartNumberSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -97,6 +106,11 @@ export function SearchSection({ config }: { config?: TextPair }) {
 
     if (!normalizedPartNumber) {
       setErrorMessage("Enter a part number, OEM number, or part name before searching.")
+      setIsErrorDialogOpen(true)
+      return
+    }
+    if (normalizedPartNumber.length > PART_SEARCH_MAX_LENGTH) {
+      setErrorMessage(`Part number, OEM number, or part name must be ${PART_SEARCH_MAX_LENGTH} characters or fewer.`)
       setIsErrorDialogOpen(true)
       return
     }
@@ -131,7 +145,15 @@ export function SearchSection({ config }: { config?: TextPair }) {
                 id="home-vin-search"
                 type="text"
                 value={vin}
-                onChange={(event) => setVin(event.target.value.toUpperCase())}
+                onChange={(event) =>
+                  setVin(
+                    event.target.value
+                      .toUpperCase()
+                      .replace(/[^A-HJ-NPR-Z0-9]/g, "")
+                      .slice(0, VIN_MAX_LENGTH),
+                  )
+                }
+                maxLength={VIN_MAX_LENGTH}
                 placeholder="Enter Vehicle Identification Number (VIN) (e.g., 1HGBH41JXMN109186)"
                 className="h-14 bg-brand-panel px-5 text-base rounded-sm"
                 autoComplete="off"
@@ -161,7 +183,10 @@ export function SearchSection({ config }: { config?: TextPair }) {
               <Input
                 type="text"
                 value={partNumber}
-                onChange={(event) => setPartNumber(event.target.value)}
+                onChange={(event) =>
+                  setPartNumber(event.target.value.slice(0, PART_SEARCH_MAX_LENGTH))
+                }
+                maxLength={PART_SEARCH_MAX_LENGTH}
                 placeholder="Enter part number, OEM number, or part name"
                 className="h-14 bg-brand-panel px-5 text-base rounded-sm"
                 autoComplete="off"

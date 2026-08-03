@@ -13,6 +13,7 @@ export type ApiRequestOptions<Body = unknown> = Omit<
   headers?: HeadersInit;
   token?: string;
   body?: Body | RequestInit["body"] | null;
+  timeoutMs?: number;
 };
 
 export type ApiErrorPayload = {

@@ -8,6 +8,7 @@ import {
   EyeIcon,
   LockIcon,
   MailIcon,
+  PhoneIcon,
   UserIcon,
 } from "@/components/icons/site-icons";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { UserAccountRole } from "@/types/api/user-auth";
+import {
+  CountryPhoneInput,
+  buildInternationalPhoneNumber,
+} from "@/components/site/shared/country-phone-input";
 
 export type AuthMode = "signin" | "signup";
 export type AccountType = UserAccountRole;
@@ -38,17 +43,38 @@ export function AccountSetupFields({
   accountType,
   fullName,
   businessName,
+  supplierContactPerson,
+  supplierDesignation,
+  supplierPhoneCountryCode,
+  supplierPhoneNumber,
   onAccountTypeChange,
   onFullNameChange,
   onBusinessNameChange,
+  onSupplierContactPersonChange,
+  onSupplierDesignationChange,
+  onSupplierPhoneCountryCodeChange,
+  onSupplierPhoneNumberChange,
 }: {
   accountType: AccountType;
   fullName: string;
   businessName: string;
+  supplierContactPerson: string;
+  supplierDesignation: string;
+  supplierPhoneCountryCode: string;
+  supplierPhoneNumber: string;
   onAccountTypeChange: (value: AccountType) => void;
   onFullNameChange: (value: string) => void;
   onBusinessNameChange: (value: string) => void;
+  onSupplierContactPersonChange: (value: string) => void;
+  onSupplierDesignationChange: (value: string) => void;
+  onSupplierPhoneCountryCodeChange: (value: string) => void;
+  onSupplierPhoneNumberChange: (value: string) => void;
 }) {
+  const supplierPhone = buildInternationalPhoneNumber(
+    supplierPhoneCountryCode,
+    supplierPhoneNumber,
+  );
+
   return (
     <>
       <div className="mb-5 min-w-0 space-y-2">
@@ -89,10 +115,66 @@ export function AccountSetupFields({
             autoComplete="name"
             placeholder={accountType === "User" ? "Enter your full name" : "Enter business name"}
             className="h-12 bg-background pl-12"
+            maxLength={accountType === "User" ? 100 : 120}
             required
           />
         </div>
       </AuthField>
+
+      {accountType === "Supplier" ? (
+        <div className="mb-4 rounded-xl border border-border bg-background/60 p-4">
+          <AuthField label="Authorized Person Name">
+            <div className="relative min-w-0">
+              <UserIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
+              <Input
+                value={supplierContactPerson}
+                onChange={(event) =>
+                  onSupplierContactPersonChange(event.target.value)
+                }
+                autoComplete="name"
+                placeholder="Enter authorized person name"
+                className="h-12 bg-background pl-12"
+                maxLength={100}
+                required
+              />
+            </div>
+          </AuthField>
+
+          <AuthField label="Designation">
+            <div className="relative min-w-0">
+              <BuildingIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
+              <Input
+                value={supplierDesignation}
+                onChange={(event) =>
+                  onSupplierDesignationChange(event.target.value)
+                }
+                autoComplete="organization-title"
+                placeholder="Enter designation"
+                className="h-12 bg-background pl-12"
+                maxLength={80}
+                required
+              />
+            </div>
+          </AuthField>
+
+          <div className="relative">
+            <PhoneIcon className="pointer-events-none absolute left-[calc(9.5rem+1rem)] top-[3.25rem] z-10 h-5 w-5 -translate-y-1/2 text-brand-muted" />
+            <CountryPhoneInput
+              id="supplier-phone"
+              name="supplierPhone"
+              label="Phone"
+              countryCode={supplierPhoneCountryCode}
+              phoneNumber={supplierPhoneNumber}
+              onCountryCodeChange={onSupplierPhoneCountryCodeChange}
+              onPhoneNumberChange={onSupplierPhoneNumberChange}
+              inputClassName="pl-12"
+            />
+            <p className="mt-2 text-xs text-brand-muted">
+              Stored as {supplierPhone}
+            </p>
+          </div>
+        </div>
+      ) : null}
 
     </>
   );
@@ -111,7 +193,7 @@ export function TermsAgreement({
         id="terms"
         checked={checked}
         onCheckedChange={(value) => onCheckedChange(value === true)}
-        className="mt-0.5 shrink-0"
+        className="mt-0.5 size-5 shrink-0 border-2 border-primary bg-background data-[state=checked]:bg-primary"
       />
       <Label
         htmlFor="terms"
@@ -209,6 +291,7 @@ export function EmailFields({
             autoComplete="email"
             placeholder="Enter your email"
             className="h-12 bg-background pl-12"
+            maxLength={254}
             required
           />
         </div>
@@ -223,6 +306,8 @@ export function EmailFields({
             autoComplete="current-password"
             placeholder="Enter your password"
             className="h-12 bg-background pl-12 pr-12"
+            minLength={8}
+            maxLength={128}
             required
           />
           <Button

@@ -57,6 +57,16 @@ export async function establishApplicationSession(
     requestedRole: resolvedRole,
     requestedRoleUid: resolvedRole ? firebaseUser.uid : undefined,
     requestedDisplayName: resolvedDisplayName,
+    requestedSupplierContactPerson:
+      resolvedRole === "Supplier"
+        ? pendingRegistration?.supplierContactPerson
+        : undefined,
+    requestedSupplierDesignation:
+      resolvedRole === "Supplier"
+        ? pendingRegistration?.supplierDesignation
+        : undefined,
+    requestedSupplierPhone:
+      resolvedRole === "Supplier" ? pendingRegistration?.supplierPhone : undefined,
   });
 
   if (!response.ok) {

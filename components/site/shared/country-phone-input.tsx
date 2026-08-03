@@ -86,7 +86,7 @@ export function CountryPhoneInput({
         >
           {PHONE_COUNTRY_OPTIONS.map((country) => (
             <option key={`${country.code}-${country.label}`} value={country.code}>
-              {country.code} {country.label}
+              {country.code}
             </option>
           ))}
         </select>

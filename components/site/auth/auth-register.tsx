@@ -17,6 +17,10 @@ export function AuthRegister({
   accountType,
   fullName,
   businessName,
+  supplierContactPerson,
+  supplierDesignation,
+  supplierPhoneCountryCode,
+  supplierPhoneNumber,
   email,
   password,
   showPassword,
@@ -27,6 +31,10 @@ export function AuthRegister({
   onAccountTypeChange,
   onFullNameChange,
   onBusinessNameChange,
+  onSupplierContactPersonChange,
+  onSupplierDesignationChange,
+  onSupplierPhoneCountryCodeChange,
+  onSupplierPhoneNumberChange,
   onEmailChange,
   onPasswordChange,
   onTogglePassword,
@@ -37,6 +45,10 @@ export function AuthRegister({
   accountType: AccountType;
   fullName: string;
   businessName: string;
+  supplierContactPerson: string;
+  supplierDesignation: string;
+  supplierPhoneCountryCode: string;
+  supplierPhoneNumber: string;
   email: string;
   password: string;
   showPassword: boolean;
@@ -47,6 +59,10 @@ export function AuthRegister({
   onAccountTypeChange: (value: AccountType) => void;
   onFullNameChange: (value: string) => void;
   onBusinessNameChange: (value: string) => void;
+  onSupplierContactPersonChange: (value: string) => void;
+  onSupplierDesignationChange: (value: string) => void;
+  onSupplierPhoneCountryCodeChange: (value: string) => void;
+  onSupplierPhoneNumberChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onTogglePassword: () => void;
@@ -64,9 +80,17 @@ export function AuthRegister({
         accountType={accountType}
         fullName={fullName}
         businessName={businessName}
+        supplierContactPerson={supplierContactPerson}
+        supplierDesignation={supplierDesignation}
+        supplierPhoneCountryCode={supplierPhoneCountryCode}
+        supplierPhoneNumber={supplierPhoneNumber}
         onAccountTypeChange={onAccountTypeChange}
         onFullNameChange={onFullNameChange}
         onBusinessNameChange={onBusinessNameChange}
+        onSupplierContactPersonChange={onSupplierContactPersonChange}
+        onSupplierDesignationChange={onSupplierDesignationChange}
+        onSupplierPhoneCountryCodeChange={onSupplierPhoneCountryCodeChange}
+        onSupplierPhoneNumberChange={onSupplierPhoneNumberChange}
       />
 
       <EmailFields

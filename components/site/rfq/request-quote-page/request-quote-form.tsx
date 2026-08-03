@@ -18,6 +18,8 @@ import {
   CompanyInformationSection,
   type ImportedRfqPart,
   PartsNeededSection,
+  RFQ_PART_NAME_MAX_LENGTH,
+  RFQ_PART_NUMBER_MAX_LENGTH,
   type RfqVehicleOption,
   VehicleInformationSection,
 } from "./form-sections";
@@ -340,6 +342,10 @@ export function RequestQuoteForm() {
                           ? "Vehicle model is required."
                           : parts.some((part) => part.partName.trim().length < 2)
                         ? "Every part must have a valid part name."
+                        : parts.some((part) => part.partName.trim().length > RFQ_PART_NAME_MAX_LENGTH)
+                          ? `Part name must be ${RFQ_PART_NAME_MAX_LENGTH} characters or fewer.`
+                          : parts.some((part) => part.partNumber.trim().length > RFQ_PART_NUMBER_MAX_LENGTH)
+                            ? `Part number or OEM number must be ${RFQ_PART_NUMBER_MAX_LENGTH} characters or fewer.`
                         : parts.some(
                             (part) =>
                               !Number.isInteger(part.quantity) ||

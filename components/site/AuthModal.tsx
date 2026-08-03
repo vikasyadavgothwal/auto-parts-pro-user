@@ -34,6 +34,7 @@ import {
 import { ApiRequestError } from "@/lib/api/client";
 import {
   getPendingAccountRegistration,
+  normalizeSupplierSignupDetails,
   setPendingAccountRegistration,
   validateSignupDetails,
 } from "@/lib/account-registration";
@@ -144,6 +145,9 @@ const isVerifiedAccountRoleRequired = (error: unknown) =>
   error instanceof Error &&
   error.message === VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE;
 
+const sanitizeSingleLine = (value: string, maximum: number) =>
+  value.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").slice(0, maximum);
+
 export function AuthModalCard({
   onAuthenticated,
   onClose,
@@ -158,6 +162,10 @@ export function AuthModalCard({
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [supplierContactPerson, setSupplierContactPerson] = useState("");
+  const [supplierDesignation, setSupplierDesignation] = useState("");
+  const [supplierPhoneCountryCode, setSupplierPhoneCountryCode] = useState("+971");
+  const [supplierPhoneNumber, setSupplierPhoneNumber] = useState("");
   const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -200,6 +208,16 @@ export function AuthModalCard({
     setErrorMessage("");
     setStatusMessage("");
   };
+
+  const getSupplierSignupDetails = () =>
+    normalizeSupplierSignupDetails({
+      contactPerson: supplierContactPerson,
+      designation: supplierDesignation,
+      phone: buildInternationalPhoneNumber(
+        supplierPhoneCountryCode,
+        supplierPhoneNumber,
+      ),
+    });
 
   const finishAuthentication = async (
     user: User,
@@ -318,7 +336,19 @@ export function AuthModalCard({
         fullName,
         businessName,
         acceptedTerms,
+        ...(accountType === "Supplier"
+          ? {
+              supplierContactPerson,
+              supplierDesignation,
+              supplierPhone: buildInternationalPhoneNumber(
+                supplierPhoneCountryCode,
+                supplierPhoneNumber,
+              ),
+            }
+          : {}),
       });
+      const supplierDetails =
+        accountType === "Supplier" ? getSupplierSignupDetails() : undefined;
 
       const credential = await createUserWithEmailAndPassword(
         auth,
@@ -330,6 +360,7 @@ export function AuthModalCard({
         credential.user.uid,
         accountType,
         displayName,
+        supplierDetails,
       );
       await sendUserEmailVerification(credential.user, accountType);
       setVerificationUser(credential.user);
@@ -391,8 +422,22 @@ export function AuthModalCard({
             businessName:
               businessName.trim() || credential.user.displayName || "",
             acceptedTerms,
+            ...(accountType === "Supplier"
+              ? {
+                  supplierContactPerson,
+                  supplierDesignation,
+                  supplierPhone: buildInternationalPhoneNumber(
+                    supplierPhoneCountryCode,
+                    supplierPhoneNumber,
+                  ),
+                }
+              : {}),
           })
         : undefined;
+      const supplierDetails =
+        mode === "signup" && accountType === "Supplier"
+          ? getSupplierSignupDetails()
+          : undefined;
       if (signupDisplayName) {
         await updateProfile(credential.user, {
           displayName: signupDisplayName,
@@ -401,6 +446,7 @@ export function AuthModalCard({
           credential.user.uid,
           accountType,
           signupDisplayName,
+          supplierDetails,
         );
       }
 
@@ -463,13 +509,26 @@ export function AuthModalCard({
         fullName,
         businessName,
         acceptedTerms,
+        ...(accountType === "Supplier"
+          ? {
+              supplierContactPerson,
+              supplierDesignation,
+              supplierPhone: buildInternationalPhoneNumber(
+                supplierPhoneCountryCode,
+                supplierPhoneNumber,
+              ),
+            }
+          : {}),
       });
+      const supplierDetails =
+        accountType === "Supplier" ? getSupplierSignupDetails() : undefined;
 
       await updateProfile(pendingVerifiedUser, { displayName });
       setPendingAccountRegistration(
         pendingVerifiedUser.uid,
         accountType,
         displayName,
+        supplierDetails,
       );
       await finishAuthentication(
         pendingVerifiedUser,
@@ -576,13 +635,27 @@ export function AuthModalCard({
               accountType={accountType}
               fullName={fullName}
               businessName={businessName}
+              supplierContactPerson={supplierContactPerson}
+              supplierDesignation={supplierDesignation}
+              supplierPhoneCountryCode={supplierPhoneCountryCode}
+              supplierPhoneNumber={supplierPhoneNumber}
               acceptedTerms={acceptedTerms}
               isSubmitting={isSubmitting}
               errorMessage={errorMessage}
               statusMessage={statusMessage}
               onAccountTypeChange={setAccountType}
-              onFullNameChange={setFullName}
-              onBusinessNameChange={setBusinessName}
+              onFullNameChange={(value) => setFullName(sanitizeSingleLine(value, 100))}
+              onBusinessNameChange={(value) =>
+                setBusinessName(sanitizeSingleLine(value, 120))
+              }
+              onSupplierContactPersonChange={(value) =>
+                setSupplierContactPerson(sanitizeSingleLine(value, 100))
+              }
+              onSupplierDesignationChange={(value) =>
+                setSupplierDesignation(sanitizeSingleLine(value, 80))
+              }
+              onSupplierPhoneCountryCodeChange={setSupplierPhoneCountryCode}
+              onSupplierPhoneNumberChange={setSupplierPhoneNumber}
               onTermsChange={setAcceptedTerms}
               onSubmit={handleCompleteVerifiedAccount}
             />
@@ -660,6 +733,10 @@ export function AuthModalCard({
               accountType={accountType}
               fullName={fullName}
               businessName={businessName}
+              supplierContactPerson={supplierContactPerson}
+              supplierDesignation={supplierDesignation}
+              supplierPhoneCountryCode={supplierPhoneCountryCode}
+              supplierPhoneNumber={supplierPhoneNumber}
               email={email}
               password={password}
               showPassword={showPassword}
@@ -668,10 +745,20 @@ export function AuthModalCard({
               errorMessage={errorMessage}
               statusMessage={statusMessage}
               onAccountTypeChange={setAccountType}
-              onFullNameChange={setFullName}
-              onBusinessNameChange={setBusinessName}
-              onEmailChange={setEmail}
-              onPasswordChange={setPassword}
+              onFullNameChange={(value) => setFullName(sanitizeSingleLine(value, 100))}
+              onBusinessNameChange={(value) =>
+                setBusinessName(sanitizeSingleLine(value, 120))
+              }
+              onSupplierContactPersonChange={(value) =>
+                setSupplierContactPerson(sanitizeSingleLine(value, 100))
+              }
+              onSupplierDesignationChange={(value) =>
+                setSupplierDesignation(sanitizeSingleLine(value, 80))
+              }
+              onSupplierPhoneCountryCodeChange={setSupplierPhoneCountryCode}
+              onSupplierPhoneNumberChange={setSupplierPhoneNumber}
+              onEmailChange={(value) => setEmail(sanitizeSingleLine(value, 254))}
+              onPasswordChange={(value) => setPassword(value.slice(0, 128))}
               onTogglePassword={() => setShowPassword((value) => !value)}
               onTermsChange={setAcceptedTerms}
               onSubmit={handleEmailSubmit}

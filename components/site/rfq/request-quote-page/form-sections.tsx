@@ -9,6 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CountryPhoneInput } from "@/components/site/shared/country-phone-input";
 import { companyFields, vehicleFields } from "@/lib/data/request";
+
+const VIN_MAX_LENGTH = 17;
+export const RFQ_PART_NAME_MAX_LENGTH = 160;
+export const RFQ_PART_NUMBER_MAX_LENGTH = 100;
+
 const MAX_VEHICLE_YEAR = new Date().getFullYear() + 1;
 export type RfqVehicleOption = {
   id: string;
@@ -68,7 +73,18 @@ function TextField({
         max={max}
         maxLength={maxLength}
         value={value}
-        onChange={onChange ? (event) => onChange(event.target.value) : undefined}
+        onChange={
+          onChange
+            ? (event) => onChange(event.target.value)
+            : name.toLowerCase().includes("vin")
+              ? (event) => {
+                  event.currentTarget.value = event.currentTarget.value
+                    .toUpperCase()
+                    .replace(/[^A-HJ-NPR-Z0-9]/g, "")
+                    .slice(0, VIN_MAX_LENGTH);
+                }
+              : undefined
+        }
         placeholder={placeholder}
         className="h-12 rounded-xl bg-brand-surface px-4 text-base"
       />
@@ -111,7 +127,7 @@ function PartRequestCard({
             <Label className="mb-2">Different Vehicle VIN</Label>
             <Input
               name={`parts.${part.id}.vin`}
-              maxLength={17}
+              maxLength={VIN_MAX_LENGTH}
               defaultValue={part.vin ?? ""}
               placeholder="Leave blank to use selected vehicle"
               aria-label={`Part ${partNumber} vehicle VIN`}
@@ -120,7 +136,7 @@ function PartRequestCard({
                 event.currentTarget.value = event.currentTarget.value
                   .toUpperCase()
                   .replace(/[^A-HJ-NPR-Z0-9]/g, "")
-                  .slice(0, 17);
+                  .slice(0, VIN_MAX_LENGTH);
               }}
             />
           </div>
@@ -130,6 +146,7 @@ function PartRequestCard({
             <Input
               name={`parts.${part.id}.name`}
               required
+              maxLength={RFQ_PART_NAME_MAX_LENGTH}
               defaultValue={part.partName ?? ""}
               placeholder="Front brake pads"
               aria-label={`Part ${partNumber} name`}
@@ -155,6 +172,7 @@ function PartRequestCard({
             <Label className="mb-2">Part Number (if known)</Label>
             <Input
               name={`parts.${part.id}.partNumber`}
+              maxLength={RFQ_PART_NUMBER_MAX_LENGTH}
               placeholder="BC1259"
               defaultValue={part.partNumber ?? ""}
               aria-label={`Part ${partNumber} part number`}
@@ -325,7 +343,7 @@ export function VehicleInformationSection({
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-5">
-          <TextField name="vehicleVin" label="VIN (Optional)" placeholder="1HGBH41JXMN109186" maxLength={17} />
+          <TextField name="vehicleVin" label="VIN (Optional)" placeholder="1HGBH41JXMN109186" maxLength={VIN_MAX_LENGTH} />
           {vehicleFields.map((field, index) => (
             <TextField
               key={field.label}

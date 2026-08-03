@@ -14,6 +14,10 @@ export function AuthCompleteAccount({
   accountType,
   fullName,
   businessName,
+  supplierContactPerson,
+  supplierDesignation,
+  supplierPhoneCountryCode,
+  supplierPhoneNumber,
   acceptedTerms,
   isSubmitting,
   errorMessage,
@@ -21,12 +25,20 @@ export function AuthCompleteAccount({
   onAccountTypeChange,
   onFullNameChange,
   onBusinessNameChange,
+  onSupplierContactPersonChange,
+  onSupplierDesignationChange,
+  onSupplierPhoneCountryCodeChange,
+  onSupplierPhoneNumberChange,
   onTermsChange,
   onSubmit,
 }: {
   accountType: AccountType;
   fullName: string;
   businessName: string;
+  supplierContactPerson: string;
+  supplierDesignation: string;
+  supplierPhoneCountryCode: string;
+  supplierPhoneNumber: string;
   acceptedTerms: boolean;
   isSubmitting: boolean;
   errorMessage: string;
@@ -34,6 +46,10 @@ export function AuthCompleteAccount({
   onAccountTypeChange: (value: AccountType) => void;
   onFullNameChange: (value: string) => void;
   onBusinessNameChange: (value: string) => void;
+  onSupplierContactPersonChange: (value: string) => void;
+  onSupplierDesignationChange: (value: string) => void;
+  onSupplierPhoneCountryCodeChange: (value: string) => void;
+  onSupplierPhoneNumberChange: (value: string) => void;
   onTermsChange: (value: boolean) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
@@ -47,9 +63,17 @@ export function AuthCompleteAccount({
         accountType={accountType}
         fullName={fullName}
         businessName={businessName}
+        supplierContactPerson={supplierContactPerson}
+        supplierDesignation={supplierDesignation}
+        supplierPhoneCountryCode={supplierPhoneCountryCode}
+        supplierPhoneNumber={supplierPhoneNumber}
         onAccountTypeChange={onAccountTypeChange}
         onFullNameChange={onFullNameChange}
         onBusinessNameChange={onBusinessNameChange}
+        onSupplierContactPersonChange={onSupplierContactPersonChange}
+        onSupplierDesignationChange={onSupplierDesignationChange}
+        onSupplierPhoneCountryCodeChange={onSupplierPhoneCountryCodeChange}
+        onSupplierPhoneNumberChange={onSupplierPhoneNumberChange}
       />
       <TermsAgreement
         checked={acceptedTerms}

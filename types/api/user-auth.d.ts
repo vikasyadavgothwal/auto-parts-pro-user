@@ -6,6 +6,9 @@ export type FirebaseSessionRequest = {
   requestedRole?: UserAccountRole;
   requestedRoleUid?: string;
   requestedDisplayName?: string;
+  requestedSupplierContactPerson?: string;
+  requestedSupplierDesignation?: string;
+  requestedSupplierPhone?: string;
 };
 
 export type PasswordSessionRequest = {

@@ -81,6 +81,11 @@ const readResponseBody = async (response: Response): Promise<unknown> => {
   }
 };
 
+const requestSignal = (
+  signal: AbortSignal | null | undefined,
+  timeoutMs: number,
+) => signal ?? AbortSignal.timeout(timeoutMs);
+
 const buildUrl = (scope: ApiScope, path: string, query?: ApiQuery) => {
   const baseUrl = getBaseUrl(scope);
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
@@ -105,6 +110,7 @@ export async function apiRequest<TResponse, TBody = unknown>(
   const {
     scope = "public",
     query,
+    timeoutMs = 10_000,
     headers: rawHeaders,
     token,
     body,
@@ -135,6 +141,7 @@ export async function apiRequest<TResponse, TBody = unknown>(
     ...init,
     headers,
     body: payloadBody,
+    signal: requestSignal(init.signal, timeoutMs),
   });
 
   const responseBody = await readResponseBody(response);

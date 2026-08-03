@@ -39,6 +39,29 @@ describe("pending account registration", () => {
     });
   });
 
+  it("stores supplier registration contact details", () => {
+    const storage = createStorage();
+    const now = Date.now();
+    setPendingAccountRegistration(
+      "supplier-uid",
+      "Supplier",
+      "Acme Parts",
+      {
+        contactPerson: "  Dana Manager  ",
+        designation: "  Operations Lead  ",
+        phone: "+971501234567",
+      },
+      storage,
+      now,
+    );
+
+    expect(getPendingAccountRegistration("supplier-uid", storage, now)).toMatchObject({
+      supplierContactPerson: "Dana Manager",
+      supplierDesignation: "Operations Lead",
+      supplierPhone: "+971501234567",
+    });
+  });
+
   it("does not clear another user's pending registration", () => {
     const storage = createStorage();
     setPendingAccountRegistration(
@@ -153,5 +176,31 @@ describe("signup validation", () => {
         acceptedTerms: true,
       }),
     ).toThrow("Enter your business name.");
+  });
+
+  it("requires supplier contact details and international phone", () => {
+    expect(() =>
+      validateSignupDetails({
+        role: "Supplier",
+        fullName: "",
+        businessName: "Acme Parts",
+        acceptedTerms: true,
+        supplierContactPerson: "Dana Manager",
+        supplierDesignation: "Operations Lead",
+        supplierPhone: "0501234567",
+      }),
+    ).toThrow("Enter a valid supplier phone number with country code.");
+
+    expect(
+      validateSignupDetails({
+        role: "Supplier",
+        fullName: "",
+        businessName: "Acme Parts",
+        acceptedTerms: true,
+        supplierContactPerson: "Dana Manager",
+        supplierDesignation: "Operations Lead",
+        supplierPhone: "+971501234567",
+      }),
+    ).toBe("Acme Parts");
   });
 });
