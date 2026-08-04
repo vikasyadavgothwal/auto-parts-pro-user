@@ -67,7 +67,7 @@ export function HeroSection({ config }: { config?: HomeBannerConfig }) {
             <h1
               className="mb-6 max-w-4xl text-[48px] font-bold leading-tight text-white"
             >
-              {heading}
+              {heading} kdsjbfs
             </h1>
           ) : null}
 
