@@ -8,6 +8,7 @@ export type SearchFilterState = Record<SearchFilterKey, string[]>;
 
 type FilterOption = { label: string; value: string; icon?: ComponentType<ComponentProps<"svg">>; iconClassName?: string };
 type FilterSectionProps = { title: string; options: readonly FilterOption[]; selected: string[]; onToggle: (value: string) => void };
+export type PriceRangeOption = { label: string; value: string; min: number; max: number };
 
 const checkboxClassName = "h-4 w-4 data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500";
 const fitmentOptions: FilterOption[] = [
@@ -22,7 +23,7 @@ function FilterSection({ title, options, selected, onToggle }: FilterSectionProp
 
 type SearchFiltersPanelProps = {
   brands: readonly string[];
-  prices: readonly string[];
+  prices: readonly PriceRangeOption[];
   filters: SearchFilterState;
   onToggle: (key: SearchFilterKey, value: string) => void;
   onClear: () => void;
@@ -37,7 +38,7 @@ export function SearchFiltersPanel({ brands, prices, filters, onToggle, onClear,
     <div className="my-6 border-t border-[#2A2A2A]" />
     <FilterSection title="Brand" options={brands.map((brand) => ({ label: brand, value: brand }))} selected={filters.brands} onToggle={(value) => onToggle("brands", value)} />
     <div className="my-6 border-t border-[#2A2A2A]" />
-    <FilterSection title="Price Range" options={prices.map((price) => ({ label: price, value: price }))} selected={filters.prices} onToggle={(value) => onToggle("prices", value)} />
+    <FilterSection title="Price Range" options={prices.map((price) => ({ label: price.label, value: price.value }))} selected={filters.prices} onToggle={(value) => onToggle("prices", value)} />
     <div className="my-6 border-t border-[#2A2A2A]" />
     <FilterSection title="Availability" options={availabilityOptions} selected={filters.availability} onToggle={(value) => onToggle("availability", value)} />
     {!showHeader ? <button type="button" onClick={onClear} className="text-sm text-[#DC2626] hover:underline">Clear all filters</button> : null}

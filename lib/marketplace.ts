@@ -122,7 +122,7 @@ export async function searchMarketplaceProducts(params: {
   q?: string | null
   limit?: number
 }): Promise<MarketplaceSearchResponse> {
-  const response = await fetch(buildBackendUrl("/api/marketplace/search", params), {
+  const response = await fetch(buildBackendUrl("/api/v1/marketplace/search", params), {
     cache: "no-store",
     headers: { Accept: "application/json" },
   })
@@ -139,7 +139,7 @@ export async function getMarketplaceProduct(
   partUid: string,
 ): Promise<MarketplaceProductDetail | null> {
   const response = await fetch(
-    buildBackendUrl(`/api/marketplace/products/${encodeURIComponent(partUid)}`),
+    buildBackendUrl(`/api/v1/marketplace/products/${encodeURIComponent(partUid)}`),
     {
       cache: "no-store",
       headers: { Accept: "application/json" },

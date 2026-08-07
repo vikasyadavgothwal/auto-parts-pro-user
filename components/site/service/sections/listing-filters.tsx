@@ -14,7 +14,7 @@ export type FilterState = Record<FilterKey, string[]>;
 export type FilterSection = {
   key: FilterKey;
   title: string;
-  items: string[];
+  items: Array<string | { label: string; value: string }>;
 };
 
 const checkboxClassName =
@@ -138,7 +138,7 @@ function FilterGroup({
   onCheckedChange,
 }: {
   title: string;
-  items: string[];
+  items: Array<string | { label: string; value: string }>;
   checkedItems: string[];
   onCheckedChange: (item: string, checked: boolean) => void;
 }) {
@@ -148,26 +148,28 @@ function FilterGroup({
 
       <div className="space-y-2">
         {items.map((item, index) => {
+          const value = typeof item === "string" ? item : item.value;
+          const label = typeof item === "string" ? item : item.label;
           const checkboxId = `${title}-${index}`
             .toLowerCase()
             .replace(/\s+/g, "-");
 
           return (
             <label
-              key={item}
+              key={value}
               htmlFor={checkboxId}
               className="group flex cursor-pointer items-center gap-3"
             >
               <Checkbox
                 id={checkboxId}
-                checked={checkedItems.includes(item)}
+                checked={checkedItems.includes(value)}
                 onCheckedChange={(checked) =>
-                  onCheckedChange(item, checked === true)
+                  onCheckedChange(value, checked === true)
                 }
                 className={checkboxClassName}
               />
               <span className="text-sm text-brand-muted group-hover:text-white">
-                {item}
+                {label}
               </span>
             </label>
           );

@@ -5,7 +5,7 @@ import type {
   VinSearchVehicle,
 } from "@/types/api/vin-search";
 
-const VIN_SEARCH_PATH = "/api/vin-search";
+const VIN_SEARCH_PATH = "/api/v1/vin-search";
 const INVALID_VIN_MESSAGE =
   "You entered an invalid VIN. Please check the VIN and try again.";
 

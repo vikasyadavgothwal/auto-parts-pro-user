@@ -52,7 +52,16 @@ Public AutoParts Pro website, marketing pages, marketplace search, product detai
 - Search, product detail, RFQ, booking, and auth pages render
 - API proxy routes reach the configured backend
 - Public website content stays separate from dashboard-only business logic
-- Run the commands documented in this app README when relevant.
+- Preferred validation: `npm run lint`, `npx tsc --noEmit`, `npm run test`, and `npm run build` when relevant.
 - Update project root `docs/AI_HANDOFF.md` after major changes.
+
+### App-Specific Boundaries
+
+- Do not implement admin-only plan, permission, or tenant enforcement here; call backend APIs that enforce those rules.
+- Public signup/login can start supplier, garage, fleet, or customer flows, but business approval, subscription plan data, and feature limits belong to `auto_parts_admin`.
+
+### Visual Design Rule
+
+- For any new UI feature (buttons, inputs, selects, modals, tables, cards, and similar controls), use the existing ShadCN UI components and keep spacing, type scale, colors, and interaction patterns aligned with the current app design language.
 
 <!-- END:autoparts-pro-codex-docs -->

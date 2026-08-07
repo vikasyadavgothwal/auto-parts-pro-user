@@ -44,6 +44,17 @@ export type MarketplaceOffer = {
   ratingAverage: number
   reviewCount: number
   recommended: boolean
+  ranking?: {
+    relevance: number
+    pricing: number
+    subscriptionBoost: number
+    productCompleteness: number
+    supplierRating: number
+    verifiedSupplier: number
+    stockAvailability: number
+    deliverySla: number
+    total: number
+  }
   images: string[]
   content: MarketplaceVendorContent
   warehouseStock: Array<{

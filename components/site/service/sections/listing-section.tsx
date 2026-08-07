@@ -56,12 +56,7 @@ const fallbackCertificationOptions = [
   "Manufacturer Certified",
 ];
 
-const priceRangeOptions = [
-  "Under AED 50",
-  "AED 50 - AED 100",
-  "AED 100 - AED 200",
-  "Over AED 200",
-];
+type PriceRangeOption = { label: string; value: string; min: number; max: number };
 
 const createInitialFilters = (): FilterState => ({
   serviceTypes: [],
@@ -71,25 +66,45 @@ const createInitialFilters = (): FilterState => ({
 });
 
 function getPriceValue(price: number | null) {
-  return typeof price === "number" ? price : Number.NaN;
+  return typeof price === "number" ? price / 100 : Number.NaN;
 }
 
-function matchesPriceRange(price: number | null, priceRange: string) {
-  const priceValue = getPriceValue(price);
-  if (!Number.isFinite(priceValue)) return false;
+function formatPriceRangeAmount(value: number) {
+  return `AED ${value.toFixed(value % 1 === 0 ? 0 : 2)}`;
+}
 
-  switch (priceRange) {
-    case "Under AED 50":
-      return priceValue < 50;
-    case "AED 50 - AED 100":
-      return priceValue >= 50 && priceValue <= 100;
-    case "AED 100 - AED 200":
-      return priceValue > 100 && priceValue <= 200;
-    case "Over AED 200":
-      return priceValue > 200;
-    default:
-      return true;
+function buildPriceRangeOptions(garages: PublicGarageSummary[]): PriceRangeOption[] {
+  const values = garages
+    .map((garage) => getPriceValue(garage.startingPrice))
+    .filter((price) => Number.isFinite(price));
+
+  if (!values.length) return [];
+
+  const min = Math.floor(Math.min(...values));
+  const max = Math.ceil(Math.max(...values));
+
+  if (min === max) {
+    return [{ label: formatPriceRangeAmount(min), value: `${min}-${max}`, min, max }];
   }
+
+  const rangeCount = Math.min(4, max - min + 1);
+  const step = Math.ceil((max - min + 1) / rangeCount);
+
+  return Array.from({ length: rangeCount }, (_, index) => {
+    const rangeMin = min + index * step;
+    const rangeMax = Math.min(max, rangeMin + step - 1);
+    return {
+      label: `${formatPriceRangeAmount(rangeMin)} - ${formatPriceRangeAmount(rangeMax)}`,
+      value: `${rangeMin}-${rangeMax}`,
+      min: rangeMin,
+      max: rangeMax,
+    };
+  }).filter((range) => range.min <= range.max);
+}
+
+function matchesPriceRange(price: number | null, priceRange: PriceRangeOption | undefined) {
+  const priceValue = getPriceValue(price);
+  return Number.isFinite(priceValue) && Boolean(priceRange) && priceValue >= priceRange.min && priceValue <= priceRange.max;
 }
 
 function hasSelectedMatch(selectedItems: string[], availableItems: string[]) {
@@ -152,6 +167,11 @@ export function ServicesListingSection({
       ? Array.from(new Set(values))
       : fallbackCertificationOptions;
   }, [garages]);
+  const priceRangeOptions = useMemo(() => buildPriceRangeOptions(garages), [garages]);
+  const priceRangeByValue = useMemo(
+    () => new Map(priceRangeOptions.map((range) => [range.value, range])),
+    [priceRangeOptions],
+  );
 
   const filterSections: FilterSection[] = useMemo(
     () => [
@@ -173,10 +193,13 @@ export function ServicesListingSection({
       {
         key: "priceRanges",
         title: "Price Range",
-        items: priceRangeOptions,
+        items: priceRangeOptions.map((range) => ({
+          label: range.label,
+          value: range.value,
+        })),
       },
     ],
-    [certificationOptions, serviceTypeOptions],
+    [certificationOptions, priceRangeOptions, serviceTypeOptions],
   );
 
   const filteredGarages = useMemo(() => {
@@ -192,7 +215,7 @@ export function ServicesListingSection({
           hasSelectedMatch(filters.certifications, garage.certifications) &&
           (filters.priceRanges.length === 0 ||
             filters.priceRanges.some((priceRange) =>
-              matchesPriceRange(garage.startingPrice, priceRange),
+              matchesPriceRange(garage.startingPrice, priceRangeByValue.get(priceRange)),
             ))
         );
       });
@@ -201,7 +224,7 @@ export function ServicesListingSection({
       if (sort === "price-high") return [...filtered].sort((a, b) => (b.startingPrice ?? Number.NEGATIVE_INFINITY) - (a.startingPrice ?? Number.NEGATIVE_INFINITY));
       if (sort === "experience") return [...filtered].sort((a, b) => b.yearsExperience - a.yearsExperience);
       return filtered;
-  }, [filters, garages, sort]);
+  }, [filters, garages, priceRangeByValue, sort]);
 
   const paginationLinks = useMemo<ListingPaginationLink[]>(() => {
     if (pagination.totalPages <= 1) return [];

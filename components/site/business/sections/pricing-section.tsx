@@ -1,9 +1,7 @@
 import { CheckIcon } from "@/components/icons/site-icons";
-import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog";
+import { PricingActionButton } from "@/components/site/business/sections/pricing-action-button";
 import { SectionHeading } from "@/components/site/shared/section-heading";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { getBusinessQueryType } from "@/lib/business-query-cta";
 import {
   getPublicText,
   hasPublicText,
@@ -12,6 +10,13 @@ import {
 
 type PricingSectionProps = {
   config?: ForBusinessPricingConfig;
+};
+
+const businessRoleFromPlan = (heading: string): "Fleet" | "Garage" | "Supplier" => {
+  const normalized = heading.toLowerCase();
+  if (normalized.includes("supplier")) return "Supplier";
+  if (normalized.includes("fleet")) return "Fleet";
+  return "Garage";
 };
 
 export function PricingSection({ config }: PricingSectionProps) {
@@ -34,7 +39,8 @@ export function PricingSection({ config }: PricingSectionProps) {
       hasPublicText(plan.heading, plan.subheading, plan.price, plan.duration) ||
       plan.keyPoints.length > 0 ||
       Boolean(plan.buttonText),
-    );
+    )
+    .slice(0, 3);
 
   if (!hasPublicText(heading, subheading) && plans.length === 0) {
     return null;
@@ -58,11 +64,11 @@ export function PricingSection({ config }: PricingSectionProps) {
         ) : null}
 
         {plans.length > 0 ? (
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-3">
             {plans.map((plan, index) => (
               <Card
                 key={`${plan.heading}-${index}`}
-                className={`relative flex h-full flex-col border-2 p-8 ${
+                className={`relative flex h-full flex-col rounded-2xl border p-6 ${
                   plan.mostPopular
                     ? "border-primary/70 shadow-lg shadow-primary/10"
                     : "border-border"
@@ -89,7 +95,7 @@ export function PricingSection({ config }: PricingSectionProps) {
                 {plan.price || plan.duration ? (
                   <div className="mb-6">
                     {plan.price ? (
-                      <span className="text-5xl font-bold text-white">
+                      <span className="text-4xl font-bold text-white">
                         {plan.price}
                       </span>
                     ) : null}
@@ -118,30 +124,16 @@ export function PricingSection({ config }: PricingSectionProps) {
 
                 {plan.buttonText ? (
                   <div className="mt-auto pt-2">
-                    {getBusinessQueryType(plan.buttonText) ? (
-                      <BusinessDemoDialogButton
-                        queryType={getBusinessQueryType(plan.buttonText) ?? "General"}
-                        source={plan.buttonText}
-                        className={`w-full h-auto rounded-full py-4 ${
-                          plan.mostPopular
-                            ? "bg-primary text-white hover:bg-primary-hover hover:text-white"
-                            : "bg-black text-primary hover:bg-black/90"
-                        }`}
-                      >
-                        {plan.buttonText}
-                      </BusinessDemoDialogButton>
-                    ) : (
-                      <Button
-                        type="button"
-                        className={`w-full h-auto rounded-full py-4 ${
-                          plan.mostPopular
-                            ? "bg-primary text-white hover:bg-primary-hover hover:text-white"
-                            : "bg-black text-primary hover:bg-black/90"
-                        }`}
-                      >
-                        {plan.buttonText}
-                      </Button>
-                    )}
+                    <PricingActionButton
+                      role={businessRoleFromPlan(plan.heading)}
+                      className={`w-full h-auto rounded-full py-4 ${
+                        plan.mostPopular
+                          ? "bg-primary text-white hover:bg-primary-hover hover:text-white"
+                          : "bg-black text-primary hover:bg-black/90"
+                      }`}
+                    >
+                      {plan.buttonText}
+                    </PricingActionButton>
                   </div>
                 ) : null}
               </Card>

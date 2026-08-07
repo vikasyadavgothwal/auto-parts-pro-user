@@ -1,82 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
-import type { VinSearchRequest } from "@/types/api/vin-search";
+import { NextRequest } from 'next/server';
+import { POST as v1POST } from '../v1/vin-search/route';
 
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
-const VIN_SEARCH_PATH = "/api/vin-search";
-
-const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
-
-const getBackendBaseUrl = () => {
-  const value =
-    process.env.BACKEND_URL?.trim() ||
-    process.env.NEXT_PUBLIC_BACKEND_URL?.trim() ||
-    "";
-
-  if (!value) {
-    throw new Error("Missing API base URL. Set BACKEND_URL or NEXT_PUBLIC_BACKEND_URL.");
-  }
-
-  return trimTrailingSlash(value);
-};
-
-const normalizeVin = (value: unknown) =>
-  typeof value === "string" ? value.trim().toUpperCase() : "";
-
-const readJsonBody = async (response: Response): Promise<unknown> => {
-  try {
-    return await response.json();
-  } catch {
-    return null;
-  }
-};
-
-const parseRequestBody = async (
-  request: NextRequest,
-): Promise<VinSearchRequest | null> => {
-  try {
-    const body = (await request.json()) as Partial<VinSearchRequest> | null;
-    const vin = normalizeVin(body?.vin);
-
-    if (!vin) {
-      return null;
-    }
-
-    return { vin };
-  } catch {
-    return null;
-  }
-};
-
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  const body = await parseRequestBody(request);
-
-  if (!body) {
-    return NextResponse.json(
-      { error: "VIN is required." },
-      { status: 400 },
-    );
-  }
-
-  try {
-    const response = await fetch(`${getBackendBaseUrl()}${VIN_SEARCH_PATH}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-      cache: "no-store",
-    });
-    const payload = await readJsonBody(response);
-
-    return NextResponse.json(payload, {
-      status: response.status || 200,
-    });
-  } catch {
-    return NextResponse.json(
-      { error: "Unable to verify VIN right now. Please try again." },
-      { status: 502 },
-    );
-  }
+export async function POST(request: NextRequest) {
+  const response = await v1POST(request);
+  response.headers.set(
+    'x-api-compatibility-layer',
+    'legacy-path;/api/vin-search;canonical;/api/v1/vin-search',
+  );
+  return response;
 }
