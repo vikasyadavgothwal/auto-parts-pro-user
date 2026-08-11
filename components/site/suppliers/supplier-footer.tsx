@@ -17,7 +17,7 @@ const businessLinks = [
   { label: "Supplier Portal", href: "/supplier/dashboard" },
   { label: "Fleet Management", href: "/fleet/dashboard" },
   { label: "Garage Network", href: "/services" },
-  { label: "API Access", href: "#" },
+  { label: "API Access", href: "/developers/api" },
 ]
 
 const supportLinks = [

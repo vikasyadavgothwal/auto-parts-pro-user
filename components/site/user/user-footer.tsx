@@ -47,6 +47,11 @@ export const SiteFooter = () => {
                     For Business
                   </Link>
                 </li>
+                <li>
+                  <Link href="/developers/api" className="hover:text-white">
+                    Developer API
+                  </Link>
+                </li>
               </ul>
             </div>
 

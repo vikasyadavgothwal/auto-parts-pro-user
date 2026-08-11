@@ -81,10 +81,21 @@ const readResponseBody = async (response: Response): Promise<unknown> => {
   }
 };
 
-const requestSignal = (
-  signal: AbortSignal | null | undefined,
+const fetchWithTimeout = (
+  input: RequestInfo | URL,
+  init: RequestInit,
   timeoutMs: number,
-) => signal ?? AbortSignal.timeout(timeoutMs);
+) => {
+  if (init.signal) return fetch(input, init);
+  const controller = new AbortController();
+  const timeout = globalThis.setTimeout(
+    () => controller.abort(new Error("Request timed out")),
+    timeoutMs,
+  );
+  return fetch(input, { ...init, signal: controller.signal }).finally(() => {
+    globalThis.clearTimeout(timeout);
+  });
+};
 
 const buildUrl = (scope: ApiScope, path: string, query?: ApiQuery) => {
   const baseUrl = getBaseUrl(scope);
@@ -136,13 +147,12 @@ export async function apiRequest<TResponse, TBody = unknown>(
   const resolvedMethod =
     method ?? (body === undefined ? "GET" : "POST");
 
-  const response = await fetch(buildUrl(scope, path, query), {
+  const response = await fetchWithTimeout(buildUrl(scope, path, query), {
     method: resolvedMethod,
     ...init,
     headers,
     body: payloadBody,
-    signal: requestSignal(init.signal, timeoutMs),
-  });
+  }, timeoutMs);
 
   const responseBody = await readResponseBody(response);
 

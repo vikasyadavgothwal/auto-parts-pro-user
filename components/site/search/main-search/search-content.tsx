@@ -38,7 +38,7 @@ const buildPriceRanges = (products: SearchProduct[]): PriceRangeOption[] => {
   }).filter((range) => range.min <= range.max);
 };
 const matchesPrice = (price: number | null | undefined, range: PriceRangeOption | undefined) => {
-  return typeof price === "number" && Boolean(range) && price >= range.min && price <= range.max;
+  return typeof price === "number" && range !== undefined && price >= range.min && price <= range.max;
 };
 
 type SearchContentProps = { products: SearchProduct[]; queryLabel: string; emptyMessage?: string };

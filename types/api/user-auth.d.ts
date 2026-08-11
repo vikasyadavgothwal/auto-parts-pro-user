@@ -1,8 +1,13 @@
 export type UserAccountRole = "Fleet" | "User" | "Garage" | "Supplier";
 
-export type FirebaseSessionRequest = {
+export type BrowserSessionDevice = {
+  deviceName?: string;
+  deviceIdentifier?: string;
+  deviceMacAddress?: string;
+};
+
+export type FirebaseSessionRequest = BrowserSessionDevice & {
   firebaseIdToken: string;
-  installationId?: string;
   requestedRole?: UserAccountRole;
   requestedRoleUid?: string;
   requestedDisplayName?: string;
@@ -11,10 +16,15 @@ export type FirebaseSessionRequest = {
   requestedSupplierPhone?: string;
 };
 
-export type PasswordSessionRequest = {
+export type PasswordSessionRequest = BrowserSessionDevice & {
   email: string;
   password: string;
-  installationId?: string;
+};
+
+export type LoginVerificationRequest = BrowserSessionDevice & {
+  challengeId: string;
+  code: string;
+  method: "otp" | "pin";
 };
 
 export type UserAuthProfile = {
@@ -34,6 +44,13 @@ export type UserAuthApiSuccess = {
   success: true;
   user: UserAuthProfile;
   expiresAt?: string;
+  mfa?: {
+    challengeId: string;
+    method: "otp" | "pin_or_otp";
+    planCode: "Free" | "Pro" | "Enterprise";
+    hasPin: boolean;
+    message: string;
+  };
 };
 
 export type UserAuthApiError = {

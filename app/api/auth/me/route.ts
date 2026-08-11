@@ -1,9 +1,11 @@
 import type { NextRequest } from "next/server"
+import { fetchWithTimeout } from "@shared/backend-proxy"
 
 const accessCookieName =
   process.env.USER_ACCESS_COOKIE_NAME ?? "user_access_token"
 const refreshCookieName =
   process.env.USER_REFRESH_COOKIE_NAME ?? "user_refresh_token"
+const AUTH_ME_TIMEOUT_MS = 4_000
 
 const backendUrl = () => {
   const baseUrl =
@@ -59,11 +61,20 @@ export async function GET(request: NextRequest) {
   const cookie = request.headers.get("cookie")
   if (cookie) headers.set("cookie", cookie)
 
-  const response = await fetch(backendUrl(), {
-    method: "GET",
-    cache: "no-store",
-    headers,
-  })
+  let response: Response
+  try {
+    response = await fetchWithTimeout(backendUrl(), {
+      method: "GET",
+      cache: "no-store",
+      headers,
+      timeoutMs: AUTH_ME_TIMEOUT_MS,
+    })
+  } catch {
+    return Response.json(
+      { ok: false, authenticated: false, user: null, message: "Backend unavailable" },
+      { status: 503 },
+    )
+  }
 
   const body = await response.arrayBuffer()
   const payload = JSON.parse(new TextDecoder().decode(body)) as {

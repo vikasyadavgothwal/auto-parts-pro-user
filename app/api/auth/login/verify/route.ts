@@ -10,7 +10,7 @@ const backendUrl = () => {
     );
   }
 
-  return new URL("/api/v1/user/auth/login", baseUrl);
+  return new URL("/api/v1/user/auth/login/verify", baseUrl);
 };
 
 const BACKEND_ACCESS_COOKIE =
@@ -20,27 +20,15 @@ const BACKEND_REFRESH_COOKIE =
 
 const dashboardCookieNames: Record<string, { access: string; refresh: string }> =
   {
-    Fleet: {
-      access: "fleet_access_token",
-      refresh: "fleet_refresh_token",
-    },
-    Garage: {
-      access: "garage_access_token",
-      refresh: "garage_refresh_token",
-    },
-    Supplier: {
-      access: "supplier_access_token",
-      refresh: "supplier_refresh_token",
-    },
+    Fleet: { access: "fleet_access_token", refresh: "fleet_refresh_token" },
+    Garage: { access: "garage_access_token", refresh: "garage_refresh_token" },
+    Supplier: { access: "supplier_access_token", refresh: "supplier_refresh_token" },
   };
 
 const getSetCookieHeaders = (headers: Headers): string[] => {
-  const enhancedHeaders = headers as Headers & {
-    getSetCookie?: () => string[];
-  };
+  const enhancedHeaders = headers as Headers & { getSetCookie?: () => string[] };
   const values = enhancedHeaders.getSetCookie?.();
   if (values?.length) return values;
-
   const combinedValue = headers.get("set-cookie");
   return combinedValue ? [combinedValue] : [];
 };
@@ -59,16 +47,11 @@ const rewriteSetCookieName = (value: string, nextName: string) => {
 const dashboardCookiesForRole = (values: string[], role: string | undefined) => {
   const names = role ? dashboardCookieNames[role] : undefined;
   if (!names) return [];
-
   return values
     .map((value) => {
       const name = setCookieName(value);
-      if (name === BACKEND_ACCESS_COOKIE) {
-        return rewriteSetCookieName(value, names.access);
-      }
-      if (name === BACKEND_REFRESH_COOKIE) {
-        return rewriteSetCookieName(value, names.refresh);
-      }
+      if (name === BACKEND_ACCESS_COOKIE) return rewriteSetCookieName(value, names.access);
+      if (name === BACKEND_REFRESH_COOKIE) return rewriteSetCookieName(value, names.refresh);
       return null;
     })
     .filter((value): value is string => Boolean(value));
@@ -77,7 +60,6 @@ const dashboardCookiesForRole = (values: string[], role: string | undefined) => 
 const cookieDomainForRequest = (request: Request) => {
   const configuredDomain = process.env.USER_COOKIE_DOMAIN?.trim();
   if (configuredDomain) return configuredDomain;
-
   const hostname = new URL(request.url).hostname.toLowerCase();
   return hostname.endsWith(".websitedesignersdubai.ae")
     ? ".websitedesignersdubai.ae"
@@ -88,7 +70,6 @@ const clearUserCookieValues = (request: Request) => {
   const domain = cookieDomainForRequest(request);
   const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
   const domainAttribute = domain ? `; Domain=${domain}` : "";
-
   return [BACKEND_ACCESS_COOKIE, BACKEND_REFRESH_COOKIE].map(
     (name) =>
       `${name}=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict${secure}${domainAttribute}`,
@@ -96,10 +77,7 @@ const clearUserCookieValues = (request: Request) => {
 };
 
 const parseJsonPayload = (body: ArrayBuffer, contentType: string | null) => {
-  if (!contentType?.toLowerCase().includes("application/json")) {
-    return null;
-  }
-
+  if (!contentType?.toLowerCase().includes("application/json")) return null;
   try {
     return JSON.parse(new TextDecoder().decode(body)) as {
       ok?: boolean;
@@ -132,48 +110,22 @@ export async function POST(request: Request) {
     headers,
     body: await request.text(),
   });
-
   const payloadBuffer = await backend.arrayBuffer();
-  const payload = parseJsonPayload(
-    payloadBuffer,
-    backend.headers.get("content-type"),
-  );
-  const issuedCookies = getSetCookieHeaders(backend.headers);
-
-  if (!payload) {
-    return Response.json(
-      {
-        ok: false,
-        success: false,
-        message:
-          "Backend login endpoint did not return JSON. Check NEXT_PUBLIC_BACKEND_URL or BACKEND_URL points to auto_parts_admin.",
-      },
-      { status: 502 },
-    );
-  }
-
+  const payload = parseJsonPayload(payloadBuffer, backend.headers.get("content-type"));
   const response = new Response(payloadBuffer, {
     status: backend.status,
     headers: {
       "content-type": backend.headers.get("content-type") ?? "application/json",
     },
   });
-  const retryAfter = backend.headers.get("retry-after");
-  if (retryAfter) response.headers.set("retry-after", retryAfter);
-  if (backend.ok && payload.ok) {
+  if (payload?.ok) {
+    const issuedCookies = getSetCookieHeaders(backend.headers);
     const role = payload.user?.activeRole;
-    const isPublicWebsiteUser =
-      role === "User" && payload.user?.roles?.includes("User");
+    const isPublicWebsiteUser = role === "User" && payload.user?.roles?.includes("User");
     const cookiesToSet = isPublicWebsiteUser
       ? issuedCookies
-      : [
-          ...dashboardCookiesForRole(issuedCookies, role),
-          ...clearUserCookieValues(request),
-        ];
-
-    for (const value of cookiesToSet) {
-      response.headers.append("set-cookie", value);
-    }
+      : [...dashboardCookiesForRole(issuedCookies, role), ...clearUserCookieValues(request)];
+    for (const value of cookiesToSet) response.headers.append("set-cookie", value);
   }
   return response;
 }

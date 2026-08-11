@@ -24,7 +24,7 @@ import { AuthLoginPhoneSend } from "@/components/site/auth/auth-login-phone-send
 import { AuthLoginPhoneVerify } from "@/components/site/auth/auth-login-phone-verify";
 import { AuthRegister } from "@/components/site/auth/auth-register";
 import { AuthResetPassword } from "@/components/site/auth/auth-reset-password";
-import type { AccountType } from "@/components/site/auth/auth-shared";
+import { AuthFeedback, type AccountType } from "@/components/site/auth/auth-shared";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -39,6 +39,7 @@ import {
   validateSignupDetails,
 } from "@/lib/account-registration";
 import {
+  getEphemeralFirebaseClientAuth,
   getFirebaseAuthDiagnostics,
   getFirebaseClientAuth,
   sendUserPasswordResetEmail,
@@ -47,11 +48,20 @@ import {
 import {
   establishApplicationSession,
   establishPasswordApplicationSession,
+  verifyBusinessLoginSession,
 } from "@/lib/user-auth";
 import { dashboardUrlForRole } from "@/lib/current-user";
 
 type AuthMode = "signin" | "signup" | "reset";
 type LoginMethod = "email" | "phone";
+type LoginMfaChallenge = {
+  challengeId: string;
+  method: "otp" | "pin_or_otp";
+  planCode: "Free" | "Pro" | "Enterprise";
+  hasPin: boolean;
+  message: string;
+  role: string;
+};
 
 const VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE =
   "Choose an account type to finish creating your account";
@@ -169,6 +179,10 @@ export function AuthModalCard({
   const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
+  const [businessLoginCode, setBusinessLoginCode] = useState("");
+  const [businessLoginMethod, setBusinessLoginMethod] = useState<"otp" | "pin">("otp");
+  const [businessLoginChallenge, setBusinessLoginChallenge] =
+    useState<LoginMfaChallenge | null>(null);
   const [confirmationResult, setConfirmationResult] =
     useState<ConfirmationResult | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -231,11 +245,22 @@ export function AuthModalCard({
       requestedRole,
       requestedDisplayName,
     );
+    if (session.mfa) {
+      setBusinessLoginChallenge({
+        ...session.mfa,
+        role: session.user.activeRole,
+      });
+      setBusinessLoginMethod(session.mfa.method === "pin_or_otp" && session.mfa.hasPin ? "pin" : "otp");
+      setBusinessLoginCode("");
+      setStatusMessage(session.mfa.message);
+      return;
+    }
     if (session.user.activeRole !== "User") {
       await signOut(getFirebaseClientAuth()).catch(() => undefined);
       window.location.assign(dashboardUrlForRole(session.user.activeRole));
       return;
     }
+    await signOut(getFirebaseClientAuth()).catch(() => undefined);
     router.refresh();
     onAuthenticated?.();
     onClose?.();
@@ -243,6 +268,16 @@ export function AuthModalCard({
 
   const finishPasswordAuthentication = async () => {
     const session = await establishPasswordApplicationSession(email, password);
+    if (session.mfa) {
+      setBusinessLoginChallenge({
+        ...session.mfa,
+        role: session.user.activeRole,
+      });
+      setBusinessLoginMethod(session.mfa.method === "pin_or_otp" && session.mfa.hasPin ? "pin" : "otp");
+      setBusinessLoginCode("");
+      setStatusMessage(session.mfa.message);
+      return;
+    }
     if (session.user.activeRole !== "User") {
       await signOut(getFirebaseClientAuth()).catch(() => undefined);
       window.location.assign(dashboardUrlForRole(session.user.activeRole));
@@ -299,7 +334,7 @@ export function AuthModalCard({
     event.preventDefault();
 
     void runAuthAction(async () => {
-      const auth = getFirebaseClientAuth();
+      const auth = await getEphemeralFirebaseClientAuth();
 
       if (mode === "signin") {
         let credential;
@@ -407,7 +442,7 @@ export function AuthModalCard({
 
   const handleGoogleSignIn = () => {
     void runAuthAction(async () => {
-      const auth = getFirebaseClientAuth();
+      const auth = await getEphemeralFirebaseClientAuth();
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: "select_account" });
       if (mode === "signup" && !acceptedTerms) {
@@ -470,7 +505,7 @@ export function AuthModalCard({
       let result: ConfirmationResult;
       try {
         result = await signInWithPhoneNumber(
-          getFirebaseClientAuth(),
+          await getEphemeralFirebaseClientAuth(),
           buildInternationalPhoneNumber(phoneCountryCode, phoneNumber),
           getPhoneRecaptchaVerifier(),
         );
@@ -539,6 +574,28 @@ export function AuthModalCard({
     });
   };
 
+  const handleBusinessLoginVerification = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    void runAuthAction(async () => {
+      if (!businessLoginChallenge) throw new Error("Sign in first.");
+      if (!/^\d{6}$/.test(businessLoginCode)) {
+        throw new Error("Enter the 6-digit verification code.");
+      }
+
+      const session = await verifyBusinessLoginSession({
+        challengeId: businessLoginChallenge.challengeId,
+        code: businessLoginCode,
+        method: businessLoginMethod,
+      });
+
+      await signOut(getFirebaseClientAuth()).catch(() => undefined);
+      onAuthenticated?.();
+      onClose?.();
+      window.location.assign(dashboardUrlForRole(session.user.activeRole));
+    });
+  };
+
   const readApiMessage = async (response: Response) => {
     const payload = (await response.json().catch(() => null)) as
       | { message?: string }
@@ -571,6 +628,8 @@ export function AuthModalCard({
     setLoginMethod("email");
     setVerificationUser(null);
     setPendingVerifiedUser(null);
+    setBusinessLoginChallenge(null);
+    setBusinessLoginCode("");
     setOtp("");
     resetFeedback();
   };
@@ -593,7 +652,9 @@ export function AuthModalCard({
           <div className="border-b border-border/70 bg-gradient-to-b from-primary/10 to-transparent p-5 pb-6 pr-14 sm:p-8 sm:pb-7 sm:pr-14">
             <div className="mb-6 text-center">
               <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
-                {pendingVerifiedUser
+                {businessLoginChallenge
+                  ? "Verify Login"
+                  : pendingVerifiedUser
                   ? "Finish Account Setup"
                   : mode === "reset"
                     ? "Reset Password"
@@ -602,7 +663,9 @@ export function AuthModalCard({
                     : "Get Started"}
               </h2>
               <p className="text-brand-muted">
-                {pendingVerifiedUser
+                {businessLoginChallenge
+                  ? businessLoginChallenge.message
+                  : pendingVerifiedUser
                   ? "Choose the account type that matches how you use AutoPartsPro."
                   : mode === "reset"
                     ? "Verify your email before changing your password"
@@ -612,7 +675,7 @@ export function AuthModalCard({
               </p>
             </div>
 
-            {!pendingVerifiedUser ? (
+            {!pendingVerifiedUser && !businessLoginChallenge ? (
               <div className="flex gap-2 rounded-xl border border-border bg-background p-1">
                 <ModeButton
                   active={mode === "signin"}
@@ -659,6 +722,65 @@ export function AuthModalCard({
               onTermsChange={setAcceptedTerms}
               onSubmit={handleCompleteVerifiedAccount}
             />
+          ) : businessLoginChallenge ? (
+            <div className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8">
+              <form onSubmit={handleBusinessLoginVerification} className="space-y-4">
+                {businessLoginChallenge.method === "pin_or_otp" ? (
+                  <div className="grid grid-cols-2 gap-2">
+                    {businessLoginChallenge.hasPin ? (
+                      <Button
+                        type="button"
+                        variant={businessLoginMethod === "pin" ? "default" : "outline"}
+                        onClick={() => setBusinessLoginMethod("pin")}
+                      >
+                        Use PIN
+                      </Button>
+                    ) : null}
+                    <Button
+                      type="button"
+                      variant={businessLoginMethod === "otp" ? "default" : "outline"}
+                      onClick={() => setBusinessLoginMethod("otp")}
+                    >
+                      Use OTP
+                    </Button>
+                  </div>
+                ) : null}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground" htmlFor="business-login-code">
+                    6-digit {businessLoginMethod === "pin" ? "PIN" : "OTP"}
+                  </label>
+                  <input
+                    id="business-login-code"
+                    value={businessLoginCode}
+                    onChange={(event) =>
+                      setBusinessLoginCode(event.target.value.replace(/\D/g, "").slice(0, 6))
+                    }
+                    inputMode="numeric"
+                    maxLength={6}
+                    className="h-12 w-full rounded-xl border border-border bg-background px-4 text-center text-lg tracking-[0.45em] outline-none focus:border-primary"
+                    placeholder="000000"
+                    required
+                  />
+                </div>
+                <Button type="submit" disabled={isSubmitting} className="h-11 w-full rounded-xl">
+                  {isSubmitting ? "Verifying..." : "Verify and continue"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={isSubmitting}
+                  onClick={() => {
+                    setBusinessLoginChallenge(null);
+                    setBusinessLoginCode("");
+                    resetFeedback();
+                  }}
+                  className="h-10 w-full rounded-xl"
+                >
+                  Use another account
+                </Button>
+              </form>
+              <AuthFeedback error={errorMessage} status={statusMessage} />
+            </div>
           ) : mode === "signin" ? (
             loginMethod === "email" ? (
               <AuthLoginEmail

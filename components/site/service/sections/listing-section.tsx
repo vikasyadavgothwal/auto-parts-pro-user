@@ -104,7 +104,7 @@ function buildPriceRangeOptions(garages: PublicGarageSummary[]): PriceRangeOptio
 
 function matchesPriceRange(price: number | null, priceRange: PriceRangeOption | undefined) {
   const priceValue = getPriceValue(price);
-  return Number.isFinite(priceValue) && Boolean(priceRange) && priceValue >= priceRange.min && priceValue <= priceRange.max;
+  return Number.isFinite(priceValue) && priceRange !== undefined && priceValue >= priceRange.min && priceValue <= priceRange.max;
 }
 
 function hasSelectedMatch(selectedItems: string[], availableItems: string[]) {

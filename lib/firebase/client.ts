@@ -1,8 +1,10 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   getAuth,
+  inMemoryPersistence,
   sendPasswordResetEmail,
   sendEmailVerification,
+  setPersistence,
   type ActionCodeSettings,
   type Auth,
   type User,
@@ -33,6 +35,12 @@ export function getFirebaseClientAuth(): Auth {
 
   const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
   return getAuth(app);
+}
+
+export async function getEphemeralFirebaseClientAuth(): Promise<Auth> {
+  const auth = getFirebaseClientAuth();
+  await setPersistence(auth, inMemoryPersistence);
+  return auth;
 }
 
 export function getFirebaseAuthDiagnostics() {

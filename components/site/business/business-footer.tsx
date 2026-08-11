@@ -62,6 +62,11 @@ export const BusinessFooter = () => {
                 </a>
               </li>
               <li>
+                <Link href="/developers/api" className="transition-colors hover:text-white">
+                  Developer API
+                </Link>
+              </li>
+              <li>
                 <a href="#" className="transition-colors hover:text-white">
                   Shipping Info
                 </a>

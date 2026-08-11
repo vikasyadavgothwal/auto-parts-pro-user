@@ -1,60 +1,23 @@
-const backendUrl = async (
-  request: Request,
-  context: { params: Promise<{ id: string }> },
-) => {
-  const { id } = await context.params;
-  const baseUrl =
-    process.env.PRIVATE_API_URL?.trim() ||
-    process.env.BACKEND_URL?.trim() ||
-    process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
-
-  if (!baseUrl) {
-    throw new Error(
-      "Missing API base URL. Set PRIVATE_API_URL, BACKEND_URL, or NEXT_PUBLIC_BACKEND_URL.",
-    );
-  }
-
-  return new URL(`/api/v1/user/addresses/${encodeURIComponent(id)}`, baseUrl);
-};
-
-async function forward(
-  request: Request,
-  context: { params: Promise<{ id: string }> },
-) {
-  const headers = new Headers({ accept: "application/json" });
-  const contentType = request.headers.get("content-type");
-  const cookie = request.headers.get("cookie");
-  if (contentType) headers.set("content-type", contentType);
-  if (cookie) headers.set("cookie", cookie);
-
-  const response = await fetch(await backendUrl(request, context), {
-    method: request.method,
-    cache: "no-store",
-    headers,
-    body: request.method === "DELETE" ? undefined : await request.arrayBuffer(),
-  });
-
-  return new Response(await response.arrayBuffer(), {
-    status: response.status,
-    headers: {
-      "content-type":
-        response.headers.get("content-type") ?? "application/json",
-    },
-  });
-}
+import { proxyToBackend } from "@/lib/backend-proxy"
 
 export const dynamic = "force-dynamic";
 
+type RouteContext = {
+  params: Promise<{ id: string }>
+}
+
 export async function PATCH(
   request: Request,
-  context: { params: Promise<{ id: string }> },
+  context: RouteContext,
 ) {
-  return forward(request, context);
+  const { id } = await context.params
+  return proxyToBackend(request, `/api/v1/user/addresses/${encodeURIComponent(id)}`)
 }
 
 export async function DELETE(
   request: Request,
-  context: { params: Promise<{ id: string }> },
+  context: RouteContext,
 ) {
-  return forward(request, context);
+  const { id } = await context.params
+  return proxyToBackend(request, `/api/v1/user/addresses/${encodeURIComponent(id)}`)
 }

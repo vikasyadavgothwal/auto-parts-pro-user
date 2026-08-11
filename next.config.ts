@@ -34,7 +34,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   turbopack: {
-    root: path.resolve(__dirname),
+    root: path.resolve(__dirname, ".."),
+  },
+  experimental: {
+    externalDir: true,
   },
   images: {
     remotePatterns: [
