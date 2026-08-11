@@ -28,6 +28,22 @@ const requiredConfig = [
   firebaseConfig.appId,
 ];
 
+const getMainSiteOrigin = (): string => {
+  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configuredSiteUrl) {
+    try {
+      const configuredUrl = new URL(configuredSiteUrl);
+      if (configuredUrl.hostname === window.location.hostname) {
+        return configuredUrl.origin;
+      }
+    } catch {
+      // Keep browser-local origin if the configured URL is temporarily malformed.
+    }
+  }
+
+  return window.location.origin;
+};
+
 export function getFirebaseClientAuth(): Auth {
   if (requiredConfig.some((value) => !value?.trim())) {
     throw new Error("Firebase client authentication is not configured.");
@@ -58,8 +74,7 @@ const getVerificationContinueUrl = (
   firebaseUid: string,
   role?: UserAccountRole,
 ): string => {
-  const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  const siteUrl = configuredSiteUrl || window.location.origin;
+  const siteUrl = getMainSiteOrigin();
   const url = new URL("/auth/email-verified", siteUrl);
 
   url.searchParams.set("uid", firebaseUid);
@@ -84,7 +99,7 @@ export async function sendUserEmailVerification(
 }
 
 export async function sendUserPasswordResetEmail(email: string): Promise<void> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || window.location.origin;
+  const siteUrl = getMainSiteOrigin();
   const continueUrl = `${siteUrl.replace(/\/+$/, "")}/?auth=signin`;
   const actionCodeSettings: ActionCodeSettings = {
     url: continueUrl,

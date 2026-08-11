@@ -210,6 +210,8 @@ export const marketplaceOffersToProductOffers = (
     shippingTime: offer.leadTime || "Confirm at checkout",
     deliveryDate: formatDeliveryDateFromLeadTime(offer.leadTime),
     recommended: offer.recommended,
+    verifiedSupplier: offer.verifiedSupplier,
+    featuredVendor: offer.featuredVendor,
     description:
       offer.content.longDescription ||
       offer.content.shortDescription ||

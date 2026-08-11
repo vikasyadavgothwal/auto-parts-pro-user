@@ -25,6 +25,8 @@ export type ProductOffer = {
   shippingTime: string
   deliveryDate?: string | null
   recommended: boolean
+  verifiedSupplier?: boolean
+  featuredVendor?: boolean
   description?: string | null
 }
 

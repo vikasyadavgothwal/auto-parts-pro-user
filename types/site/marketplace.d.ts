@@ -44,6 +44,8 @@ export type MarketplaceOffer = {
   ratingAverage: number
   reviewCount: number
   recommended: boolean
+  verifiedSupplier: boolean
+  featuredVendor: boolean
   ranking?: {
     relevance: number
     pricing: number

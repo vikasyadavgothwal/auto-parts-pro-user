@@ -3,9 +3,9 @@
 import { AddProductToCartButton } from "@/components/site/cart/add-product-to-cart-button";
 import {
   FitmentConfirmedIcon,
-  ShieldIcon,
   TruckIcon,
 } from "@/components/icons/site-icons";
+import { BadgeCheck, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { ProductOffer } from "@/types/site/product";
@@ -58,10 +58,18 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
               ) : null}
 
               <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
-                <div className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-0.5 text-xs text-green-600">
-                  <ShieldIcon className="h-3 w-3" />
-                  <span>Verified</span>
-                </div>
+                {offer.verifiedSupplier ? (
+                  <div className="inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-0.5 text-xs text-green-600">
+                    <BadgeCheck className="h-3 w-3" />
+                    <span>Verified Supplier</span>
+                  </div>
+                ) : null}
+                {offer.featuredVendor ? (
+                  <div className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-xs text-amber-700">
+                    <Star className="h-3 w-3" fill="currentColor" />
+                    <span>Featured Vendor</span>
+                  </div>
+                ) : null}
               </div>
 
               <div className="flex flex-wrap items-center gap-2 text-xs text-[#64748B]">
