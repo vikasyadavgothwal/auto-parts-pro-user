@@ -1,4 +1,3 @@
-import path from "node:path";
 import type { NextConfig } from "next";
 
 const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
@@ -33,12 +32,6 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  turbopack: {
-    root: path.resolve(__dirname, ".."),
-  },
-  experimental: {
-    externalDir: true,
-  },
   images: {
     remotePatterns: [
       {

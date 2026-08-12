@@ -1,4 +1,4 @@
-import { fetchWithTimeout } from "@shared/backend-proxy";
+import { fetchWithTimeout } from "@/lib/backend-proxy";
 
 const AUTH_REFRESH_TIMEOUT_MS = 4_000;
 const refreshCookieName =

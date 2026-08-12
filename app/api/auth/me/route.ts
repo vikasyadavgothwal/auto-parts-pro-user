@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server"
-import { fetchWithTimeout } from "@shared/backend-proxy"
+import { fetchWithTimeout } from "@/lib/backend-proxy"
 
 const accessCookieName =
   process.env.USER_ACCESS_COOKIE_NAME ?? "user_access_token"
