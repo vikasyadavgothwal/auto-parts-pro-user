@@ -14,7 +14,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatGaragePrice } from "@/lib/public-garages";
-import { galleryImages as fallbackGalleryImages } from "@/lib/data/service";
 import type { GarageDayHours, PublicGarageDetail } from "@/types/site/garages";
 
 type ServiceDetailPageProps = {
@@ -55,17 +54,17 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
   const certifications =
     garage.certifications.length > 0 ? garage.certifications : ["Verified Garage"];
   const services = garage.services;
+  const hasContact = Boolean(garage.mobile || garage.email);
+  const hasWorkingHours = garage.workingDays.length > 0;
+  const about = garage.about?.trim();
   const ratingLabel = garage.reviewCount
     ? garage.ratingAverage.toFixed(1)
     : "New";
   const reviewCountLabel = `${garage.reviewCount} review${garage.reviewCount === 1 ? "" : "s"}`;
-  const gallery =
-    garage.galleryImages.length > 0
-      ? garage.galleryImages.map((src, index) => ({
-          src,
-          alt: `${garage.name} gallery ${index + 1}`,
-        }))
-      : fallbackGalleryImages;
+  const gallery = garage.galleryImages.map((src, index) => ({
+    src,
+    alt: `${garage.name} gallery ${index + 1}`,
+  }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,68 +93,58 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
                   Book a Service
                 </h3>
 
-                <div className="mb-6 rounded-xl border border-border bg-background p-4">
-                  <div className="mb-3 flex items-center gap-3">
-                    <PhoneIcon className="h-5 w-5 text-primary" />
-                    <div>
-                      <div className="text-xs text-brand-muted">Call Us</div>
-                      {garage.mobile ? (
-                        <a
-                          href={`tel:${garage.mobile}`}
-                          className="font-medium text-foreground hover:text-primary"
-                        >
-                          {garage.mobile}
-                        </a>
-                      ) : (
-                        <span className="font-medium text-foreground">
-                          Not added
-                        </span>
-                      )}
-                    </div>
+                {hasContact ? (
+                  <div className="mb-6 rounded-xl border border-border bg-background p-4">
+                    {garage.mobile ? (
+                      <div className="mb-3 flex items-center gap-3">
+                        <PhoneIcon className="h-5 w-5 text-primary" />
+                        <div>
+                          <div className="text-xs text-brand-muted">Call Us</div>
+                          <a
+                            href={`tel:${garage.mobile}`}
+                            className="font-medium text-foreground hover:text-primary"
+                          >
+                            {garage.mobile}
+                          </a>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {garage.email ? (
+                      <div className="flex items-center gap-3">
+                        <MailIcon className="h-5 w-5 text-primary" />
+                        <div>
+                          <div className="text-xs text-brand-muted">Email</div>
+                          <a
+                            href={`mailto:${garage.email}`}
+                            className="text-sm font-medium text-foreground hover:text-primary"
+                          >
+                            {garage.email}
+                          </a>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
+                ) : null}
 
-                  <div className="flex items-center gap-3">
-                    <MailIcon className="h-5 w-5 text-primary" />
-                    <div>
-                      <div className="text-xs text-brand-muted">Email</div>
-                      {garage.email ? (
-                        <a
-                          href={`mailto:${garage.email}`}
-                          className="text-sm font-medium text-foreground hover:text-primary"
-                        >
-                          {garage.email}
-                        </a>
-                      ) : (
-                        <span className="text-sm font-medium text-foreground">
-                          Not added
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                {hasWorkingHours ? (
+                  <div className="mb-6">
+                    <h4 className="mb-3 text-sm font-semibold text-foreground">
+                      Working Hours
+                    </h4>
 
-                <div className="mb-6">
-                  <h4 className="mb-3 text-sm font-semibold text-foreground">
-                    Working Hours
-                  </h4>
-
-                  <div className="space-y-2">
-                    {garage.workingDays.length ? (
-                      garage.workingDays.map((day) => (
+                    <div className="space-y-2">
+                      {garage.workingDays.map((day) => (
                         <div key={day} className="flex justify-between gap-4 text-sm">
                           <span className="text-brand-muted">{day}</span>
                           <span className="text-right font-medium text-foreground">
                             {dayHours(day, garage.workingHoursByDay[day])}
                           </span>
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-sm text-brand-muted">
-                        Working hours not added
-                      </div>
-                    )}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                ) : null}
 
                 <Link
                   href={`/booking?garageId=${encodeURIComponent(garage.id)}`}
@@ -198,10 +187,12 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
                       </Badge>
                     </div>
 
-                    <div className="mb-4 flex items-center gap-2 text-brand-muted">
-                      <MapPinIcon className="h-5 w-5" />
-                      <span>{address || "Location not added"}</span>
-                    </div>
+                    {address ? (
+                      <div className="mb-4 flex items-center gap-2 text-brand-muted">
+                        <MapPinIcon className="h-5 w-5" />
+                        <span>{address}</span>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
 
@@ -261,16 +252,16 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
               </CardContent>
             </Card>
 
-            <Card className="rounded-2xl border border-border bg-card shadow-none">
-              <CardContent className="p-6 sm:p-8">
-                <h2 className="mb-4 text-2xl font-Inter text-foreground">
-                  About
-                </h2>
-                <p className="leading-relaxed text-brand-muted">
-                  {garage.about || "This garage has not added an about section yet."}
-                </p>
-              </CardContent>
-            </Card>
+            {about ? (
+              <Card className="rounded-2xl border border-border bg-card shadow-none">
+                <CardContent className="p-6 sm:p-8">
+                  <h2 className="mb-4 text-2xl font-Inter text-foreground">
+                    About
+                  </h2>
+                  <p className="leading-relaxed text-brand-muted">{about}</p>
+                </CardContent>
+              </Card>
+            ) : null}
 
             <Card className="rounded-2xl border border-border bg-card shadow-none">
               <CardContent className="p-6 sm:p-8">
@@ -381,24 +372,26 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
               </CardContent>
             </Card>
 
-            <Card className="rounded-2xl border-none bg-transparent shadow-none">
-              <CardContent className="p-6 sm:p-8">
-                <h2 className="mb-6 text-2xl font-Inter text-foreground">
-                  Gallery
-                </h2>
+            {gallery.length ? (
+              <Card className="rounded-2xl border-none bg-transparent shadow-none">
+                <CardContent className="p-6 sm:p-8">
+                  <h2 className="mb-6 text-2xl font-Inter text-foreground">
+                    Gallery
+                  </h2>
 
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                  {gallery.map((image) => (
-                    <div
-                      key={image.alt}
-                      className="aspect-video overflow-hidden rounded-xl bg-cover bg-center"
-                      style={{ backgroundImage: `url("${image.src}")` }}
-                      aria-label={image.alt}
-                    />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                    {gallery.map((image) => (
+                      <div
+                        key={image.alt}
+                        className="aspect-video overflow-hidden rounded-xl bg-cover bg-center"
+                        style={{ backgroundImage: `url("${image.src}")` }}
+                        aria-label={image.alt}
+                      />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null}
           </div>
         </div>
       </div>

@@ -2,12 +2,7 @@
 
 import Link from "next/link";
 
-import {
-  AwardIcon,
-  Clock3Icon,
-  MapPinIcon,
-  RatingStarIcon,
-} from "@/components/icons/site-icons";
+import { AwardIcon, Clock3Icon, MapPinIcon, RatingStarIcon } from "@/components/icons/site-icons";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -105,12 +100,12 @@ export function ListingItemCard({ garage }: { garage: PublicGarageSummary }) {
             {garage.name}
           </h3>
 
-          <div className="mb-4 flex items-center gap-2 text-sm text-[#9CA3AF]">
-            <MapPinIcon className="h-4 w-4 shrink-0" />
-            <span className="line-clamp-1">
-              {location || "Location not added"}
-            </span>
-          </div>
+          {location ? (
+            <div className="mb-4 flex items-center gap-2 text-sm text-[#9CA3AF]">
+              <MapPinIcon className="h-4 w-4 shrink-0" />
+              <span className="line-clamp-1">{location}</span>
+            </div>
+          ) : null}
 
           <span className="mb-2 block text-sm font-medium text-[#9CA3AF]">
             Specialties:
