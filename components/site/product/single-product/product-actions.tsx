@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { HeartIcon, ShareIcon } from "@/components/icons/site-icons";
 import { Button } from "@/components/ui/button";
@@ -24,21 +25,21 @@ const buttonClass =
   "h-12 flex-1 border-[#2A2A2A] bg-[#1A1A1A] p-3 text-white hover:border-[#DC2626] hover:bg-[#1A1A1A] md:p-0";
 
 export function ProductActions({ partUid, title }: ProductActionsProps) {
+  const resolvedPartUid = useMemo(() => partUid?.trim() || "", [partUid]);
   const [canSave, setCanSave] = useState(false);
   const [saved, setSaved] = useState(false);
   const [watchForPriceDrops, setWatchForPriceDrops] = useState(false);
   const [watchForStockReturns, setWatchForStockReturns] = useState(false);
   const [pending, setPending] = useState(false);
-  const [message, setMessage] = useState("");
 
   const shareUrl = useMemo(
     () =>
       typeof window === "undefined"
         ? ""
-        : partUid
-          ? `${window.location.origin}/product/${encodeURIComponent(partUid)}`
+        : resolvedPartUid
+          ? `${window.location.origin}/product/${encodeURIComponent(resolvedPartUid)}`
           : window.location.href,
-    [partUid],
+    [resolvedPartUid],
   );
 
   useEffect(() => {
@@ -48,11 +49,11 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
       const user = await getCurrentUser();
       if (!mounted) return;
       const isUser = user?.activeRole === "User" && user.roles.includes("User");
-      setCanSave(Boolean(partUid && isUser));
-      if (!partUid || !isUser) return;
+      setCanSave(Boolean(resolvedPartUid && isUser));
+      if (!resolvedPartUid || !isUser) return;
 
       const response = await siteAuthenticatedFetch(
-        `/api/saved-parts?partUid=${encodeURIComponent(partUid)}`,
+        `/api/saved-parts?partUid=${encodeURIComponent(resolvedPartUid)}`,
         { credentials: "include", cache: "no-store" },
       );
       const payload = (await response.json().catch(() => null)) as
@@ -72,12 +73,15 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
     return () => {
       mounted = false;
     };
-  }, [partUid]);
+  }, [resolvedPartUid]);
 
-  const updateSavedPart = async (nextSaved: boolean, patch?: { price?: boolean; stock?: boolean }) => {
-    if (!partUid || pending) return;
+  const updateSavedPart = async (
+    nextSaved: boolean,
+    patch?: { price?: boolean; stock?: boolean },
+    successMessage?: string,
+  ) => {
+    if (!resolvedPartUid || pending) return;
     setPending(true);
-    setMessage("");
 
     try {
       if (!nextSaved) {
@@ -85,27 +89,27 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
           method: "DELETE",
           credentials: "include",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ partUid }),
+          body: JSON.stringify({ partUid: resolvedPartUid }),
         });
         const payload = (await response.json().catch(() => null)) as
           | SavedStatusPayload
           | null;
-        if (!response.ok || payload?.ok === false) {
-          throw new Error(payload?.message || "Unable to update saved part.");
-        }
-        setSaved(false);
-        setWatchForPriceDrops(false);
-        setWatchForStockReturns(false);
-        setMessage("Removed from saved parts.");
-        return;
+      if (!response.ok || payload?.ok === false) {
+        throw new Error(payload?.message || "Unable to update saved part.");
       }
+      setSaved(false);
+      setWatchForPriceDrops(false);
+      setWatchForStockReturns(false);
+      toast.success(successMessage ?? "Part removed from saved parts.");
+      return;
+    }
 
       const response = await siteAuthenticatedFetch("/api/saved-parts", {
         method: "POST",
         credentials: "include",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          partUid,
+          partUid: resolvedPartUid,
           watchForPriceDrops:
             patch?.price ?? watchForPriceDrops,
           watchForStockReturns:
@@ -122,11 +126,9 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
       setSaved(true);
       setWatchForPriceDrops(Boolean(payload.watchForPriceDrops));
       setWatchForStockReturns(Boolean(payload.watchForStockReturns));
-      setMessage("Saved to your dashboard.");
+      toast.success(successMessage ?? "Part saved successfully.");
     } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : "Unable to update saved part.",
-      );
+      toast.error(error instanceof Error ? error.message : "Unable to update saved part.");
     } finally {
       setPending(false);
     }
@@ -134,8 +136,7 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
 
   const toggleWatchForPriceDrops = async () => {
     const nextValue = !watchForPriceDrops;
-    await updateSavedPart(true, { price: nextValue, stock: watchForStockReturns });
-    setMessage(
+    await updateSavedPart(true, { price: nextValue, stock: watchForStockReturns },
       nextValue
         ? "You will be notified on lower price drops."
         : "Price watch removed.",
@@ -144,59 +145,29 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
 
   const toggleWatchForStockReturns = async () => {
     const nextValue = !watchForStockReturns;
-    await updateSavedPart(true, { price: watchForPriceDrops, stock: nextValue });
-    setMessage(
+    await updateSavedPart(true, { price: watchForPriceDrops, stock: nextValue },
       nextValue
         ? "You will be notified when stock returns."
         : "Stock watch removed.",
     );
   };
 
-  useEffect(() => {
-    if (!message) return;
-    const timeout = window.setTimeout(() => setMessage(""), 5000);
-    return () => window.clearTimeout(timeout);
-  }, [message]);
-
   const shareProduct = async () => {
-    setMessage("");
     try {
       if (navigator.share) {
         await navigator.share({ title, url: shareUrl });
         return;
       }
       await navigator.clipboard.writeText(shareUrl);
-      setMessage("Product link copied.");
+      toast.success("Product link copied.");
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         return;
       }
-      setMessage("Unable to share this product.");
+      toast.error("Unable to share this product.");
     }
   };
 
-  const watchSection = canSave ? (
-    <div className="space-y-2 rounded-xl border border-[#2A2A2A] bg-[#1A1A1A] p-3">
-      <p className="text-xs text-[#9CA3AF]">Alerts for this saved part</p>
-      <label className="flex items-center gap-2 text-sm text-[#9CA3AF]">
-        <Checkbox
-          checked={watchForPriceDrops}
-          disabled={!saved || pending}
-          onCheckedChange={() => void toggleWatchForPriceDrops()}
-        />
-        <span>Watch for lower price</span>
-      </label>
-      <label className="flex items-center gap-2 text-sm text-[#9CA3AF]">
-        <Checkbox
-          checked={watchForStockReturns}
-          disabled={!saved || pending}
-          onCheckedChange={() => void toggleWatchForStockReturns()}
-        />
-        <span>Watch for stock return</span>
-      </label>
-      {!saved ? <p className="text-xs text-[#9CA3AF]">Save first to enable alerts.</p> : null}
-    </div>
-  ) : null;
 
   return (
     <div className="space-y-2">
@@ -223,8 +194,6 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
           Share
         </Button>
       </div>
-      {watchSection}
-      {message ? <p className="text-sm text-[#9CA3AF]">{message}</p> : null}
     </div>
   );
 }

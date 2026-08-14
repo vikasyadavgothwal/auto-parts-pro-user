@@ -24,13 +24,13 @@ const getSearchParam = (
 export default async function Search({ searchParams }: SearchPageRouteProps) {
   const params = await searchParams;
   const isConfirmedFitment = getSearchParam(params, "fitment") === "confirmed";
-  const partNumber = getSearchParam(params, "partNumber").trim();
-  const textQuery = getSearchParam(params, "q").trim();
-  const confirmedVin = getSearchParam(params, "vin").trim();
-  const confirmedModelId = getSearchParam(params, "modelId").trim();
-  const confirmedYear = getSearchParam(params, "year").trim();
-  const confirmedMake = getSearchParam(params, "make").trim();
-  const confirmedModel = getSearchParam(params, "model").trim();
+  const partNumber = getSearchParam(params, "partNumber").trim().slice(0, 120);
+  const textQuery = getSearchParam(params, "q").trim().slice(0, 120);
+  const confirmedVin = getSearchParam(params, "vin").trim().toUpperCase().slice(0, 17);
+  const confirmedModelId = getSearchParam(params, "modelId").trim().slice(0, 100);
+  const confirmedYear = getSearchParam(params, "year").trim().slice(0, 4);
+  const confirmedMake = getSearchParam(params, "make").trim().slice(0, 80);
+  const confirmedModel = getSearchParam(params, "model").trim().slice(0, 80);
   const confirmedVehicle =
     isConfirmedFitment && confirmedVin
       ? {

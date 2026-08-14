@@ -45,6 +45,7 @@ export function SuppliersSection() {
                 <SearchIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
                 <Input
                   type="text"
+                  maxLength={100}
                   placeholder="Search suppliers by name or specialty..."
                   className="h-12 bg-brand-surface py-3 pl-12 pr-4"
                 />

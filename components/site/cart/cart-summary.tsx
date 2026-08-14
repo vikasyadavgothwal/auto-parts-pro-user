@@ -4,6 +4,7 @@ import { type FormEvent } from "react";
 import { CheckCircle2, MapPin } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 
 export type UserAddress = {
   id: string;
@@ -41,9 +42,6 @@ const fieldClass = (hasError: boolean) =>
     hasError ? "border-destructive" : "border-border"
   }`;
 
-const FieldError = ({ message }: { message?: string }) =>
-  message ? <p className="text-xs text-destructive">{message}</p> : null;
-
 type CartSummaryProps = {
   productItemCount: number;
   serviceItemCount: number;
@@ -59,7 +57,6 @@ type CartSummaryProps = {
   addresses: UserAddress[];
   showAddressForm: boolean;
   addressForm: AddressForm;
-  addressError: string;
   addressFieldErrors: AddressFieldErrors;
   isLoadingAddresses: boolean;
   isSavingAddress: boolean;
@@ -89,7 +86,6 @@ export function CartSummary({
   addresses,
   showAddressForm,
   addressForm,
-  addressError,
   addressFieldErrors,
   isLoadingAddresses,
   isSavingAddress,
@@ -126,12 +122,6 @@ export function CartSummary({
               {showAddressForm ? "Cancel" : "Add address"}
             </Button>
           </div>
-
-          {addressError ? (
-            <p className="break-words rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {addressError}
-            </p>
-          ) : null}
 
           {isLoadingAddresses ? (
             <p className="text-sm text-brand-muted">Loading addresses...</p>
@@ -188,68 +178,70 @@ export function CartSummary({
               className="grid min-w-0 gap-4 rounded-lg border border-border bg-brand-surface p-3 sm:grid-cols-2 sm:p-4"
             >
               <label className="min-w-0 space-y-2 text-sm">
-                <span className="text-brand-muted">Address label</span>
+                <span className="text-brand-muted">Address label<RequiredMark /></span>
                 <input
                   value={addressForm.label}
                   onChange={(event) =>
                     onAddressFieldChange("label", event.target.value)
                   }
                   aria-invalid={Boolean(addressFieldErrors.label)}
+                  required
                   maxLength={60}
                   placeholder="Home, Office, Warehouse"
                   className={fieldClass(Boolean(addressFieldErrors.label))}
                 />
-                <FieldError message={addressFieldErrors.label} />
               </label>
               <label className="min-w-0 space-y-2 text-sm">
-                <span className="text-brand-muted">Recipient name</span>
+                <span className="text-brand-muted">Recipient name<RequiredMark /></span>
                 <input
                   value={addressForm.recipientName}
                   onChange={(event) =>
                     onAddressFieldChange("recipientName", event.target.value)
                   }
                   aria-invalid={Boolean(addressFieldErrors.recipientName)}
+                  required
                   maxLength={120}
                   autoComplete="name"
                   className={fieldClass(
                     Boolean(addressFieldErrors.recipientName),
                   )}
                 />
-                <FieldError message={addressFieldErrors.recipientName} />
               </label>
               <label className="min-w-0 space-y-2 text-sm">
-                <span className="text-brand-muted">Phone</span>
+                <span className="text-brand-muted">Phone<RequiredMark /></span>
                 <input
                   value={addressForm.phone}
                   onChange={(event) => onPhoneChange(event.target.value)}
                   aria-invalid={Boolean(addressFieldErrors.phone)}
+                  required
+                  maxLength={16}
                   autoComplete="tel"
                   inputMode="tel"
                   placeholder="+971..."
                   className={fieldClass(Boolean(addressFieldErrors.phone))}
                 />
-                <FieldError message={addressFieldErrors.phone} />
               </label>
               <label className="min-w-0 space-y-2 text-sm">
-                <span className="text-brand-muted">Postal code</span>
+                <span className="text-brand-muted">Postal code<RequiredMark /></span>
                 <input
                   value={addressForm.postalCode}
                   onChange={(event) => onPostalCodeChange(event.target.value)}
                   aria-invalid={Boolean(addressFieldErrors.postalCode)}
+                  required
                   autoComplete="postal-code"
                   maxLength={20}
                   className={fieldClass(Boolean(addressFieldErrors.postalCode))}
                 />
-                <FieldError message={addressFieldErrors.postalCode} />
               </label>
               <label className="min-w-0 space-y-2 text-sm sm:col-span-2">
-                <span className="text-brand-muted">Address line 1</span>
+                <span className="text-brand-muted">Address line 1<RequiredMark /></span>
                 <input
                   value={addressForm.addressLine1}
                   onChange={(event) =>
                     onAddressFieldChange("addressLine1", event.target.value)
                   }
                   aria-invalid={Boolean(addressFieldErrors.addressLine1)}
+                  required
                   autoComplete="address-line1"
                   maxLength={255}
                   placeholder="Building, street, area"
@@ -257,7 +249,6 @@ export function CartSummary({
                     Boolean(addressFieldErrors.addressLine1),
                   )}
                 />
-                <FieldError message={addressFieldErrors.addressLine1} />
               </label>
               <label className="min-w-0 space-y-2 text-sm sm:col-span-2">
                 <span className="text-brand-muted">Address line 2</span>
@@ -274,7 +265,6 @@ export function CartSummary({
                     Boolean(addressFieldErrors.addressLine2),
                   )}
                 />
-                <FieldError message={addressFieldErrors.addressLine2} />
               </label>
               <label className="min-w-0 space-y-2 text-sm sm:col-span-2">
                 <span className="text-brand-muted">Landmark</span>
@@ -288,49 +278,48 @@ export function CartSummary({
                   placeholder="Nearby landmark"
                   className={fieldClass(Boolean(addressFieldErrors.landmark))}
                 />
-                <FieldError message={addressFieldErrors.landmark} />
               </label>
               <label className="min-w-0 space-y-2 text-sm">
-                <span className="text-brand-muted">City</span>
+                <span className="text-brand-muted">City<RequiredMark /></span>
                 <input
                   value={addressForm.city}
                   onChange={(event) =>
                     onAddressFieldChange("city", event.target.value)
                   }
                   aria-invalid={Boolean(addressFieldErrors.city)}
+                  required
                   autoComplete="address-level2"
                   maxLength={120}
                   className={fieldClass(Boolean(addressFieldErrors.city))}
                 />
-                <FieldError message={addressFieldErrors.city} />
               </label>
               <label className="min-w-0 space-y-2 text-sm">
-                <span className="text-brand-muted">State</span>
+                <span className="text-brand-muted">State<RequiredMark /></span>
                 <input
                   value={addressForm.state}
                   onChange={(event) =>
                     onAddressFieldChange("state", event.target.value)
                   }
                   aria-invalid={Boolean(addressFieldErrors.state)}
+                  required
                   autoComplete="address-level1"
                   maxLength={120}
                   className={fieldClass(Boolean(addressFieldErrors.state))}
                 />
-                <FieldError message={addressFieldErrors.state} />
               </label>
               <label className="min-w-0 space-y-2 text-sm">
-                <span className="text-brand-muted">Country</span>
+                <span className="text-brand-muted">Country<RequiredMark /></span>
                 <input
                   value={addressForm.country}
                   onChange={(event) =>
                     onAddressFieldChange("country", event.target.value)
                   }
                   aria-invalid={Boolean(addressFieldErrors.country)}
+                  required
                   autoComplete="country-name"
                   maxLength={120}
                   className={fieldClass(Boolean(addressFieldErrors.country))}
                 />
-                <FieldError message={addressFieldErrors.country} />
               </label>
               <label className="flex min-w-0 items-center gap-2 self-end rounded-lg border border-border bg-brand-panel px-3 py-3 text-sm text-brand-muted">
                 <input

@@ -58,6 +58,7 @@ export function AuthCompleteAccount({
     <form
       className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8"
       onSubmit={onSubmit}
+      noValidate
     >
       <AccountSetupFields
         accountType={accountType}

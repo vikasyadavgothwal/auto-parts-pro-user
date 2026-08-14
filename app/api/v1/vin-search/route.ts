@@ -23,6 +23,8 @@ const getBackendBaseUrl = () => {
 const normalizeVin = (value: unknown) =>
   typeof value === 'string' ? value.trim().toUpperCase() : '';
 
+const isValidVin = (value: string) => /^[A-HJ-NPR-Z0-9]{17}$/.test(value);
+
 const readJsonBody = async (response: Response): Promise<unknown> => {
   try {
     return await response.json();
@@ -38,7 +40,7 @@ const parseRequestBody = async (
     const body = (await request.json()) as Partial<VinSearchRequest> | null;
     const vin = normalizeVin(body?.vin);
 
-    if (!vin) {
+    if (!isValidVin(vin)) {
       return null;
     }
 
@@ -53,7 +55,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   if (!body) {
     return NextResponse.json(
-      { error: 'VIN is required.' },
+      { error: 'VIN must contain exactly 17 valid characters.' },
       { status: 400 },
     );
   }

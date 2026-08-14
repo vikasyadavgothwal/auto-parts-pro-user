@@ -8,13 +8,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CountryPhoneInput } from "@/components/site/shared/country-phone-input";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 import { companyFields, vehicleFields } from "@/lib/data/request";
+import {
+  RFQ_COMPANY_NAME_MAX_LENGTH,
+  RFQ_CONTACT_NAME_MAX_LENGTH,
+  RFQ_EMAIL_MAX_LENGTH,
+  RFQ_MAX_PARTS,
+  RFQ_PART_NAME_MAX_LENGTH,
+  RFQ_PART_NOTES_MAX_LENGTH,
+  RFQ_PART_NUMBER_MAX_LENGTH,
+  RFQ_VEHICLE_TEXT_MAX_LENGTH,
+} from "@/lib/rfq-validation";
 
 const VIN_MAX_LENGTH = 17;
-export const RFQ_PART_NAME_MAX_LENGTH = 160;
-export const RFQ_PART_NUMBER_MAX_LENGTH = 100;
+const TARGET_PRICE_MAX_LENGTH = 12;
 
-const MAX_VEHICLE_YEAR = new Date().getFullYear() + 1;
+const decimalInput = (value: string) => {
+  const [whole = "", ...fractionParts] = value.replace(/[^\d.]/g, "").split(".");
+  const fraction = fractionParts.join("").slice(0, 2);
+  return fractionParts.length ? `${whole.slice(0, 9)}.${fraction}` : whole.slice(0, 9);
+};
+
 export type RfqVehicleOption = {
   id: string;
   label: string;
@@ -34,6 +49,7 @@ type TextFieldProps = {
   type?: HTMLInputTypeAttribute;
   min?: number;
   max?: number;
+  minLength?: number;
   maxLength?: number;
   value?: string;
   onChange?: (value: string) => void;
@@ -55,6 +71,7 @@ function TextField({
   type = "text",
   min,
   max,
+  minLength,
   maxLength,
   value,
   onChange,
@@ -63,20 +80,30 @@ function TextField({
     <div>
       <Label className="mb-2 block text-sm font-medium text-white">
         {label}
+        {required ? <RequiredMark /> : null}
       </Label>
 
       <Input
         name={name}
         required={required}
         type={type}
+        inputMode={name === "vehicleYear" ? "numeric" : undefined}
+        pattern={name === "vehicleYear" ? "[0-9]{4}" : undefined}
         min={min}
         max={max}
+        minLength={minLength}
         maxLength={maxLength}
         value={value}
         onChange={
           onChange
             ? (event) => onChange(event.target.value)
-            : name.toLowerCase().includes("vin")
+            : name === "vehicleYear"
+              ? (event) => {
+                  event.currentTarget.value = event.currentTarget.value
+                    .replace(/\D/g, "")
+                    .slice(0, 4);
+                }
+              : name.toLowerCase().includes("vin")
               ? (event) => {
                   event.currentTarget.value = event.currentTarget.value
                     .toUpperCase()
@@ -142,7 +169,10 @@ function PartRequestCard({
           </div>
 
           <div className="flex flex-col">
-            <Label className="mb-2">Part Name / Description</Label>
+            <Label className="mb-2">
+              Part Name / Description
+              <RequiredMark />
+            </Label>
             <Input
               name={`parts.${part.id}.name`}
               required
@@ -158,12 +188,15 @@ function PartRequestCard({
             <Label className="mb-2">Target Price (AED)</Label>
             <Input
               name={`parts.${part.id}.targetPrice`}
-              type="number"
-              min={0}
-              max={100000000}
-              step="0.01"
+              type="text"
+              inputMode="decimal"
+              pattern="[0-9]+(?:\.[0-9]{1,2})?"
+              maxLength={TARGET_PRICE_MAX_LENGTH}
               placeholder="0.00"
               defaultValue={part.targetPrice ?? ""}
+              onInput={(event) => {
+                event.currentTarget.value = decimalInput(event.currentTarget.value);
+              }}
               className="h-12 rounded-xl bg-brand-panel px-4 text-base"
             />
           </div>
@@ -181,15 +214,21 @@ function PartRequestCard({
           </div>
 
           <div className="flex flex-col">
-            <Label className="mb-2">Quantity</Label>
+            <Label className="mb-2">
+              Quantity
+              <RequiredMark />
+            </Label>
             <Input
               name={`parts.${part.id}.quantity`}
-              type="number"
-              min={1}
-              max={10000}
-              step={1}
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]{1,5}"
+              maxLength={5}
               required
               defaultValue={part.quantity ?? 1}
+              onInput={(event) => {
+                event.currentTarget.value = event.currentTarget.value.replace(/\D/g, "").slice(0, 5);
+              }}
               aria-label={`Part ${partNumber} quantity`}
               className="h-12 rounded-xl bg-brand-panel px-4 text-base"
             />
@@ -201,6 +240,7 @@ function PartRequestCard({
           <Textarea
             name={`parts.${part.id}.notes`}
             rows={2}
+            maxLength={RFQ_PART_NOTES_MAX_LENGTH}
             placeholder="Any specific requirements or preferences..."
             defaultValue={part.notes ?? ""}
             aria-label={`Part ${partNumber} requirements`}
@@ -243,13 +283,13 @@ export function CompanyInformationSection({
       </h2>
 
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-        <TextField name="companyName" label={companyFields[0]?.[0] ?? "Company Name"} placeholder={companyFields[0]?.[1]} required value={companyName} onChange={onCompanyNameChange} />
-        <TextField name="contactName" label={companyFields[1]?.[0] ?? "Contact Name"} placeholder={companyFields[1]?.[1]} required value={contactName} onChange={onContactNameChange} />
-        <TextField name="email" label={companyFields[2]?.[0] ?? "Email"} placeholder={companyFields[2]?.[1]} required type="email" value={email} onChange={onEmailChange} />
+        <TextField name="companyName" label={companyFields[0]?.[0] ?? "Company Name"} placeholder={companyFields[0]?.[1]} required minLength={2} maxLength={RFQ_COMPANY_NAME_MAX_LENGTH} value={companyName} onChange={onCompanyNameChange} />
+        <TextField name="contactName" label={companyFields[1]?.[0] ?? "Contact Name"} placeholder={companyFields[1]?.[1]} required minLength={2} maxLength={RFQ_CONTACT_NAME_MAX_LENGTH} value={contactName} onChange={onContactNameChange} />
+        <TextField name="email" label={companyFields[2]?.[0] ?? "Email"} placeholder={companyFields[2]?.[1]} required type="email" maxLength={RFQ_EMAIL_MAX_LENGTH} value={email} onChange={onEmailChange} />
         <CountryPhoneInput
           id="rfq-phone"
           name="phone"
-          label={companyFields[3]?.[0] ?? "Phone *"}
+          label={companyFields[3]?.[0] ?? "Phone"}
           countryCode={phoneCountryCode}
           phoneNumber={phoneNumber}
           onCountryCodeChange={onPhoneCountryCodeChange}
@@ -351,9 +391,8 @@ export function VehicleInformationSection({
               label={field.label}
               placeholder={field.placeholder}
               required={index < 3}
-              type={index === 0 ? "number" : "text"}
-              min={index === 0 ? 1886 : undefined}
-              max={index === 0 ? MAX_VEHICLE_YEAR : undefined}
+              type="text"
+              maxLength={index === 0 ? 4 : RFQ_VEHICLE_TEXT_MAX_LENGTH}
             />
           ))}
         </div>
@@ -375,6 +414,7 @@ export function PartsNeededSection({
   const [parts, setParts] = useState<PartRequest[]>([{ id: 1 }]);
 
   function handleAddPart() {
+    if (parts.length >= RFQ_MAX_PARTS) return;
     const id = nextPartId.current;
     nextPartId.current += 1;
     setParts((currentParts) => [...currentParts, { id }]);
@@ -416,10 +456,11 @@ export function PartsNeededSection({
           type="button"
           variant="outline"
           onClick={handleAddPart}
+          disabled={parts.length >= RFQ_MAX_PARTS}
           className="h-11 w-full rounded-xl border-primary/20 px-4 text-primary hover:bg-primary/10 sm:w-auto"
         >
           <PlusIcon className="h-4 w-4" />
-          Add Part
+          {parts.length >= RFQ_MAX_PARTS ? "20 parts maximum" : "Add Part"}
         </Button>
       </div>
 
@@ -431,7 +472,7 @@ export function PartsNeededSection({
               Import CSV or Excel
             </h3>
             <p className="text-sm text-brand-muted">
-              Columns: VIN No, Quantity, Target Price, Part Number, Part Name
+              Columns: VIN No, Quantity, Target Price, Part Number, Part Name. Maximum file size: 5 MB.
             </p>
           </div>
           <span className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-medium text-white">

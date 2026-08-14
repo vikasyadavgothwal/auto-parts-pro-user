@@ -9,7 +9,6 @@ import type {
 } from "@/types/site/booking";
 
 type ReviewStepProps = {
-  error?: string;
   garageName?: string;
   isSubmitting?: boolean;
   selectedDate?: BookingDateOption;
@@ -37,7 +36,6 @@ const advanceLabel = (advance: NonNullable<ReviewStepProps["advance"]>) =>
     : `Advance payment (${advance.value}%)`;
 
 export function ReviewStep({
-  error,
   garageName,
   isSubmitting = false,
   selectedDate,
@@ -136,12 +134,6 @@ export function ReviewStep({
           </div>
         </CardContent>
       </Card>
-
-      {error ? (
-        <div className="mb-4 rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-primary">
-          {error}
-        </div>
-      ) : null}
 
       <Button
         onClick={onConfirm}

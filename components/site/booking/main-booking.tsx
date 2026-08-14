@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "motion/react";
+import { toast } from "sonner";
 import { AuthModalCard } from "@/components/site/AuthModal";
 import { BookingActions } from "@/components/site/booking/booking-actions";
 import { BookingConfirmation } from "@/components/site/booking/booking-confirmation";
@@ -114,7 +115,6 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [vehicles, setVehicles] = useState<UserVehicleRecord[]>([]);
   const [isLoadingVehicles, setIsLoadingVehicles] = useState(false);
-  const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmedBooking, setConfirmedBooking] =
     useState<GarageBookingResult | null>(null);
@@ -167,9 +167,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
       setVehicles(payload.vehicles ?? []);
     } catch (error) {
       setVehicles([]);
-      setSubmitError(
-        error instanceof Error ? error.message : "Unable to load your saved cars",
-      );
+      toast.error(error instanceof Error ? error.message : "Unable to load your saved cars");
     } finally {
       setIsLoadingVehicles(false);
     }
@@ -221,7 +219,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
             : current,
         );
       })
-      .catch((error) => { if (active) setSubmitError(error instanceof Error ? error.message : "Unable to load available times"); })
+      .catch((error) => { if (active) toast.error(error instanceof Error ? error.message : "Unable to load available times"); })
       .finally(() => { if (active) setIsLoadingAvailability(false); });
     return () => { active = false; };
   }, [garage?.id, selection.serviceId, selection.date]);
@@ -230,14 +228,12 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
     key: Key,
     value: BookingSelection[Key],
   ) => {
-    setSubmitError("");
     setSelection((current) => ({
       ...current,
       [key]: value,
     }));
   };
   const handleSelectVehicle = (vehicle: UserVehicleRecord) => {
-    setSubmitError("");
     setSelection((current) => ({
       ...current,
       vehicleId: vehicle.id,
@@ -256,22 +252,20 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
 
   const handleConfirm = async () => {
     if (!garage || !selectedService || !selection.date || !selection.time) {
-      setSubmitError("Select a garage, service, date, and time before booking.");
+      toast.error("Select a garage, service, date, and time before booking.");
       return;
     }
     if (!vehicleDetailsComplete) {
-      setSubmitError("Select one of your saved cars before booking.");
+      toast.error("Select one of your saved cars before booking.");
       return;
     }
     if (!currentUser) {
       setIsAuthModalOpen(true);
-      setSubmitError("Login is required before booking a service.");
+      toast.error("Login is required before booking a service.");
       return;
     }
 
     setIsSubmitting(true);
-    setSubmitError("");
-
     try {
       const response = await siteAuthenticatedFetch("/api/garage-bookings", {
         method: "POST",
@@ -297,9 +291,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
       setPendingConfirmedBooking(payload.booking);
       setPaymentReceipt(payload.payment);
     } catch (error) {
-      setSubmitError(
-        error instanceof Error ? error.message : "Unable to confirm booking",
-      );
+      toast.error(error instanceof Error ? error.message : "Unable to confirm booking");
     } finally {
       setIsSubmitting(false);
     }
@@ -452,7 +444,6 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
       case "review":
         return (
           <ReviewStep
-            error={submitError}
             garageName={garage.name}
             isSubmitting={isSubmitting}
             selectedDate={selectedDate}
@@ -489,12 +480,6 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
       <div className="mx-auto max-w-4xl px-8 py-16">
         <AnimatePresence mode="wait">{renderStepContent()}</AnimatePresence>
 
-        {submitError && step !== "review" ? (
-          <div className="mt-6 rounded-xl border border-primary/30 bg-primary/10 p-4 text-sm text-primary">
-            {submitError}
-          </div>
-        ) : null}
-
         {step !== "review" && (
           <BookingActions
             canProceed={canProceed}
@@ -514,6 +499,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           </DialogHeader>
           <DialogFooter>
             <Button onClick={() => {
+              toast.success("Payment successful. Your garage booking is confirmed.");
               setConfirmedBooking(pendingConfirmedBooking);
               setPendingConfirmedBooking(null);
               setPaymentReceipt(undefined);

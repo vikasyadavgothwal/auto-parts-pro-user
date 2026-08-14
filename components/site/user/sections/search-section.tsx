@@ -3,6 +3,7 @@
 import { type FormEvent, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
 import { SearchIcon } from "@/components/icons/site-icons"
 
 import { Button } from "@/components/ui/button"
@@ -18,8 +19,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getPublicText, type TextPair } from "@/lib/public-content"
 import { lookupVin } from "@/lib/vin-search"
-import { GlobalMessageDialog } from "@/components/site/shared/global-message-dialog"
 import type { VinSearchVehicle } from "@/types/api/vin-search"
+import { RequiredMark } from "@/components/site/shared/required-mark"
 
 const VIN_MAX_LENGTH = 17
 const PART_SEARCH_MAX_LENGTH = 120
@@ -55,8 +56,6 @@ export function SearchSection({ config }: { config?: TextPair }) {
   const partNumberLabel = "Part Number, OEM Number, or Part Name"
   const [vin, setVin] = useState("")
   const [partNumber, setPartNumber] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false)
   const [confirmedVehicle, setConfirmedVehicle] =
     useState<VinSearchVehicle | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -66,20 +65,17 @@ export function SearchSection({ config }: { config?: TextPair }) {
       if (!result.ok) {
         setConfirmedVehicle(null)
         setDialogOpen(false)
-        setIsErrorDialogOpen(true)
-        setErrorMessage(result.error)
+        toast.error(result.error)
         return
       }
 
-      setErrorMessage("")
       setConfirmedVehicle(result.vehicle)
       setDialogOpen(true)
     },
     onError: () => {
       setConfirmedVehicle(null)
-      setErrorMessage("Unable to verify VIN right now. Please try again.")
+      toast.error("Unable to verify VIN right now. Please try again.")
       setDialogOpen(false)
-      setIsErrorDialogOpen(true)
     },
   })
   const formattedMake = useMemo(
@@ -89,12 +85,9 @@ export function SearchSection({ config }: { config?: TextPair }) {
 
   const onVinSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setErrorMessage("")
-    setIsErrorDialogOpen(false)
     const normalizedVin = vin.trim().toUpperCase()
     if (normalizedVin.length !== VIN_MAX_LENGTH) {
-      setErrorMessage("VIN must contain exactly 17 valid characters.")
-      setIsErrorDialogOpen(true)
+      toast.error("VIN must contain exactly 17 valid characters.")
       return
     }
     vinSearch.mutate(normalizedVin)
@@ -105,13 +98,11 @@ export function SearchSection({ config }: { config?: TextPair }) {
     const normalizedPartNumber = partNumber.trim()
 
     if (!normalizedPartNumber) {
-      setErrorMessage("Enter a part number, OEM number, or part name before searching.")
-      setIsErrorDialogOpen(true)
+      toast.error("Enter a part number, OEM number, or part name before searching.")
       return
     }
     if (normalizedPartNumber.length > PART_SEARCH_MAX_LENGTH) {
-      setErrorMessage(`Part number, OEM number, or part name must be ${PART_SEARCH_MAX_LENGTH} characters or fewer.`)
-      setIsErrorDialogOpen(true)
+      toast.error(`Part number, OEM number, or part name must be ${PART_SEARCH_MAX_LENGTH} characters or fewer.`)
       return
     }
 
@@ -139,7 +130,7 @@ export function SearchSection({ config }: { config?: TextPair }) {
                 htmlFor="home-vin-search"
                 className="mb-2 block text-sm font-medium text-brand-muted"
               >
-                {vinLabel}
+                <span>{vinLabel}<RequiredMark /></span>
               </Label>
               <Input
                 id="home-vin-search"
@@ -154,6 +145,7 @@ export function SearchSection({ config }: { config?: TextPair }) {
                   )
                 }
                 maxLength={VIN_MAX_LENGTH}
+                required
                 placeholder="Enter Vehicle Identification Number (VIN) (e.g., 1HGBH41JXMN109186)"
                 className="h-14 bg-brand-panel px-5 text-base rounded-sm"
                 autoComplete="off"
@@ -178,7 +170,7 @@ export function SearchSection({ config }: { config?: TextPair }) {
           >
             <div className="flex-1">
               <Label className="mb-2 block text-sm font-medium text-brand-muted">
-                {partNumberLabel}
+                <span>{partNumberLabel}<RequiredMark /></span>
               </Label>
               <Input
                 type="text"
@@ -187,6 +179,7 @@ export function SearchSection({ config }: { config?: TextPair }) {
                   setPartNumber(event.target.value.slice(0, PART_SEARCH_MAX_LENGTH))
                 }
                 maxLength={PART_SEARCH_MAX_LENGTH}
+                required
                 placeholder="Enter part number, OEM number, or part name"
                 className="h-14 bg-brand-panel px-5 text-base rounded-sm"
                 autoComplete="off"
@@ -205,16 +198,6 @@ export function SearchSection({ config }: { config?: TextPair }) {
           </form>
         </div>
       </div>
-      <GlobalMessageDialog
-        open={isErrorDialogOpen}
-        title="VIN Error"
-        message={errorMessage}
-        onClose={() => {
-          setIsErrorDialogOpen(false)
-          setErrorMessage("")
-        }}
-      />
-
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="border border-border bg-brand-surface text-white sm:max-w-lg">
           <DialogHeader>

@@ -32,7 +32,7 @@ export function AuthLoginPhoneSend({
 }) {
   return (
     <div className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8">
-      <form onSubmit={onSendOtp}>
+      <form onSubmit={onSendOtp} noValidate>
         <AuthMethodHeading
           title="Sign in with mobile"
           description="We’ll send a secure one-time code to your phone."

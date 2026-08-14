@@ -1,7 +1,10 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 import { cn } from "@/lib/utils";
 
 export const PHONE_COUNTRY_OPTIONS = [
@@ -33,7 +36,7 @@ export const isValidInternationalPhoneNumber = (value: string) =>
 
 type CountryPhoneInputProps = {
   id: string;
-  label?: string;
+  label?: ReactNode;
   name?: string;
   countryCode: string;
   phoneNumber: string;
@@ -68,7 +71,7 @@ export function CountryPhoneInput({
     <div className={cn("grid gap-2", className)}>
       {label ? (
         <Label htmlFor={id} className={labelClassName}>
-          {label}
+          <span>{label}{required ? <RequiredMark /> : null}</span>
         </Label>
       ) : null}
       {name ? <input type="hidden" name={name} value={fullPhoneNumber} /> : null}

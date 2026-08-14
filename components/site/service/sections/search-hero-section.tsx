@@ -35,6 +35,7 @@ export function SearchHeroSection({
                 name="service"
                 type="text"
                 defaultValue={serviceQuery}
+                maxLength={100}
                 placeholder="What service do you need?"
                 className="h-auto border-none bg-transparent px-0 shadow-none focus-visible:ring-0"
               />
@@ -45,6 +46,7 @@ export function SearchHeroSection({
                 name="location"
                 type="text"
                 defaultValue={locationQuery}
+                maxLength={100}
                 placeholder="Enter ZIP code or city"
                 className="h-auto border-none bg-transparent px-0 shadow-none focus-visible:ring-0"
               />

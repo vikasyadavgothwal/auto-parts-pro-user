@@ -23,9 +23,9 @@ type ServicePageProps = {
 
 export default async function ServicePage({ searchParams }: ServicePageProps) {
   const params = await searchParams
-  const searchQuery = typeof params.q === "string" ? params.q.trim() : ""
-  const serviceQuery = typeof params.service === "string" ? params.service.trim() : ""
-  const locationQuery = typeof params.location === "string" ? params.location.trim() : ""
+  const searchQuery = typeof params.q === "string" ? params.q.trim().slice(0, 100) : ""
+  const serviceQuery = typeof params.service === "string" ? params.service.trim().slice(0, 100) : ""
+  const locationQuery = typeof params.location === "string" ? params.location.trim().slice(0, 100) : ""
   const page = typeof params.page === "string" ? params.page : "1"
   const garageResponse = await listPublicGarages({
     q: searchQuery,

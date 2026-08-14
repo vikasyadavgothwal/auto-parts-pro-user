@@ -3,6 +3,7 @@ import { BookingStepFrame } from "@/components/site/booking/booking-step-frame";
 import { Card, CardContent } from "@/components/ui/card";
 import { bookingServices } from "@/lib/data/booking";
 import type { BookingService } from "@/types/site/booking";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 
 type ServiceStepProps = {
   onSelectService: (serviceId: string) => void;
@@ -18,7 +19,7 @@ export function ServiceStep({
   return (
     <BookingStepFrame stepId="service">
       <h2 className="mb-2 text-3xl font-bold text-foreground">
-        Select a Service
+        Select a Service<RequiredMark />
       </h2>
       <p className="mb-8 text-brand-muted">Choose the service you need</p>
 

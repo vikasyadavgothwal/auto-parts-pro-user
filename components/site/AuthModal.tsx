@@ -51,6 +51,7 @@ import {
   verifyBusinessLoginSession,
 } from "@/lib/user-auth";
 import { dashboardUrlForRole } from "@/lib/current-user";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 
 type AuthMode = "signin" | "signup" | "reset";
 type LoginMethod = "email" | "phone";
@@ -158,6 +159,9 @@ const isVerifiedAccountRoleRequired = (error: unknown) =>
 const sanitizeSingleLine = (value: string, maximum: number) =>
   value.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").slice(0, maximum);
 
+const validEmail = (value: string) =>
+  value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
 export function AuthModalCard({
   onAuthenticated,
   onClose,
@@ -170,6 +174,7 @@ export function AuthModalCard({
   const [accountType, setAccountType] = useState<AccountType>("User");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [supplierContactPerson, setSupplierContactPerson] = useState("");
@@ -334,6 +339,16 @@ export function AuthModalCard({
     event.preventDefault();
 
     void runAuthAction(async () => {
+      const normalizedEmail = email.trim();
+      if (!validEmail(normalizedEmail)) {
+        throw new Error("Enter a valid email address.");
+      }
+      if (password.length < 8 || password.length > 128) {
+        throw new Error("Password must contain 8 to 128 characters.");
+      }
+      if (mode === "signup" && password !== confirmPassword) {
+        throw new Error("Passwords do not match.");
+      }
       const auth = await getEphemeralFirebaseClientAuth();
 
       if (mode === "signin") {
@@ -341,7 +356,7 @@ export function AuthModalCard({
         try {
           credential = await signInWithEmailAndPassword(
             auth,
-            email.trim(),
+            normalizedEmail,
             password,
           );
         } catch (firebaseError) {
@@ -387,7 +402,7 @@ export function AuthModalCard({
 
       const credential = await createUserWithEmailAndPassword(
         auth,
-        email.trim(),
+        normalizedEmail,
         password,
       );
       await updateProfile(credential.user, { displayName });
@@ -525,6 +540,9 @@ export function AuthModalCard({
       if (!confirmationResult) {
         throw new Error("Request a verification code first.");
       }
+      if (!/^\d{6}$/.test(otp)) {
+        throw new Error("Enter the 6-digit verification code.");
+      }
 
       const credential = await confirmationResult.confirm(otp.trim());
       await finishVerifiedProviderAuthentication(credential.user, true);
@@ -607,16 +625,20 @@ export function AuthModalCard({
     event.preventDefault();
 
     void runAuthAction(async () => {
+      const normalizedEmail = email.trim();
+      if (!validEmail(normalizedEmail)) {
+        throw new Error("Enter a valid email address.");
+      }
       const response = await fetch("/api/auth/password-reset/request", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email: email.trim() }),
+        body: JSON.stringify({ email: normalizedEmail }),
       });
       const message = await readApiMessage(response);
       if (!response.ok) {
         throw new Error(message || "Unable to send password reset link");
       }
-      await sendUserPasswordResetEmail(email.trim());
+      await sendUserPasswordResetEmail(normalizedEmail);
       setOtp("");
       setPassword("");
       setStatusMessage("Password reset link sent by Firebase.");
@@ -631,6 +653,7 @@ export function AuthModalCard({
     setBusinessLoginChallenge(null);
     setBusinessLoginCode("");
     setOtp("");
+    setConfirmPassword("");
     resetFeedback();
   };
 
@@ -724,7 +747,7 @@ export function AuthModalCard({
             />
           ) : businessLoginChallenge ? (
             <div className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8">
-              <form onSubmit={handleBusinessLoginVerification} className="space-y-4">
+              <form onSubmit={handleBusinessLoginVerification} noValidate className="space-y-4">
                 {businessLoginChallenge.method === "pin_or_otp" ? (
                   <div className="grid grid-cols-2 gap-2">
                     {businessLoginChallenge.hasPin ? (
@@ -747,7 +770,7 @@ export function AuthModalCard({
                 ) : null}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground" htmlFor="business-login-code">
-                    6-digit {businessLoginMethod === "pin" ? "PIN" : "OTP"}
+                    6-digit {businessLoginMethod === "pin" ? "PIN" : "OTP"}<RequiredMark />
                   </label>
                   <input
                     id="business-login-code"
@@ -756,7 +779,10 @@ export function AuthModalCard({
                       setBusinessLoginCode(event.target.value.replace(/\D/g, "").slice(0, 6))
                     }
                     inputMode="numeric"
+                    pattern="[0-9]{6}"
+                    minLength={6}
                     maxLength={6}
+                    autoComplete="one-time-code"
                     className="h-12 w-full rounded-xl border border-border bg-background px-4 text-center text-lg tracking-[0.45em] outline-none focus:border-primary"
                     placeholder="000000"
                     required
@@ -861,6 +887,7 @@ export function AuthModalCard({
               supplierPhoneNumber={supplierPhoneNumber}
               email={email}
               password={password}
+              confirmPassword={confirmPassword}
               showPassword={showPassword}
               acceptedTerms={acceptedTerms}
               isSubmitting={isSubmitting}
@@ -881,6 +908,7 @@ export function AuthModalCard({
               onSupplierPhoneNumberChange={setSupplierPhoneNumber}
               onEmailChange={(value) => setEmail(sanitizeSingleLine(value, 254))}
               onPasswordChange={(value) => setPassword(value.slice(0, 128))}
+              onConfirmPasswordChange={(value) => setConfirmPassword(value.slice(0, 128))}
               onTogglePassword={() => setShowPassword((value) => !value)}
               onTermsChange={setAcceptedTerms}
               onSubmit={handleEmailSubmit}

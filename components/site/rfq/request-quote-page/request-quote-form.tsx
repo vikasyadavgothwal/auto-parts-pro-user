@@ -1,9 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { toast } from "sonner";
 
 import { AuthModalCard } from "@/components/site/AuthModal";
-import { PHONE_COUNTRY_OPTIONS } from "@/components/site/shared/country-phone-input";
+import {
+  PHONE_COUNTRY_OPTIONS,
+  isValidInternationalPhoneNumber,
+} from "@/components/site/shared/country-phone-input";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,11 +22,21 @@ import {
   CompanyInformationSection,
   type ImportedRfqPart,
   PartsNeededSection,
-  RFQ_PART_NAME_MAX_LENGTH,
-  RFQ_PART_NUMBER_MAX_LENGTH,
   type RfqVehicleOption,
   VehicleInformationSection,
 } from "./form-sections";
+import {
+  hasMeaningfulText,
+  isValidRfqEmail,
+  isValidRfqTargetPrice,
+  RFQ_COMPANY_NAME_MAX_LENGTH,
+  RFQ_CONTACT_NAME_MAX_LENGTH,
+  RFQ_MAX_PARTS,
+  RFQ_PART_NAME_MAX_LENGTH,
+  RFQ_PART_NOTES_MAX_LENGTH,
+  RFQ_PART_NUMBER_MAX_LENGTH,
+  validateRfqImportFile,
+} from "@/lib/rfq-validation";
 
 type UserVehiclesResponse = {
   ok: boolean;
@@ -116,8 +130,6 @@ const mapFleetVehicle = (
 const cleanText = (value: string) => value.trim().replace(/\s+/g, " ");
 
 const validVin = (value: string) => /^[A-HJ-NPR-Z0-9]{17}$/.test(value);
-const maxParts = 20;
-
 const profileName = (user: UserAuthProfile) =>
   [user.firstName, user.lastName].filter(Boolean).join(" ") ||
   user.email ||
@@ -137,8 +149,6 @@ const splitPhone = (value: string | null | undefined) => {
 
 export function RequestQuoteForm() {
   const [pending, setPending] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserAuthProfile | null>(null);
   const [vehicles, setVehicles] = useState<RfqVehicleOption[]>([]);
@@ -214,7 +224,7 @@ export function RequestQuoteForm() {
       );
       setIsLoadingVehicles(false);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to load saved vehicles");
+      toast.error(caught instanceof Error ? caught.message : "Unable to load saved vehicles");
       setVehicles([]);
       setSelectedVehicleId("");
       setIsLoadingVehicles(false);
@@ -231,9 +241,10 @@ export function RequestQuoteForm() {
 
   async function importRfqFile(file: File) {
     setIsImporting(true);
-    setError("");
-    setMessage("");
     try {
+      const fileError = validateRfqImportFile(file);
+      if (fileError) throw new Error(fileError);
+
       const body = new FormData();
       body.set("file", file);
       const response = await siteAuthenticatedFetch("/api/rfqs/import", {
@@ -245,8 +256,8 @@ export function RequestQuoteForm() {
       if (!response.ok || !result.ok || !result.parts?.length) {
         throw new Error(result.message ?? "Unable to import RFQ file");
       }
-      if (result.parts.length > maxParts) {
-        throw new Error(`An RFQ can include up to ${maxParts} parts.`);
+      if (result.parts.length > RFQ_MAX_PARTS) {
+        throw new Error(`An RFQ can include up to ${RFQ_MAX_PARTS} parts.`);
       }
       const importedVin = result.vin?.trim().toUpperCase();
       if (importedVin) {
@@ -263,7 +274,7 @@ export function RequestQuoteForm() {
       }));
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "Unable to import RFQ file";
-      setError(message);
+      toast.error(message);
       throw new Error(message);
     } finally {
       setIsImporting(false);
@@ -275,20 +286,26 @@ export function RequestQuoteForm() {
     const activeUser = currentUser ?? (await getCurrentUser());
     if (!activeUser) {
       setIsAuthModalOpen(true);
-      setError("Sign in with a User or Fleet account to submit an RFQ.");
-      setMessage("");
+      toast.error("Sign in with a User or Fleet account to submit an RFQ.");
       return;
     }
     if (activeUser.activeRole !== "User" && activeUser.activeRole !== "Fleet") {
-      setError(
+      toast.error(
         "Only User and Fleet accounts can submit RFQs.",
       );
-      setMessage("");
       return;
     }
 
     const form = event.currentTarget;
-    if (!form.reportValidity()) return;
+    if (!form.checkValidity()) {
+      const invalidField = form.querySelector(":invalid") as
+        | HTMLInputElement
+        | HTMLTextAreaElement
+        | null;
+      toast.error(invalidField?.validationMessage || "Check the required RFQ fields.");
+      invalidField?.focus();
+      return;
+    }
     const values = new FormData(form);
     const selectedVehicle = vehicles.find((vehicle) => vehicle.id === selectedVehicleId);
     const partIds = Array.from(values.keys())
@@ -302,9 +319,8 @@ export function RequestQuoteForm() {
       targetPrice: String(values.get(`parts.${id}.targetPrice`) ?? ""),
       notes: String(values.get(`parts.${id}.notes`) ?? ""),
     }));
-    if (parts.length > maxParts) {
-      setError(`An RFQ can include up to ${maxParts} parts.`);
-      setMessage("");
+    if (parts.length > RFQ_MAX_PARTS) {
+      toast.error(`An RFQ can include up to ${RFQ_MAX_PARTS} parts.`);
       return;
     }
     const deadline = new Date();
@@ -317,13 +333,13 @@ export function RequestQuoteForm() {
     const selectedVin = selectedVehicle?.vin.trim().toUpperCase() ?? "";
     const currentYear = new Date().getFullYear();
     const validationError =
-      submittedCompanyName.trim().length < 2
-        ? "Company name must contain at least 2 characters."
-        : submittedContactName.length < 2
-          ? "Contact name must contain at least 2 characters."
-            : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(submittedEmail)
+      !hasMeaningfulText(submittedCompanyName, 2, RFQ_COMPANY_NAME_MAX_LENGTH)
+        ? `Company name must contain 2 to ${RFQ_COMPANY_NAME_MAX_LENGTH} characters.`
+        : !hasMeaningfulText(submittedContactName, 2, RFQ_CONTACT_NAME_MAX_LENGTH)
+          ? `Contact name must contain 2 to ${RFQ_CONTACT_NAME_MAX_LENGTH} characters.`
+            : !isValidRfqEmail(submittedEmail)
               ? "Enter a valid email address."
-              : !/^\+\d{8,18}$/.test(phone)
+              : !isValidInternationalPhoneNumber(phone)
                 ? "Enter a valid phone number with country code."
               : !selectedVehicle && parts.some((part) => !part.vehicleVin)
                 ? "Select a saved vehicle or enter a valid VIN for every part."
@@ -340,12 +356,19 @@ export function RequestQuoteForm() {
                         ? "Vehicle make is required."
                         : selectedVehicle && !selectedVehicle.model.trim()
                           ? "Vehicle model is required."
-                          : parts.some((part) => part.partName.trim().length < 2)
+                    : parts.some(
+                        (part) =>
+                          !hasMeaningfulText(
+                            part.partName,
+                            2,
+                            RFQ_PART_NAME_MAX_LENGTH,
+                          ),
+                      )
                         ? "Every part must have a valid part name."
-                        : parts.some((part) => part.partName.trim().length > RFQ_PART_NAME_MAX_LENGTH)
-                          ? `Part name must be ${RFQ_PART_NAME_MAX_LENGTH} characters or fewer.`
-                          : parts.some((part) => part.partNumber.trim().length > RFQ_PART_NUMBER_MAX_LENGTH)
+                        : parts.some((part) => part.partNumber.trim().length > RFQ_PART_NUMBER_MAX_LENGTH)
                             ? `Part number or OEM number must be ${RFQ_PART_NUMBER_MAX_LENGTH} characters or fewer.`
+                        : parts.some((part) => part.notes.trim().length > RFQ_PART_NOTES_MAX_LENGTH)
+                          ? `Additional notes must be ${RFQ_PART_NOTES_MAX_LENGTH} characters or fewer per part.`
                         : parts.some(
                             (part) =>
                               !Number.isInteger(part.quantity) ||
@@ -356,14 +379,12 @@ export function RequestQuoteForm() {
                           : parts.some(
                               (part) =>
                                 part.targetPrice !== "" &&
-                                (!Number.isFinite(Number(part.targetPrice)) ||
-                                  Number(part.targetPrice) < 0),
+                                !isValidRfqTargetPrice(part.targetPrice),
                             )
-                            ? "Target prices must be valid non-negative amounts."
+                            ? "Target prices must be valid amounts with no more than 2 decimal places."
                             : "";
     if (validationError) {
-      setError(validationError);
-      setMessage("");
+      toast.error(validationError);
       return;
     }
 
@@ -385,13 +406,11 @@ export function RequestQuoteForm() {
       );
       const lookup = (await lookupResponse.json()) as VinLookupResponse;
       if (!lookupResponse.ok || !lookup.ok) {
-        setError(lookup.message ?? `Unable to validate VIN ${vinToResolve}.`);
-        setMessage("");
+        toast.error(lookup.message ?? `Unable to validate VIN ${vinToResolve}.`);
         return;
       }
       if (!lookup.found || !lookup.vehicle) {
-        setError(`VIN ${vinToResolve} was not found. Correct it before submitting.`);
-        setMessage("");
+        toast.error(`VIN ${vinToResolve} was not found. Correct it before submitting.`);
         return;
       }
       resolvedVehicles.push(lookup.vehicle);
@@ -419,8 +438,7 @@ export function RequestQuoteForm() {
           }
         : null;
     if (!primaryVehicle) {
-      setError(`VIN ${primaryVin} was not found. Correct it before submitting.`);
-      setMessage("");
+      toast.error(`VIN ${primaryVin} was not found. Correct it before submitting.`);
       return;
     }
 
@@ -460,8 +478,6 @@ export function RequestQuoteForm() {
     body.set("payload", JSON.stringify(payload));
 
     setPending(true);
-    setError("");
-    setMessage("");
     try {
       const response = await siteAuthenticatedFetch("/api/rfqs", {
         method: "POST",
@@ -471,9 +487,9 @@ export function RequestQuoteForm() {
       const result = await response.json();
       if (!response.ok || !result.ok) throw new Error(result.message ?? "Unable to submit RFQ");
       form.reset();
-      setMessage("Quote request submitted to suppliers successfully.");
+      toast.success("Quote request submitted to suppliers successfully.");
     } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Unable to submit RFQ");
+      toast.error(submitError instanceof Error ? submitError.message : "Unable to submit RFQ");
     } finally {
       setPending(false);
     }
@@ -481,7 +497,7 @@ export function RequestQuoteForm() {
 
   return (
     <>
-      <form className="space-y-6 sm:space-y-8" onSubmit={submit}>
+      <form noValidate className="space-y-6 sm:space-y-8" onSubmit={submit}>
         <CompanyInformationSection
           companyName={companyName}
           contactName={contactName}
@@ -506,8 +522,6 @@ export function RequestQuoteForm() {
           isImporting={isImporting}
           onImportFile={importRfqFile}
         />
-        {error ? <p className="text-center text-sm text-red-500">{error}</p> : null}
-        {message ? <p className="text-center text-sm text-green-500">{message}</p> : null}
         <div className="flex justify-center">
           <Button type="submit" disabled={pending} className="h-12 w-full rounded-full px-6 text-base font-medium hover:bg-brand-primary-hover sm:h-auto sm:w-auto sm:px-8 sm:py-6 sm:text-lg">
             {pending ? "Submitting..." : "Submit Quote Request"}

@@ -178,6 +178,25 @@ describe("signup validation", () => {
     ).toThrow("Enter your business name.");
   });
 
+  it("rejects one-character and punctuation-only account names", () => {
+    expect(() =>
+      validateSignupDetails({
+        role: "User",
+        fullName: "A",
+        businessName: "",
+        acceptedTerms: true,
+      }),
+    ).toThrow("Full name must contain at least 2 meaningful characters.");
+    expect(() =>
+      validateSignupDetails({
+        role: "Garage",
+        fullName: "",
+        businessName: "--",
+        acceptedTerms: true,
+      }),
+    ).toThrow("Business name must contain at least 2 meaningful characters.");
+  });
+
   it("requires supplier contact details and international phone", () => {
     expect(() =>
       validateSignupDetails({

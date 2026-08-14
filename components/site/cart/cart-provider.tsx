@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   createContext,
   useCallback,
@@ -83,7 +84,6 @@ type SiteCartContextValue = {
   user: UserAuthProfile | null;
   items: SiteCartItem[];
   itemCount: number;
-  notice: string;
   isCheckingOut: boolean;
   subtotal: number;
   productSubtotal: number;
@@ -97,7 +97,6 @@ type SiteCartContextValue = {
   updateQuantity: (itemId: string, quantity: number) => void;
   removeItem: (itemId: string) => void;
   clearCart: () => void;
-  clearNotice: () => void;
   checkoutProducts: (addressId: string) => Promise<void>;
 };
 
@@ -255,7 +254,6 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
   );
   const [isLoaded, setIsLoaded] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [notice, setNotice] = useState("");
   const [addedCartItem, setAddedCartItem] = useState<{
     title: string;
     type: SiteCartItem["type"];
@@ -380,7 +378,6 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
             : item,
         );
       });
-      setNotice(`${input.title} added to cart.`);
       setAddedCartItem({ title: input.title, type: input.type });
       return { ok: true, message: "Added to cart." };
     },
@@ -403,10 +400,6 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = useCallback(() => {
     setItems([]);
-  }, []);
-
-  const clearNotice = useCallback(() => {
-    setNotice("");
   }, []);
 
   const productItems = useMemo(
@@ -454,11 +447,10 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
     async (addressId: string) => {
       if (!productItems.length || isCheckingOut) return;
       if (!addressId.trim()) {
-        setNotice("Select a delivery address before placing the order.");
+        toast.error("Select a delivery address before placing the order.");
         return;
       }
       setIsCheckingOut(true);
-      setNotice("");
       try {
         const response = await siteAuthenticatedFetch("/api/orders", {
           method: "POST",
@@ -512,9 +504,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
               : null,
         });
       } catch (error) {
-        setNotice(
-          error instanceof Error ? error.message : "Unable to create orders.",
-        );
+        toast.error(error instanceof Error ? error.message : "Unable to create orders.");
       } finally {
         setIsCheckingOut(false);
       }
@@ -540,7 +530,6 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       user,
       items,
       itemCount: items.reduce((total, item) => total + item.quantity, 0),
-      notice,
       isCheckingOut,
       subtotal,
       productSubtotal,
@@ -550,24 +539,20 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       productItems,
       serviceItems,
       openCart: () => {
-        setNotice("");
         router.push("/cart");
       },
       addItem,
       updateQuantity,
       removeItem,
       clearCart,
-      clearNotice,
       checkoutProducts,
     }),
     [
       addItem,
       checkoutProducts,
       clearCart,
-      clearNotice,
       isCheckingOut,
       items,
-      notice,
       productItems,
       productSubtotal,
       serviceAdvanceSubtotal,

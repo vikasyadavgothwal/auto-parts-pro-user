@@ -32,7 +32,7 @@ export function AuthLoginPhoneVerify({
   // FIX: Extracted existing phone OTP verification view without changing handlers.
   return (
     <div className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8">
-      <form onSubmit={onVerifyOtp}>
+      <form onSubmit={onVerifyOtp} noValidate>
         <AuthMethodHeading
           title="Verify your mobile"
           description="Enter the one-time code sent to your phone."
@@ -40,8 +40,13 @@ export function AuthLoginPhoneVerify({
         <AuthField label="Verification Code">
           <Input
             value={otp}
-            onChange={(event) => onOtpChange(event.target.value)}
+            onChange={(event) =>
+              onOtpChange(event.target.value.replace(/\D/g, "").slice(0, 6))
+            }
             inputMode="numeric"
+            pattern="[0-9]{6}"
+            minLength={6}
+            maxLength={6}
             autoComplete="one-time-code"
             placeholder="Enter SMS code"
             className="h-12 bg-background"

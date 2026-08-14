@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { bookingAvailableDates, bookingTimeSlots } from "@/lib/data/booking";
 import type { BookingDateOption } from "@/types/site/booking";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 
 type DateTimeStepProps = {
   dates?: readonly BookingDateOption[];
@@ -31,7 +32,7 @@ export function DateTimeStep({
   return (
     <BookingStepFrame stepId="datetime">
       <h2 className="mb-2 text-3xl font-bold text-foreground">
-        Select Date & Time
+        Select Date & Time<RequiredMark />
       </h2>
       <p className="mb-8 text-brand-muted">
         Choose your preferred appointment slot

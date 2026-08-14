@@ -10,6 +10,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,6 +28,7 @@ import {
   isValidInternationalPhoneNumber,
 } from "@/components/site/shared/country-phone-input";
 import type { BusinessQueryType } from "@/lib/business-query-cta";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 
 type BusinessDemoDialogButtonProps = {
   children: ReactNode;
@@ -48,8 +50,6 @@ export function BusinessDemoDialogButton({
   variant,
 }: BusinessDemoDialogButtonProps) {
   const [open, setOpen] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
   const [phone, setPhone] = useState("");
   const [messageLength, setMessageLength] = useState(0);
@@ -70,10 +70,6 @@ export function BusinessDemoDialogButton({
       clearTimeout(closeTimer.current);
       closeTimer.current = null;
     }
-    if (nextOpen) {
-      setError("");
-      setSuccess("");
-    }
     setOpen(nextOpen);
   }
 
@@ -91,31 +87,28 @@ export function BusinessDemoDialogButton({
     const company = String(values.company ?? "").trim();
     const message = String(values.message ?? "").trim();
 
-    setError("");
-    setSuccess("");
-
-    if (name.length < 2) {
-      setError("Enter your full name.");
+    if (name.length < 2 || name.length > 100 || !/[\p{L}\p{N}]/u.test(name)) {
+      toast.error("Enter your full name.");
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Enter a valid email address.");
+    if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Enter a valid email address.");
       return;
     }
     if (!isValidInternationalPhoneNumber(phoneNumber)) {
-      setError("Enter a valid phone number with country code.");
+      toast.error("Enter a valid phone number with country code.");
       return;
     }
-    if (company.length < 2) {
-      setError("Enter your company name.");
+    if (company.length < 2 || company.length > 120 || !/[\p{L}\p{N}]/u.test(company)) {
+      toast.error("Enter your company name.");
       return;
     }
-    if (message.length < 5) {
-      setError("Add a short message.");
+    if (message.length < 5 || !/[\p{L}\p{N}]/u.test(message)) {
+      toast.error("Add a short message.");
       return;
     }
     if (message.length > messageMaxLength) {
-      setError(`Message must be ${messageMaxLength} characters or less.`);
+      toast.error(`Message must be ${messageMaxLength} characters or less.`);
       return;
     }
 
@@ -149,13 +142,12 @@ export function BusinessDemoDialogButton({
       form.reset();
       setPhone("");
       setMessageLength(0);
-      setSuccess("Thanks. Your request has been submitted.");
+      toast.success("Thanks. Your request has been submitted.");
       closeTimer.current = setTimeout(() => {
         setOpen(false);
-        setSuccess("");
       }, 2000);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to submit the form.");
+      toast.error(caught instanceof Error ? caught.message : "Unable to submit the form.");
     } finally {
       setIsSubmitting(false);
     }
@@ -184,7 +176,7 @@ export function BusinessDemoDialogButton({
 
           <div className="grid gap-2">
             <Label htmlFor={`${formId}-name`} className="text-white">
-              Name
+              <span>Name<RequiredMark /></span>
             </Label>
             <Input
               id={`${formId}-name`}
@@ -193,12 +185,13 @@ export function BusinessDemoDialogButton({
               className={inputClassName}
               autoComplete="name"
               minLength={2}
+              maxLength={100}
             />
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor={`${formId}-email`} className="text-white">
-              Email
+              <span>Email<RequiredMark /></span>
             </Label>
             <Input
               id={`${formId}-email`}
@@ -207,6 +200,7 @@ export function BusinessDemoDialogButton({
               required
               className={inputClassName}
               autoComplete="email"
+              maxLength={254}
             />
           </div>
 
@@ -225,7 +219,7 @@ export function BusinessDemoDialogButton({
 
           <div className="grid gap-2">
             <Label htmlFor={`${formId}-company`} className="text-white">
-              Company
+              <span>Company<RequiredMark /></span>
             </Label>
             <Input
               id={`${formId}-company`}
@@ -234,12 +228,13 @@ export function BusinessDemoDialogButton({
               className={inputClassName}
               autoComplete="organization"
               minLength={2}
+              maxLength={120}
             />
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor={`${formId}-message`} className="text-white">
-              Message
+              <span>Message<RequiredMark /></span>
             </Label>
             <Textarea
               id={`${formId}-message`}
@@ -254,11 +249,6 @@ export function BusinessDemoDialogButton({
             <p className="text-right text-xs text-brand-muted">
               {messageLength}/{messageMaxLength}
             </p>
-          </div>
-
-          <div aria-live="polite" className="min-h-5">
-            {error ? <p className="text-sm text-red-400">{error}</p> : null}
-            {success ? <p className="text-sm text-green-400">{success}</p> : null}
           </div>
 
           <Button

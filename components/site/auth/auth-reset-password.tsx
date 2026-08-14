@@ -35,7 +35,7 @@ export function AuthResetPassword({
         description="Enter your account email. We will send a secure link where you can set a new password."
       />
 
-      <form onSubmit={onRequestOtp}>
+      <form onSubmit={onRequestOtp} noValidate>
         <AuthField label="Email Address">
           <div className="relative">
             <MailIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
@@ -46,6 +46,7 @@ export function AuthResetPassword({
               autoComplete="email"
               placeholder="Enter your account email"
               className="h-12 bg-background pl-12"
+              maxLength={254}
               required
             />
           </div>

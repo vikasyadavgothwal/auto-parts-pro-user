@@ -16,6 +16,7 @@ import {
 } from "@/components/site/cart/cart-summary";
 import { useSiteCart } from "@/components/site/cart/cart-provider";
 import { siteAuthenticatedFetch } from "@/lib/current-user";
+import { isValidInternationalPhoneNumber } from "@/components/site/shared/country-phone-input";
 
 const emptyAddressForm: AddressForm = {
   label: "Home",
@@ -31,7 +32,7 @@ const emptyAddressForm: AddressForm = {
   isDefault: true,
 };
 
-const normalizePhone = (value: string, maxLength = 16) => {
+const normalizePhone = (value: string, maxLength = 15) => {
   const compact = value.replace(/[^\d+]/g, "");
   const prefix = compact.startsWith("+") ? "+" : "";
   return `${prefix}${compact.replace(/\+/g, "").slice(0, maxLength)}`;
@@ -50,6 +51,10 @@ const validateAddress = (form: AddressForm) => {
     const value = String(form[key]).trim();
     if (!value) {
       errors[key] = `${label} is required.`;
+      return;
+    }
+    if (!/[\p{L}\p{N}]/u.test(value)) {
+      errors[key] = `${label} must include a letter or number.`;
       return;
     }
     if (value.length > maxLength) {
@@ -73,10 +78,9 @@ const validateAddress = (form: AddressForm) => {
   }
 
   const phone = form.phone.trim();
-  const phoneDigits = phone.replace(/\D/g, "");
   if (!phone) {
     errors.phone = "Phone number is required.";
-  } else if (!/^\+?\d{8,16}$/.test(phone) || phoneDigits.length < 8) {
+  } else if (!isValidInternationalPhoneNumber(phone)) {
     errors.phone = "Enter a valid phone number with country code.";
   }
 
@@ -92,7 +96,6 @@ export function CartPage() {
   const {
     user,
     items,
-    notice,
     isCheckingOut,
     subtotal,
     productSubtotal,
@@ -110,7 +113,6 @@ export function CartPage() {
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [addressForm, setAddressForm] = useState<AddressForm>(emptyAddressForm);
-  const [addressError, setAddressError] = useState("");
   const [addressFieldErrors, setAddressFieldErrors] =
     useState<AddressFieldErrors>({});
   const [isLoadingAddresses, setIsLoadingAddresses] = useState(false);
@@ -147,7 +149,7 @@ export function CartPage() {
       .catch((error) => {
         if (mounted) {
           console.warn("Checkout address lookup failed", error);
-          setAddressError("");
+          toast.error("Unable to load saved addresses. Add a new address to continue.");
           setShowAddressForm(true);
         }
       })
@@ -170,11 +172,10 @@ export function CartPage() {
 
   const saveAddress = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setAddressError("");
     const validation = validateAddress(addressForm);
     setAddressFieldErrors(validation.errors);
     if (validation.message) {
-      setAddressError(validation.message);
+      toast.error(validation.message);
       return;
     }
 
@@ -216,79 +217,72 @@ export function CartPage() {
       setSelectedAddressId(payload.address.id);
       setAddressForm(emptyAddressForm);
       setShowAddressForm(false);
-      toast.success("Address saved.");
+      toast.success("Your delivery address was saved and selected for checkout.");
     } catch (error) {
-      setAddressError(
-        error instanceof Error ? error.message : "Unable to save address.",
-      );
+      toast.error(error instanceof Error ? error.message : "Unable to save address.");
     } finally {
       setIsSavingAddress(false);
     }
   };
 
   return (
-    <main className="bg-brand-surface py-10 text-white md:py-14">
-      <div className="site-container-wide">
-        <CartHeader />
+    <>
+      <main className="bg-brand-surface py-10 text-white md:py-14">
+        <div className="site-container-wide">
+          <CartHeader />
 
-        <div className="space-y-4">
-          {notice ? (
-            <div className="break-words rounded-xl border border-primary/30 bg-primary/10 p-3 text-sm text-primary">
-              {notice}
-            </div>
-          ) : null}
-
-          {user?.activeRole !== "User" ? (
-            <div className="rounded-xl border border-border bg-brand-panel p-5 text-sm text-brand-muted">
-              Sign in with a User account to view and manage cart items.
-            </div>
-          ) : items.length === 0 ? (
-            <CartEmptyState />
-          ) : (
-            <>
-              <CartItemList
-                items={items}
-                onUpdateQuantity={updateQuantity}
-                onRemoveItem={removeItem}
-              />
-              {productItems.length ? <CartServiceSelector /> : null}
-              <CartPromoCode />
-              <CartSummary
-                productItemCount={productItems.length}
-                serviceItemCount={serviceItems.length}
-                subtotal={subtotal}
-                productSubtotal={productSubtotal}
-                serviceAdvanceSubtotal={serviceAdvanceSubtotal}
-                payableSubtotal={payableSubtotal}
-                garageAdvance={garageAdvance}
-                selectedAddressId={selectedAddressId}
-                addresses={addresses}
-                showAddressForm={showAddressForm}
-                addressForm={addressForm}
-                addressError={addressError}
-                addressFieldErrors={addressFieldErrors}
-                isLoadingAddresses={isLoadingAddresses}
-                isSavingAddress={isSavingAddress}
-                isCheckingOut={isCheckingOut}
-                onToggleAddressForm={() =>
-                  setShowAddressForm((current) => !current)
-                }
-                onSelectAddress={setSelectedAddressId}
-                onSaveAddress={saveAddress}
-                onAddressFieldChange={setAddressField}
-                onPhoneChange={(value) =>
-                  setAddressField("phone", normalizePhone(value))
-                }
-                onPostalCodeChange={(value) =>
-                  setAddressField("postalCode", normalizePostalCode(value))
-                }
-                onCheckoutProducts={() => checkoutProducts(selectedAddressId)}
-                onClearCart={clearCart}
-              />
-            </>
-          )}
+          <div className="space-y-4">
+            {user?.activeRole !== "User" ? (
+              <div className="rounded-xl border border-border bg-brand-panel p-5 text-sm text-brand-muted">
+                Sign in with a User account to view and manage cart items.
+              </div>
+            ) : items.length === 0 ? (
+              <CartEmptyState />
+            ) : (
+              <>
+                <CartItemList
+                  items={items}
+                  onUpdateQuantity={updateQuantity}
+                  onRemoveItem={removeItem}
+                />
+                {productItems.length ? <CartServiceSelector /> : null}
+                <CartPromoCode />
+                <CartSummary
+                  productItemCount={productItems.length}
+                  serviceItemCount={serviceItems.length}
+                  subtotal={subtotal}
+                  productSubtotal={productSubtotal}
+                  serviceAdvanceSubtotal={serviceAdvanceSubtotal}
+                  payableSubtotal={payableSubtotal}
+                  garageAdvance={garageAdvance}
+                  selectedAddressId={selectedAddressId}
+                  addresses={addresses}
+                  showAddressForm={showAddressForm}
+                  addressForm={addressForm}
+                  addressFieldErrors={addressFieldErrors}
+                  isLoadingAddresses={isLoadingAddresses}
+                  isSavingAddress={isSavingAddress}
+                  isCheckingOut={isCheckingOut}
+                  onToggleAddressForm={() =>
+                    setShowAddressForm((current) => !current)
+                  }
+                  onSelectAddress={setSelectedAddressId}
+                  onSaveAddress={saveAddress}
+                  onAddressFieldChange={setAddressField}
+                  onPhoneChange={(value) =>
+                    setAddressField("phone", normalizePhone(value))
+                  }
+                  onPostalCodeChange={(value) =>
+                    setAddressField("postalCode", normalizePostalCode(value))
+                  }
+                  onCheckoutProducts={() => checkoutProducts(selectedAddressId)}
+                  onClearCart={clearCart}
+                />
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

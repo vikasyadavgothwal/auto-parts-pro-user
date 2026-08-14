@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
 
 import { useSiteCart } from "@/components/site/cart/cart-provider";
 import { Button } from "@/components/ui/button";
@@ -18,16 +19,14 @@ export function AddProductToCartButton({
   className,
 }: AddProductToCartButtonProps) {
   const { addItem } = useSiteCart();
-  const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
 
   const addToCart = async () => {
     if (!offer.id || !offer.productId) {
-      setMessage("This offer is not available for cart.");
+      toast.error("This offer is not available for cart.");
       return;
     }
     setPending(true);
-    setMessage("");
     const result = await addItem({
       type: "product",
       productId: offer.productId,
@@ -41,7 +40,7 @@ export function AddProductToCartButton({
       partNumber: offer.partNumber,
       vendorSku: offer.vendorSku,
     });
-    setMessage(result.message);
+    if (!result.ok) toast.error(result.message);
     setPending(false);
   };
 
@@ -56,9 +55,6 @@ export function AddProductToCartButton({
         <ShoppingCart className="mr-2 h-4 w-4" />
         {pending ? "Adding..." : "Add to Cart"}
       </Button>
-      {message ? (
-        <p className="text-center text-xs text-[#64748B]">{message}</p>
-      ) : null}
     </div>
   );
 }

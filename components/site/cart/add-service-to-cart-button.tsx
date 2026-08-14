@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
 
 import { useSiteCart } from "@/components/site/cart/cart-provider";
 import { Button } from "@/components/ui/button";
@@ -30,12 +31,10 @@ export function AddServiceToCartButton({
   className,
 }: AddServiceToCartButtonProps) {
   const { addItem } = useSiteCart();
-  const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
 
   const addToCart = async () => {
     setPending(true);
-    setMessage("");
     const result = await addItem({
       type: "service",
       garageId,
@@ -48,7 +47,7 @@ export function AddServiceToCartButton({
       currency,
       quantity: 1,
     });
-    setMessage(result.message);
+    if (!result.ok) toast.error(result.message);
     setPending(false);
   };
 
@@ -64,9 +63,6 @@ export function AddServiceToCartButton({
         <ShoppingCart className="mr-2 h-4 w-4" />
         {pending ? "Adding..." : "Add to cart"}
       </Button>
-      {message ? (
-        <p className="text-center text-xs text-brand-muted">{message}</p>
-      ) : null}
     </div>
   );
 }

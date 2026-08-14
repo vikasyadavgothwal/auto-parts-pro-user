@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import Link from "next/link";
 import {
   FitmentConfirmedIcon,
@@ -64,7 +65,15 @@ type SearchResultCardProps = {
 };
 
 export function SearchResultCard({ product }: SearchResultCardProps) {
-  const partUid = String(product.id);
+  const partUid = useMemo(() => {
+    try {
+      const productUrl = new URL(product.href, "https://example.com");
+      const lastSegment = productUrl.pathname.split("/").filter(Boolean).pop();
+      return lastSegment ? decodeURIComponent(lastSegment) : String(product.id);
+    } catch {
+      return String(product.id);
+    }
+  }, [product.href, product.id]);
   const productHref = product.href;
   const BadgeIcon = badgeIcons[product.badgeType];
   const imageCandidates = useMemo(
@@ -84,7 +93,6 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
   const [watchForPriceDrops, setWatchForPriceDrops] = useState(false);
   const [watchForStockReturns, setWatchForStockReturns] = useState(false);
   const [pending, setPending] = useState(false);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     let mounted = true;
@@ -116,10 +124,13 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
     };
   }, [partUid]);
 
-  const updateSavedPart = async (nextSaved: boolean, options?: { price?: boolean; stock?: boolean }) => {
+  const updateSavedPart = async (
+    nextSaved: boolean,
+    options?: { price?: boolean; stock?: boolean },
+    successMessage?: string,
+  ) => {
     if (!partUid || pending) return;
     setPending(true);
-    setMessage("");
 
     try {
       if (!nextSaved) {
@@ -138,6 +149,7 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
         setSaved(false);
         setWatchForPriceDrops(false);
         setWatchForStockReturns(false);
+        toast.success(successMessage ?? "Part removed from saved parts.");
         return;
       }
 
@@ -160,8 +172,9 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
       setSaved(true);
       setWatchForPriceDrops(Boolean(payload.watchForPriceDrops));
       setWatchForStockReturns(Boolean(payload.watchForStockReturns));
+      toast.success(successMessage ?? "Part saved successfully.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to update saved part.");
+      toast.error(error instanceof Error ? error.message : "Unable to update saved part.");
     } finally {
       setPending(false);
     }
@@ -169,8 +182,7 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
 
   const toggleWatchForPriceDrops = () => {
     const nextValue = !watchForPriceDrops;
-    void updateSavedPart(true, { price: nextValue, stock: watchForStockReturns });
-    setMessage(
+    void updateSavedPart(true, { price: nextValue, stock: watchForStockReturns },
       nextValue
         ? "You will be notified on lower price drops."
         : "Price watch removed.",
@@ -179,8 +191,7 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
 
   const toggleWatchForStockReturns = () => {
     const nextValue = !watchForStockReturns;
-    void updateSavedPart(true, { price: watchForPriceDrops, stock: nextValue });
-    setMessage(
+    void updateSavedPart(true, { price: watchForPriceDrops, stock: nextValue },
       nextValue
         ? "You will be notified when stock returns."
         : "Stock watch removed.",
@@ -303,7 +314,6 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
               />
               <span>Watch for stock return</span>
             </label>
-            {message ? <p className="text-xs text-[#9CA3AF]">{message}</p> : null}
           </div>
         ) : null}
       </div>

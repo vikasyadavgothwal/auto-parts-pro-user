@@ -1,6 +1,7 @@
 "use client";
 
-import { type FormEvent, type ReactNode } from "react";
+import { type FormEvent, type ReactNode, useEffect } from "react";
+import { toast } from "sonner";
 
 import { GoogleBrandIcon } from "@/components/icons/brands";
 import {
@@ -28,6 +29,7 @@ import {
   CountryPhoneInput,
   buildInternationalPhoneNumber,
 } from "@/components/site/shared/country-phone-input";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 
 export type AuthMode = "signin" | "signup";
 export type AccountType = UserAccountRole;
@@ -79,7 +81,7 @@ export function AccountSetupFields({
     <>
       <div className="mb-5 min-w-0 space-y-2">
         <Label htmlFor="account-type" className="text-sm font-medium text-foreground">
-          Account Type
+          <span>Account Type<RequiredMark /></span>
         </Label>
         <Select
           value={accountType}
@@ -199,7 +201,7 @@ export function TermsAgreement({
         htmlFor="terms"
         className="block min-w-0 flex-1 whitespace-normal break-words text-left text-xs leading-5 text-brand-muted sm:text-sm sm:leading-6"
       >
-        I agree to the{" "}
+        <span>I agree<RequiredMark /></span>{" "}to the{" "}
         <a
           href="/terms"
           className="inline whitespace-normal break-words font-medium text-primary underline-offset-4 hover:underline"
@@ -240,8 +242,9 @@ export function EmailForm({
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} noValidate>
       <EmailFields
+        mode={mode}
         email={email}
         password={password}
         showPassword={showPassword}
@@ -265,18 +268,24 @@ export function EmailForm({
 }
 
 export function EmailFields({
+  mode = "signin",
   email,
   password,
+  confirmPassword = "",
   showPassword,
   onEmailChange,
   onPasswordChange,
+  onConfirmPasswordChange,
   onTogglePassword,
 }: {
+  mode?: AuthMode;
   email: string;
   password: string;
+  confirmPassword?: string;
   showPassword: boolean;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
+  onConfirmPasswordChange?: (value: string) => void;
   onTogglePassword: () => void;
 }) {
   return (
@@ -303,7 +312,7 @@ export function EmailFields({
             type={showPassword ? "text" : "password"}
             value={password}
             onChange={(event) => onPasswordChange(event.target.value)}
-            autoComplete="current-password"
+            autoComplete={mode === "signup" ? "new-password" : "current-password"}
             placeholder="Enter your password"
             className="h-12 bg-background pl-12 pr-12"
             minLength={8}
@@ -322,6 +331,24 @@ export function EmailFields({
           </Button>
         </div>
       </AuthField>
+      {mode === "signup" ? (
+        <AuthField label="Confirm Password">
+          <div className="relative">
+            <LockIcon className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-muted" />
+            <Input
+              type={showPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(event) => onConfirmPasswordChange?.(event.target.value)}
+              autoComplete="new-password"
+              placeholder="Enter your password again"
+              className="h-12 bg-background pl-12"
+              minLength={8}
+              maxLength={128}
+              required
+            />
+          </div>
+        </AuthField>
+      ) : null}
     </>
   );
 }
@@ -350,7 +377,9 @@ export function AuthField({
 }) {
   return (
     <div className="mb-4 min-w-0 space-y-2">
-      <Label className="text-sm font-medium text-foreground">{label}</Label>
+      <Label className="text-sm font-medium text-foreground">
+        <span>{label}<RequiredMark /></span>
+      </Label>
       {children}
     </div>
   );
@@ -378,19 +407,12 @@ export function GoogleButton({
 }
 
 export function AuthFeedback({ error, status }: { error: string; status: string }) {
-  if (!error && !status) {
-    return null;
-  }
+  useEffect(() => {
+    if (error) toast.error(error);
+    else if (status) toast.success(status);
+  }, [error, status]);
 
-  return (
-    <p
-      role="status"
-      aria-live="polite"
-      className={`mb-4 text-sm ${error ? "text-destructive" : "text-emerald-600"}`}
-    >
-      {error || status}
-    </p>
-  );
+  return null;
 }
 
 export function AuthSeparator() {

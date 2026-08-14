@@ -23,6 +23,7 @@ export function AuthRegister({
   supplierPhoneNumber,
   email,
   password,
+  confirmPassword,
   showPassword,
   acceptedTerms,
   isSubmitting,
@@ -37,6 +38,7 @@ export function AuthRegister({
   onSupplierPhoneNumberChange,
   onEmailChange,
   onPasswordChange,
+  onConfirmPasswordChange,
   onTogglePassword,
   onTermsChange,
   onSubmit,
@@ -51,6 +53,7 @@ export function AuthRegister({
   supplierPhoneNumber: string;
   email: string;
   password: string;
+  confirmPassword: string;
   showPassword: boolean;
   acceptedTerms: boolean;
   isSubmitting: boolean;
@@ -65,6 +68,7 @@ export function AuthRegister({
   onSupplierPhoneNumberChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
+  onConfirmPasswordChange: (value: string) => void;
   onTogglePassword: () => void;
   onTermsChange: (value: boolean) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -75,6 +79,7 @@ export function AuthRegister({
     <form
       className="min-w-0 px-4 pb-6 sm:px-8 sm:pb-8"
       onSubmit={onSubmit}
+      noValidate
     >
       <AccountSetupFields
         accountType={accountType}
@@ -94,11 +99,14 @@ export function AuthRegister({
       />
 
       <EmailFields
+        mode="signup"
         email={email}
         password={password}
+        confirmPassword={confirmPassword}
         showPassword={showPassword}
         onEmailChange={onEmailChange}
         onPasswordChange={onPasswordChange}
+        onConfirmPasswordChange={onConfirmPasswordChange}
         onTogglePassword={onTogglePassword}
       />
       <TermsAgreement

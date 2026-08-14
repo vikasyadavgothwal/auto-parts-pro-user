@@ -225,6 +225,13 @@ export function validateSignupDetails({
       role === "User" ? "Enter your full name." : "Enter your business name.",
     );
   }
+  if (displayName.length < 2 || !/[\p{L}\p{N}]/u.test(displayName)) {
+    throw new Error(
+      role === "User"
+        ? "Full name must contain at least 2 meaningful characters."
+        : "Business name must contain at least 2 meaningful characters.",
+    );
+  }
 
   if (role === "Supplier") {
     const contactPerson = sanitizeSingleLine(
@@ -239,8 +246,14 @@ export function validateSignupDetails({
     if (!contactPerson) {
       throw new Error("Enter the authorized person's name.");
     }
+    if (contactPerson.length < 2 || !/[\p{L}\p{N}]/u.test(contactPerson)) {
+      throw new Error("Authorized person name must contain at least 2 meaningful characters.");
+    }
     if (!designation) {
       throw new Error("Enter the authorized person's designation.");
+    }
+    if (designation.length < 2 || !/[\p{L}\p{N}]/u.test(designation)) {
+      throw new Error("Designation must contain at least 2 meaningful characters.");
     }
     if (!SUPPLIER_PHONE_PATTERN.test(phone)) {
       throw new Error("Enter a valid supplier phone number with country code.");

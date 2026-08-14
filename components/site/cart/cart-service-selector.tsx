@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronsUpDown, Search, Wrench } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +18,7 @@ import type {
   PublicGarageService,
   PublicGarageSummary,
 } from "@/types/site/garages";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 
 type GarageDetailResponse = {
   ok?: boolean;
@@ -40,7 +42,6 @@ export function CartServiceSelector() {
   const [isLoadingGarages, setIsLoadingGarages] = useState(true);
   const [isLoadingServices, setIsLoadingServices] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
-  const [message, setMessage] = useState("");
 
   const selectedGarage = useMemo(
     () => garages.find((garage) => garage.id === selectedGarageId) ?? null,
@@ -95,9 +96,7 @@ export function CartServiceSelector() {
       })
       .catch((error) => {
         if (!mounted) return;
-        setMessage(
-          error instanceof Error ? error.message : "Unable to load garages.",
-        );
+        toast.error(error instanceof Error ? error.message : "Unable to load garages.");
       })
       .finally(() => {
         if (mounted) setIsLoadingGarages(false);
@@ -131,9 +130,7 @@ export function CartServiceSelector() {
       .catch((error) => {
         if (!mounted) return;
         setServices([]);
-        setMessage(
-          error instanceof Error ? error.message : "Unable to load services.",
-        );
+        toast.error(error instanceof Error ? error.message : "Unable to load services.");
       })
       .finally(() => {
         if (mounted) setIsLoadingServices(false);
@@ -150,7 +147,6 @@ export function CartServiceSelector() {
     }
 
     setIsAdding(true);
-    setMessage("");
     const result = await addItem({
       type: "service",
       garageId: selectedGarage.id,
@@ -163,7 +159,7 @@ export function CartServiceSelector() {
       currency: selectedService.currency,
       quantity: 1,
     });
-    setMessage(result.message);
+    if (!result.ok) toast.error(result.message);
     setIsAdding(false);
   }
 
@@ -187,7 +183,7 @@ export function CartServiceSelector() {
 
       <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto] md:items-end">
         <label className="grid gap-2 text-sm">
-          <span className="text-brand-muted">Garage</span>
+          <span className="text-brand-muted">Garage<RequiredMark /></span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -211,7 +207,8 @@ export function CartServiceSelector() {
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-muted" />
                 <input
                   value={garageSearch}
-                  onChange={(event) => setGarageSearch(event.target.value)}
+                  maxLength={100}
+                  onChange={(event) => setGarageSearch(event.target.value.slice(0, 100))}
                   placeholder="Search garage..."
                   className="h-10 w-full rounded-md border border-border bg-brand-surface pl-9 pr-3 text-sm text-white outline-none focus:border-primary"
                 />
@@ -222,7 +219,6 @@ export function CartServiceSelector() {
                     <DropdownMenuItem
                       key={garage.id}
                       onSelect={() => {
-                        setMessage("");
                         setServices([]);
                         setSelectedServiceId("");
                         setSelectedGarageId(garage.id);
@@ -255,11 +251,11 @@ export function CartServiceSelector() {
         </label>
 
         <label className="grid gap-2 text-sm">
-          <span className="text-brand-muted">Service</span>
+          <span className="text-brand-muted">Service<RequiredMark /></span>
           <select
             value={selectedServiceId}
+            required
             onChange={(event) => {
-              setMessage("");
               setSelectedServiceId(event.target.value);
             }}
             disabled={!selectedGarageId || isLoadingServices}
@@ -289,12 +285,6 @@ export function CartServiceSelector() {
               : "Add service"}
         </Button>
       </div>
-
-      {message ? (
-        <p className="rounded-lg border border-border bg-brand-surface px-3 py-2 text-sm text-brand-muted">
-          {message}
-        </p>
-      ) : null}
     </div>
   );
 }

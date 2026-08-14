@@ -8,6 +8,7 @@ import {
   type UserVehicleRecord,
 } from "@/lib/user-vehicles";
 import type { BookingSelection } from "@/types/site/booking";
+import { RequiredMark } from "@/components/site/shared/required-mark";
 
 type VehicleStepProps = {
   selection: BookingSelection;
@@ -30,7 +31,7 @@ export function VehicleStep({
   return (
     <BookingStepFrame stepId="vehicle">
       <h2 className="mb-2 text-3xl font-bold text-foreground">
-        Select Your Car
+        Select Your Car<RequiredMark />
       </h2>
       <p className="mb-8 text-brand-muted">
         Select one of your saved cars before scheduling this garage appointment
@@ -107,7 +108,8 @@ export function VehicleStep({
             <Textarea
               id="bookingNotes"
               value={selection.notes}
-              onChange={(event) => onChange("notes", event.target.value)}
+              onChange={(event) => onChange("notes", event.target.value.slice(0, 1000))}
+              maxLength={1000}
               placeholder="Describe the issue or anything the garage should know"
             />
           </div>

@@ -182,6 +182,7 @@ export function PartsSection() {
                   <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-muted" />
                   <Input
                     type="text"
+                    maxLength={120}
                     placeholder="Search products..."
                     className="h-10 bg-brand-surface py-2.5 pl-10 pr-4 rounded-xl"
                   />
