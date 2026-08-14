@@ -190,11 +190,35 @@
     @apply inline-flex items-center gap-1.5 rounded-full border border-brand-warning/20 bg-brand-warning/10 px-2 py-1 text-sm font-medium text-brand-warning;
   }
 
-  .bg-grid-pattern {
+.bg-grid-pattern {
     background-image:
       linear-gradient(to right, rgb(255 255 255 / 0.08) 1px, transparent 1px),
       linear-gradient(to bottom, rgb(255 255 255 / 0.08) 1px, transparent 1px);
     background-size: 28px 28px;
+  }
+
+  .brand-toaster {
+    --normal-bg: #0a0a0a;
+    --normal-text: var(--primary);
+    --normal-border: #2a2a2a;
+    --normal-bg-hover: #1a1a1a;
+    --normal-border-hover: var(--primary);
+    --success-bg: color-mix(in srgb, var(--primary) 18%, #0a0a0a);
+    --success-text: var(--primary);
+    --success-border: color-mix(in srgb, var(--primary) 55%, var(--border));
+    --error-bg: color-mix(in srgb, var(--primary) 18%, var(--brand-panel));
+    --error-text: var(--primary);
+    --error-border: color-mix(in srgb, var(--primary) 55%, var(--border));
+    --warning-bg: color-mix(in srgb, var(--primary) 18%, #0a0a0a);
+    --warning-text: var(--primary);
+    --warning-border: color-mix(in srgb, var(--primary) 55%, var(--border));
+    --info-bg: color-mix(in srgb, var(--primary) 16%, #0a0a0a);
+    --info-text: var(--primary);
+    --info-border: color-mix(in srgb, var(--primary) 55%, var(--border));
+    --loading-bg: #1a1a1a;
+    --loading-text: var(--primary);
+    --loading-border: #2a2a2a;
+    --border-radius: var(--radius-lg);
   }
 }
 .no-scrollbar::-webkit-scrollbar {

@@ -23,7 +23,25 @@ export default function RootLayout({
           <UserHeader />
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter />
-          <Toaster richColors position="top-right" />
+          <Toaster
+            position="top-right"
+            theme="dark"
+            richColors={false}
+            className="brand-toaster"
+            closeButton
+            expand={true}
+            toastOptions={{
+              classNames: {
+                toast: "text-[var(--primary)]",
+                title: "text-[var(--primary)]",
+                description: "text-[var(--primary)]",
+                icon: "text-[var(--primary)]",
+                closeButton: "text-[var(--primary)] hover:text-[var(--primary)]",
+                actionButton: "text-[var(--primary)] hover:text-[var(--primary)] border border-[var(--primary)]",
+                cancelButton: "text-[var(--primary)] hover:text-[var(--primary)] border border-[var(--primary)]",
+              },
+            }}
+          />
         </Providers>
       </body>
     </html>
