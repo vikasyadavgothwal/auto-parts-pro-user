@@ -24,7 +24,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getCurrentUser, siteAuthenticatedFetch } from "@/lib/current-user";
-import { getBookingAvailableDates, bookingStepOrder } from "@/lib/data/booking";
+import {
+  bookingAvailableDates,
+  bookingStepOrder,
+} from "@/lib/data/booking";
 import {
   type UserVehicleRecord,
 } from "@/lib/user-vehicles";
@@ -32,6 +35,7 @@ import type {
   BookingCustomerVehicle,
   BookingSelection,
   BookingService,
+  BookingDateOption,
   BookingStep,
   GarageBookingResult,
 } from "@/types/site/booking";
@@ -85,6 +89,65 @@ const serviceDuration = (minutes: number) => {
   return remaining ? `${hours}h ${remaining}m` : `${hours}h`;
 };
 
+const dayFormatter = new Intl.DateTimeFormat("en-US", { weekday: "long" });
+const labelFormatter = new Intl.DateTimeFormat("en-US", {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+});
+
+const getDayName = (date: Date) => dayFormatter.format(date);
+
+const getBookingDateLabel = (date: Date, offset: number) => {
+  if (offset === 0) return "Today";
+  if (offset === 1) return "Tomorrow";
+  return labelFormatter.format(date);
+};
+
+const formatBookingDate = (date: Date) => date.toISOString().slice(0, 10);
+
+const getGarageOpenDays = (garage: PublicGarageDetail) => {
+  if (Object.keys(garage.workingHoursByDay || {}).length > 0) {
+    return new Set(
+      Object.entries(garage.workingHoursByDay)
+        .filter(([, hours]) => hours?.enabled)
+        .map(([day]) => day),
+    );
+  }
+
+  return new Set(garage.workingDays);
+};
+
+const getGarageAvailableDates = (
+  garage: PublicGarageDetail | null,
+): BookingDateOption[] => {
+  if (!garage) {
+    return bookingAvailableDates;
+  }
+
+  const openDays = getGarageOpenDays(garage);
+
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+
+  return Array.from({ length: 5 }, (_, offset) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + offset);
+    const dayName = getDayName(date);
+    const isAvailable = openDays.size === 0 || openDays.has(dayName);
+
+    return {
+      date: formatBookingDate(date),
+      label: getBookingDateLabel(date, offset),
+      availability: isAvailable
+        ? offset === 0 || offset === 4
+          ? "limited"
+          : "available"
+        : "unavailable",
+    } as BookingDateOption;
+  });
+};
+
 export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps) {
   const router = useRouter();
   const services = useMemo<BookingService[]>(
@@ -102,7 +165,10 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const initialService = services.some((service) => service.id === initialServiceId)
     ? initialServiceId
     : "";
-  const availableDates = useMemo(() => getBookingAvailableDates(), []);
+  const availableDates = useMemo(
+    () => getGarageAvailableDates(garage),
+    [garage],
+  );
   const [step, setStep] = useState<BookingStep>(
     initialService ? "vehicle" : "service",
   );
@@ -129,6 +195,8 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const selectedDate = availableDates.find(
     (date) => date.date === selection.date,
   );
+  const isSelectedDateAvailable =
+    !!selectedDate && selectedDate.availability !== "unavailable";
   const customerVehicle: BookingCustomerVehicle = {
     customerName: selection.customerName.trim(),
     customerEmail: selection.customerEmail.trim(),
@@ -253,6 +321,10 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const handleConfirm = async () => {
     if (!garage || !selectedService || !selection.date || !selection.time) {
       toast.error("Select a garage, service, date, and time before booking.");
+      return;
+    }
+    if (!isSelectedDateAvailable) {
+      toast.error("Selected date is not available for this garage.");
       return;
     }
     if (!vehicleDetailsComplete) {
@@ -380,7 +452,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
       : step === "vehicle"
         ? vehicleDetailsComplete
         : step === "datetime"
-          ? Boolean(selection.date && selection.time)
+          ? Boolean(selection.date && selection.time && isSelectedDateAvailable)
           : false;
 
   const handleNext = () => {
@@ -435,6 +507,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
             onSelectDate={(date) => {
               setIsLoadingAvailability(true);
               setSelectionValue("date", date);
+              setSelectionValue("time", "");
             }}
             onSelectTime={(time) => setSelectionValue("time", time)}
             unavailableTimes={unavailableTimes}

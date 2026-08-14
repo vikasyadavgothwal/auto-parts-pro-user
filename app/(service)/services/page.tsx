@@ -2,7 +2,7 @@ import { PublicSectionContentBoundary } from "@/components/site/public-content/p
 import { SearchHeroSection } from "@/components/site/service/sections/search-hero-section"
 import { ServicesListingSection } from "@/components/site/service/sections/listing-section"
 import { getPublicContentMetadata } from "@/lib/public-seo"
-import { listPublicGarages } from "@/lib/public-garages"
+import { listAllPublicGarages } from "@/lib/public-garages"
 
 export const dynamic = "force-dynamic"
 
@@ -17,7 +17,6 @@ type ServicePageProps = {
     q?: string
     service?: string
     location?: string
-    page?: string
   }>
 }
 
@@ -26,13 +25,11 @@ export default async function ServicePage({ searchParams }: ServicePageProps) {
   const searchQuery = typeof params.q === "string" ? params.q.trim().slice(0, 100) : ""
   const serviceQuery = typeof params.service === "string" ? params.service.trim().slice(0, 100) : ""
   const locationQuery = typeof params.location === "string" ? params.location.trim().slice(0, 100) : ""
-  const page = typeof params.page === "string" ? params.page : "1"
-  const garageResponse = await listPublicGarages({
+  const garageResponse = await listAllPublicGarages({
     q: searchQuery,
     service: serviceQuery,
     location: locationQuery,
-    page,
-    pageSize: 6,
+    pageSize: 5,
   }).catch(() => ({
     ok: true as const,
     garages: [],

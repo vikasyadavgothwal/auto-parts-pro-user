@@ -63,6 +63,48 @@ export async function listPublicGarages(params: {
   return payload
 }
 
+export async function listAllPublicGarages(params: {
+  q?: string | null
+  service?: string | null
+  location?: string | null
+  pageSize?: string | number | null
+}): Promise<PublicGarageListResponse> {
+  const firstPage = await listPublicGarages({
+    ...params,
+    page: 1,
+    pageSize: params.pageSize ?? 5,
+  })
+
+  const remainingPages =
+    firstPage.pagination.totalPages > 1
+      ? await Promise.all(
+          Array.from(
+            { length: firstPage.pagination.totalPages - 1 },
+            (_, index) =>
+              listPublicGarages({
+                ...params,
+                page: String(index + 2),
+                pageSize: firstPage.pagination.pageSize,
+              }),
+          ),
+        )
+      : []
+
+  return {
+    ok: true,
+    garages: [
+      ...firstPage.garages,
+      ...remainingPages.flatMap((pageResponse) => pageResponse.garages),
+    ],
+    pagination: {
+      page: 1,
+      pageSize: Math.max(1, firstPage.pagination.total),
+      total: firstPage.pagination.total,
+      totalPages: 1,
+    },
+  }
+}
+
 export async function getPublicGarage(
   garageId: string,
 ): Promise<PublicGarageDetail | null> {

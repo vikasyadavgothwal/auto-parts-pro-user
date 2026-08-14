@@ -14,10 +14,6 @@ import {
   ListingHeader,
   type GarageSort,
 } from "@/components/site/service/sections/listing-header";
-import {
-  ListingPagination,
-  type ListingPaginationLink,
-} from "@/components/site/service/sections/listing-pagination";
 import type { PublicGarageSummary } from "@/types/site/garages";
 
 type GaragePagination = {
@@ -107,24 +103,20 @@ function matchesPriceRange(price: number | null, priceRange: PriceRangeOption | 
   return Number.isFinite(priceValue) && priceRange !== undefined && priceValue >= priceRange.min && priceValue <= priceRange.max;
 }
 
+function compareTopGarages(a: PublicGarageSummary, b: PublicGarageSummary) {
+  return (
+    b.reviewCount - a.reviewCount ||
+    b.jobCompletedNumber - a.jobCompletedNumber ||
+    b.ratingAverage - a.ratingAverage ||
+    b.yearsExperience - a.yearsExperience
+  )
+}
+
 function hasSelectedMatch(selectedItems: string[], availableItems: string[]) {
   return (
     selectedItems.length === 0 ||
     selectedItems.some((selectedItem) => availableItems.includes(selectedItem))
   );
-}
-
-function paginationHref(
-  page: number,
-  searchParams: ServicesListingSectionProps["searchParams"],
-) {
-  const params = new URLSearchParams();
-  if (searchParams.q) params.set("q", searchParams.q);
-  if (searchParams.service) params.set("service", searchParams.service);
-  if (searchParams.location) params.set("location", searchParams.location);
-  if (page > 1) params.set("page", String(page));
-  const query = params.toString();
-  return query ? `/services?${query}` : "/services";
 }
 
 export function ServicesListingSection({
@@ -138,6 +130,17 @@ export function ServicesListingSection({
     createInitialFilters(),
   );
   const [sort, setSort] = useState<GarageSort>("best");
+  const hasSearchOrLocationFilter =
+    Boolean(searchParams.q) || Boolean(searchParams.service) || Boolean(searchParams.location);
+  const hasClientFilters = useMemo(
+    () =>
+      filters.serviceTypes.length > 0 ||
+      filters.availability.length > 0 ||
+      filters.certifications.length > 0 ||
+      filters.priceRanges.length > 0,
+    [filters],
+  );
+  const shouldShowAll = hasSearchOrLocationFilter || hasClientFilters;
 
   useEffect(() => {
     const desktopMediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -203,64 +206,52 @@ export function ServicesListingSection({
   );
 
   const filteredGarages = useMemo(() => {
-      const filtered = garages.filter((garage) => {
-        const availability = [
-          ...(garage.availableToday ? ["Available Today"] : []),
-          ...(garage.availableThisWeek ? ["Available This Week"] : []),
-        ];
+    const filtered = garages.filter((garage) => {
+      const availability = [
+        ...(garage.availableToday ? ["Available Today"] : []),
+        ...(garage.availableThisWeek ? ["Available This Week"] : []),
+      ];
 
-        return (
-          hasSelectedMatch(filters.serviceTypes, garage.specialties) &&
-          hasSelectedMatch(filters.availability, availability) &&
-          hasSelectedMatch(filters.certifications, garage.certifications) &&
-          (filters.priceRanges.length === 0 ||
-            filters.priceRanges.some((priceRange) =>
-              matchesPriceRange(garage.startingPrice, priceRangeByValue.get(priceRange)),
-            ))
-        );
-      });
-      if (sort === "rating") return [...filtered].sort((a, b) => b.ratingAverage - a.ratingAverage || b.reviewCount - a.reviewCount);
-      if (sort === "price-low") return [...filtered].sort((a, b) => (a.startingPrice ?? Number.POSITIVE_INFINITY) - (b.startingPrice ?? Number.POSITIVE_INFINITY));
-      if (sort === "price-high") return [...filtered].sort((a, b) => (b.startingPrice ?? Number.NEGATIVE_INFINITY) - (a.startingPrice ?? Number.NEGATIVE_INFINITY));
-      if (sort === "experience") return [...filtered].sort((a, b) => b.yearsExperience - a.yearsExperience);
-      return filtered;
+      return (
+        hasSelectedMatch(filters.serviceTypes, garage.specialties) &&
+        hasSelectedMatch(filters.availability, availability) &&
+        hasSelectedMatch(filters.certifications, garage.certifications) &&
+        (filters.priceRanges.length === 0 ||
+          filters.priceRanges.some((priceRange) =>
+            matchesPriceRange(garage.startingPrice, priceRangeByValue.get(priceRange)),
+          ))
+      );
+    });
+
+    if (sort === "rating") {
+      return [...filtered].sort(
+        (a, b) => b.ratingAverage - a.ratingAverage || b.reviewCount - a.reviewCount,
+      );
+    }
+    if (sort === "price-low") {
+      return [...filtered].sort(
+        (a, b) =>
+          (a.startingPrice ?? Number.POSITIVE_INFINITY) -
+          (b.startingPrice ?? Number.POSITIVE_INFINITY),
+      );
+    }
+    if (sort === "price-high") {
+      return [...filtered].sort(
+        (a, b) =>
+          (b.startingPrice ?? Number.NEGATIVE_INFINITY) -
+          (a.startingPrice ?? Number.NEGATIVE_INFINITY),
+      );
+    }
+    if (sort === "experience") {
+      return [...filtered].sort((a, b) => b.yearsExperience - a.yearsExperience);
+    }
+
+    return [...filtered].sort(compareTopGarages);
   }, [filters, garages, priceRangeByValue, sort]);
-
-  const paginationLinks = useMemo<ListingPaginationLink[]>(() => {
-    if (pagination.totalPages <= 1) return [];
-
-    const pageLinks: ListingPaginationLink[] = Array.from(
-      { length: pagination.totalPages },
-      (_, index) => {
-        const page = index + 1;
-        return {
-          key: `page-${page}`,
-          label: String(page),
-          href: paginationHref(page, searchParams),
-          isCurrent: page === pagination.page,
-        };
-      },
-    );
-
-    return [
-      {
-        key: "previous",
-        label: "Previous",
-        href: paginationHref(Math.max(1, pagination.page - 1), searchParams),
-        isDisabled: pagination.page <= 1,
-      },
-      ...pageLinks,
-      {
-        key: "next",
-        label: "Next",
-        href: paginationHref(
-          Math.min(pagination.totalPages, pagination.page + 1),
-          searchParams,
-        ),
-        isDisabled: pagination.page >= pagination.totalPages,
-      },
-    ];
-  }, [pagination, searchParams]);
+  const displayedGarages = useMemo(
+    () => (shouldShowAll ? filteredGarages : filteredGarages.slice(0, 6)),
+    [filteredGarages, shouldShowAll],
+  );
 
   function handleFilterChange(
     filterKey: FilterKey,
@@ -301,7 +292,7 @@ export function ServicesListingSection({
         <div className="min-w-0 flex-1">
           <ListingHeader
             showFilters={showFilters}
-            filteredCount={filteredGarages.length}
+            filteredCount={displayedGarages.length}
             totalCount={pagination.total}
             sort={sort}
             onOpenMobileFilters={() => setMobileFiltersOpen(true)}
@@ -311,10 +302,7 @@ export function ServicesListingSection({
 
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"></div>
 
-          <ListingGrid garages={filteredGarages} />
-          <ListingPagination
-            links={filteredGarages.length > 0 ? paginationLinks : []}
-          />
+          <ListingGrid garages={displayedGarages} />
         </div>
       </div>
 

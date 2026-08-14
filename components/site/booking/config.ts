@@ -33,7 +33,7 @@ export const BOOKING_DATE_AVAILABILITY_LABELS: Record<
 > = {
   available: "Available",
   limited: "Limited",
-  unavailable: "Full",
+  unavailable: "Unavailable",
 };
 export const BOOKING_DATE_AVAILABILITY_CLASSES: Record<
   BookingDateAvailability,
@@ -41,7 +41,7 @@ export const BOOKING_DATE_AVAILABILITY_CLASSES: Record<
 > = {
   available: "text-brand-success",
   limited: "text-brand-warning",
-  unavailable: "text-primary",
+  unavailable: "text-destructive",
 };
 export const BOOKING_STEP_MOTION = {
   initial: { opacity: 0, x: 20 },

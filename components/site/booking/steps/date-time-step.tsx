@@ -44,28 +44,40 @@ export function DateTimeStep({
         </h3>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {dates.map((dateOption) => (
-            <Card
-              key={dateOption.date}
-              onClick={() => onSelectDate(dateOption.date)}
-              className={`cursor-pointer rounded-xl border-2 bg-card text-center shadow-none transition-all ${
-                selectedDate === dateOption.date
-                  ? "border-primary ring-2 ring-primary/20"
-                  : "border-border hover:border-primary/50"
-              }`}
-            >
-              <CardContent className="p-4">
-                <div className="mb-1 font-semibold text-foreground">
-                  {dateOption.label}
-                </div>
-                <div
-                  className={`text-xs ${BOOKING_DATE_AVAILABILITY_CLASSES[dateOption.availability]}`}
-                >
-                  {BOOKING_DATE_AVAILABILITY_LABELS[dateOption.availability]}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {dates.map((dateOption) => {
+            const isUnavailable = dateOption.availability === "unavailable";
+
+            return (
+              <Card
+                key={dateOption.date}
+                onClick={() => {
+                  if (isUnavailable) return;
+                  onSelectDate(dateOption.date);
+                }}
+                aria-disabled={isUnavailable}
+                className={`rounded-xl border-2 bg-card text-center shadow-none transition-all ${
+                  isUnavailable
+                    ? "cursor-not-allowed border-border bg-muted/40 opacity-60"
+                    : "cursor-pointer border-border hover:border-primary/50"
+                } ${
+                  selectedDate === dateOption.date
+                    ? "border-primary ring-2 ring-primary/20"
+                    : ""
+                }`}
+              >
+                <CardContent className="p-4">
+                  <div className="mb-1 font-semibold text-foreground">
+                    {dateOption.label}
+                  </div>
+                  <div
+                    className={`text-xs ${BOOKING_DATE_AVAILABILITY_CLASSES[dateOption.availability]}`}
+                  >
+                    {BOOKING_DATE_AVAILABILITY_LABELS[dateOption.availability]}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
 

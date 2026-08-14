@@ -31,10 +31,7 @@ function GarageRatingStars({ rating }: { rating: number }) {
 
 export function ListingItemCard({ garage }: { garage: PublicGarageSummary }) {
   const price = formatGaragePrice(garage.startingPrice, garage.currency);
-  const certifications =
-    garage.certifications.length > 0
-      ? garage.certifications
-      : ["Verified Garage"];
+  const certifications = garage.certifications;
   const image =
     garage.image ||
     "https://images.unsplash.com/photo-1625047509248-ec889cbff17f?w=900&h=675&fit=crop";
@@ -60,11 +57,6 @@ export function ListingItemCard({ garage }: { garage: PublicGarageSummary }) {
             style={{ backgroundImage: `url("${image}")` }}
             aria-label={garage.name}
           />
-
-          <div className="absolute top-4 left-4 flex items-center gap-2 rounded-xl border border-[#10B981]/30 bg-[#10B981] px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
-            <Clock3Icon className="h-4 w-4" />
-            <span>Verified</span>
-          </div>
 
           <div className="absolute bottom-4 left-4 rounded-xl border border-white/10 bg-black/45 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
             Starting at {price}
