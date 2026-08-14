@@ -34,6 +34,9 @@ import { RequiredMark } from "@/components/site/shared/required-mark";
 export type AuthMode = "signin" | "signup";
 export type AccountType = UserAccountRole;
 
+const PASSWORD_TITLE =
+  "Use 8 to 128 characters with uppercase, lowercase, and a number.";
+
 const ACCOUNT_TYPE_DESCRIPTIONS: Record<AccountType, string> = {
   User: "Shop for parts and manage your personal vehicles.",
   Fleet: "Manage vehicles and source parts for your fleet.",
@@ -317,6 +320,7 @@ export function EmailFields({
             className="h-12 bg-background pl-12 pr-12"
             minLength={8}
             maxLength={128}
+            title={mode === "signup" ? PASSWORD_TITLE : undefined}
             required
           />
           <Button
@@ -344,6 +348,7 @@ export function EmailFields({
               className="h-12 bg-background pl-12"
               minLength={8}
               maxLength={128}
+              title={PASSWORD_TITLE}
               required
             />
           </div>

@@ -64,6 +64,7 @@ type LoginMfaChallenge = {
   role: string;
 };
 
+const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
 const VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE =
   "Choose an account type to finish creating your account";
 
@@ -345,6 +346,9 @@ export function AuthModalCard({
       }
       if (password.length < 8 || password.length > 128) {
         throw new Error("Password must contain 8 to 128 characters.");
+      }
+      if (mode === "signup" && !PASSWORD_PATTERN.test(password)) {
+        throw new Error("Password must include uppercase, lowercase, and number characters.");
       }
       if (mode === "signup" && password !== confirmPassword) {
         throw new Error("Passwords do not match.");
