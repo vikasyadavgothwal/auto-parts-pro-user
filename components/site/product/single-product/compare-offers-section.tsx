@@ -29,7 +29,7 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
         <div className="flex h-10 items-center justify-center bg-primary px-4 text-center">
           <span className="flex items-center gap-2 text-sm font-semibold text-white">
             <FitmentConfirmedIcon className="h-4 w-4" />
-            BEST VALUE - Recommended Offer
+            Featured supplier - Best ranked offer
           </span>
         </div>
       )}
@@ -138,7 +138,7 @@ export function CompareOffersSection({ offers }: CompareOffersSectionProps) {
           Compare Offers
         </h2>
         <p className="text-base text-[#9CA3AF] sm:text-lg">
-          Choose from {offers.length} verified suppliers — best offer highlighted
+          Choose from {offers.length} verified suppliers — featured supplier highlighted
         </p>
       </div>
 

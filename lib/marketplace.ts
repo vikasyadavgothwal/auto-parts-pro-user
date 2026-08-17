@@ -120,6 +120,9 @@ export async function searchMarketplaceProducts(params: {
   make?: string | null
   model?: string | null
   q?: string | null
+  deliveryCity?: string | null
+  deliveryState?: string | null
+  deliveryCountry?: string | null
   limit?: number
 }): Promise<MarketplaceSearchResponse> {
   const response = await fetch(buildBackendUrl("/api/v1/marketplace/search", params), {
@@ -137,9 +140,17 @@ export async function searchMarketplaceProducts(params: {
 
 export async function getMarketplaceProduct(
   partUid: string,
+  params?: {
+    deliveryCity?: string | null
+    deliveryState?: string | null
+    deliveryCountry?: string | null
+  },
 ): Promise<MarketplaceProductDetail | null> {
   const response = await fetch(
-    buildBackendUrl(`/api/v1/marketplace/products/${encodeURIComponent(partUid)}`),
+    buildBackendUrl(
+      `/api/v1/marketplace/products/${encodeURIComponent(partUid)}`,
+      params,
+    ),
     {
       cache: "no-store",
       headers: { Accept: "application/json" },
@@ -156,9 +167,23 @@ export async function getMarketplaceProduct(
 
 export const marketplaceProductToSearchProduct = (
   product: MarketplaceProductSummary,
+  params?: {
+    deliveryCity?: string | null
+    deliveryState?: string | null
+    deliveryCountry?: string | null
+  },
 ): SearchProduct => ({
   id: product.partUid,
-  href: `/product/${encodeURIComponent(product.partUid)}`,
+  href: (() => {
+    const url = new URL(
+      `/product/${encodeURIComponent(product.partUid)}`,
+      "https://autoparts.local",
+    )
+    for (const [key, value] of Object.entries(params ?? {})) {
+      if (value) url.searchParams.set(key, value)
+    }
+    return `${url.pathname}${url.search}`
+  })(),
   title: product.title,
   partNo: product.partNumber ?? product.brandName ?? product.partUid,
   seller:

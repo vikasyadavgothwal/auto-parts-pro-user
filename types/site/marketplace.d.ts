@@ -107,6 +107,9 @@ export type MarketplaceSearchResponse = {
     make: string | null
     model: string | null
     q: string | null
+    deliveryCity: string | null
+    deliveryState: string | null
+    deliveryCountry: string | null
   }
   count: number
   products: MarketplaceProductSummary[]

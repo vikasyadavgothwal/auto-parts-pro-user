@@ -31,6 +31,9 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
   const confirmedYear = getSearchParam(params, "year").trim().slice(0, 4);
   const confirmedMake = getSearchParam(params, "make").trim().slice(0, 80);
   const confirmedModel = getSearchParam(params, "model").trim().slice(0, 80);
+  const deliveryCity = getSearchParam(params, "deliveryCity").trim().slice(0, 120);
+  const deliveryState = getSearchParam(params, "deliveryState").trim().slice(0, 120);
+  const deliveryCountry = getSearchParam(params, "deliveryCountry").trim().slice(0, 120);
   const confirmedVehicle =
     isConfirmedFitment && confirmedVin
       ? {
@@ -48,9 +51,18 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
     make: confirmedMake,
     model: confirmedModel,
     q: textQuery,
+    deliveryCity,
+    deliveryState,
+    deliveryCountry,
     limit: 24,
   });
-  const products = result.products.map(marketplaceProductToSearchProduct);
+  const products = result.products.map((product) =>
+    marketplaceProductToSearchProduct(product, {
+      deliveryCity,
+      deliveryState,
+      deliveryCountry,
+    }),
+  );
   const queryLabel =
     partNumber ||
     [confirmedYear, confirmedMake || confirmedModel]

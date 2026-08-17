@@ -24,7 +24,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  canOptimizeSiteImageSrc,
+  resolveSiteImageSrc,
+} from "@/lib/site-image"
 import { tabs, productFilters, products } from "@/lib/data/service"
+
 export function PartsSection() {
   return (
     <main className="md:pb-20 pb-6 md:pt-24 pt-10">
@@ -205,61 +210,65 @@ export function PartsSection() {
           </Card>
 
           <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {products.map((product) => (
-              <Link key={product.id} href={product.href} className="group block">
-                <Card className="overflow-hidden transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/10">
-                  <div className="relative aspect-square overflow-hidden bg-brand-surface">
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
+            {products.map((product) => {
+              const imageSrc = resolveSiteImageSrc(product.image)
 
-                  <div className="p-5">
-                    {product.confirmedFit ? (
-                      <div className="mb-3">
-                        <Badge variant="success" className="rounded-md px-2.5 py-1">
-                          <CircleCheckIcon className="h-3.5 w-3.5" />
-                          <span>Confirmed Fit</span>
-                        </Badge>
-                      </div>
-                    ) : null}
-
-                    <h3 className="mb-1 text-lg font-semibold text-white transition-colors group-hover:text-primary">
-                      {product.name}
-                    </h3>
-
-                    <p className="mb-3 text-sm text-brand-muted">
-                      Part #: {product.partNumber}
-                    </p>
-
-                    <div className="mb-4 text-xs text-brand-muted">
-                      {product.condition}
+              return (
+                <Link key={product.id} href={product.href} className="group block">
+                  <Card className="overflow-hidden transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/10">
+                    <div className="relative aspect-square overflow-hidden bg-brand-surface">
+                      <Image
+                        src={imageSrc}
+                        alt={product.name}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        unoptimized={!canOptimizeSiteImageSrc(imageSrc)}
+                      />
                     </div>
 
-                    <div className="mb-4 flex items-center justify-between">
-                      <div>
-                        <div className="text-2xl font-bold text-white">
-                          {product.price}
+                    <div className="p-5">
+                      {product.confirmedFit ? (
+                        <div className="mb-3">
+                          <Badge variant="success" className="rounded-md px-2.5 py-1">
+                            <CircleCheckIcon className="h-3.5 w-3.5" />
+                            <span>Confirmed Fit</span>
+                          </Badge>
                         </div>
-                        {product.offers ? (
-                          <div className="text-xs text-brand-muted">
-                            {product.offers}
-                          </div>
-                        ) : null}
-                      </div>
-                    </div>
-                    
+                      ) : null}
 
-                    <Button className="w-full rounded-xl px-6 py-5 text-sm font-medium hover:bg-brand-primary-hover rounded-xl">
-                      View Offers
-                    </Button>
-                  </div>
-                </Card>
-              </Link>
-            ))}
+                      <h3 className="mb-1 text-lg font-semibold text-white transition-colors group-hover:text-primary">
+                        {product.name}
+                      </h3>
+
+                      <p className="mb-3 text-sm text-brand-muted">
+                        Part #: {product.partNumber}
+                      </p>
+
+                      <div className="mb-4 text-xs text-brand-muted">
+                        {product.condition}
+                      </div>
+
+                      <div className="mb-4 flex items-center justify-between">
+                        <div>
+                          <div className="text-2xl font-bold text-white">
+                            {product.price}
+                          </div>
+                          {product.offers ? (
+                            <div className="text-xs text-brand-muted">
+                              {product.offers}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <Button className="w-full rounded-xl px-6 py-5 text-sm font-medium hover:bg-brand-primary-hover rounded-xl">
+                        View Offers
+                      </Button>
+                    </div>
+                  </Card>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </div>
