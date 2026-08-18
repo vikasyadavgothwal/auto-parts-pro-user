@@ -31,6 +31,8 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
   const confirmedYear = getSearchParam(params, "year").trim().slice(0, 4);
   const confirmedMake = getSearchParam(params, "make").trim().slice(0, 80);
   const confirmedModel = getSearchParam(params, "model").trim().slice(0, 80);
+  const vehicleName = getSearchParam(params, "vehicleName").trim().slice(0, 80);
+  const queryType = getSearchParam(params, "queryType").trim().slice(0, 40);
   const deliveryCity = getSearchParam(params, "deliveryCity").trim().slice(0, 120);
   const deliveryState = getSearchParam(params, "deliveryState").trim().slice(0, 120);
   const deliveryCountry = getSearchParam(params, "deliveryCountry").trim().slice(0, 120);
@@ -50,6 +52,8 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
     year: confirmedYear,
     make: confirmedMake,
     model: confirmedModel,
+    vehicleName,
+    queryType,
     q: textQuery,
     deliveryCity,
     deliveryState,
@@ -75,11 +79,15 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
     ? "Part Search Results"
     : confirmedVin
       ? "Confirmed Fitment"
+      : queryType === "part_name"
+        ? "Compatible Part Results"
       : "Results Found";
   const description = confirmedVin
     ? "Parts below are matched against the vehicle fitment data saved in the database."
     : partNumber
       ? "Part number, OEM number, and part name matches from the marketplace database."
+      : queryType === "part_name"
+        ? "Part name matches are filtered by the vehicle details you entered."
       : textQuery
         ? "Part number, OEM number, and part name matches from the marketplace database."
         : undefined;

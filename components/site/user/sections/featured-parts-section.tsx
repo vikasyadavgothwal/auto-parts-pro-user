@@ -27,9 +27,8 @@ export function FeaturedPartsSection({
   const buttonText = getPublicText(config?.buttonText)
   const buttonSlug = getPublicText(config?.buttonSlug)
   const productsWithOffers = products.filter((product) => product.offerCount > 0)
-  const visibleProducts = (
-    productsWithOffers.length >= 4 ? productsWithOffers : products
-  ).slice(0, 4)
+  if (productsWithOffers.length < 2) return null
+  const visibleProducts = productsWithOffers.slice(0, 4)
 
   return (
     <section className="bg-brand-surface pb-10">

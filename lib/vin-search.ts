@@ -13,7 +13,17 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
 const getText = (value: unknown) =>
-  typeof value === "string" ? value.trim() : "";
+  typeof value === "string" || typeof value === "number"
+    ? String(value).trim()
+    : "";
+
+const firstRecord = (value: unknown): Record<string, unknown> | null => {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  return value.find(isRecord) ?? null;
+};
 
 const normalizeFieldName = (value: string) =>
   value.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -66,6 +76,8 @@ const normalizeVinRecord = (
   ]);
 
   const epc = getTextByFieldAliases(value, [
+    "Series_en",
+    "Brand_en",
     "epc",
     "make",
     "make_name",
@@ -81,6 +93,14 @@ const normalizeVinRecord = (
     "id",
     "vehicle_id",
   ]);
+  const modelListItem = firstRecord(value.model_list);
+  const nestedModelId = modelListItem
+    ? getTextByFieldAliases(modelListItem, ["Id", "id", "model_id", "modelId"])
+    : "";
+  const fallbackModelId = getTextByFieldAliases(value, [
+    "my_model_std_id",
+    "epc_id",
+  ]);
 
   if (!fullVin || !modelYearFromVin || !epc) {
     return null;
@@ -90,7 +110,9 @@ const normalizeVinRecord = (
     fullVin,
     modelYearFromVin,
     epc,
-    ...(modelId ? { modelId } : {}),
+    ...(modelId || nestedModelId || fallbackModelId
+      ? { modelId: modelId || nestedModelId || fallbackModelId }
+      : {}),
   };
 };
 

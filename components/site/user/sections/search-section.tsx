@@ -24,6 +24,9 @@ import { RequiredMark } from "@/components/site/shared/required-mark"
 
 const VIN_MAX_LENGTH = 17
 const PART_SEARCH_MAX_LENGTH = 120
+const CURRENT_YEAR = new Date().getFullYear()
+const VIN_PATTERN = /^[A-HJ-NPR-Z0-9]{17}$/
+const VEHICLE_TEXT_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9 .,'/-]*$/
 
 const buildConfirmedFitmentUrl = (vehicle: VinSearchVehicle) => {
   const params = new URLSearchParams({
@@ -41,12 +44,43 @@ const buildConfirmedFitmentUrl = (vehicle: VinSearchVehicle) => {
   return `/search?${params.toString()}`
 }
 
-const buildPartSearchUrl = (query: string) => {
+const buildPartSearchUrl = (query: string, queryType: "part_number" | "vin") => {
   const params = new URLSearchParams({
-    q: query.trim(),
+    [queryType === "vin" ? "vin" : "partNumber"]: query.trim(),
+    queryType,
   })
 
   return `/search?${params.toString()}`
+}
+
+const buildPartNameSearchUrl = (
+  query: string,
+  vehicle: { vehicleName: string; year: string; make: string; model: string },
+) => {
+  const params = new URLSearchParams({
+    q: query.trim(),
+    queryType: "part_name",
+    vehicleName: vehicle.vehicleName.trim(),
+    year: vehicle.year.trim(),
+    make: vehicle.make.trim(),
+    model: vehicle.model.trim(),
+  })
+
+  return `/search?${params.toString()}`
+}
+
+const looksLikePartNumber = (query: string) =>
+  /[0-9]/.test(query) || /[-_/]/.test(query)
+
+const validateVehicleText = (value: string, label: string) => {
+  if (value.length < 2) {
+    return `${label} must be at least 2 characters.`
+  }
+  if (!VEHICLE_TEXT_PATTERN.test(value)) {
+    return `${label} can only include letters, numbers, spaces, and common vehicle punctuation.`
+  }
+
+  return ""
 }
 
 export function SearchSection({ config }: { config?: TextPair }) {
@@ -56,6 +90,13 @@ export function SearchSection({ config }: { config?: TextPair }) {
   const partNumberLabel = "Part Number, OEM Number, or Part Name"
   const [vin, setVin] = useState("")
   const [partNumber, setPartNumber] = useState("")
+  const [partNameDialogOpen, setPartNameDialogOpen] = useState(false)
+  const [partNameVehicle, setPartNameVehicle] = useState({
+    vehicleName: "",
+    year: "",
+    make: "",
+    model: "",
+  })
   const [confirmedVehicle, setConfirmedVehicle] =
     useState<VinSearchVehicle | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -106,7 +147,63 @@ export function SearchSection({ config }: { config?: TextPair }) {
       return
     }
 
-    router.push(buildPartSearchUrl(normalizedPartNumber))
+    const normalizedToken = normalizedPartNumber
+      .toUpperCase()
+      .replace(/[^A-HJ-NPR-Z0-9]/g, "")
+
+    if (VIN_PATTERN.test(normalizedToken)) {
+      router.push(buildPartSearchUrl(normalizedToken, "vin"))
+      return
+    }
+
+    if (looksLikePartNumber(normalizedPartNumber)) {
+      router.push(buildPartSearchUrl(normalizedPartNumber, "part_number"))
+      return
+    }
+
+    setPartNameDialogOpen(true)
+  }
+
+  const onPartNameVehicleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const vehicleName = partNameVehicle.vehicleName.trim()
+    const year = partNameVehicle.year.trim()
+    const make = partNameVehicle.make.trim()
+    const model = partNameVehicle.model.trim()
+    const parsedYear = Number.parseInt(year, 10)
+
+    if (!vehicleName || !year || !make || !model) {
+      toast.error("Enter car name, model year, make, and model before searching.")
+      return
+    }
+    const vehicleNameError = validateVehicleText(vehicleName, "Car name")
+    if (vehicleNameError) {
+      toast.error(vehicleNameError)
+      return
+    }
+    if (!Number.isInteger(parsedYear) || parsedYear < 1900 || parsedYear > CURRENT_YEAR + 1) {
+      toast.error(`Model year must be between 1900 and ${CURRENT_YEAR + 1}.`)
+      return
+    }
+    const makeError = validateVehicleText(make, "Make")
+    if (makeError) {
+      toast.error(makeError)
+      return
+    }
+    const modelError = validateVehicleText(model, "Model")
+    if (modelError) {
+      toast.error(modelError)
+      return
+    }
+
+    router.push(
+      buildPartNameSearchUrl(partNumber, {
+        vehicleName,
+        year,
+        make,
+        model,
+      }),
+    )
   }
 
   const onConfirmVehicle = () => {
@@ -240,6 +337,117 @@ export function SearchSection({ config }: { config?: TextPair }) {
               Confirm and Browse Parts
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={partNameDialogOpen} onOpenChange={setPartNameDialogOpen}>
+        <DialogContent className="border border-border bg-brand-surface text-white sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-white">
+              Vehicle details required
+            </DialogTitle>
+            <DialogDescription className="text-brand-muted">
+              Part name searches need vehicle details so we can match compatible parts.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={onPartNameVehicleSubmit} className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="part-name-car-name">
+                Car name<RequiredMark />
+              </Label>
+              <Input
+                id="part-name-car-name"
+                value={partNameVehicle.vehicleName}
+                placeholder="e.g., Toyota Corolla 1.8"
+                onChange={(event) =>
+                  setPartNameVehicle((current) => ({
+                    ...current,
+                    vehicleName: event.target.value.slice(0, 80),
+                  }))
+                }
+                className="bg-brand-panel"
+                maxLength={80}
+                autoComplete="off"
+                required
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-2">
+                <Label htmlFor="part-name-year">
+                  Model year<RequiredMark />
+                </Label>
+                <Input
+                  id="part-name-year"
+                  inputMode="numeric"
+                  value={partNameVehicle.year}
+                  placeholder={`e.g., ${CURRENT_YEAR}`}
+                  onChange={(event) =>
+                    setPartNameVehicle((current) => ({
+                      ...current,
+                      year: event.target.value.replace(/\D/g, "").slice(0, 4),
+                    }))
+                  }
+                  className="bg-brand-panel"
+                  maxLength={4}
+                  autoComplete="off"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="part-name-make">
+                  Make<RequiredMark />
+                </Label>
+                <Input
+                  id="part-name-make"
+                  value={partNameVehicle.make}
+                  placeholder="e.g., Toyota"
+                  onChange={(event) =>
+                    setPartNameVehicle((current) => ({
+                      ...current,
+                      make: event.target.value.slice(0, 80),
+                    }))
+                  }
+                  className="bg-brand-panel"
+                  maxLength={80}
+                  autoComplete="off"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="part-name-model">
+                  Model<RequiredMark />
+                </Label>
+                <Input
+                  id="part-name-model"
+                  value={partNameVehicle.model}
+                  placeholder="e.g., Corolla"
+                  onChange={(event) =>
+                    setPartNameVehicle((current) => ({
+                      ...current,
+                      model: event.target.value.slice(0, 80),
+                    }))
+                  }
+                  className="bg-brand-panel"
+                  maxLength={80}
+                  autoComplete="off"
+                  required
+                />
+              </div>
+            </div>
+            <DialogFooter className="bg-transparent">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setPartNameDialogOpen(false)}
+                className="border-border bg-brand-surface text-white hover:bg-border"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" className="hover:bg-brand-primary-hover">
+                Search Parts
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </section>

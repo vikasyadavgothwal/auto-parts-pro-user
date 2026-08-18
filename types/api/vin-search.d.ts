@@ -43,6 +43,11 @@ export type VinSearchApiRecord = {
   Id?: unknown;
   id?: unknown;
   vehicle_id?: unknown;
+  my_model_std_id?: unknown;
+  epc_id?: unknown;
+  Series_en?: unknown;
+  Brand_en?: unknown;
+  model_list?: unknown;
 }
 
 export type VinSearchBackendResponse = {

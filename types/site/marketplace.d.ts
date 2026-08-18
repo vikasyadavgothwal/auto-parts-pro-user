@@ -106,6 +106,8 @@ export type MarketplaceSearchResponse = {
     year: string | null
     make: string | null
     model: string | null
+    vehicleName: string | null
+    queryType: string | null
     q: string | null
     deliveryCity: string | null
     deliveryState: string | null
