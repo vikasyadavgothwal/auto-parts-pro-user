@@ -788,7 +788,7 @@ export function AuthModalCard({
                     maxLength={6}
                     autoComplete="one-time-code"
                     className="h-12 w-full rounded-xl border border-border bg-background px-4 text-center text-lg tracking-[0.45em] outline-none focus:border-primary"
-                    placeholder="000000"
+                    placeholder={businessLoginMethod === "pin" ? "Enter 6-digit PIN" : "Enter 6-digit OTP"}
                     required
                   />
                 </div>
