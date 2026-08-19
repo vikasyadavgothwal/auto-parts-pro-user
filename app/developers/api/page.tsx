@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { headers } from "next/headers"
 import Link from "next/link"
 import { ArrowRight, KeyRound, ShieldCheck } from "lucide-react"
 
@@ -184,7 +185,26 @@ const errorRows = [
   ["404", "API_ENDPOINT_NOT_FOUND", "The Developer API URL is misspelled or does not exist."],
 ]
 
-export default function DeveloperApiPage() {
+const getDeveloperApiOrigin = async () => {
+  const requestHeaders = await headers()
+  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host")
+
+  if (host) {
+    const protocol =
+      requestHeaders.get("x-forwarded-proto") ??
+      (process.env.NODE_ENV === "production" ? "https" : "http")
+
+    return `${protocol}://${host}`
+  }
+
+  return process.env.NODE_ENV === "production"
+    ? "https://websitedesignersdubai.ae"
+    : "http://localhost:3001"
+}
+
+export default async function DeveloperApiPage() {
+  const developerApiOrigin = await getDeveloperApiOrigin()
+
   return (
     <main className="bg-brand-surface text-white">
       <section className="site-container py-20">
@@ -233,7 +253,7 @@ export default function DeveloperApiPage() {
           </CardHeader>
           <CardContent>
             <pre className="overflow-x-auto rounded-lg border border-border bg-black p-4 text-sm text-emerald-300">
-{`curl https://api.autopartspro.com/api/v1/developer/garage/services \\
+{`curl ${developerApiOrigin}/api/v1/developer/garage/services \\
   -H "Authorization: Bearer app_live_garage_xxxxx"`}
             </pre>
             <p className="mt-4 text-sm leading-6 text-brand-muted">

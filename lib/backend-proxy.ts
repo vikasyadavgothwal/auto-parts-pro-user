@@ -71,11 +71,15 @@ const streamBackendRequest = async ({
   const headers = new Headers({ accept: "application/json" })
   const contentType = request.headers.get("content-type")
   const cookie = request.headers.get("cookie")
+  const authorization = request.headers.get("authorization")
+  const apiKey = request.headers.get("x-api-key")
   const userAgent = request.headers.get("user-agent")
   const forwardedFor = request.headers.get("x-forwarded-for")
 
   if (contentType) headers.set("content-type", contentType)
   if (cookie) headers.set("cookie", cookie)
+  if (authorization) headers.set("authorization", authorization)
+  if (apiKey) headers.set("x-api-key", apiKey)
   if (userAgent) headers.set("user-agent", userAgent)
   if (forwardedFor) headers.set("x-forwarded-for", forwardedFor)
 
