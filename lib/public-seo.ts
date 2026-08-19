@@ -4,6 +4,7 @@ import {
   type PublicContentSeo,
   type PublicContentSlug,
 } from "@/lib/public-content";
+import { getMainWebsiteSiteSettings } from "@/lib/site-settings";
 
 type SeoFallback = {
   title: string;
@@ -94,11 +95,21 @@ export const getPublicContentMetadata = async (
   fallback: SeoFallback,
 ): Promise<Metadata> => {
   try {
-    const response = await fetchPublicContentBySlug(slug, {
-      cache: "no-store",
-    });
+    const [response, siteSettings] = await Promise.all([
+      fetchPublicContentBySlug(slug, { cache: "no-store" }),
+      getMainWebsiteSiteSettings(),
+    ]);
+    const mergedSeo: PublicContentSeo = {
+      ...response.seo,
+      metaTitle: response.seo.metaTitle || siteSettings.seo.title,
+      metaDescription: response.seo.metaDescription || siteSettings.seo.description,
+      metaKeywords: response.seo.metaKeywords || siteSettings.seo.keywords,
+      canonicalLink: response.seo.canonicalLink || siteSettings.seo.canonicalUrl,
+      noIndex: response.seo.noIndex || siteSettings.seo.noIndex,
+      noFollow: response.seo.noFollow || siteSettings.seo.noFollow,
+    };
 
-    return buildMetadataFromPublicSeo(response.seo, fallback);
+    return buildMetadataFromPublicSeo(mergedSeo, fallback);
   } catch {
     return buildMetadataFromPublicSeo(undefined, fallback);
   }

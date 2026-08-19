@@ -22,6 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { MainWebsiteSiteSettings } from "@/types/api/site-settings";
 
 const navItems = [
   { label: "Browse Parts", href: "/search" },
@@ -30,7 +31,7 @@ const navItems = [
   { label: "For Business", href: "/business" },
 ];
 
-export function UserHeader() {
+export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, "logoUrl" | "siteName">) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user, itemCount, openCart } = useSiteCart();
@@ -64,7 +65,7 @@ export function UserHeader() {
         <div className="grid h-20 grid-cols-[auto_1fr_auto] items-center gap-4">
           {/* Left: Logo */}
           <div className="flex items-center">
-            <BrandLogo href="/" textClassName="text-brand-surface" />
+            <BrandLogo href="/" logoUrl={logoUrl} siteName={siteName} textClassName="text-brand-surface" />
           </div>
 
           {/* Center: Nav Links */}
@@ -108,6 +109,8 @@ export function UserHeader() {
                   </DialogHeader>
 
                   <AuthModalCard
+                    logoUrl={logoUrl}
+                    siteName={siteName}
                     onAuthenticated={goToActiveDashboard}
                     onClose={() => setIsAuthModalOpen(false)}
                   />

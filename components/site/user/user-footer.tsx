@@ -8,14 +8,25 @@ import {
 } from "@/components/icons/brands";
 import { Separator } from "@/components/ui/separator";
 import { BrandLogo } from "@/components/site/shared/brand-logo";
+import { getMainWebsiteSiteSettings } from "@/lib/site-settings";
+import type { MainWebsiteSiteSettings } from "@/types/api/site-settings";
 
-export const SiteFooter = () => {
+export const SiteFooter = async ({ settings: providedSettings }: { settings?: MainWebsiteSiteSettings }) => {
+  const settings = providedSettings ?? (await getMainWebsiteSiteSettings());
+  const socialLinks = [
+    { label: "Facebook", href: settings.social.facebook, icon: <FacebookBrandIcon className="size-5 transition-colors hover:text-primary" /> },
+    { label: "Instagram", href: settings.social.instagram, icon: <InstagramBrandIcon className="size-5 transition-colors hover:text-primary" /> },
+    { label: "X", href: settings.social.x, icon: <XBrandIcon className="size-5 transition-colors hover:text-primary" /> },
+    { label: "YouTube", href: settings.social.youtube, icon: <YouTubeBrandIcon className="size-5 transition-colors hover:text-primary" /> },
+    { label: "LinkedIn", href: settings.social.linkedin, icon: <LinkedInBrandIcon className="size-5 transition-colors hover:text-primary" /> },
+  ].filter((link) => link.href);
+
   return (
     <footer className="bg-black text-white">
       <div className="site-container py-14">
         <div className="grid gap-10 md:grid-cols-[1fr_auto]">
           <div>
-            <BrandLogo href="/" textClassName="text-white" />
+            <BrandLogo href="/" logoUrl={settings.logoUrl} siteName={settings.siteName} textClassName="text-white" />
           </div>
 
           {/* Right → Links */}
@@ -63,19 +74,19 @@ export const SiteFooter = () => {
 
               <ul className="space-y-2 text-white">
                 <li>
-                  <Link href="/help" className="hover:text-white">
-                    Contact Number: +971585008555
-                  </Link>
+                  <a href={`tel:${settings.contact.phone}`} className="hover:text-white">
+                    Contact Number: {settings.contact.phone || "Not provided"}
+                  </a>
                 </li>
                 <li>
-                  <Link href="/shipping" className="hover:text-white">
-                    info@autoparts.ae
-                  </Link>
+                  <a href={`mailto:${settings.contact.email}`} className="hover:text-white">
+                    {settings.contact.email || "Not provided"}
+                  </a>
                 </li>
                 <li>
-                  <Link href="/returns" className="hover:text-white">
-                    Address: Abu Dhabi, Abu Dhabi 147712
-                  </Link>
+                  <span>
+                    Address: {settings.contact.address || "Not provided"}
+                  </span>
                 </li>
               </ul>
             </div>
@@ -89,7 +100,7 @@ export const SiteFooter = () => {
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           {/* Left side */}
           <div className="flex flex-wrap items-center gap-6 text-sm text-white">
-            <span>© 2026 DALEEL MUSAFFAH MARKETING SERVICES - SOLE PROPRIETORSHIP L.L.C.</span>
+            <span>{settings.copyright}</span>
 
             <Link href="/privacy-policy" className="hover:text-white">
               Privacy Policy
@@ -103,27 +114,9 @@ export const SiteFooter = () => {
             </Link>
           </div>
 
-          <div className="flex items-center gap-5 text-white">
-            <Link href="#" aria-label="Facebook">
-              <FacebookBrandIcon className="size-5 transition-colors hover:text-primary" />
-            </Link>
-
-            <Link href="#" aria-label="Instagram">
-              <InstagramBrandIcon className="size-5 transition-colors hover:text-primary" />
-            </Link>
-
-            <Link href="#" aria-label="Twitter">
-              <XBrandIcon className="size-5 transition-colors hover:text-primary" />
-            </Link>
-
-            <Link href="#" aria-label="YouTube">
-              <YouTubeBrandIcon className="size-5 transition-colors hover:text-primary" />
-            </Link>
-
-            <Link href="#" aria-label="LinkedIn">
-              <LinkedInBrandIcon className="size-5 transition-colors hover:text-primary" />
-            </Link>
-          </div>
+          {socialLinks.length ? <div className="flex items-center gap-5 text-white">
+            {socialLinks.map((link) => <a key={link.label} href={link.href} aria-label={link.label} target="_blank" rel="noreferrer">{link.icon}</a>)}
+          </div> : null}
         </div>
       </div>
     </footer>

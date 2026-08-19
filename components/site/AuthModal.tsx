@@ -26,6 +26,7 @@ import { AuthLoginPhoneVerify } from "@/components/site/auth/auth-login-phone-ve
 import { AuthRegister } from "@/components/site/auth/auth-register";
 import { AuthResetPassword } from "@/components/site/auth/auth-reset-password";
 import { AuthFeedback, type AccountType } from "@/components/site/auth/auth-shared";
+import { BrandLogo } from "@/components/site/shared/brand-logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -77,6 +78,8 @@ const VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE =
 type AuthModalCardProps = {
   onAuthenticated?: () => void;
   onClose?: () => void;
+  logoUrl?: string;
+  siteName?: string;
 };
 
 const getAuthErrorMessage = (error: unknown): string => {
@@ -180,6 +183,8 @@ const sanitizeSingleLine = (value: string, maximum: number) =>
 export function AuthModalCard({
   onAuthenticated,
   onClose,
+  logoUrl,
+  siteName = "AutoPartsPro",
 }: AuthModalCardProps) {
   const router = useRouter();
   const recaptchaVerifier = useRef<RecaptchaVerifier | null>(null);
@@ -213,6 +218,7 @@ export function AuthModalCard({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
+  const [branding, setBranding] = useState({ logoUrl: logoUrl ?? "", siteName });
 
   useEffect(() => {
     return () => {
@@ -220,6 +226,19 @@ export function AuthModalCard({
       recaptchaVerifier.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (logoUrl) return;
+    void fetch("/api/v1/user/site-settings", { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) return;
+        const payload = (await response.json()) as { ok?: boolean; settings?: { logoUrl?: string; siteName?: string } };
+        if (payload.ok && payload.settings) {
+          setBranding({ logoUrl: payload.settings.logoUrl ?? "", siteName: payload.settings.siteName ?? "AutoPartsPro" });
+        }
+      })
+      .catch(() => undefined);
+  }, [logoUrl]);
 
   const clearPhoneRecaptchaVerifier = () => {
     recaptchaVerifier.current?.clear();
@@ -687,6 +706,9 @@ export function AuthModalCard({
 
         <CardContent className="p-0">
           <div className="border-b border-border/70 bg-gradient-to-b from-primary/10 to-transparent p-5 pb-6 pr-14 sm:p-8 sm:pb-7 sm:pr-14">
+            <div className="mb-5 flex justify-center">
+              <BrandLogo href="/" logoUrl={branding.logoUrl} siteName={branding.siteName} className="pointer-events-none" textClassName="text-foreground" />
+            </div>
             <div className="mb-6 text-center">
               <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
                 {businessLoginChallenge

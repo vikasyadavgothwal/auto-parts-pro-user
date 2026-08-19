@@ -5,6 +5,8 @@ export type BrandLogoProps = {
   accentClassName?: string
   markClassName?: string
   showMark?: boolean
+  logoUrl?: string
+  siteName?: string
 }
 
 export type SectionHeadingProps = {

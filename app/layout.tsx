@@ -5,24 +5,33 @@ import { SiteFooter } from "@/components/site/user/user-footer";
 import { UserHeader } from "@/components/site/user/user-header";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Auto Parts Pro",
-  description:
-    "A comprehensive auto parts e-commerce platform built with Next.js, offering a wide range of high-quality automotive components and accessories for all types of vehicles.",
-};
+import { getMainWebsiteSiteSettings } from "@/lib/site-settings";
 
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getMainWebsiteSiteSettings();
+  return {
+    title: settings.seo.title || settings.siteName,
+    description: settings.seo.description,
+    ...(settings.seo.keywords ? { keywords: settings.seo.keywords.split(",").map((value) => value.trim()).filter(Boolean) } : {}),
+    ...(settings.seo.canonicalUrl ? { alternates: { canonical: settings.seo.canonicalUrl } } : {}),
+    robots: { index: !settings.seo.noIndex, follow: !settings.seo.noFollow },
+    icons: { icon: `/api/favicon?v=${encodeURIComponent(settings.faviconKey || "default")}` },
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getMainWebsiteSiteSettings();
   return (
     <html lang="en" className="h-full bg-background antialiased">
       <body className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
         <Providers>
-          <UserHeader />
+          <UserHeader logoUrl={settings.logoUrl} siteName={settings.siteName} />
           <div className="flex flex-1 flex-col">{children}</div>
-          <SiteFooter />
+          <SiteFooter settings={settings} />
           <Toaster
             position="top-right"
             theme="dark"

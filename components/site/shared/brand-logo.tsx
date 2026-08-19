@@ -10,7 +10,10 @@ export function BrandLogo({
   accentClassName,
   markClassName,
   showMark = false,
+  logoUrl,
+  siteName = "AutoPartsPro",
 }: BrandLogoProps) {
+  const isDefaultBrand = siteName === "AutoPartsPro" || siteName === "AutoParts Pro"
   return (
     <Link href={href} className={cn("inline-flex items-center gap-3", className)}>
       {showMark ? (
@@ -24,9 +27,14 @@ export function BrandLogo({
         </span>
       ) : null}
 
-      <span className={cn("text-2xl font-bold text-black", textClassName)}>
-        AutoParts<span className={cn("text-primary", accentClassName)}>Pro</span>
-      </span>
+      {logoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logoUrl} alt="AutoParts Pro" className="h-10 max-w-[220px] object-contain" />
+      ) : (
+        <span className={cn("text-2xl font-bold text-black", textClassName)}>
+          {isDefaultBrand ? <>AutoParts<span className={cn("text-primary", accentClassName)}> Pro</span></> : siteName}
+        </span>
+      )}
     </Link>
   )
 }
