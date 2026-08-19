@@ -52,6 +52,12 @@ import {
 } from "@/lib/user-auth";
 import { dashboardUrlForRole } from "@/lib/current-user";
 import { RequiredMark } from "@/components/site/shared/required-mark";
+import {
+  authEmailPasswordSchema,
+  authEmailSchema,
+  authSignupPasswordSchema,
+  firstZodError,
+} from "@/lib/validation/site-forms";
 
 type AuthMode = "signin" | "signup" | "reset";
 type LoginMethod = "email" | "phone";
@@ -64,7 +70,6 @@ type LoginMfaChallenge = {
   role: string;
 };
 
-const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/;
 const VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE =
   "Choose an account type to finish creating your account";
 
@@ -159,9 +164,6 @@ const isVerifiedAccountRoleRequired = (error: unknown) =>
 
 const sanitizeSingleLine = (value: string, maximum: number) =>
   value.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").slice(0, maximum);
-
-const validEmail = (value: string) =>
-  value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 export function AuthModalCard({
   onAuthenticated,
@@ -340,19 +342,11 @@ export function AuthModalCard({
     event.preventDefault();
 
     void runAuthAction(async () => {
-      const normalizedEmail = email.trim();
-      if (!validEmail(normalizedEmail)) {
-        throw new Error("Enter a valid email address.");
-      }
-      if (password.length < 8 || password.length > 128) {
-        throw new Error("Password must contain 8 to 128 characters.");
-      }
-      if (mode === "signup" && !PASSWORD_PATTERN.test(password)) {
-        throw new Error("Password must include uppercase, lowercase, and number characters.");
-      }
-      if (mode === "signup" && password !== confirmPassword) {
-        throw new Error("Passwords do not match.");
-      }
+      const validation = mode === "signup"
+        ? authSignupPasswordSchema.safeParse({ email, password, confirmPassword })
+        : authEmailPasswordSchema.safeParse({ email, password });
+      if (!validation.success) throw new Error(firstZodError(validation.error));
+      const normalizedEmail = validation.data.email;
       const auth = await getEphemeralFirebaseClientAuth();
 
       if (mode === "signin") {
@@ -629,10 +623,9 @@ export function AuthModalCard({
     event.preventDefault();
 
     void runAuthAction(async () => {
-      const normalizedEmail = email.trim();
-      if (!validEmail(normalizedEmail)) {
-        throw new Error("Enter a valid email address.");
-      }
+      const validation = authEmailSchema.safeParse({ email });
+      if (!validation.success) throw new Error(firstZodError(validation.error));
+      const normalizedEmail = validation.data.email;
       const response = await fetch("/api/auth/password-reset/request", {
         method: "POST",
         headers: { "content-type": "application/json" },

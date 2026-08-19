@@ -21,12 +21,17 @@ import { getPublicText, type TextPair } from "@/lib/public-content"
 import { lookupVin } from "@/lib/vin-search"
 import type { VinSearchVehicle } from "@/types/api/vin-search"
 import { RequiredMark } from "@/components/site/shared/required-mark"
+import {
+  firstZodError,
+  partNameVehicleSchema,
+  partSearchSchema,
+  vinSearchSchema,
+} from "@/lib/validation/site-forms"
 
 const VIN_MAX_LENGTH = 17
 const PART_SEARCH_MAX_LENGTH = 120
 const CURRENT_YEAR = new Date().getFullYear()
 const VIN_PATTERN = /^[A-HJ-NPR-Z0-9]{17}$/
-const VEHICLE_TEXT_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9 .,'/-]*$/
 
 const buildConfirmedFitmentUrl = (vehicle: VinSearchVehicle) => {
   const params = new URLSearchParams({
@@ -72,17 +77,6 @@ const buildPartNameSearchUrl = (
 const looksLikePartNumber = (query: string) =>
   /[0-9]/.test(query) || /[-_/]/.test(query)
 
-const validateVehicleText = (value: string, label: string) => {
-  if (value.length < 2) {
-    return `${label} must be at least 2 characters.`
-  }
-  if (!VEHICLE_TEXT_PATTERN.test(value)) {
-    return `${label} can only include letters, numbers, spaces, and common vehicle punctuation.`
-  }
-
-  return ""
-}
-
 export function SearchSection({ config }: { config?: TextPair }) {
   const router = useRouter()
   const heading = getPublicText(config?.heading)
@@ -127,23 +121,21 @@ export function SearchSection({ config }: { config?: TextPair }) {
   const onVinSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const normalizedVin = vin.trim().toUpperCase()
-    if (normalizedVin.length !== VIN_MAX_LENGTH) {
-      toast.error("VIN must contain exactly 17 valid characters.")
+    const validation = vinSearchSchema.safeParse({ vin: normalizedVin })
+    if (!validation.success) {
+      toast.error(firstZodError(validation.error))
       return
     }
-    vinSearch.mutate(normalizedVin)
+    vinSearch.mutate(validation.data.vin)
   }
 
   const onPartNumberSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const normalizedPartNumber = partNumber.trim()
 
-    if (!normalizedPartNumber) {
-      toast.error("Enter a part number, OEM number, or part name before searching.")
-      return
-    }
-    if (normalizedPartNumber.length > PART_SEARCH_MAX_LENGTH) {
-      toast.error(`Part number, OEM number, or part name must be ${PART_SEARCH_MAX_LENGTH} characters or fewer.`)
+    const validation = partSearchSchema.safeParse({ query: normalizedPartNumber })
+    if (!validation.success) {
+      toast.error(firstZodError(validation.error))
       return
     }
 
@@ -166,42 +158,18 @@ export function SearchSection({ config }: { config?: TextPair }) {
 
   const onPartNameVehicleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const vehicleName = partNameVehicle.vehicleName.trim()
-    const year = partNameVehicle.year.trim()
-    const make = partNameVehicle.make.trim()
-    const model = partNameVehicle.model.trim()
-    const parsedYear = Number.parseInt(year, 10)
-
-    if (!vehicleName || !year || !make || !model) {
-      toast.error("Enter car name, model year, make, and model before searching.")
-      return
-    }
-    const vehicleNameError = validateVehicleText(vehicleName, "Car name")
-    if (vehicleNameError) {
-      toast.error(vehicleNameError)
-      return
-    }
-    if (!Number.isInteger(parsedYear) || parsedYear < 1900 || parsedYear > CURRENT_YEAR + 1) {
-      toast.error(`Model year must be between 1900 and ${CURRENT_YEAR + 1}.`)
-      return
-    }
-    const makeError = validateVehicleText(make, "Make")
-    if (makeError) {
-      toast.error(makeError)
-      return
-    }
-    const modelError = validateVehicleText(model, "Model")
-    if (modelError) {
-      toast.error(modelError)
+    const validation = partNameVehicleSchema.safeParse(partNameVehicle)
+    if (!validation.success) {
+      toast.error(firstZodError(validation.error))
       return
     }
 
     router.push(
       buildPartNameSearchUrl(partNumber, {
-        vehicleName,
-        year,
-        make,
-        model,
+        vehicleName: validation.data.vehicleName,
+        year: validation.data.year,
+        make: validation.data.make,
+        model: validation.data.model,
       }),
     )
   }

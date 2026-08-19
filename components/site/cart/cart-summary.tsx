@@ -1,9 +1,24 @@
 "use client";
 
 import { type FormEvent } from "react";
-import { CheckCircle2, MapPin } from "lucide-react";
+import { CheckCircle2, CreditCard, MapPin, Plus, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  CountryPhoneInput,
+  PHONE_COUNTRY_OPTIONS,
+  buildInternationalPhoneNumber,
+  normalizePhoneDigits,
+} from "@/components/site/shared/country-phone-input";
 import { RequiredMark } from "@/components/site/shared/required-mark";
 
 export type UserAddress = {
@@ -16,7 +31,6 @@ export type UserAddress = {
   landmark: string | null;
   city: string;
   state: string;
-  postalCode: string;
   country: string;
   isDefault: boolean;
 };
@@ -30,7 +44,6 @@ export type AddressForm = {
   landmark: string;
   city: string;
   state: string;
-  postalCode: string;
   country: string;
   isDefault: boolean;
 };
@@ -38,9 +51,43 @@ export type AddressForm = {
 export type AddressFieldErrors = Partial<Record<keyof AddressForm, string>>;
 
 const fieldClass = (hasError: boolean) =>
-  `h-11 w-full min-w-0 rounded-lg border bg-brand-panel px-3 text-white outline-none transition-colors focus:border-primary ${
-    hasError ? "border-destructive" : "border-border"
+  `h-11 rounded-lg border-brand-subtle bg-brand-panel text-white ${
+    hasError ? "border-destructive" : ""
   }`;
+
+const phoneSelectClass = (hasError: boolean) =>
+  `h-11 !w-24 !min-w-0 rounded-l-lg rounded-r-none border-border bg-brand-panel px-2 text-white ${
+    hasError ? "border-destructive" : ""
+  }`;
+
+const phoneInputClass = (hasError: boolean) =>
+  `h-11 rounded-l-none rounded-r-lg border-border border-l-0 bg-brand-panel text-white ${
+    hasError ? "border-destructive" : ""
+  }`;
+
+const parseInternationalPhone = (value: string) => {
+  const compact = value.replace(/[^\d+]/g, "");
+  const countryCode =
+    [...PHONE_COUNTRY_OPTIONS]
+      .sort((left, right) => right.code.length - left.code.length)
+      .find((country) => compact.startsWith(country.code))?.code ?? "+971";
+  return {
+    countryCode,
+    phoneNumber: normalizePhoneDigits(compact.slice(countryCode.length)),
+  };
+};
+
+const addressText = (address: UserAddress) =>
+  [
+    address.addressLine1,
+    address.addressLine2,
+    address.landmark,
+    address.city,
+    address.state,
+    address.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
 type CartSummaryProps = {
   productItemCount: number;
@@ -61,7 +108,7 @@ type CartSummaryProps = {
   isLoadingAddresses: boolean;
   isSavingAddress: boolean;
   isCheckingOut: boolean;
-  onToggleAddressForm: () => void;
+  onAddressModalChange: (open: boolean) => void;
   onSelectAddress: (addressId: string) => void;
   onSaveAddress: (event: FormEvent<HTMLFormElement>) => void;
   onAddressFieldChange: <Key extends keyof AddressForm>(
@@ -69,7 +116,6 @@ type CartSummaryProps = {
     value: AddressForm[Key],
   ) => void;
   onPhoneChange: (value: string) => void;
-  onPostalCodeChange: (value: string) => void;
   onCheckoutProducts: () => void;
   onClearCart: () => void;
 };
@@ -90,100 +136,167 @@ export function CartSummary({
   isLoadingAddresses,
   isSavingAddress,
   isCheckingOut,
-  onToggleAddressForm,
+  onAddressModalChange,
   onSelectAddress,
   onSaveAddress,
   onAddressFieldChange,
   onPhoneChange,
-  onPostalCodeChange,
   onCheckoutProducts,
   onClearCart,
 }: CartSummaryProps) {
+  const parsedPhone = parseInternationalPhone(addressForm.phone);
+  const selectedAddress = addresses.find((address) => address.id === selectedAddressId);
+
   return (
-    <>
+    <aside className="space-y-4 lg:sticky lg:top-24">
       {productItemCount ? (
-        <div className="space-y-4 rounded-xl border border-border bg-brand-panel p-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <section className="rounded-lg border border-border bg-brand-panel p-4">
+          <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+              <h2 className="flex items-center gap-2 text-base font-semibold text-white">
                 <MapPin className="h-5 w-5 text-primary" />
                 Delivery address
               </h2>
               <p className="mt-1 text-sm text-brand-muted">
-                Choose a saved address or add a new delivery address.
+                Product orders need a saved delivery address.
               </p>
             </div>
             <Button
               type="button"
               variant="outline"
-              className="w-full border-border bg-brand-surface text-white hover:bg-border sm:w-auto"
-              onClick={onToggleAddressForm}
+              size="sm"
+              className="shrink-0 border-border bg-brand-surface text-white hover:bg-border"
+              onClick={() => onAddressModalChange(true)}
             >
-              {showAddressForm ? "Cancel" : "Add address"}
+              <Plus className="mr-2 h-4 w-4" />
+              Add
             </Button>
           </div>
 
-          {isLoadingAddresses ? (
-            <p className="text-sm text-brand-muted">Loading addresses...</p>
-          ) : addresses.length ? (
-            <div className="grid gap-3 md:grid-cols-2">
-              {addresses.map((address) => (
+          <div className="mt-4 space-y-3">
+            {isLoadingAddresses ? (
+              <p className="rounded-lg border border-border bg-brand-surface p-3 text-sm text-brand-muted">
+                Loading addresses...
+              </p>
+            ) : addresses.length ? (
+              addresses.map((address) => (
                 <button
                   key={address.id}
                   type="button"
                   onClick={() => onSelectAddress(address.id)}
-                  className={`min-w-0 rounded-lg border p-4 text-left transition-colors ${
+                  className={`w-full rounded-lg border p-3 text-left transition-colors ${
                     selectedAddressId === address.id
                       ? "border-primary bg-primary/10"
                       : "border-border bg-brand-surface hover:border-primary/60"
                   }`}
                 >
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <span className="font-semibold text-white">
-                      {address.label}
-                    </span>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-semibold text-white">{address.label}</span>
                     {selectedAddressId === address.id ? (
                       <CheckCircle2 className="h-5 w-5 text-primary" />
                     ) : null}
                   </div>
-                  <p className="break-words text-sm text-white">
+                  <p className="mt-1 break-words text-sm text-white">
                     {address.recipientName} | {address.phone}
                   </p>
-                  <p className="mt-1 break-words text-sm leading-6 text-brand-muted">
-                    {[
-                      address.addressLine1,
-                      address.addressLine2,
-                      address.landmark,
-                      address.city,
-                      address.state,
-                      address.postalCode,
-                      address.country,
-                    ]
-                      .filter(Boolean)
-                      .join(", ")}
+                  <p className="mt-1 line-clamp-2 break-words text-sm leading-5 text-brand-muted">
+                    {addressText(address)}
                   </p>
                 </button>
-              ))}
-            </div>
-          ) : (
-            <p className="rounded-lg border border-border bg-brand-surface p-4 text-sm text-brand-muted">
-              Add a delivery address before placing a product order.
-            </p>
-          )}
+              ))
+            ) : (
+              <p className="rounded-lg border border-dashed border-border bg-brand-surface p-3 text-sm text-brand-muted">
+                Add a delivery address before placing a product order.
+              </p>
+            )}
+          </div>
+        </section>
+      ) : null}
 
-          {showAddressForm ? (
-            <form
-              onSubmit={onSaveAddress}
-              noValidate
-              className="grid min-w-0 gap-4 rounded-lg border border-border bg-brand-surface p-3 sm:grid-cols-2 sm:p-4"
+      <section className="rounded-lg border border-border bg-brand-panel p-4">
+        <h2 className="flex items-center gap-2 text-base font-semibold text-white">
+          <CreditCard className="h-5 w-5 text-primary" />
+          Order summary
+        </h2>
+
+        <div className="mt-4 space-y-3 border-b border-border pb-4 text-sm">
+          <div className="flex justify-between gap-4 text-brand-muted">
+            <span>Products</span>
+            <span className="text-white">AED {productSubtotal.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between gap-4 text-brand-muted">
+            <span>Garage service advance</span>
+            <span className="text-white">AED {serviceAdvanceSubtotal.toFixed(2)}</span>
+          </div>
+          {serviceItemCount ? (
+            <p className="rounded-lg bg-brand-surface px-3 py-2 text-xs leading-5 text-brand-muted">
+              Service advance is due now
+              {garageAdvance.mode === "percentage"
+                ? ` at ${garageAdvance.value}% of service price.`
+                : ` as AED ${garageAdvance.value.toFixed(2)} per service.`}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="mt-4 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-sm text-brand-muted">Payable now</p>
+            <p className="text-2xl font-bold text-white">
+              AED {payableSubtotal.toFixed(2)}
+            </p>
+          </div>
+          <p className="text-right text-xs text-brand-muted">
+            Cart value AED {subtotal.toFixed(2)}
+          </p>
+        </div>
+
+        {selectedAddress ? (
+          <p className="mt-3 flex items-center gap-2 rounded-lg bg-brand-surface px-3 py-2 text-xs text-brand-muted">
+            <ShieldCheck className="h-4 w-4 text-primary" />
+            Delivering to {selectedAddress.label}
+          </p>
+        ) : null}
+
+        <div className="mt-4 grid gap-2">
+          {productItemCount ? (
+            <Button
+              type="button"
+              disabled={isCheckingOut || !selectedAddressId}
+              onClick={onCheckoutProducts}
+              className="rounded-lg px-4"
             >
+              {isCheckingOut
+                ? "Processing payment..."
+                : `Pay & place order${productItemCount === 1 ? "" : "s"}`}
+            </Button>
+          ) : null}
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-lg border-border bg-brand-surface text-white hover:bg-border"
+            onClick={onClearCart}
+          >
+            Clear cart
+          </Button>
+        </div>
+      </section>
+
+      <Dialog open={showAddressForm} onOpenChange={onAddressModalChange}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto border-border bg-brand-surface text-white sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add delivery address</DialogTitle>
+            <DialogDescription>
+              Save a delivery address for product checkout.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form id="checkout-address-form" onSubmit={onSaveAddress} noValidate>
+            <div className="grid min-w-0 gap-4 sm:grid-cols-2">
               <label className="min-w-0 space-y-2 text-sm">
                 <span className="text-brand-muted">Address label<RequiredMark /></span>
-                <input
+                <Input
                   value={addressForm.label}
-                  onChange={(event) =>
-                    onAddressFieldChange("label", event.target.value)
-                  }
+                  onChange={(event) => onAddressFieldChange("label", event.target.value)}
                   aria-invalid={Boolean(addressFieldErrors.label)}
                   required
                   maxLength={60}
@@ -193,7 +306,7 @@ export function CartSummary({
               </label>
               <label className="min-w-0 space-y-2 text-sm">
                 <span className="text-brand-muted">Recipient name<RequiredMark /></span>
-                <input
+                <Input
                   value={addressForm.recipientName}
                   onChange={(event) =>
                     onAddressFieldChange("recipientName", event.target.value)
@@ -202,40 +315,29 @@ export function CartSummary({
                   required
                   maxLength={120}
                   autoComplete="name"
-                  className={fieldClass(
-                    Boolean(addressFieldErrors.recipientName),
-                  )}
+                  placeholder="Full name"
+                  className={fieldClass(Boolean(addressFieldErrors.recipientName))}
                 />
               </label>
-              <label className="min-w-0 space-y-2 text-sm">
-                <span className="text-brand-muted">Phone<RequiredMark /></span>
-                <input
-                  value={addressForm.phone}
-                  onChange={(event) => onPhoneChange(event.target.value)}
-                  aria-invalid={Boolean(addressFieldErrors.phone)}
-                  required
-                  maxLength={16}
-                  autoComplete="tel"
-                  inputMode="tel"
-                  placeholder="+971..."
-                  className={fieldClass(Boolean(addressFieldErrors.phone))}
-                />
-              </label>
-              <label className="min-w-0 space-y-2 text-sm">
-                <span className="text-brand-muted">Postal code<RequiredMark /></span>
-                <input
-                  value={addressForm.postalCode}
-                  onChange={(event) => onPostalCodeChange(event.target.value)}
-                  aria-invalid={Boolean(addressFieldErrors.postalCode)}
-                  required
-                  autoComplete="postal-code"
-                  maxLength={20}
-                  className={fieldClass(Boolean(addressFieldErrors.postalCode))}
-                />
-              </label>
+              <CountryPhoneInput
+                id="checkout-address-phone"
+                label="Phone"
+                className="[&>div]:grid-cols-[6rem_minmax(0,1fr)]"
+                countryCode={parsedPhone.countryCode}
+                phoneNumber={parsedPhone.phoneNumber}
+                onCountryCodeChange={(countryCode) =>
+                  onPhoneChange(buildInternationalPhoneNumber(countryCode, parsedPhone.phoneNumber))
+                }
+                onPhoneNumberChange={(phoneNumber) =>
+                  onPhoneChange(buildInternationalPhoneNumber(parsedPhone.countryCode, phoneNumber))
+                }
+                labelClassName="text-brand-muted"
+                selectClassName={phoneSelectClass(Boolean(addressFieldErrors.phone))}
+                inputClassName={phoneInputClass(Boolean(addressFieldErrors.phone))}
+              />
               <label className="min-w-0 space-y-2 text-sm sm:col-span-2">
                 <span className="text-brand-muted">Address line 1<RequiredMark /></span>
-                <input
+                <Input
                   value={addressForm.addressLine1}
                   onChange={(event) =>
                     onAddressFieldChange("addressLine1", event.target.value)
@@ -245,14 +347,12 @@ export function CartSummary({
                   autoComplete="address-line1"
                   maxLength={255}
                   placeholder="Building, street, area"
-                  className={fieldClass(
-                    Boolean(addressFieldErrors.addressLine1),
-                  )}
+                  className={fieldClass(Boolean(addressFieldErrors.addressLine1))}
                 />
               </label>
               <label className="min-w-0 space-y-2 text-sm sm:col-span-2">
                 <span className="text-brand-muted">Address line 2</span>
-                <input
+                <Input
                   value={addressForm.addressLine2}
                   onChange={(event) =>
                     onAddressFieldChange("addressLine2", event.target.value)
@@ -261,18 +361,14 @@ export function CartSummary({
                   autoComplete="address-line2"
                   maxLength={255}
                   placeholder="Apartment, suite, floor"
-                  className={fieldClass(
-                    Boolean(addressFieldErrors.addressLine2),
-                  )}
+                  className={fieldClass(Boolean(addressFieldErrors.addressLine2))}
                 />
               </label>
               <label className="min-w-0 space-y-2 text-sm sm:col-span-2">
                 <span className="text-brand-muted">Landmark</span>
-                <input
+                <Input
                   value={addressForm.landmark}
-                  onChange={(event) =>
-                    onAddressFieldChange("landmark", event.target.value)
-                  }
+                  onChange={(event) => onAddressFieldChange("landmark", event.target.value)}
                   aria-invalid={Boolean(addressFieldErrors.landmark)}
                   maxLength={160}
                   placeholder="Nearby landmark"
@@ -281,43 +377,40 @@ export function CartSummary({
               </label>
               <label className="min-w-0 space-y-2 text-sm">
                 <span className="text-brand-muted">City<RequiredMark /></span>
-                <input
+                <Input
                   value={addressForm.city}
-                  onChange={(event) =>
-                    onAddressFieldChange("city", event.target.value)
-                  }
+                  onChange={(event) => onAddressFieldChange("city", event.target.value)}
                   aria-invalid={Boolean(addressFieldErrors.city)}
                   required
                   autoComplete="address-level2"
                   maxLength={120}
+                  placeholder="Dubai"
                   className={fieldClass(Boolean(addressFieldErrors.city))}
                 />
               </label>
               <label className="min-w-0 space-y-2 text-sm">
                 <span className="text-brand-muted">State<RequiredMark /></span>
-                <input
+                <Input
                   value={addressForm.state}
-                  onChange={(event) =>
-                    onAddressFieldChange("state", event.target.value)
-                  }
+                  onChange={(event) => onAddressFieldChange("state", event.target.value)}
                   aria-invalid={Boolean(addressFieldErrors.state)}
                   required
                   autoComplete="address-level1"
                   maxLength={120}
+                  placeholder="Dubai"
                   className={fieldClass(Boolean(addressFieldErrors.state))}
                 />
               </label>
               <label className="min-w-0 space-y-2 text-sm">
                 <span className="text-brand-muted">Country<RequiredMark /></span>
-                <input
+                <Input
                   value={addressForm.country}
-                  onChange={(event) =>
-                    onAddressFieldChange("country", event.target.value)
-                  }
+                  onChange={(event) => onAddressFieldChange("country", event.target.value)}
                   aria-invalid={Boolean(addressFieldErrors.country)}
                   required
                   autoComplete="country-name"
                   maxLength={120}
+                  placeholder="United Arab Emirates"
                   className={fieldClass(Boolean(addressFieldErrors.country))}
                 />
               </label>
@@ -332,70 +425,30 @@ export function CartSummary({
                 />
                 Use as default address
               </label>
-              <div className="sm:col-span-2">
-                <Button
-                  type="submit"
-                  disabled={isSavingAddress}
-                  className="w-full rounded-xl px-4 sm:w-auto"
-                >
-                  {isSavingAddress ? "Saving..." : "Save address"}
-                </Button>
-              </div>
-            </form>
-          ) : null}
-        </div>
-      ) : null}
+            </div>
+          </form>
 
-      <div className="flex flex-col gap-3 rounded-xl border border-border bg-brand-panel p-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm text-brand-muted">Payable now</p>
-          <p className="text-2xl font-bold text-white">
-            AED {payableSubtotal.toFixed(2)}
-          </p>
-          {productItemCount ? (
-            <p className="mt-1 text-sm text-brand-muted">
-              Product checkout total: AED {productSubtotal.toFixed(2)}
-            </p>
-          ) : null}
-          {serviceItemCount ? (
-            <p className="mt-1 text-sm text-brand-muted">
-              Service advance due now: AED {serviceAdvanceSubtotal.toFixed(2)}
-              {garageAdvance.mode === "percentage"
-                ? ` (${garageAdvance.value}% advance)`
-                : ` (fixed AED ${garageAdvance.value.toFixed(2)} advance)`}
-            </p>
-          ) : null}
-          {serviceItemCount ? (
-            <p className="mt-1 text-sm text-brand-muted">
-              Service list price in cart value: AED{" "}
-              {(subtotal - productSubtotal).toFixed(2)}. Slot selection unlocks
-              after part delivery.
-            </p>
-          ) : null}
-        </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          {productItemCount ? (
+          <DialogFooter className="border-border bg-brand-panel">
             <Button
               type="button"
-              disabled={isCheckingOut || !selectedAddressId}
-              onClick={onCheckoutProducts}
-              className="rounded-xl px-4"
+              variant="outline"
+              className="border-border bg-brand-surface text-white hover:bg-border"
+              onClick={() => onAddressModalChange(false)}
+              disabled={isSavingAddress}
             >
-              {isCheckingOut
-                ? "Processing dummy payment..."
-                : `Pay & place order${productItemCount === 1 ? "" : "s"}`}
+              Cancel
             </Button>
-          ) : null}
-          <Button
-            type="button"
-            variant="outline"
-            className="border-border bg-brand-surface text-white hover:bg-border"
-            onClick={onClearCart}
-          >
-            Clear cart
-          </Button>
-        </div>
-      </div>
-    </>
+            <Button
+              type="submit"
+              form="checkout-address-form"
+              disabled={isSavingAddress}
+              className="rounded-lg"
+            >
+              {isSavingAddress ? "Saving..." : "Save address"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </aside>
   );
 }

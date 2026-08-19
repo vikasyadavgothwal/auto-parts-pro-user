@@ -59,7 +59,7 @@ const writeRequests = [
     title: "Garage profile",
     methods: "PATCH /api/v1/developer/account",
     scope: "account.profile.write",
-    fields: "All fields are optional. Send only values to change: garageName, workingDays, workingHours, workingHoursByDay, address, country, state, city, pincode, jobCompletedNumber, yearsExperience, responseTime, certifications, and about.",
+    fields: "All fields are optional. Send only values to change: garageName, workingDays, workingHours, workingHoursByDay, address, country, state, city, jobCompletedNumber, yearsExperience, responseTime, certifications, and about.",
     body: `{
   "garageName": "Downtown Auto Care",
   "address": "12 Al Quoz Industrial Area",
@@ -75,14 +75,13 @@ const writeRequests = [
     title: "Fleet or supplier profile",
     methods: "PATCH /api/v1/developer/account",
     scope: "account.profile.write",
-    fields: "Fleet accepts companyName, firstName, lastName, addressLine1, addressLine2, city, state, postalCode, and country. Supplier accepts the same fields plus contactPerson and designation. Send only fields to change.",
+    fields: "Fleet accepts companyName, firstName, lastName, addressLine1, addressLine2, city, state, and country. Supplier accepts the same fields plus contactPerson and designation. Send only fields to change.",
     body: `{
   "companyName": "Acme Fleet Services",
   "contactPerson": "Samir Khan",
   "designation": "Operations Manager",
   "addressLine1": "Warehouse 4, Industrial City",
   "city": "Dubai",
-  "postalCode": "123456",
   "country": "UAE"
 }`,
   },

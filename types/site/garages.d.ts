@@ -32,7 +32,6 @@ export type PublicGarageSummary = {
   country: string | null
   state: string | null
   city: string | null
-  pincode: string | null
   image: string | null
   imageKey: string | null
   jobCompletedNumber: number
@@ -44,6 +43,7 @@ export type PublicGarageSummary = {
   currency: string
   ratingAverage: number
   reviewCount: number
+  planPriority: number
   availableToday: boolean
   availableThisWeek: boolean
 }

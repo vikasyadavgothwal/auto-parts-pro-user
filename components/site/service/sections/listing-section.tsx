@@ -105,11 +105,24 @@ function matchesPriceRange(price: number | null, priceRange: PriceRangeOption | 
 
 function compareTopGarages(a: PublicGarageSummary, b: PublicGarageSummary) {
   return (
+    b.planPriority - a.planPriority ||
     b.reviewCount - a.reviewCount ||
     b.jobCompletedNumber - a.jobCompletedNumber ||
     b.ratingAverage - a.ratingAverage ||
     b.yearsExperience - a.yearsExperience
   )
+}
+
+function topOptions(values: string[], limit: number, fallback: string[]) {
+  if (!values.length) return fallback.slice(0, limit);
+  const counts = values.reduce<Map<string, number>>((result, value) => {
+    result.set(value, (result.get(value) ?? 0) + 1);
+    return result;
+  }, new Map());
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(([value]) => value);
 }
 
 function hasSelectedMatch(selectedItems: string[], availableItems: string[]) {
@@ -122,7 +135,6 @@ function hasSelectedMatch(selectedItems: string[], availableItems: string[]) {
 export function ServicesListingSection({
   garages,
   pagination,
-  searchParams,
 }: ServicesListingSectionProps) {
   const [showFilters, setShowFilters] = useState(true);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -130,17 +142,8 @@ export function ServicesListingSection({
     createInitialFilters(),
   );
   const [sort, setSort] = useState<GarageSort>("best");
-  const hasSearchOrLocationFilter =
-    Boolean(searchParams.q) || Boolean(searchParams.service) || Boolean(searchParams.location);
-  const hasClientFilters = useMemo(
-    () =>
-      filters.serviceTypes.length > 0 ||
-      filters.availability.length > 0 ||
-      filters.certifications.length > 0 ||
-      filters.priceRanges.length > 0,
-    [filters],
-  );
-  const shouldShowAll = hasSearchOrLocationFilter || hasClientFilters;
+  const [page, setPage] = useState(1);
+  const pageSize = 6;
 
   useEffect(() => {
     const desktopMediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -159,16 +162,12 @@ export function ServicesListingSection({
 
   const serviceTypeOptions = useMemo(() => {
     const values = garages.flatMap((garage) => garage.specialties);
-    return values.length
-      ? Array.from(new Set(values))
-      : fallbackServiceTypeOptions;
+    return topOptions(values, 4, fallbackServiceTypeOptions);
   }, [garages]);
 
   const certificationOptions = useMemo(() => {
     const values = garages.flatMap((garage) => garage.certifications);
-    return values.length
-      ? Array.from(new Set(values))
-      : fallbackCertificationOptions;
+    return topOptions(values, 5, fallbackCertificationOptions);
   }, [garages]);
   const priceRangeOptions = useMemo(() => buildPriceRangeOptions(garages), [garages]);
   const priceRangeByValue = useMemo(
@@ -248,9 +247,11 @@ export function ServicesListingSection({
 
     return [...filtered].sort(compareTopGarages);
   }, [filters, garages, priceRangeByValue, sort]);
+  const totalPages = Math.max(1, Math.ceil(filteredGarages.length / pageSize));
+  const safePage = Math.min(page, totalPages);
   const displayedGarages = useMemo(
-    () => (shouldShowAll ? filteredGarages : filteredGarages.slice(0, 6)),
-    [filteredGarages, shouldShowAll],
+    () => filteredGarages.slice((safePage - 1) * pageSize, safePage * pageSize),
+    [filteredGarages, pageSize, safePage],
   );
 
   function handleFilterChange(
@@ -269,10 +270,17 @@ export function ServicesListingSection({
         [filterKey]: nextItems,
       };
     });
+    setPage(1);
   }
 
   function handleClearFilters() {
     setFilters(createInitialFilters());
+    setPage(1);
+  }
+
+  function handleSortChange(nextSort: GarageSort) {
+    setSort(nextSort);
+    setPage(1);
   }
 
   return (
@@ -297,12 +305,43 @@ export function ServicesListingSection({
             sort={sort}
             onOpenMobileFilters={() => setMobileFiltersOpen(true)}
             onToggleFilters={() => setShowFilters((current) => !current)}
-            onSortChange={setSort}
+            onSortChange={handleSortChange}
           />
 
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"></div>
 
           <ListingGrid garages={displayedGarages} />
+
+          {filteredGarages.length > pageSize ? (
+            <div className="mt-8 flex flex-col gap-3 rounded-lg border border-border bg-card p-4 text-sm text-brand-muted sm:flex-row sm:items-center sm:justify-between">
+              <p>
+                Showing {(safePage - 1) * pageSize + 1}
+                -{Math.min(safePage * pageSize, filteredGarages.length)} of{" "}
+                {filteredGarages.length} garages
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  disabled={safePage <= 1}
+                  onClick={() => setPage((current) => Math.max(1, current - 1))}
+                  className="rounded-md border border-border px-3 py-2 text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span>
+                  Page {safePage} of {totalPages}
+                </span>
+                <button
+                  type="button"
+                  disabled={safePage >= totalPages}
+                  onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                  className="rounded-md border border-border px-3 py-2 text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
 

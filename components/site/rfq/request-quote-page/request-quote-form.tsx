@@ -26,17 +26,10 @@ import {
   VehicleInformationSection,
 } from "./form-sections";
 import {
-  hasMeaningfulText,
-  isValidRfqEmail,
-  isValidRfqTargetPrice,
-  RFQ_COMPANY_NAME_MAX_LENGTH,
-  RFQ_CONTACT_NAME_MAX_LENGTH,
   RFQ_MAX_PARTS,
-  RFQ_PART_NAME_MAX_LENGTH,
-  RFQ_PART_NOTES_MAX_LENGTH,
-  RFQ_PART_NUMBER_MAX_LENGTH,
   validateRfqImportFile,
 } from "@/lib/rfq-validation";
+import { firstZodError, rfqFormSchema } from "@/lib/validation/site-forms";
 
 type UserVehiclesResponse = {
   ok: boolean;
@@ -129,7 +122,6 @@ const mapFleetVehicle = (
 
 const cleanText = (value: string) => value.trim().replace(/\s+/g, " ");
 
-const validVin = (value: string) => /^[A-HJ-NPR-Z0-9]{17}$/.test(value);
 const profileName = (user: UserAuthProfile) =>
   [user.firstName, user.lastName].filter(Boolean).join(" ") ||
   user.email ||
@@ -331,60 +323,23 @@ export function RequestQuoteForm() {
     const phone = String(values.get("phone") ?? "").trim();
     const source = activeUser.activeRole === "Fleet" ? "fleet" : "user";
     const selectedVin = selectedVehicle?.vin.trim().toUpperCase() ?? "";
-    const currentYear = new Date().getFullYear();
-    const validationError =
-      !hasMeaningfulText(submittedCompanyName, 2, RFQ_COMPANY_NAME_MAX_LENGTH)
-        ? `Company name must contain 2 to ${RFQ_COMPANY_NAME_MAX_LENGTH} characters.`
-        : !hasMeaningfulText(submittedContactName, 2, RFQ_CONTACT_NAME_MAX_LENGTH)
-          ? `Contact name must contain 2 to ${RFQ_CONTACT_NAME_MAX_LENGTH} characters.`
-            : !isValidRfqEmail(submittedEmail)
-              ? "Enter a valid email address."
-              : !isValidInternationalPhoneNumber(phone)
-                ? "Enter a valid phone number with country code."
-              : !selectedVehicle && parts.some((part) => !part.vehicleVin)
-                ? "Select a saved vehicle or enter a valid VIN for every part."
-                : parts.some((part) => part.vehicleVin && !validVin(part.vehicleVin))
-                  ? "Every VIN must contain exactly 17 valid characters."
-                  : selectedVehicle && !validVin(selectedVin)
-                    ? "Selected vehicle VIN must contain exactly 17 valid characters."
-                    : selectedVehicle &&
-                        (!Number.isInteger(Number(selectedVehicle.year)) ||
-                          Number(selectedVehicle.year) < 1886 ||
-                          Number(selectedVehicle.year) > currentYear + 1)
-                      ? `Vehicle year must be between 1886 and ${currentYear + 1}.`
-                      : selectedVehicle && !selectedVehicle.make.trim()
-                        ? "Vehicle make is required."
-                        : selectedVehicle && !selectedVehicle.model.trim()
-                          ? "Vehicle model is required."
-                    : parts.some(
-                        (part) =>
-                          !hasMeaningfulText(
-                            part.partName,
-                            2,
-                            RFQ_PART_NAME_MAX_LENGTH,
-                          ),
-                      )
-                        ? "Every part must have a valid part name."
-                        : parts.some((part) => part.partNumber.trim().length > RFQ_PART_NUMBER_MAX_LENGTH)
-                            ? `Part number or OEM number must be ${RFQ_PART_NUMBER_MAX_LENGTH} characters or fewer.`
-                        : parts.some((part) => part.notes.trim().length > RFQ_PART_NOTES_MAX_LENGTH)
-                          ? `Additional notes must be ${RFQ_PART_NOTES_MAX_LENGTH} characters or fewer per part.`
-                        : parts.some(
-                            (part) =>
-                              !Number.isInteger(part.quantity) ||
-                              part.quantity < 1 ||
-                              part.quantity > 10000,
-                          )
-                          ? "Every part quantity must be between 1 and 10,000."
-                          : parts.some(
-                              (part) =>
-                                part.targetPrice !== "" &&
-                                !isValidRfqTargetPrice(part.targetPrice),
-                            )
-                            ? "Target prices must be valid amounts with no more than 2 decimal places."
-                            : "";
-    if (validationError) {
-      toast.error(validationError);
+    const validation = rfqFormSchema.safeParse({
+      companyName: submittedCompanyName,
+      contactName: submittedContactName,
+      email: submittedEmail,
+      phone,
+      selectedVehicleVin: selectedVin,
+      selectedVehicleYear: selectedVehicle?.year ?? "",
+      selectedVehicleMake: selectedVehicle?.make ?? "",
+      selectedVehicleModel: selectedVehicle?.model ?? "",
+      parts,
+    });
+    if (!validation.success) {
+      toast.error(firstZodError(validation.error));
+      return;
+    }
+    if (!isValidInternationalPhoneNumber(phone)) {
+      toast.error("Enter a valid phone number with country code.");
       return;
     }
 

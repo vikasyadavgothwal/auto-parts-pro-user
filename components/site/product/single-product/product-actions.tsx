@@ -5,7 +5,6 @@ import { toast } from "sonner";
 
 import { HeartIcon, ShareIcon } from "@/components/icons/site-icons";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { getCurrentUser, siteAuthenticatedFetch } from "@/lib/current-user";
 
 type SavedStatusPayload = {
@@ -132,24 +131,6 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
     } finally {
       setPending(false);
     }
-  };
-
-  const toggleWatchForPriceDrops = async () => {
-    const nextValue = !watchForPriceDrops;
-    await updateSavedPart(true, { price: nextValue, stock: watchForStockReturns },
-      nextValue
-        ? "You will be notified on lower price drops."
-        : "Price watch removed.",
-    );
-  };
-
-  const toggleWatchForStockReturns = async () => {
-    const nextValue = !watchForStockReturns;
-    await updateSavedPart(true, { price: watchForPriceDrops, stock: nextValue },
-      nextValue
-        ? "You will be notified when stock returns."
-        : "Stock watch removed.",
-    );
   };
 
   const shareProduct = async () => {

@@ -40,7 +40,6 @@ export function ListingItemCard({ garage }: { garage: PublicGarageSummary }) {
     garage.city,
     garage.state,
     garage.country,
-    garage.pincode,
   ]
     .filter(Boolean)
     .join(", ");

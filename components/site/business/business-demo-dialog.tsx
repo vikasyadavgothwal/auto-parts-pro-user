@@ -29,6 +29,7 @@ import {
 } from "@/components/site/shared/country-phone-input";
 import type { BusinessQueryType } from "@/lib/business-query-cta";
 import { RequiredMark } from "@/components/site/shared/required-mark";
+import { demoRequestSchema, firstZodError } from "@/lib/validation/site-forms";
 
 type BusinessDemoDialogButtonProps = {
   children: ReactNode;
@@ -87,28 +88,19 @@ export function BusinessDemoDialogButton({
     const company = String(values.company ?? "").trim();
     const message = String(values.message ?? "").trim();
 
-    if (name.length < 2 || name.length > 100 || !/[\p{L}\p{N}]/u.test(name)) {
-      toast.error("Enter your full name.");
-      return;
-    }
-    if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error("Enter a valid email address.");
+    const validation = demoRequestSchema.safeParse({
+      name,
+      email,
+      phone: phoneNumber,
+      company,
+      message,
+    });
+    if (!validation.success) {
+      toast.error(firstZodError(validation.error));
       return;
     }
     if (!isValidInternationalPhoneNumber(phoneNumber)) {
       toast.error("Enter a valid phone number with country code.");
-      return;
-    }
-    if (company.length < 2 || company.length > 120 || !/[\p{L}\p{N}]/u.test(company)) {
-      toast.error("Enter your company name.");
-      return;
-    }
-    if (message.length < 5 || !/[\p{L}\p{N}]/u.test(message)) {
-      toast.error("Add a short message.");
-      return;
-    }
-    if (message.length > messageMaxLength) {
-      toast.error(`Message must be ${messageMaxLength} characters or less.`);
       return;
     }
 
@@ -186,6 +178,7 @@ export function BusinessDemoDialogButton({
               autoComplete="name"
               minLength={2}
               maxLength={100}
+              placeholder="Enter your full name"
             />
           </div>
 
@@ -201,6 +194,7 @@ export function BusinessDemoDialogButton({
               className={inputClassName}
               autoComplete="email"
               maxLength={254}
+              placeholder="name@example.com"
             />
           </div>
 
@@ -229,6 +223,7 @@ export function BusinessDemoDialogButton({
               autoComplete="organization"
               minLength={2}
               maxLength={120}
+              placeholder="Enter your company name"
             />
           </div>
 
@@ -243,6 +238,7 @@ export function BusinessDemoDialogButton({
               rows={4}
               minLength={5}
               maxLength={messageMaxLength}
+              placeholder="Tell us what you want to see in the demo"
               onChange={(event) => setMessageLength(event.target.value.length)}
               className="resize-none rounded-xl border-border bg-brand-surface px-3 py-2 text-white placeholder:text-brand-placeholder"
             />

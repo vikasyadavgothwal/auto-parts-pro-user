@@ -24,7 +24,7 @@ const fallbackGarageImage =
   "https://plus.unsplash.com/premium_photo-1661373022510-dfd61512e080?q=80&w=2731&auto=format&fit=crop";
 
 const formatAddress = (garage: PublicGarageDetail) =>
-  [garage.address, garage.city, garage.state, garage.country, garage.pincode]
+  [garage.address, garage.city, garage.state, garage.country]
     .filter(Boolean)
     .join(", ");
 
@@ -61,6 +61,7 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
     ? garage.ratingAverage.toFixed(1)
     : "New";
   const reviewCountLabel = `${garage.reviewCount} review${garage.reviewCount === 1 ? "" : "s"}`;
+  const hasReviews = garage.reviews.length > 0;
   const gallery = garage.galleryImages.map((src, index) => ({
     src,
     alt: `${garage.name} gallery ${index + 1}`,
@@ -176,9 +177,11 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
                         <span className="text-2xl font-bold text-foreground">
                           {ratingLabel}
                         </span>
-                        <span className="text-brand-muted">
-                          ({reviewCountLabel})
-                        </span>
+                        {hasReviews ? (
+                          <span className="text-brand-muted">
+                            ({reviewCountLabel})
+                          </span>
+                        ) : null}
                       </div>
 
                       <Badge className="flex items-center gap-1 rounded-xl border border-brand-success/20 bg-brand-success/10 px-3 py-1 text-sm font-semibold text-brand-success hover:bg-brand-success/10">
@@ -321,14 +324,15 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
               </CardContent>
             </Card>
 
-            <Card className="rounded-2xl border border-border bg-card shadow-none">
-              <CardContent className="p-6 sm:p-8">
-                <h2 className="mb-6 text-2xl font-Inter text-foreground">
-                  Customer Reviews
-                </h2>
+            {hasReviews ? (
+              <Card className="rounded-2xl border border-border bg-card shadow-none">
+                <CardContent className="p-6 sm:p-8">
+                  <h2 className="mb-6 text-2xl font-Inter text-foreground">
+                    Customer Reviews
+                  </h2>
 
-                <div className="space-y-6">
-                  {garage.reviews.length ? garage.reviews.map((review) => (
+                  <div className="space-y-6">
+                    {garage.reviews.map((review) => (
                     <div
                       key={review.id}
                       className="border-b border-border pb-6 last:border-0"
@@ -363,14 +367,11 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
 
                       <p className="mb-3 text-brand-muted">{review.comment}</p>
                     </div>
-                  )) : (
-                    <p className="text-brand-muted">
-                      No customer reviews yet.
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null}
 
             {gallery.length ? (
               <Card className="rounded-2xl border-none bg-transparent shadow-none">
@@ -379,7 +380,7 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
                     Gallery
                   </h2>
 
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                     {gallery.map((image) => (
                       <div
                         key={image.alt}

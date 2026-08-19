@@ -16,6 +16,7 @@ type DateTimeStepProps = {
   selectedDate: string;
   selectedTime: string;
   unavailableTimes?: readonly string[];
+  unavailableMessage?: string;
   isLoadingAvailability?: boolean;
 };
 
@@ -26,9 +27,11 @@ export function DateTimeStep({
   selectedDate,
   selectedTime,
   unavailableTimes = [],
+  unavailableMessage = "",
   isLoadingAvailability = false,
 }: DateTimeStepProps) {
   const unavailable = new Set(unavailableTimes);
+  const isGarageUnavailable = Boolean(unavailableMessage);
   return (
     <BookingStepFrame stepId="datetime">
       <h2 className="mb-2 text-3xl font-bold text-foreground">
@@ -87,6 +90,12 @@ export function DateTimeStep({
             Select Time
           </h3>
 
+          {isGarageUnavailable ? (
+            <div className="mb-4 rounded-xl border border-border bg-muted/40 p-4 text-sm font-medium text-brand-muted">
+              {unavailableMessage}
+            </div>
+          ) : null}
+
           <div className="space-y-6">
             {Object.entries(bookingTimeSlots).map(([period, slots]) => (
               <div key={period}>
@@ -98,11 +107,11 @@ export function DateTimeStep({
                   {slots.map((time) => (
                     <Button
                       key={time}
-                      disabled={isLoadingAvailability || unavailable.has(time)}
+                      disabled={isGarageUnavailable || isLoadingAvailability || unavailable.has(time)}
                       onClick={() => onSelectTime(time)}
                       variant="outline"
                       className={`rounded-xl border-2 py-6 font-medium transition-all ${
-                        unavailable.has(time)
+                        isGarageUnavailable || unavailable.has(time)
                           ? "cursor-not-allowed border-border bg-muted text-brand-muted opacity-50"
                           : selectedTime === time
                           ? "border-primary bg-primary text-primary-foreground hover:bg-brand-primary-hover"

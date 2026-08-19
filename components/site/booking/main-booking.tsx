@@ -69,6 +69,8 @@ type BookingResponse = {
 type AvailabilityResponse = {
   ok: boolean;
   unavailableTimes?: string[];
+  bookingUnavailable?: boolean;
+  bookingUnavailableMessage?: string | null;
   advance?: BookingAdvance;
   advancePercentage?: number;
   message?: string;
@@ -187,6 +189,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const [pendingConfirmedBooking, setPendingConfirmedBooking] = useState<GarageBookingResult | null>(null);
   const [paymentReceipt, setPaymentReceipt] = useState<BookingResponse["payment"]>(undefined);
   const [unavailableTimes, setUnavailableTimes] = useState<string[]>([]);
+  const [bookingUnavailableMessage, setBookingUnavailableMessage] = useState("");
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
   const [advance, setAdvance] = useState<BookingAdvance>({ mode: "percentage", value: 10 });
   const selectedService = services.find(
@@ -196,7 +199,9 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
     (date) => date.date === selection.date,
   );
   const isSelectedDateAvailable =
-    !!selectedDate && selectedDate.availability !== "unavailable";
+    !!selectedDate &&
+    selectedDate.availability !== "unavailable" &&
+    !bookingUnavailableMessage;
   const customerVehicle: BookingCustomerVehicle = {
     customerName: selection.customerName.trim(),
     customerEmail: selection.customerEmail.trim(),
@@ -280,9 +285,15 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
         if (!response.ok || !payload.ok) throw new Error(payload.message || "Unable to load available times");
         if (!active) return;
         setUnavailableTimes(payload.unavailableTimes ?? []);
+        setBookingUnavailableMessage(
+          payload.bookingUnavailable
+            ? payload.bookingUnavailableMessage ||
+                "This garage is not accepting new bookings right now."
+            : "",
+        );
         setAdvance(payload.advance ?? { mode: "percentage", value: payload.advancePercentage ?? 10 });
         setSelection((current) =>
-          (payload.unavailableTimes ?? []).includes(current.time)
+          payload.bookingUnavailable || (payload.unavailableTimes ?? []).includes(current.time)
             ? { ...current, time: "" }
             : current,
         );
@@ -484,6 +495,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
             selectedServiceId={selection.serviceId}
             onSelectService={(serviceId) => {
               if (selection.date) setIsLoadingAvailability(true);
+              setBookingUnavailableMessage("");
               setSelectionValue("serviceId", serviceId);
             }}
           />
@@ -506,11 +518,13 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
             selectedTime={selection.time}
             onSelectDate={(date) => {
               setIsLoadingAvailability(true);
+              setBookingUnavailableMessage("");
               setSelectionValue("date", date);
               setSelectionValue("time", "");
             }}
             onSelectTime={(time) => setSelectionValue("time", time)}
             unavailableTimes={unavailableTimes}
+            unavailableMessage={bookingUnavailableMessage}
             isLoadingAvailability={isLoadingAvailability}
           />
         );

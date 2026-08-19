@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { PublicSectionIntro } from "@/components/site/public-content/public-section-intro"
-import Link from "next/link"
 
 type SearchHeroSectionProps = {
   serviceQuery?: string
@@ -56,7 +55,6 @@ export function SearchHeroSection({
             </Button>
           </Card>
           </form>
-          <div className="mt-4 text-center"><Link href="/#vehicle-search" className="text-sm font-medium text-primary hover:underline">Change Vehicle</Link></div>
         </div>
       </div>
     </section>

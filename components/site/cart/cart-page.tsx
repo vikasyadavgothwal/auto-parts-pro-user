@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { PackageCheck, Wrench } from "lucide-react";
 import { toast } from "sonner";
 
 import { CartEmptyState } from "@/components/site/cart/cart-empty-state";
 import { CartHeader } from "@/components/site/cart/cart-header";
 import { CartItemList } from "@/components/site/cart/cart-item-list";
-import { CartPromoCode } from "@/components/site/cart/cart-promo-code";
 import { CartServiceSelector } from "@/components/site/cart/cart-service-selector";
 import {
   CartSummary,
@@ -16,7 +16,11 @@ import {
 } from "@/components/site/cart/cart-summary";
 import { useSiteCart } from "@/components/site/cart/cart-provider";
 import { siteAuthenticatedFetch } from "@/lib/current-user";
-import { isValidInternationalPhoneNumber } from "@/components/site/shared/country-phone-input";
+import {
+  addressSchema,
+  firstZodError,
+  zodFieldErrors,
+} from "@/lib/validation/site-forms";
 
 const emptyAddressForm: AddressForm = {
   label: "Home",
@@ -27,7 +31,6 @@ const emptyAddressForm: AddressForm = {
   landmark: "",
   city: "",
   state: "",
-  postalCode: "",
   country: "",
   isDefault: true,
 };
@@ -38,58 +41,54 @@ const normalizePhone = (value: string, maxLength = 15) => {
   return `${prefix}${compact.replace(/\+/g, "").slice(0, maxLength)}`;
 };
 
-const normalizePostalCode = (value: string) =>
-  value.replace(/[^A-Za-z0-9 -]/g, "").slice(0, 20);
+const CartSection = ({
+  title,
+  description,
+  count,
+  icon,
+  children,
+}: {
+  title: string;
+  description: string;
+  count: number;
+  icon: ReactNode;
+  children: ReactNode;
+}) => (
+  <section className="rounded-lg border border-border bg-brand-panel p-4 shadow-sm sm:p-5">
+    <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+          {icon}
+          {title}
+        </h2>
+        <p className="mt-1 text-sm text-brand-muted">{description}</p>
+      </div>
+      <span className="w-fit rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+        {count} {count === 1 ? "item" : "items"}
+      </span>
+    </div>
+    {children}
+  </section>
+);
 
 const validateAddress = (form: AddressForm) => {
-  const errors: AddressFieldErrors = {};
-  const requiredText = (
-    key: keyof AddressForm,
-    label: string,
-    maxLength: number,
-  ) => {
-    const value = String(form[key]).trim();
-    if (!value) {
-      errors[key] = `${label} is required.`;
-      return;
-    }
-    if (!/[\p{L}\p{N}]/u.test(value)) {
-      errors[key] = `${label} must include a letter or number.`;
-      return;
-    }
-    if (value.length > maxLength) {
-      errors[key] = `${label} must be ${maxLength} characters or fewer.`;
-    }
-  };
-
-  requiredText("label", "Address label", 60);
-  requiredText("recipientName", "Recipient name", 120);
-  requiredText("addressLine1", "Address line 1", 255);
-  requiredText("city", "City", 120);
-  requiredText("state", "State", 120);
-  requiredText("postalCode", "Postal code", 20);
-  requiredText("country", "Country", 120);
-
-  if (form.addressLine2.trim().length > 255) {
-    errors.addressLine2 = "Address line 2 must be 255 characters or fewer.";
+  const validation = addressSchema.safeParse({
+    ...form,
+    label: form.label.trim(),
+    recipientName: form.recipientName.trim(),
+    phone: form.phone.trim(),
+    addressLine1: form.addressLine1.trim(),
+    addressLine2: form.addressLine2.trim(),
+    landmark: form.landmark.trim(),
+    city: form.city.trim(),
+    state: form.state.trim(),
+    country: form.country.trim(),
+  });
+  if (!validation.success) {
+    const errors = zodFieldErrors<keyof AddressForm & string>(validation.error);
+    return { data: null, errors, message: firstZodError(validation.error) };
   }
-  if (form.landmark.trim().length > 160) {
-    errors.landmark = "Landmark must be 160 characters or fewer.";
-  }
-
-  const phone = form.phone.trim();
-  if (!phone) {
-    errors.phone = "Phone number is required.";
-  } else if (!isValidInternationalPhoneNumber(phone)) {
-    errors.phone = "Enter a valid phone number with country code.";
-  }
-
-  if (!/^[A-Za-z0-9 -]{3,20}$/.test(form.postalCode.trim())) {
-    errors.postalCode = "Enter a valid postal code.";
-  }
-
-  const firstError = Object.values(errors)[0] ?? "";
-  return { errors, message: firstError };
+  return { data: validation.data, errors: {}, message: "" };
 };
 
 export function CartPage() {
@@ -181,23 +180,13 @@ export function CartPage() {
 
     setIsSavingAddress(true);
     try {
+      const address = validation.data;
+      if (!address) return;
       const response = await siteAuthenticatedFetch("/api/user/addresses", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          label: addressForm.label.trim(),
-          recipientName: addressForm.recipientName.trim(),
-          phone: addressForm.phone.trim(),
-          addressLine1: addressForm.addressLine1.trim(),
-          addressLine2: addressForm.addressLine2.trim(),
-          landmark: addressForm.landmark.trim(),
-          city: addressForm.city.trim(),
-          state: addressForm.state.trim(),
-          postalCode: addressForm.postalCode.trim(),
-          country: addressForm.country.trim(),
-          isDefault: addressForm.isDefault,
-        }),
+        body: JSON.stringify(address),
       });
       const payload = (await response.json().catch(() => null)) as {
         ok?: boolean;
@@ -239,14 +228,46 @@ export function CartPage() {
             ) : items.length === 0 ? (
               <CartEmptyState />
             ) : (
-              <>
-                <CartItemList
-                  items={items}
-                  onUpdateQuantity={updateQuantity}
-                  onRemoveItem={removeItem}
-                />
-                {productItems.length ? <CartServiceSelector /> : null}
-                <CartPromoCode />
+              <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-start">
+                <div className="space-y-5">
+                  {productItems.length ? (
+                    <CartSection
+                      title="Product offers"
+                      description="Parts selected from marketplace suppliers."
+                      count={productItems.length}
+                      icon={<PackageCheck className="h-5 w-5 text-primary" />}
+                    >
+                      <CartItemList
+                        items={productItems}
+                        onUpdateQuantity={updateQuantity}
+                        onRemoveItem={removeItem}
+                      />
+                    </CartSection>
+                  ) : null}
+
+                  {serviceItems.length || productItems.length ? (
+                    <CartSection
+                      title="Garage services"
+                      description="Optional services are handled separately from product delivery."
+                      count={serviceItems.length}
+                      icon={<Wrench className="h-5 w-5 text-primary" />}
+                    >
+                      {serviceItems.length ? (
+                        <CartItemList
+                          items={serviceItems}
+                          onUpdateQuantity={updateQuantity}
+                          onRemoveItem={removeItem}
+                        />
+                      ) : (
+                        <p className="rounded-lg border border-dashed border-border bg-brand-surface p-4 text-sm text-brand-muted">
+                          No garage service selected yet.
+                        </p>
+                      )}
+                      {productItems.length ? <CartServiceSelector /> : null}
+                    </CartSection>
+                  ) : null}
+                </div>
+
                 <CartSummary
                   productItemCount={productItems.length}
                   serviceItemCount={serviceItems.length}
@@ -263,22 +284,17 @@ export function CartPage() {
                   isLoadingAddresses={isLoadingAddresses}
                   isSavingAddress={isSavingAddress}
                   isCheckingOut={isCheckingOut}
-                  onToggleAddressForm={() =>
-                    setShowAddressForm((current) => !current)
-                  }
+                  onAddressModalChange={setShowAddressForm}
                   onSelectAddress={setSelectedAddressId}
                   onSaveAddress={saveAddress}
                   onAddressFieldChange={setAddressField}
                   onPhoneChange={(value) =>
                     setAddressField("phone", normalizePhone(value))
                   }
-                  onPostalCodeChange={(value) =>
-                    setAddressField("postalCode", normalizePostalCode(value))
-                  }
                   onCheckoutProducts={() => checkoutProducts(selectedAddressId)}
                   onClearCart={clearCart}
                 />
-              </>
+              </div>
             )}
           </div>
         </div>
