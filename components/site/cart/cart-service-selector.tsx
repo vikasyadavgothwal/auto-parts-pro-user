@@ -164,7 +164,7 @@ export function CartServiceSelector() {
   }
 
   return (
-    <div className="space-y-4 rounded-xl border border-border bg-brand-panel p-4">
+    <div className="space-y-4 rounded-xl border border-border bg-brand-panel p-4 mt-8">
       <div className="flex items-start gap-3">
         <div className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-primary">
           <Wrench className="h-5 w-5" />

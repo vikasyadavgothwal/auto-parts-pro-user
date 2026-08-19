@@ -155,6 +155,7 @@ export function RequestQuoteForm() {
   const [email, setEmail] = useState("");
   const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [partsResetKey, setPartsResetKey] = useState(0);
 
   const loadAccountVehicles = useCallback(async () => {
     try {
@@ -446,6 +447,13 @@ export function RequestQuoteForm() {
       const result = await response.json();
       if (!response.ok || !result.ok) throw new Error(result.message ?? "Unable to submit RFQ");
       form.reset();
+      setCompanyName("");
+      setContactName("");
+      setEmail("");
+      setPhoneCountryCode("+971");
+      setPhoneNumber("");
+      setSelectedVehicleId("");
+      setPartsResetKey((current) => current + 1);
       toast.success("Quote request submitted to suppliers successfully.");
     } catch (submitError) {
       toast.error(submitError instanceof Error ? submitError.message : "Unable to submit RFQ");
@@ -478,6 +486,7 @@ export function RequestQuoteForm() {
           onVehicleChange={setSelectedVehicleId}
         />
         <PartsNeededSection
+          key={partsResetKey}
           isImporting={isImporting}
           onImportFile={importRfqFile}
         />
