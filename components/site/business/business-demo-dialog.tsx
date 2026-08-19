@@ -25,7 +25,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   CountryPhoneInput,
-  isValidInternationalPhoneNumber,
 } from "@/components/site/shared/country-phone-input";
 import type { BusinessQueryType } from "@/lib/business-query-cta";
 import { RequiredMark } from "@/components/site/shared/required-mark";
@@ -97,10 +96,6 @@ export function BusinessDemoDialogButton({
     });
     if (!validation.success) {
       toast.error(firstZodError(validation.error));
-      return;
-    }
-    if (!isValidInternationalPhoneNumber(phoneNumber)) {
-      toast.error("Enter a valid phone number with country code.");
       return;
     }
 

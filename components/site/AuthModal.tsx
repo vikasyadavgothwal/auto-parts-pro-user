@@ -3,6 +3,7 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
+import { z } from "zod";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -161,6 +162,17 @@ const logFirebaseAuthError = (error: unknown) => {
 const isVerifiedAccountRoleRequired = (error: unknown) =>
   error instanceof Error &&
   error.message === VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE;
+
+const nationalPhoneSchema = z
+  .string()
+  .trim()
+  .refine((value) => isValidNationalPhoneNumber(value), {
+    message: "Enter a valid phone number.",
+  });
+const otpVerificationCodeSchema = z
+  .string()
+  .trim()
+  .regex(/^\d{6}$/, "Enter the 6-digit verification code.");
 
 const sanitizeSingleLine = (value: string, maximum: number) =>
   value.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").slice(0, maximum);
@@ -511,15 +523,16 @@ export function AuthModalCard({
     event.preventDefault();
 
     void runAuthAction(async () => {
-      if (!isValidNationalPhoneNumber(phoneNumber)) {
-        throw new Error("Enter a valid phone number.");
+      const phoneValidation = nationalPhoneSchema.safeParse(phoneNumber);
+      if (!phoneValidation.success) {
+        throw new Error(firstZodError(phoneValidation.error));
       }
 
       let result: ConfirmationResult;
       try {
         result = await signInWithPhoneNumber(
           await getEphemeralFirebaseClientAuth(),
-          buildInternationalPhoneNumber(phoneCountryCode, phoneNumber),
+          buildInternationalPhoneNumber(phoneCountryCode, phoneValidation.data),
           getPhoneRecaptchaVerifier(),
         );
       } catch (error) {
@@ -538,11 +551,12 @@ export function AuthModalCard({
       if (!confirmationResult) {
         throw new Error("Request a verification code first.");
       }
-      if (!/^\d{6}$/.test(otp)) {
-        throw new Error("Enter the 6-digit verification code.");
+      const otpValidation = otpVerificationCodeSchema.safeParse(otp);
+      if (!otpValidation.success) {
+        throw new Error(firstZodError(otpValidation.error));
       }
 
-      const credential = await confirmationResult.confirm(otp.trim());
+      const credential = await confirmationResult.confirm(otpValidation.data);
       await finishVerifiedProviderAuthentication(credential.user, true);
     });
   };
@@ -595,13 +609,16 @@ export function AuthModalCard({
 
     void runAuthAction(async () => {
       if (!businessLoginChallenge) throw new Error("Sign in first.");
-      if (!/^\d{6}$/.test(businessLoginCode)) {
-        throw new Error("Enter the 6-digit verification code.");
+      const businessLoginCodeValidation = otpVerificationCodeSchema.safeParse(
+        businessLoginCode,
+      );
+      if (!businessLoginCodeValidation.success) {
+        throw new Error(firstZodError(businessLoginCodeValidation.error));
       }
 
       const session = await verifyBusinessLoginSession({
         challengeId: businessLoginChallenge.challengeId,
-        code: businessLoginCode,
+        code: businessLoginCodeValidation.data,
         method: businessLoginMethod,
       });
 

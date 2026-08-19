@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from "zod";
 import type { VinSearchRequest } from '@/types/api/vin-search';
 
 export const dynamic = 'force-dynamic';
 
 const VIN_SEARCH_PATH = '/api/v1/vin-search';
+const VIN_SCHEMA = z
+  .string()
+  .trim()
+  .toUpperCase()
+  .length(17, 'VIN must contain exactly 17 valid characters.')
+  .regex(/^[A-HJ-NPR-Z0-9]{17}$/, 'VIN must contain exactly 17 valid characters.');
+const VIN_SEARCH_REQUEST_SCHEMA = z.object({
+  vin: VIN_SCHEMA,
+});
 
 const trimTrailingSlash = (value: string) => value.replace(/\/+$/, '');
 
@@ -20,11 +30,6 @@ const getBackendBaseUrl = () => {
   return trimTrailingSlash(value);
 };
 
-const normalizeVin = (value: unknown) =>
-  typeof value === 'string' ? value.trim().toUpperCase() : '';
-
-const isValidVin = (value: string) => /^[A-HJ-NPR-Z0-9]{17}$/.test(value);
-
 const readJsonBody = async (response: Response): Promise<unknown> => {
   try {
     return await response.json();
@@ -37,14 +42,13 @@ const parseRequestBody = async (
   request: NextRequest,
 ): Promise<VinSearchRequest | null> => {
   try {
-    const body = (await request.json()) as Partial<VinSearchRequest> | null;
-    const vin = normalizeVin(body?.vin);
-
-    if (!isValidVin(vin)) {
+    const body = (await request.json()) as unknown;
+    const parsed = VIN_SEARCH_REQUEST_SCHEMA.safeParse(body);
+    if (!parsed.success) {
       return null;
     }
 
-    return { vin };
+    return parsed.data;
   } catch {
     return null;
   }

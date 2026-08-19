@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { AuthModalCard } from "@/components/site/AuthModal";
 import {
   PHONE_COUNTRY_OPTIONS,
-  isValidInternationalPhoneNumber,
 } from "@/components/site/shared/country-phone-input";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +28,11 @@ import {
   RFQ_MAX_PARTS,
   validateRfqImportFile,
 } from "@/lib/rfq-validation";
-import { firstZodError, rfqFormSchema } from "@/lib/validation/site-forms";
+import {
+  firstZodError,
+  internationalPhoneSchema,
+  rfqFormSchema,
+} from "@/lib/validation/site-forms";
 
 type UserVehiclesResponse = {
   ok: boolean;
@@ -338,8 +341,9 @@ export function RequestQuoteForm() {
       toast.error(firstZodError(validation.error));
       return;
     }
-    if (!isValidInternationalPhoneNumber(phone)) {
-      toast.error("Enter a valid phone number with country code.");
+    const phoneValidation = internationalPhoneSchema.safeParse(phone);
+    if (!phoneValidation.success) {
+      toast.error(firstZodError(phoneValidation.error));
       return;
     }
 

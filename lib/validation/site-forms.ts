@@ -5,6 +5,10 @@ const textWithMeaning = /[\p{L}\p{N}]/u
 const vehicleTextPattern = /^[A-Za-z0-9][A-Za-z0-9 .,'/-]*$/
 const vinPattern = /^[A-HJ-NPR-Z0-9]{17}$/
 const emailSchema = z.string().trim().toLowerCase().email("Enter a valid email address.").max(254, "Email must be 254 characters or fewer.")
+export const internationalPhoneSchema = z
+  .string()
+  .trim()
+  .regex(/^\+[1-9]\d{6,14}$/, "Enter a valid phone number with country code.")
 
 const requiredText = (label: string, min: number, max: number) =>
   z.string()
@@ -22,9 +26,7 @@ const vehicleText = (label: string) =>
 export const demoRequestSchema = z.object({
   name: requiredText("Name", 2, 100),
   email: emailSchema,
-  phone: z.string()
-    .trim()
-    .regex(/^\+[1-9]\d{6,14}$/, "Enter a valid phone number with country code."),
+  phone: internationalPhoneSchema,
   company: requiredText("Company", 2, 120),
   message: requiredText("Message", 5, 1500),
 })
@@ -138,8 +140,16 @@ export const rfqFormSchema = z.object({
 
 export type AddressValidationValue = z.infer<typeof addressSchema>
 
-export const firstZodError = (error: z.ZodError) =>
-  error.issues[0]?.message ?? "Check the required fields."
+const isTechnicalValidationMessage = (message: string) =>
+  /(?:expected|received|invalid input|invalid_type)/i.test(message);
+
+export const firstZodError = (error: z.ZodError) => {
+  const issue = error.issues.find(
+    (entry) => !isTechnicalValidationMessage(entry.message),
+  );
+
+  return issue?.message ?? "Check the required fields.";
+};
 
 export const zodFieldErrors = <Key extends string>(error: z.ZodError) =>
   error.issues.reduce<Partial<Record<Key, string>>>((errors, issue) => {

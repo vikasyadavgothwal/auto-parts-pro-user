@@ -1,14 +1,10 @@
 import type { UserAccountRole } from "@/types/api/user-auth";
+import { z } from "zod";
 
 const PENDING_REGISTRATION_KEY = "auto-parts-pro-pending-registration";
 const REGISTRATION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
-
-const ACCOUNT_ROLES = new Set<UserAccountRole>([
-  "Fleet",
-  "User",
-  "Garage",
-  "Supplier",
-]);
+const ACCOUNT_ROLES = ["Fleet", "User", "Garage", "Supplier"] as const;
+const ACCOUNT_ROLE_SET = new Set<UserAccountRole>(ACCOUNT_ROLES);
 
 type RegistrationStorage = Pick<
   Storage,
@@ -36,12 +32,124 @@ const BUSINESS_NAME_LIMIT = 120;
 const SUPPLIER_DESIGNATION_LIMIT = 80;
 const SUPPLIER_PHONE_PATTERN = /^\+[1-9]\d{6,14}$/;
 
+const accountSignupValidationSchema = z
+  .object({
+    role: z.enum(ACCOUNT_ROLES),
+    fullName: z
+      .string()
+      .transform((value) => sanitizeSingleLine(value, TEXT_FIELD_LIMIT)),
+    businessName: z
+      .string()
+      .transform((value) => sanitizeSingleLine(value, BUSINESS_NAME_LIMIT)),
+    acceptedTerms: z.boolean(),
+    supplierContactPerson: z
+      .string()
+      .transform((value) => sanitizeSingleLine(value, TEXT_FIELD_LIMIT))
+      .optional(),
+    supplierDesignation: z
+      .string()
+      .transform((value) => sanitizeSingleLine(value, SUPPLIER_DESIGNATION_LIMIT))
+      .optional(),
+    supplierPhone: z
+      .string()
+      .transform((value) => sanitizeSingleLine(value, 20))
+      .optional(),
+  })
+  .superRefine((value, context) => {
+    if (!value.acceptedTerms) {
+      context.addIssue({
+        code: "custom",
+        path: ["acceptedTerms"],
+        message: "Accept the Terms of Service and Privacy Policy.",
+      });
+      return;
+    }
+
+    const displayName =
+      value.role === "User" ? value.fullName : value.businessName;
+    if (!displayName) {
+      context.addIssue({
+        code: "custom",
+        path: [value.role === "User" ? "fullName" : "businessName"],
+        message:
+          value.role === "User"
+            ? "Enter your full name."
+            : "Enter your business name.",
+      });
+      return;
+    }
+    if (displayName.length < 2 || !/[\p{L}\p{N}]/u.test(displayName)) {
+      context.addIssue({
+        code: "custom",
+        path: [value.role === "User" ? "fullName" : "businessName"],
+        message:
+          value.role === "User"
+            ? "Full name must contain at least 2 meaningful characters."
+            : "Business name must contain at least 2 meaningful characters.",
+      });
+      return;
+    }
+
+    if (value.role !== "Supplier") {
+      return;
+    }
+
+    if (!value.supplierContactPerson) {
+      context.addIssue({
+        code: "custom",
+        path: ["supplierContactPerson"],
+        message: "Enter the authorized person's name.",
+      });
+      return;
+    }
+    if (
+      value.supplierContactPerson.length < 2 ||
+      !/[\p{L}\p{N}]/u.test(value.supplierContactPerson)
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["supplierContactPerson"],
+        message:
+          "Authorized person name must contain at least 2 meaningful characters.",
+      });
+      return;
+    }
+
+    if (!value.supplierDesignation) {
+      context.addIssue({
+        code: "custom",
+        path: ["supplierDesignation"],
+        message: "Enter the authorized person's designation.",
+      });
+      return;
+    }
+    if (
+      value.supplierDesignation.length < 2 ||
+      !/[\p{L}\p{N}]/u.test(value.supplierDesignation)
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["supplierDesignation"],
+        message: "Designation must contain at least 2 meaningful characters.",
+      });
+      return;
+    }
+
+    if (!SUPPLIER_PHONE_PATTERN.test(value.supplierPhone ?? "")) {
+      context.addIssue({
+        code: "custom",
+        path: ["supplierPhone"],
+        message: "Enter a valid supplier phone number with country code.",
+      });
+    }
+  });
+
 const sanitizeSingleLine = (value: string, maximum: number) =>
   value.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim().slice(0, maximum);
 
 const isAccountRole = (value: unknown): value is UserAccountRole =>
   typeof value === "string" &&
-  ACCOUNT_ROLES.has(value as UserAccountRole);
+  ACCOUNT_ROLE_SET.has(value as UserAccountRole);
 
 const isFirebaseUid = (value: unknown): value is string =>
   typeof value === "string" &&
@@ -212,55 +320,23 @@ export function validateSignupDetails({
   supplierDesignation?: string;
   supplierPhone?: string;
 }): string {
-  if (!acceptedTerms) {
-    throw new Error("Accept the Terms of Service and Privacy Policy.");
+  const validation = accountSignupValidationSchema.safeParse({
+    role,
+    fullName,
+    businessName,
+    acceptedTerms,
+    supplierContactPerson,
+    supplierDesignation,
+    supplierPhone,
+  });
+
+  if (!validation.success) {
+    throw new Error(validation.error.issues[0]?.message ?? "Check the required fields.");
   }
 
-  const displayName =
-    role === "User"
-      ? sanitizeSingleLine(fullName, TEXT_FIELD_LIMIT)
-      : sanitizeSingleLine(businessName, BUSINESS_NAME_LIMIT);
-  if (!displayName) {
-    throw new Error(
-      role === "User" ? "Enter your full name." : "Enter your business name.",
-    );
-  }
-  if (displayName.length < 2 || !/[\p{L}\p{N}]/u.test(displayName)) {
-    throw new Error(
-      role === "User"
-        ? "Full name must contain at least 2 meaningful characters."
-        : "Business name must contain at least 2 meaningful characters.",
-    );
-  }
-
-  if (role === "Supplier") {
-    const contactPerson = sanitizeSingleLine(
-      supplierContactPerson ?? "",
-      TEXT_FIELD_LIMIT,
-    );
-    const designation = sanitizeSingleLine(
-      supplierDesignation ?? "",
-      SUPPLIER_DESIGNATION_LIMIT,
-    );
-    const phone = sanitizeSingleLine(supplierPhone ?? "", 20);
-    if (!contactPerson) {
-      throw new Error("Enter the authorized person's name.");
-    }
-    if (contactPerson.length < 2 || !/[\p{L}\p{N}]/u.test(contactPerson)) {
-      throw new Error("Authorized person name must contain at least 2 meaningful characters.");
-    }
-    if (!designation) {
-      throw new Error("Enter the authorized person's designation.");
-    }
-    if (designation.length < 2 || !/[\p{L}\p{N}]/u.test(designation)) {
-      throw new Error("Designation must contain at least 2 meaningful characters.");
-    }
-    if (!SUPPLIER_PHONE_PATTERN.test(phone)) {
-      throw new Error("Enter a valid supplier phone number with country code.");
-    }
-  }
-
-  return displayName;
+  return validation.data.role === "User"
+    ? validation.data.fullName
+    : validation.data.businessName;
 }
 
 export function normalizeSupplierSignupDetails({
