@@ -806,7 +806,7 @@ export function AuthModalCard({
                     </Button>
                   </div>
                 ) : null}
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <label className="text-sm font-medium text-foreground" htmlFor="business-login-code">
                     6-digit {businessLoginMethod === "pin" ? "PIN" : "OTP"}<RequiredMark />
                   </label>
