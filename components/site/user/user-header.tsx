@@ -16,8 +16,10 @@ import {
 } from "@/lib/current-user";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -33,6 +35,7 @@ const navItems = [
 
 export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, "logoUrl" | "siteName">) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user, itemCount, openCart } = useSiteCart();
 
@@ -91,7 +94,8 @@ export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, 
                   <Button
                     type="button"
                     className="h-auto rounded-xl p-2.5 text-white hover:bg-brand-primary-hover"
-                    aria-label="Profile"
+                    aria-label="Login or create new account"
+                    title="Login or create new account"
                   >
                     <UserIcon className="size-5" />
                   </Button>
@@ -122,7 +126,8 @@ export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, 
                   type="button"
                   onClick={goToActiveDashboard}
                   className="hidden h-auto rounded-xl p-2.5 text-white hover:bg-brand-primary-hover sm:inline-flex"
-                  aria-label="Dashboard"
+                  aria-label="Go to dashboard"
+                  title="Go to dashboard"
                 >
                   <UserIcon className="size-5" />
                 </Button>
@@ -131,7 +136,8 @@ export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, 
                     type="button"
                     onClick={openCart}
                     className="relative h-auto rounded-xl p-2.5 text-white hover:bg-brand-primary-hover"
-                    aria-label="Shopping cart"
+                    aria-label="Go to cart page"
+                    title="Go to cart page"
                   >
                     <ShoppingCartIcon className="size-5" />
                     {itemCount > 0 ? (
@@ -143,13 +149,30 @@ export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, 
                 ) : null}
                 <Button
                   type="button"
-                  onClick={handleLogout}
+                  onClick={() => setIsLogoutOpen(true)}
                   disabled={isLoggingOut}
                   className="h-auto rounded-xl p-2.5 text-white hover:bg-brand-primary-hover"
                   aria-label="Logout"
+                  title="Logout"
                 >
                   <LogOut className="size-5" />
                 </Button>
+                <Dialog open={isLogoutOpen} onOpenChange={setIsLogoutOpen}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Log out?</DialogTitle>
+                      <DialogDescription>Are you sure you want to log out?</DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button type="button" variant="outline" disabled={isLoggingOut}>Cancel</Button>
+                      </DialogClose>
+                      <Button type="button" variant="destructive" disabled={isLoggingOut} onClick={() => void handleLogout()}>
+                        {isLoggingOut ? "Logging out..." : "Logout"}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             )}
           </div>

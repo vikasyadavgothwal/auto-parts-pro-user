@@ -738,12 +738,14 @@ export function AuthModalCard({
               <div className="flex gap-2 rounded-xl border border-border bg-background p-1">
                 <ModeButton
                   active={mode === "signin"}
+                  title="Login"
                   onClick={() => selectMode("signin")}
                 >
                   Sign in
                 </ModeButton>
                 <ModeButton
                   active={mode === "signup"}
+                  title="Create new account"
                   onClick={() => selectMode("signup")}
                 >
                   Sign Up
@@ -961,15 +963,19 @@ function ModeButton({
   active,
   children,
   onClick,
+  title,
 }: {
   active: boolean;
   children: React.ReactNode;
   onClick: () => void;
+  title: string;
 }) {
   return (
     <Button
       type="button"
       onClick={onClick}
+      title={title}
+      aria-label={title}
       className={`flex-1 rounded-xl py-2.5 text-sm font-medium ${
         active
           ? "bg-primary text-primary-foreground hover:bg-primary"

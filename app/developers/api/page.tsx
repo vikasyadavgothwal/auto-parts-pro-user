@@ -1,349 +1,426 @@
 import type { Metadata } from "next"
 import { headers } from "next/headers"
 import Link from "next/link"
-import { ArrowRight, KeyRound, ShieldCheck } from "lucide-react"
+import {
+  Building2,
+  CalendarCheck,
+  Car,
+  CheckCircle2,
+  FileCode2,
+  KeyRound,
+  PackageSearch,
+  ShieldCheck,
+  Truck,
+  UploadCloud,
+  Wrench,
+} from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export const metadata: Metadata = {
-  title: "Developer API | Auto Parts Pro",
-  description: "Use Auto Parts Pro API keys to connect Garage, Fleet, and Supplier dashboards to your own backend.",
+  title: "Developer API | AutoParts Pro",
+  description: "Developer API guide for garage, fleet, and supplier integrations on AutoParts Pro.",
 }
 
-const dashboardGuides = [
+const baseUrl = async () => {
+  const host = (await headers()).get("host") ?? "localhost:3001"
+  const protocol = host.startsWith("localhost") || host.startsWith("127.0.0.1") ? "http" : "https"
+  return `${protocol}://${host}`
+}
+
+const noBody = { requestBody: "No request body" }
+
+const profileFields = {
+  garage: ["garageName", "workingDays", "workingHours", "workingHoursByDay", "address", "country", "state", "city", "jobCompletedNumber", "yearsExperience", "responseTime", "certifications", "about"],
+  fleet: ["companyName", "firstName", "lastName", "addressLine1", "addressLine2", "city", "state", "country"],
+  supplier: ["companyName", "firstName", "lastName", "contactPerson", "designation", "addressLine1", "addressLine2", "city", "state", "country"],
+}
+
+const roles = [
   {
-    title: "Garage API",
-    description: "Manage services and bookings from your own garage website or backend.",
-    dashboard: "Garage Dashboard → API Keys",
-    endpoints: [
-      "GET /api/v1/developer/account",
-      "PATCH /api/v1/developer/account",
-      "GET /api/v1/developer/garage/services",
-      "POST /api/v1/developer/garage/services",
-      "PATCH /api/v1/developer/garage/services/{id}",
-      "DELETE /api/v1/developer/garage/services/{id}",
-      "GET /api/v1/developer/garage/bookings",
-      "POST /api/v1/developer/garage/bookings",
-      "PATCH /api/v1/developer/garage/bookings/{id}",
+    id: "garage",
+    label: "Garage APIs",
+    icon: Building2,
+    description: "Profile, services, and appointments for a garage account.",
+    scopes: "account.profile.*, garage.services.*, garage.bookings.*",
+    sections: [
+      {
+        title: "Profile update",
+        icon: Building2,
+        summary: "Use this first so your garage information is complete before services and appointments go live.",
+        fields: profileFields.garage,
+        actions: [
+          {
+            method: "GET",
+            endpoint: "/api/v1/developer/account",
+            purpose: "Read the current editable garage profile fields.",
+            rules: ["Use this before PATCH if your system only updates changed fields."],
+            body: noBody,
+          },
+          {
+            method: "PATCH",
+            endpoint: "/api/v1/developer/account",
+            purpose: "Update garage profile fields. Send only the fields that changed.",
+            rules: ["Email, mobile verification, documents, logo, and gallery stay in dashboard settings."],
+            body: {
+              garageName: "Rapid Fix Garage",
+              address: "Al Quoz Industrial Area 3",
+              country: "United Arab Emirates",
+              state: "Dubai",
+              city: "Dubai",
+              responseTime: "Within 2 hours",
+              yearsExperience: 8,
+              about: "German, Japanese, and commercial fleet service specialist.",
+            },
+          },
+        ],
+      },
+      {
+        title: "Services create, edit, delete",
+        icon: Wrench,
+        summary: "Publish services that customers can book. Create/edit bodies should not send status from this docs flow; delete removes the service from booking selection.",
+        actions: [
+          {
+            method: "GET",
+            endpoint: "/api/v1/developer/garage/services",
+            purpose: "List active garage services and copy service ids for edits, deletes, or appointments.",
+            rules: ["Response includes service id, public id, price, duration, bookings count, and status."],
+            body: noBody,
+          },
+          {
+            method: "POST",
+            endpoint: "/api/v1/developer/garage/services",
+            purpose: "Create one garage service.",
+            rules: ["Do not send status in create body.", "Plan service limits are checked before create."],
+            body: {
+              name: "Brake inspection and pad replacement",
+              category: "Brake System",
+              durationMinutes: 90,
+              price: 299,
+              currency: "AED",
+            },
+          },
+          {
+            method: "PATCH",
+            endpoint: "/api/v1/developer/garage/services/{id}",
+            purpose: "Edit an existing garage service by id.",
+            rules: ["Send only changed fields.", "Do not send status in edit body from this integration flow."],
+            body: {
+              name: "Brake inspection and front pad replacement",
+              category: "Brake System",
+              durationMinutes: 105,
+              price: 349,
+              currency: "AED",
+            },
+          },
+          {
+            method: "DELETE",
+            endpoint: "/api/v1/developer/garage/services/{id}",
+            purpose: "Delete a service that should no longer be bookable.",
+            rules: ["Use the service id from the GET services response."],
+            body: noBody,
+          },
+        ],
+      },
+      {
+        title: "Appointments check, create, update",
+        icon: CalendarCheck,
+        summary: "Use this for offline/customer appointments created through a garage integration.",
+        actions: [
+          {
+            method: "GET",
+            endpoint: "/api/v1/developer/garage/bookings",
+            purpose: "Check all garage appointments and their current status.",
+            rules: ["Use serviceId and booking ids from this response for update flows."],
+            body: noBody,
+          },
+          {
+            method: "POST",
+            endpoint: "/api/v1/developer/garage/bookings",
+            purpose: "Create an appointment in a garage slot.",
+            rules: ["bookingDate must be YYYY-MM-DD.", "bookingTime must be h:mm AM/PM and only 00, 15, 30, or 45 minutes.", "Backend rejects closed days and times outside configured garage opening hours.", "If 10:00 is booked, 10:10 is invalid because it is not a 15-minute slot and overlaps the 10:00 slot window."],
+            body: {
+              serviceId: "service_123",
+              customerName: "Arman Sheikh",
+              customerEmail: "arman@example.com",
+              customerPhone: "+971501234567",
+              vehicleYear: 2021,
+              vehicleMake: "Toyota",
+              vehicleModel: "Camry",
+              vehicleVin: "1HGCM82633A004352",
+              bookingDate: "2026-09-10",
+              bookingTime: "10:30 AM",
+              notes: "Customer reported brake noise.",
+            },
+          },
+          {
+            method: "PATCH",
+            endpoint: "/api/v1/developer/garage/bookings/{id}",
+            purpose: "Update appointment status after garage action.",
+            rules: ["Allowed statuses: pending, confirmed, completed, cancelled.", "Completion can require completionOtp when the booking requires customer confirmation."],
+            body: { status: "confirmed" },
+          },
+        ],
+      },
     ],
   },
   {
-    title: "Fleet API",
-    description: "Sync vehicles from your fleet system and keep AutoParts Pro data current.",
-    dashboard: "Fleet Dashboard → API Keys",
-    endpoints: [
-      "GET /api/v1/developer/account",
-      "PATCH /api/v1/developer/account",
-      "GET /api/v1/developer/fleet/vehicles",
-      "POST /api/v1/developer/fleet/vehicles",
-      "PATCH /api/v1/developer/fleet/vehicles/{id}",
-      "DELETE /api/v1/developer/fleet/vehicles/{id}",
+    id: "fleet",
+    label: "Fleet APIs",
+    icon: Truck,
+    description: "Profile, vehicles, RFQs, quote comparison, and bid acceptance for fleet accounts.",
+    scopes: "account.profile.*, fleet.vehicles.* plus dashboard-auth RFQ/order actions",
+    sections: [
+      {
+        title: "Profile update",
+        icon: Truck,
+        summary: "Keep fleet company and address details updated before creating RFQs.",
+        fields: profileFields.fleet,
+        actions: [
+          { method: "GET", endpoint: "/api/v1/developer/account", purpose: "Read fleet profile fields.", rules: ["Use before PATCH to avoid overwriting fields with stale values."], body: noBody },
+          {
+            method: "PATCH",
+            endpoint: "/api/v1/developer/account",
+            purpose: "Update fleet profile fields.",
+            rules: ["Verified email and mobile remain dashboard-controlled."],
+            body: { companyName: "Metro Cold Chain Fleet", firstName: "Amit", lastName: "Verma", addressLine1: "Warehouse 14, Logistics District", city: "Dubai", state: "Dubai", country: "United Arab Emirates" },
+          },
+        ],
+      },
+      {
+        title: "Vehicles create, edit, delete",
+        icon: Car,
+        summary: "Sync fleet vehicles so RFQs can use saved vehicle ids and VINs.",
+        actions: [
+          { method: "GET", endpoint: "/api/v1/developer/fleet/vehicles?page=1&pageSize=10", purpose: "List saved fleet vehicles.", rules: ["Use returned id as fleetVehicleId when a single vehicle RFQ is created."], body: noBody },
+          {
+            method: "POST",
+            endpoint: "/api/v1/developer/fleet/vehicles",
+            purpose: "Create one fleet vehicle.",
+            rules: ["Do not send status in create body from this docs flow.", "VIN must be unique in the fleet."],
+            body: { vehicleName: "Delivery Van 12", vin: "1FTBR1C82RKA12345", mileage: 48200, driver: "Ravi Sharma", year: 2024, make: "Ford", model: "Transit", trim: "Cargo", isPrimary: false },
+          },
+          {
+            method: "PATCH",
+            endpoint: "/api/v1/developer/fleet/vehicles/{id}",
+            purpose: "Edit mileage, driver, or vehicle details.",
+            rules: ["Send only changed fields.", "Do not send status in edit body from this docs flow."],
+            body: { mileage: 50120, driver: "Arjun Mehta", vehicleName: "Delivery Van 12 - Route B", isPrimary: false },
+          },
+          { method: "DELETE", endpoint: "/api/v1/developer/fleet/vehicles/{id}", purpose: "Delete a vehicle from the fleet record.", rules: ["Use the vehicle id from the vehicle list response."], body: noBody },
+        ],
+      },
+      {
+        title: "RFQ create, single view, compare, accept",
+        icon: FileCode2,
+        summary: "RFQ routes are dashboard-auth APIs today. The flow is: create RFQ, list RFQs, open one RFQ by id, wait for ranked bids, accept one bid id.",
+        actions: [
+          {
+            method: "POST",
+            endpoint: "/api/v1/rfqs",
+            purpose: "Create a multi-part fleet RFQ. Send multipart/form-data with a payload JSON field.",
+            rules: ["One RFQ supports up to 100 parts.", "Each part can have its own vehicleVin."],
+            body: {
+              payload: {
+                source: "fleet",
+                fleetVehicleId: "veh_123_if_single_vehicle",
+                projectName: "Q3 refrigerated van maintenance parts",
+                description: "Brake and cooling parts for multiple vehicles.",
+                responseDeadline: "2026-09-15T23:59:59.000Z",
+                deliveryRequirement: "Standard Delivery",
+                paymentTerms: "Net 30",
+                companyName: "Metro Cold Chain Fleet",
+                contactName: "Amit Verma",
+                email: "fleet@example.com",
+                phone: "+971501234567",
+                vehicle: { vin: "1FTBR1C82RKA12345", year: 2024, make: "Ford", model: "Transit" },
+                parts: [
+                  { vehicleVin: "1FTBR1C82RKA12345", partName: "Front brake pad set", partNumber: "04465-33471", quantity: 2, targetPrice: "185.50", notes: "OEM or equivalent accepted" },
+                  { vehicleVin: "WDBUF56X78B123456", partName: "Air intake assembly", partNumber: "A2710900382", quantity: 1, targetPrice: "900.00", notes: "New or remanufactured only" },
+                ],
+              },
+            },
+          },
+          { method: "GET", endpoint: "/api/v1/rfqs?page=1&pageSize=20", purpose: "List fleet RFQs and get each rfq.id.", rules: ["The list response includes parts and visible ranked bids when they are ready."], body: noBody },
+          { method: "GET", endpoint: "/api/v1/rfqs/{id}", purpose: "Open one RFQ by id and see which suppliers quoted it.", rules: ["Supplier bids become visible after the ranking window, currently around 30 minutes.", "Each returned bid has an id used for accept."], body: noBody },
+          { method: "POST", endpoint: "/api/v1/rfqs/{id}/bids/{bidId}/accept", purpose: "Accept one supplier bid and create the order.", rules: ["If addressId is blank, backend uses the default delivery address.", "Accepting one bid rejects other submitted bids for the RFQ."], body: { addressId: "addr_123_delivery_location_optional" } },
+        ],
+      },
     ],
   },
   {
-    title: "Supplier API",
-    description: "Connect your external catalog, ERP, or ecommerce backend to supplier inventory.",
-    dashboard: "Supplier Dashboard → API Keys",
-    endpoints: [
-      "GET /api/v1/developer/account",
-      "PATCH /api/v1/developer/account",
-      "GET /api/v1/developer/supplier/parts",
-      "POST /api/v1/developer/supplier/parts",
-      "PATCH /api/v1/developer/supplier/parts/{id}",
+    id: "supplier",
+    label: "Supplier APIs",
+    icon: PackageSearch,
+    description: "Profile, single-part upload/edit, RFQ quoting, received orders, and proof of delivery.",
+    scopes: "account.profile.*, supplier.inventory.* plus dashboard-auth RFQ/order actions",
+    sections: [
+      {
+        title: "Profile update",
+        icon: PackageSearch,
+        summary: "Update supplier business and contact details before inventory or quote work.",
+        fields: profileFields.supplier,
+        actions: [
+          { method: "GET", endpoint: "/api/v1/developer/account", purpose: "Read supplier profile fields.", rules: ["Use before PATCH if you only sync changed fields."], body: noBody },
+          { method: "PATCH", endpoint: "/api/v1/developer/account", purpose: "Update supplier profile fields.", rules: ["Banking, documents, verification, and compliance stay in dashboard settings."], body: { companyName: "Prime Auto Spares LLC", contactPerson: "Sara Khan", designation: "Sales Manager", addressLine1: "Spare Parts Market, Shop 22", city: "Sharjah", state: "Sharjah", country: "United Arab Emirates" } },
+        ],
+      },
+      {
+        title: "Single part upload and edit",
+        icon: UploadCloud,
+        summary: "Use the full product-master body when uploading one detailed supplier part. Edit uses the same structure or offer-update fields.",
+        actions: [
+          { method: "GET", endpoint: "/api/v1/developer/supplier/parts?page=1&pageSize=10&status=mapped", purpose: "List supplier parts by mapping status and search query.", rules: ["Use returned id for edit."], body: noBody },
+          {
+            method: "POST",
+            endpoint: "/api/v1/developer/supplier/parts",
+            purpose: "Upload one complete supplier product/part.",
+            rules: ["This body supports product identity, category, brand, attributes, vehicle fitment, pricing, inventory, images, documents, cross references, bundle, shipping, compliance, and marketplace settings.", "Supplier catalog plan limits are checked before create."],
+            body: {
+              mode: "product_master_form",
+              identity: { sku: "SKU-BRK-04465", productName: "Front Brake Pad Set", shortDescription: "Front brake pads for Toyota fleet vehicles", longDescription: "OEM quality ceramic brake pad set.", mpn: "04465-33471", status: "Active", grade: "A", condition: "New" },
+              category: { name: "Brake System", parentId: null },
+              brand: { name: "Toyota Genuine", productCategories: ["Brake System"], tier: "OEM" },
+              attributes: { name: "Material", value: "Ceramic", detailed: "Low dust ceramic compound" },
+              vehicle: { make: "Toyota", model: "Camry", yearStart: 2018, yearEnd: 2024, engine: "2.5L", trim: "All", driveType: "FWD", notes: "Front axle" },
+              pricing: { basePrice: 199, discountPrice: 185.5, currency: "AED", taxClass: "standard", vat: "5", maxRetailPrice: 230, wholesaleDistributorPrice: 170, fleetPrice: 175 },
+              inventory: { warehouseId: "main-warehouse", quantity: 18, leadTime: "2 days", lowStockThreshold: 3 },
+              images: { primaryUrl: "https://example.com/brake-pad.jpg", galleryUrls: ["https://example.com/brake-pad-side.jpg"] },
+              document: { type: "spec_sheet", url: "https://example.com/spec.pdf" },
+              crossReferences: { oemNumber: "04465-33471", oemSupersessionNumbers: ["04465-33470"], competitorPartNumber: "D1210", competitorBrandName: "Aftermarket Pro", hsCode: "870830" },
+              bundle: { componentSku: null, quantityInBundle: null, parentBundleSku: null, quantityAsComponent: null },
+              shipping: { weightKg: 2.4, lengthCm: 24, widthCm: 18, heightCm: 8, hsCode: "870830", countryOfOrigin: "Japan" },
+              compliance: { warrantyMonths: 12, certification: "ISO 9001" },
+              marketplace: { allowBackorders: false, maxOrderQuantity: 20, isActive: true },
+            },
+          },
+          {
+            method: "PATCH",
+            endpoint: "/api/v1/developer/supplier/parts/{id}",
+            purpose: "Edit the uploaded part, including status, pricing, stock, condition, descriptions, and marketplace fields.",
+            rules: ["Use the part id from the list response.", "Send either the same product_master_form structure or offer-update fields."],
+            body: { vendorSku: "SKU-BRK-04465", productName: "Front Brake Pad Set", shortDescription: "Updated front brake pad listing", mpn: "04465-33471", status: "Active", grade: "A", condition: "New", category: "Brake System", basePrice: 199, discountPrice: 179, currency: "AED", stock: 12, price: 179, fleetPrice: 170 },
+          },
+        ],
+      },
+      {
+        title: "RFQ quote submit",
+        icon: FileCode2,
+        summary: "Supplier users list RFQs, open one RFQ, then submit a quote against requested part ids.",
+        actions: [
+          { method: "GET", endpoint: "/api/v1/rfqs?page=1&pageSize=20", purpose: "List open RFQs available to quote.", rules: ["Supplier response shows requested parts and your existing bid if present."], body: noBody },
+          { method: "GET", endpoint: "/api/v1/rfqs/{id}", purpose: "Open one RFQ before quoting.", rules: ["Copy each requested part id into quote items as rfqPartId."], body: noBody },
+          { method: "POST", endpoint: "/api/v1/rfqs/{id}/bids", purpose: "Submit one supplier quote for one or more RFQ parts.", rules: ["Each item needs rfqPartId, unitPrice, partType, and deliveryOption.", "Delivery options: 24_hours, 48_hours, 72_hours, one_month, more_than_one_month.", "partType examples: New, Used, Refurbished, Remanufactured, Salvage."], body: { items: [{ rfqPartId: "rfq_part_123", unitPrice: "172.25", partType: "New", deliveryOption: "48_hours" }, { rfqPartId: "rfq_part_456", unitPrice: "820.00", partType: "Remanufactured", deliveryOption: "72_hours" }], validUntil: "2026-09-14", notes: "All items are available from UAE stock." } },
+        ],
+      },
+      {
+        title: "Orders received and delivery proof",
+        icon: CheckCircle2,
+        summary: "Do not send arbitrary order status. Supplier order status moves through specific actions: confirm received order, then submit proof for delivered items.",
+        actions: [
+          { method: "GET", endpoint: "/api/v1/orders?page=1&pageSize=10&status=pending", purpose: "List orders received by the supplier dashboard account.", rules: ["Use order.id and item ids from this response for confirm/proof flows."], body: noBody },
+          { method: "PATCH", endpoint: "/api/v1/supplier/orders/{id}", purpose: "Confirm a paid pending order received by the supplier.", rules: ["No custom status body is accepted here.", "Backend sets status to confirmed and calculates expected delivery from quoted delivery options."], body: noBody },
+          { method: "POST",
+            endpoint: "/api/v1/supplier/orders/{id}",
+            purpose: "Submit proof of delivery for one or more order items.",
+            rules: ["Send multipart/form-data.", "proof must be JPG, PNG, or WebP up to 5 MB.", "If all items are delivered, backend marks order delivered; otherwise it marks processing."],
+            body: { proof: "delivery-photo.jpg", itemIds: "[\"order_item_123\",\"order_item_456\"]", recipientName: "Amit Verma", note: "Delivered to warehouse security desk." },
+          },
+          { method: "GET", endpoint: "/api/v1/orders/{id}/proof?itemId=order_item_123", purpose: "Download/view submitted proof of delivery for an order item.", rules: ["Returns a short-lived signed proof URL when the requester owns the order."], body: noBody },
+        ],
+      },
     ],
   },
 ]
 
-const writeRequests = [
-  {
-    title: "Garage profile",
-    methods: "PATCH /api/v1/developer/account",
-    scope: "account.profile.write",
-    fields: "All fields are optional. Send only values to change: garageName, workingDays, workingHours, workingHoursByDay, address, country, state, city, jobCompletedNumber, yearsExperience, responseTime, certifications, and about.",
-    body: `{
-  "garageName": "Downtown Auto Care",
-  "address": "12 Al Quoz Industrial Area",
-  "city": "Dubai",
-  "country": "UAE",
-  "workingDays": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-  "yearsExperience": 12,
-  "certifications": ["ASE Certified"],
-  "about": "European and Japanese vehicle specialists."
-}`,
-  },
-  {
-    title: "Fleet or supplier profile",
-    methods: "PATCH /api/v1/developer/account",
-    scope: "account.profile.write",
-    fields: "Fleet accepts companyName, firstName, lastName, addressLine1, addressLine2, city, state, and country. Supplier accepts the same fields plus contactPerson and designation. Send only fields to change.",
-    body: `{
-  "companyName": "Acme Fleet Services",
-  "contactPerson": "Samir Khan",
-  "designation": "Operations Manager",
-  "addressLine1": "Warehouse 4, Industrial City",
-  "city": "Dubai",
-  "country": "UAE"
-}`,
-  },
-  {
-    title: "Garage service",
-    methods: "POST /api/v1/developer/garage/services\nPATCH /api/v1/developer/garage/services/{id}",
-    scope: "garage.services.write",
-    fields: "name, category, durationMinutes, and price are required for POST and PATCH. currency defaults to AED. status may be active or inactive.",
-    body: `{
-  "name": "Oil and filter change",
-  "category": "Maintenance",
-  "durationMinutes": 45,
-  "price": 249.99,
-  "currency": "AED",
-  "status": "active"
-}`,
-  },
-  {
-    title: "Garage booking",
-    methods: "POST /api/v1/developer/garage/bookings",
-    scope: "garage.bookings.write",
-    fields: "serviceId, customerName, customerPhone, bookingDate (YYYY-MM-DD), and bookingTime (HH:mm) are required. Email, vehicle details, VIN, and notes are optional.",
-    body: `{
-  "serviceId": "service-id",
-  "customerName": "Aisha Rahman",
-  "customerEmail": "aisha@example.com",
-  "customerPhone": "+971501234567",
-  "vehicleYear": "2022",
-  "vehicleMake": "Toyota",
-  "vehicleModel": "Camry",
-  "vehicleVin": "4T1G11AK0NU123456",
-  "bookingDate": "2026-08-20",
-  "bookingTime": "10:30",
-  "notes": "Customer will wait onsite."
-}`,
-  },
-  {
-    title: "Garage booking status",
-    methods: "PATCH /api/v1/developer/garage/bookings/{id}",
-    scope: "garage.bookings.write",
-    fields: "status is required and accepts pending, pending_slot_selection, confirmed, completed, or cancelled. completionOtp is required when completing a customer-created booking.",
-    body: `{
-  "status": "completed",
-  "completionOtp": "123456"
-}`,
-  },
-  {
-    title: "Fleet vehicle",
-    methods: "POST /api/v1/developer/fleet/vehicles\nPATCH /api/v1/developer/fleet/vehicles/{id}",
-    scope: "fleet.vehicles.write",
-    fields: "vehicleName, vin, mileage, year, make, and model are required for POST and PATCH. VIN must have 17 valid characters. driver, status, trim, and isPrimary are optional.",
-    body: `{
-  "vehicleName": "Delivery Van 12",
-  "vin": "1FTBR1C82RKA12345",
-  "mileage": 48200,
-  "driver": "Omar Ali",
-  "status": "active",
-  "year": 2024,
-  "make": "Ford",
-  "model": "Transit",
-  "trim": "250",
-  "isPrimary": false
-}`,
-  },
-  {
-    title: "Supplier part",
-    methods: "POST /api/v1/developer/supplier/parts",
-    scope: "supplier.inventory.write",
-    fields: "vendorSku, price, stock, and either MPN/OEM number or brand plus competitorPartNumber are required. If no matching product master exists, include the product content returned as required by the API.",
-    body: `{
-  "vendorSku": "SKU-BRK-204",
-  "brand": "Bosch",
-  "mpn": "BP-204",
-  "oemNumber": "04465-33471",
-  "price": 185.5,
-  "stock": 24,
-  "currency": "AED"
-}`,
-  },
-  {
-    title: "Supplier part offer",
-    methods: "PATCH /api/v1/developer/supplier/parts/{id}",
-    scope: "supplier.inventory.write",
-    fields: "price and stock are required. Optional offer fields include vendorSku, productName, descriptions, MPN, status, grade, condition, category, base/discount/fleet/wholesale prices, currency, taxClass, VAT, and maxRetailPrice.",
-    body: `{
-  "price": 179.5,
-  "stock": 30,
-  "condition": "new",
-  "currency": "AED",
-  "discountPrice": 169.5
-}`,
-  },
+const errors = [
+  ["400", "Bad request", "Body is missing, invalid, or failed validation."],
+  ["401", "Unauthorized", "Missing session or API key."],
+  ["403", "Forbidden", "Role, ownership, plan, or scope does not allow this action."],
+  ["404", "Not found", "The requested record does not exist for this account."],
+  ["429", "Rate limited", "Too many requests. Retry after the limit resets."],
 ]
 
-const errorRows = [
-  ["401", "API_KEY_REQUIRED / API_KEY_INVALID / API_KEY_REVOKED", "The key is missing, invalid, incomplete, or revoked."],
-  ["402", "API_BILLING_REQUIRED", "The plan does not include API access, the add-on is not enabled, or billing has ended."],
-  ["403", "API_SCOPE_FORBIDDEN / API_ACCOUNT_TYPE_FORBIDDEN", "The key has the wrong account type or does not include the required scope."],
-  ["429", "API_RATE_LIMITED", "The key has exceeded its per-minute request limit."],
-  ["404", "API_ENDPOINT_NOT_FOUND", "The Developer API URL is misspelled or does not exist."],
-]
-
-const getDeveloperApiOrigin = async () => {
-  const requestHeaders = await headers()
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host")
-
-  if (host) {
-    const protocol =
-      requestHeaders.get("x-forwarded-proto") ??
-      (process.env.NODE_ENV === "production" ? "https" : "http")
-
-    return `${protocol}://${host}`
-  }
-
-  return process.env.NODE_ENV === "production"
-    ? "https://websitedesignersdubai.ae"
-    : "http://localhost:3001"
+function JsonBlock({ value }: { value: unknown }) {
+  return (
+    <pre className="max-h-[520px] overflow-x-auto rounded-xl border border-border bg-background p-4 text-xs leading-6 text-foreground">
+      <code>{JSON.stringify(value, null, 2)}</code>
+    </pre>
+  )
 }
 
 export default async function DeveloperApiPage() {
-  const developerApiOrigin = await getDeveloperApiOrigin()
+  const apiBase = await baseUrl()
 
   return (
-    <main className="bg-brand-surface text-white">
-      <section className="site-container py-20">
-        <div className="max-w-4xl">
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary">
-            <KeyRound className="h-4 w-4" /> Developer API
-          </p>
-          <h1 className="text-4xl font-bold tracking-tight md:text-6xl">
-            Connect your own backend to AutoParts Pro.
-          </h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-brand-muted">
-            Garage, Fleet, and Supplier accounts can create server-side API keys after API access is included in their plan or enabled by Admin as a paid add-on.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <Link href="/business">View business plans <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <a href="#quickstart">Read quickstart</a>
-            </Button>
+    <main className="bg-background text-foreground">
+      <section className="border-b border-border bg-[radial-gradient(circle_at_top_left,rgba(220,38,38,0.24),transparent_32%),linear-gradient(180deg,#111111_0%,#0A0A0A_100%)] py-16">
+        <div className="site-container space-y-5">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+            <FileCode2 className="h-4 w-4" /> Developer API documentation
           </div>
+          <h1 className="max-w-4xl text-4xl font-bold tracking-tight text-white sm:text-5xl">Role-wise APIs for Garage, Fleet, and Supplier workflows.</h1>
+          <p className="max-w-3xl text-lg leading-8 text-brand-muted">Click a role tab, then follow each API card in order. Every card explains what the API is for, the exact endpoint, validation rules, and the body for that specific method.</p>
         </div>
       </section>
 
-      <section id="quickstart" className="site-container grid gap-6 pb-12 md:grid-cols-3">
-        {[
-          ["1", "Enable API access", "Free plans do not include API access. Request the API add-on or upgrade, then Admin enables it after billing confirmation."],
-          ["2", "Create a key", "Open API Keys in your Garage, Fleet, or Supplier dashboard. Name the key and choose only the scopes your integration needs."],
-          ["3", "Call from your server", "Store the key in your backend environment and call AutoParts Pro APIs from your server, not from browser JavaScript."],
-        ].map(([step, title, description]) => (
-          <Card key={step} className="border-border bg-brand-surface-strong text-white">
-            <CardHeader>
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">{step}</div>
-              <CardTitle>{title}</CardTitle>
-              <CardDescription className="text-brand-muted">{description}</CardDescription>
-            </CardHeader>
-          </Card>
-        ))}
+      <section className="sticky top-0 z-20 border-b border-border bg-[#111111]/95 backdrop-blur">
+        <div className="site-container flex gap-3 overflow-x-auto py-4">
+          {roles.map((role) => {
+            const Icon = role.icon
+            return <Link key={role.id} href={`#${role.id}`} className="inline-flex min-w-max items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-brand-muted transition hover:border-primary hover:bg-primary/10 hover:text-white"><Icon className="h-4 w-4" /> {role.label}</Link>
+          })}
+        </div>
       </section>
 
-      <section className="site-container grid gap-8 py-12 lg:grid-cols-[1fr_0.9fr]">
-        <Card className="border-border bg-brand-surface-strong text-white">
-          <CardHeader>
-            <CardTitle>Authentication</CardTitle>
-            <CardDescription className="text-brand-muted">Send the API key in every request using a server-side HTTP client.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <pre className="overflow-x-auto rounded-lg border border-border bg-black p-4 text-sm text-emerald-300">
-{`curl ${developerApiOrigin}/api/v1/developer/garage/services \\
-  -H "Authorization: Bearer app_live_garage_xxxxx"`}
-            </pre>
-            <p className="mt-4 text-sm leading-6 text-brand-muted">
-              You may also send <code className="rounded bg-black px-1 py-0.5">x-api-key</code>. Never put the key in frontend code, mobile bundles, public GitHub repos, or screenshots.
-            </p>
-          </CardContent>
+      <section className="site-container grid gap-5 py-10 lg:grid-cols-[1.1fr_0.9fr]">
+        <Card className="surface-card shadow-none">
+          <CardHeader><CardTitle className="flex items-center gap-2 text-white"><KeyRound className="h-5 w-5 text-primary" /> Developer API-key auth</CardTitle><CardDescription className="text-brand-muted">Use for `/api/v1/developer/*` routes.</CardDescription></CardHeader>
+          <CardContent className="space-y-4"><JsonBlock value={{ baseUrl: apiBase, headers: { Authorization: "Bearer app_live_xxx", "Content-Type": "application/json" } }} /><p className="text-sm text-brand-muted">Dashboard-auth APIs use the logged-in dashboard session, not a Developer API key.</p></CardContent>
         </Card>
-        <Card className="border-border bg-brand-surface-strong text-white">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" /> Access rules</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm text-brand-muted">
-            <p>API keys inherit your active plan, enabled add-ons, and account limits.</p>
-            <p>If the billing period ends or Admin disables the add-on, API calls return a billing error instead of exposing data.</p>
-            <p>Write endpoints still respect plan limits such as service, vehicle, and product capacity.</p>
-          </CardContent>
+        <Card className="surface-card shadow-none">
+          <CardHeader><CardTitle className="flex items-center gap-2 text-white"><ShieldCheck className="h-5 w-5 text-primary" /> Access rules</CardTitle><CardDescription className="text-brand-muted">Backend verifies role, ownership, plan, limits, and API scopes.</CardDescription></CardHeader>
+          <CardContent className="space-y-3 text-sm text-brand-muted"><p>Do not rely on frontend hiding for authorization.</p><p>Developer APIs are for external backend integrations. RFQ/order routes shown as dashboard-auth require logged-in Fleet or Supplier sessions.</p></CardContent>
         </Card>
       </section>
 
-      <section className="site-container grid gap-6 py-12">
-        <div>
-          <h2 className="text-3xl font-semibold">Dashboard API coverage</h2>
-          <p className="mt-3 max-w-3xl text-brand-muted">Start with the routes below. Admin/internal/auth/payment routes are intentionally not available through API keys.</p>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          {dashboardGuides.map((guide) => (
-            <Card key={guide.title} className="border-border bg-brand-surface-strong text-white">
-              <CardHeader>
-                <CardTitle>{guide.title}</CardTitle>
-                <CardDescription className="text-brand-muted">{guide.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-3 text-sm font-medium text-primary">{guide.dashboard}</p>
-                <ul className="space-y-2">
-                  {guide.endpoints.map((endpoint) => (
-                    <li key={endpoint} className="rounded-md border border-border bg-black px-3 py-2 font-mono text-xs text-brand-muted">{endpoint}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      <section className="site-container space-y-12 pb-14">
+        {roles.map((role) => {
+          const RoleIcon = role.icon
+          return (
+            <div key={role.id} id={role.id} className="scroll-mt-24 rounded-3xl border border-border bg-card p-5 sm:p-7">
+              <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div className="max-w-3xl"><div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-sm font-semibold text-primary"><RoleIcon className="h-4 w-4" /> {role.label}</div><h2 className="text-2xl font-bold tracking-tight text-white">{role.description}</h2></div>
+                <div className="rounded-2xl border border-border bg-brand-surface p-4 text-xs text-brand-muted lg:w-96"><p className="mb-2 font-semibold text-white">Current access</p><p>{role.scopes}</p></div>
+              </div>
+              <div className="space-y-6">
+                {role.sections.map((section) => {
+                  const SectionIcon = section.icon
+                  return (
+                    <Card key={section.title} className="border-border bg-brand-panel shadow-none">
+                      <CardHeader className="border-b border-border bg-brand-surface"><CardTitle className="flex items-center gap-2 text-xl text-white"><SectionIcon className="h-5 w-5 text-primary" /> {section.title}</CardTitle><CardDescription className="text-brand-muted">{section.summary}</CardDescription>{"fields" in section && Array.isArray(section.fields) ? <div className="flex flex-wrap gap-2 pt-2">{section.fields.map((field) => <span key={field} className="rounded-full border border-border bg-background px-2.5 py-1 text-xs text-brand-muted">{field}</span>)}</div> : null}</CardHeader>
+                      <CardContent className="grid gap-4 p-5">
+                        {section.actions.map((action) => (
+                          <div key={`${action.method}-${action.endpoint}`} className="rounded-2xl border border-border bg-card p-4">
+                            <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-start md:justify-between"><div><div className="mb-2 flex flex-wrap items-center gap-2"><span className="rounded-full bg-primary px-2.5 py-1 text-xs font-bold text-white">{action.method}</span><code className="break-all rounded-lg border border-border bg-background px-2.5 py-1 text-xs text-brand-muted">{action.endpoint}</code></div><p className="text-sm text-white">{action.purpose}</p></div></div>
+                            <div className="grid gap-4 lg:grid-cols-[0.85fr_1.15fr]"><div><p className="mb-2 text-sm font-semibold text-white">Rules</p><ul className="space-y-2 text-sm text-brand-muted">{action.rules.map((rule) => <li key={rule} className="flex gap-2"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" /> <span>{rule}</span></li>)}</ul></div><div><p className="mb-2 text-sm font-semibold text-white">Request body</p><JsonBlock value={action.body} /></div></div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })}
       </section>
 
-      <section className="site-container grid gap-6 py-12">
-        <div>
-          <h2 className="text-3xl font-semibold">POST and PATCH request bodies</h2>
-          <p className="mt-3 max-w-3xl text-brand-muted">
-            Send JSON with <code className="rounded bg-black px-1 py-0.5">Content-Type: application/json</code>. Amounts use major currency units, so <code className="rounded bg-black px-1 py-0.5">249.99</code> means AED 249.99. Replace each <code className="rounded bg-black px-1 py-0.5">{"{id}"}</code> with the ID returned by a list or create request.
-          </p>
-          <p className="mt-2 max-w-3xl text-sm text-brand-muted">
-            Profile updates are partial. Email, phone, images, banking details, compliance documents, and approval state remain managed through their verified dashboard flows.
-          </p>
+      <section className="site-container pb-16">
+        <div className="mb-6 max-w-3xl"><h2 className="text-2xl font-semibold tracking-tight text-white">Error handling</h2><p className="mt-2 text-brand-muted">Use one response handling pattern across Garage, Fleet, and Supplier integrations.</p></div>
+        <div className="overflow-hidden rounded-xl border border-border bg-card">
+          <table className="w-full border-collapse text-sm"><thead className="bg-brand-surface text-left text-white"><tr><th className="p-4">Status</th><th className="p-4">Meaning</th><th className="p-4">Action</th></tr></thead><tbody>{errors.map(([status, meaning, action]) => <tr key={status} className="border-t border-border"><td className="p-4 font-mono text-brand-muted">{status}</td><td className="p-4 font-medium text-white">{meaning}</td><td className="p-4 text-brand-muted">{action}</td></tr>)}</tbody></table>
         </div>
-        <div className="grid gap-6 lg:grid-cols-2">
-          {writeRequests.map((request) => (
-            <Card key={`${request.title}-${request.methods}`} className="border-border bg-brand-surface-strong text-white">
-              <CardHeader>
-                <CardTitle>{request.title}</CardTitle>
-                <CardDescription className="whitespace-pre-line font-mono text-xs text-primary">{request.methods}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm leading-6 text-brand-muted">{request.fields}</p>
-                <p className="text-xs text-brand-muted">Required scope: <code className="rounded bg-black px-1 py-0.5 text-primary">{request.scope}</code></p>
-                <pre className="overflow-x-auto rounded-lg border border-border bg-black p-4 text-xs text-emerald-300">{request.body}</pre>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      <section className="site-container pb-20">
-        <Card className="border-border bg-brand-surface-strong text-white">
-          <CardHeader>
-            <CardTitle>Professional error handling</CardTitle>
-            <CardDescription className="text-brand-muted">Every developer API error returns JSON with <code>ok</code>, <code>code</code>, and <code>message</code>.</CardDescription>
-          </CardHeader>
-          <CardContent className="overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="text-brand-muted">
-                <tr><th className="border-b border-border py-3">HTTP</th><th className="border-b border-border py-3">Code</th><th className="border-b border-border py-3">Meaning</th></tr>
-              </thead>
-              <tbody>
-                {errorRows.map(([status, code, meaning]) => (
-                  <tr key={code}><td className="border-b border-border py-3 font-mono">{status}</td><td className="border-b border-border py-3 font-mono text-primary">{code}</td><td className="border-b border-border py-3 text-brand-muted">{meaning}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </CardContent>
-        </Card>
       </section>
     </main>
   )
