@@ -1,6 +1,17 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 import { BusinessDemoDialogButton } from "@/components/site/business/business-demo-dialog"
+import { RequestQuoteForm } from "@/components/site/rfq/request-quote-page/request-quote-form"
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   getPublicText,
   hasPublicText,
@@ -13,10 +24,14 @@ const isStartShoppingCta = (value: string) =>
 const isSupportCta = (value: string) =>
   /talk\s+to\s+support|support|contact\s+support/i.test(value)
 
+const isQuoteCta = (label: string, href: string) =>
+  /request\s+(a\s+)?quote|quote|rfq/i.test(`${label} ${href}`)
+
 const ctaHref = (label: string, href: string) =>
   isStartShoppingCta(label) ? "/search" : href
 
 export function CTASection({ config }: { config?: HomeCTAConfig }) {
+  const [quoteOpen, setQuoteOpen] = useState(false)
   const heading = getPublicText(config?.heading)
   const subheading = getPublicText(config?.subheading)
   const primaryButtonText = getPublicText(config?.primaryButtonText)
@@ -62,6 +77,15 @@ export function CTASection({ config }: { config?: HomeCTAConfig }) {
                 >
                   {primaryButtonText}
                 </BusinessDemoDialogButton>
+              ) : isQuoteCta(primaryButtonText, primaryButtonLink) ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setQuoteOpen(true)}
+                  className="h-auto rounded-full bg-white border border-white px-8 py-4 text-lg font-medium text-primary hover:bg-white/90 hover:text-primary"
+                >
+                  {primaryButtonText}
+                </Button>
               ) : (
                 <Button
                   asChild
@@ -84,6 +108,15 @@ export function CTASection({ config }: { config?: HomeCTAConfig }) {
                 >
                   {secondaryButtonText}
                 </BusinessDemoDialogButton>
+              ) : isQuoteCta(secondaryButtonText, secondaryButtonLink) ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setQuoteOpen(true)}
+                  className="h-auto rounded-full border-2 border-white bg-primary px-8 py-4 text-lg font-medium text-white hover:bg-white/20 hover:text-white"
+                >
+                  {secondaryButtonText}
+                </Button>
               ) : (
                 <Button
                   asChild
@@ -99,6 +132,19 @@ export function CTASection({ config }: { config?: HomeCTAConfig }) {
           </div>
         </div>
       </div>
+      <Dialog open={quoteOpen} onOpenChange={setQuoteOpen}>
+        <DialogContent className="max-h-[92vh] overflow-y-auto border border-border bg-brand-surface text-white sm:max-w-5xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-white">
+              Request a quote
+            </DialogTitle>
+            <DialogDescription className="sr-only">
+              Submit your RFQ details without leaving the home page.
+            </DialogDescription>
+          </DialogHeader>
+          <RequestQuoteForm />
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }
