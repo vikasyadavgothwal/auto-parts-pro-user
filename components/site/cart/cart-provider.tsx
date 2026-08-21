@@ -84,6 +84,7 @@ type SiteCartContextValue = {
   user: UserAuthProfile | null;
   items: SiteCartItem[];
   itemCount: number;
+  isCartLoading: boolean;
   isCheckingOut: boolean;
   subtotal: number;
   productSubtotal: number;
@@ -281,8 +282,9 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let isMounted = true;
-    void getCurrentUser()
-      .then((nextUser) => {
+    const loadCart = async () => {
+      try {
+        const nextUser = await getCurrentUser();
         if (!isMounted) return;
         setUser(nextUser);
         if (nextUser?.activeRole !== "User") {
@@ -290,27 +292,27 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
           setCartLoadedForUserId(null);
           return;
         }
-        void readDbCartItems()
-          .then(async (dbItems) => {
-            if (!isMounted) return;
-            const localItems = readStoredItems(nextUser.id);
-            const nextItems = dbItems.length ? dbItems : localItems;
-            setItems(nextItems);
-            setCartLoadedForUserId(nextUser.id);
-            if (!dbItems.length && localItems.length) {
-              await replaceDbCartItems(localItems).catch(() => undefined);
-            }
-            removeStoredItems(nextUser.id);
-          })
-          .catch(() => {
-            if (!isMounted) return;
-            setItems(readStoredItems(nextUser.id));
-            setCartLoadedForUserId(nextUser.id);
-          });
-      })
-      .finally(() => {
+        try {
+          const dbItems = await readDbCartItems();
+          if (!isMounted) return;
+          const localItems = readStoredItems(nextUser.id);
+          const nextItems = dbItems.length ? dbItems : localItems;
+          setItems(nextItems);
+          setCartLoadedForUserId(nextUser.id);
+          if (!dbItems.length && localItems.length) {
+            await replaceDbCartItems(localItems).catch(() => undefined);
+          }
+          removeStoredItems(nextUser.id);
+        } catch {
+          if (!isMounted) return;
+          setItems(readStoredItems(nextUser.id));
+          setCartLoadedForUserId(nextUser.id);
+        }
+      } finally {
         if (isMounted) setIsLoaded(true);
-      });
+      }
+    };
+    void loadCart();
     return () => {
       isMounted = false;
     };
@@ -341,6 +343,30 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
     if (cartLoadedForUserId !== user.id) return;
     void replaceDbCartItems(items).catch(() => undefined);
   }, [cartLoadedForUserId, isLoaded, items, user]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const paymentResult = params.get("payment");
+    if (paymentResult !== "success" && paymentResult !== "cancelled") return;
+    const timer = window.setTimeout(() => {
+      if (paymentResult === "success") {
+        setItems([]);
+        setCheckoutSuccess({
+          orderCount: 1,
+          serviceBookingCount: 0,
+          totalAmount: null,
+        });
+      } else {
+        toast.info("Payment cancelled. Your cart is still saved.");
+      }
+    }, 0);
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.delete("payment");
+    nextUrl.searchParams.delete("session_id");
+    window.history.replaceState(null, "", nextUrl.toString());
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const addItem = useCallback(
     async (input: AddCartItemInput): Promise<CartActionResult> => {
@@ -455,7 +481,10 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
         const response = await siteAuthenticatedFetch("/api/orders", {
           method: "POST",
           credentials: "include",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Idempotency-Key": `site-cart-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          },
           body: JSON.stringify({
             items: productItems.map((item) => ({
               supplierPartId: item.offerId,
@@ -469,6 +498,8 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
                 "Slot will be selected after the product order is delivered.",
             })),
             addressId,
+            paymentSuccessUrl: `${window.location.origin}/cart?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+            paymentCancelUrl: `${window.location.origin}/cart?payment=cancelled`,
           }),
         });
         const payload = (await response.json().catch(() => null)) as {
@@ -481,28 +512,26 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
             serviceBookingCount?: number;
             totalAmount?: number;
           };
+          payment?: {
+            checkoutUrl?: string | null;
+            status?: string;
+            stripeConfigured?: boolean;
+          };
         } | null;
         if (!response.ok || !payload?.ok) {
           throw new Error(payload?.message ?? "Unable to create orders.");
         }
-        const checkedOutProductIds = new Set([
-          ...productItems.map((item) => item.id),
-          ...serviceItems.map((item) => item.id),
-        ]);
-        setItems((current) =>
-          current.filter((item) => !checkedOutProductIds.has(item.id)),
-        );
-
-        const orderCount =
-          payload.summary?.orderCount ?? payload.orders?.length ?? 1;
-        setCheckoutSuccess({
-          orderCount,
-          serviceBookingCount: payload.summary?.serviceBookingCount ?? 0,
-          totalAmount:
-            typeof payload.summary?.totalAmount === "number"
-              ? payload.summary.totalAmount
-              : null,
-        });
+        if (!payload.payment?.checkoutUrl) {
+          const paymentStatus = payload.payment?.status
+            ? ` Payment status: ${payload.payment.status}.`
+            : "";
+          throw new Error(
+            payload.payment?.stripeConfigured === false
+              ? "Stripe test keys are not configured on the backend."
+              : `Stripe did not return a Checkout URL.${paymentStatus}`,
+          );
+        }
+        window.location.assign(payload.payment.checkoutUrl);
       } catch (error) {
         toast.error(error instanceof Error ? error.message : "Unable to create orders.");
       } finally {
@@ -530,6 +559,9 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       user,
       items,
       itemCount: items.reduce((total, item) => total + item.quantity, 0),
+      isCartLoading:
+        !isLoaded ||
+        (user?.activeRole === "User" && cartLoadedForUserId !== user.id),
       isCheckingOut,
       subtotal,
       productSubtotal,
@@ -551,7 +583,9 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
       addItem,
       checkoutProducts,
       clearCart,
+      cartLoadedForUserId,
       isCheckingOut,
+      isLoaded,
       items,
       productItems,
       productSubtotal,

@@ -51,7 +51,7 @@ export function SupplierHeader() {
               size="icon"
               className="text-brand-muted hover:text-white"
             >
-              <Link href="/checkout" aria-label="Cart">
+              <Link href="/cart" aria-label="Cart">
                 <ShoppingCartIcon className="size-5" />
               </Link>
             </Button>

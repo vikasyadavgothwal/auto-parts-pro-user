@@ -71,6 +71,34 @@ const CartSection = ({
   </section>
 );
 
+const CartLoadingState = () => (
+  <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-start">
+    <div className="space-y-5">
+      <section className="rounded-lg border border-border bg-brand-panel p-4 shadow-sm sm:p-5">
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <div className="space-y-2">
+            <div className="h-5 w-40 animate-pulse rounded bg-muted/50" />
+            <div className="h-4 w-64 max-w-full animate-pulse rounded bg-muted/40" />
+          </div>
+          <div className="h-7 w-16 animate-pulse rounded-full bg-muted/40" />
+        </div>
+        <div className="space-y-3">
+          <div className="h-24 animate-pulse rounded-lg bg-brand-surface" />
+          <div className="h-24 animate-pulse rounded-lg bg-brand-surface" />
+        </div>
+      </section>
+    </div>
+    <aside className="rounded-lg border border-border bg-brand-panel p-5 shadow-sm">
+      <div className="h-5 w-32 animate-pulse rounded bg-muted/50" />
+      <div className="mt-5 space-y-3">
+        <div className="h-4 animate-pulse rounded bg-muted/40" />
+        <div className="h-4 animate-pulse rounded bg-muted/40" />
+        <div className="h-10 animate-pulse rounded bg-muted/50" />
+      </div>
+    </aside>
+  </div>
+);
+
 const validateAddress = (form: AddressForm) => {
   const validation = addressSchema.safeParse({
     ...form,
@@ -103,6 +131,7 @@ export function CartPage() {
     garageAdvance,
     productItems,
     serviceItems,
+    isCartLoading,
     updateQuantity,
     removeItem,
     clearCart,
@@ -114,7 +143,7 @@ export function CartPage() {
   const [addressForm, setAddressForm] = useState<AddressForm>(emptyAddressForm);
   const [addressFieldErrors, setAddressFieldErrors] =
     useState<AddressFieldErrors>({});
-  const [isLoadingAddresses, setIsLoadingAddresses] = useState(false);
+  const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
   const [isSavingAddress, setIsSavingAddress] = useState(false);
 
   useEffect(() => {
@@ -221,7 +250,9 @@ export function CartPage() {
           <CartHeader />
 
           <div className="space-y-4">
-            {user?.activeRole !== "User" ? (
+            {isCartLoading ? (
+              <CartLoadingState />
+            ) : user?.activeRole !== "User" ? (
               <div className="rounded-xl border border-border bg-brand-panel p-5 text-sm text-brand-muted">
                 Sign in with a User account to view and manage cart items.
               </div>

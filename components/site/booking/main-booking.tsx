@@ -62,7 +62,9 @@ type BookingResponse = {
     percentage: number | null;
     amount: number;
     currency: string;
-    status: "succeeded";
+    status: string;
+    checkoutUrl?: string | null;
+    stripeConfigured?: boolean;
   };
 };
 
@@ -352,7 +354,10 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
     try {
       const response = await siteAuthenticatedFetch("/api/garage-bookings", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          "Idempotency-Key": `site-booking-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        },
         body: JSON.stringify({
           garageId: garage.id,
           serviceId: selectedService.id,
@@ -363,6 +368,8 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           notes: customerVehicle.notes,
           bookingDate: selection.date,
           bookingTime: selection.time,
+          paymentSuccessUrl: `${window.location.origin}/booking?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          paymentCancelUrl: `${window.location.origin}/booking?payment=cancelled`,
         }),
       });
       const payload = (await response.json()) as BookingResponse;
@@ -371,8 +378,17 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
         throw new Error(payload.message || "Unable to confirm booking");
       }
 
-      setPendingConfirmedBooking(payload.booking);
-      setPaymentReceipt(payload.payment);
+      if (!payload.payment.checkoutUrl) {
+        const paymentStatus = payload.payment.status
+          ? ` Payment status: ${payload.payment.status}.`
+          : "";
+        throw new Error(
+          payload.payment.stripeConfigured === false
+            ? "Stripe test keys are not configured on the backend."
+            : `Stripe did not return a Checkout URL.${paymentStatus}`,
+        );
+      }
+      window.location.assign(payload.payment.checkoutUrl);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Unable to confirm booking");
     } finally {
