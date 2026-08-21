@@ -159,6 +159,10 @@
     @apply font-sans;
     color-scheme: dark;
   }
+
+  body {
+    top: 0 !important;
+  }
 }
 
 @layer components {

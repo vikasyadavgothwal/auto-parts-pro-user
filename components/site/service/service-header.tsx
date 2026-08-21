@@ -1,5 +1,6 @@
 import Link from "next/link"
 
+import { LanguageSelector } from "@/components/site/language/language-selector"
 import { BrandLogo } from "@/components/site/shared/brand-logo"
 import { Button } from "@/components/ui/button"
 export function ServiceHeader() {
@@ -25,6 +26,7 @@ export function ServiceHeader() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
+            <LanguageSelector compact />
             <Button
               variant="ghost"
               className="px-5 py-2.5 text-brand-muted hover:text-white"

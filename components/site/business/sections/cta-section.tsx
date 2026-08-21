@@ -12,9 +12,12 @@ type BusinessCTASectionProps = {
   config?: ForBusinessCtaConfig;
 };
 
+const normalizeBrandRepeats = (value: string) =>
+  value.replace(/\bAutoPartsPro(?:\s+AutoPartsPro)+\b/g, "AutoPartsPro");
+
 export function BusinessCTASection({ config }: BusinessCTASectionProps) {
   const heading = getPublicText(config?.heading);
-  const subheading = getPublicText(config?.subheading);
+  const subheading = normalizeBrandRepeats(getPublicText(config?.subheading));
   const primaryButtonText = getPublicText(config?.primaryButtonText);
   const primaryButtonLink = getPublicText(config?.primaryButtonLink);
   const secondaryButtonText = getPublicText(config?.secondaryButtonText);

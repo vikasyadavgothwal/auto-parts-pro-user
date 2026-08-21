@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react"; // Make sure lucide-react is installed
+import { LanguageSelector } from "@/components/site/language/language-selector";
 import { BrandLogo } from "@/components/site/shared/brand-logo";
 import { Button } from "@/components/ui/button";
 
@@ -23,6 +24,7 @@ export const BusinessHeader = () => {
           </div>
           {/* Desktop Actions */}
           <div className="hidden items-center gap-4 md:flex">
+            <LanguageSelector />
             <Button variant="ghost" className="text-brand-muted hover:text-white">Sign in</Button>
             <Button className="rounded-xl text-white hover:bg-brand-primary-hover">Get Started</Button>
           </div>
@@ -42,6 +44,7 @@ export const BusinessHeader = () => {
           <Link href="/rfq" className="text-brand-muted hover:text-white">Request Quote</Link>
           <Link href="/business" className="font-medium text-[#DC2626]">For Business</Link>
           <hr className="border-border" />
+          <LanguageSelector />
           <Button variant="ghost" className="justify-start">Sign in</Button>
           <Button>Get Started</Button>
         </nav>

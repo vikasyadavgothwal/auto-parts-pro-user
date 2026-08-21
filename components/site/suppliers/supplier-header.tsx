@@ -5,6 +5,7 @@ import {
   UserIcon,
 } from "@/components/icons/site-icons"
 
+import { LanguageSelector } from "@/components/site/language/language-selector"
 import { BrandLogo } from "@/components/site/shared/brand-logo"
 import { Button } from "@/components/ui/button"
 
@@ -36,6 +37,7 @@ export function SupplierHeader() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <LanguageSelector compact />
             <Button
               variant="ghost"
               size="icon"

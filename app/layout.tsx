@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Toaster } from "sonner";
 import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site/user/user-footer";
@@ -6,6 +7,7 @@ import { UserHeader } from "@/components/site/user/user-header";
 import "./globals.css";
 
 import { getMainWebsiteSiteSettings } from "@/lib/site-settings";
+import { isSiteLanguage, siteLanguageCookie, siteLanguageDirection } from "@/lib/language-preference";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getMainWebsiteSiteSettings();
@@ -25,10 +27,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const settings = await getMainWebsiteSiteSettings();
+  const languageCookie = (await cookies()).get(siteLanguageCookie)?.value;
+  const language = isSiteLanguage(languageCookie) ? languageCookie : "en";
   return (
-    <html lang="en" className="h-full bg-background antialiased">
+    <html lang={language} dir={siteLanguageDirection(language)} className="h-full bg-background antialiased">
       <body className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
-        <Providers>
+        <Providers initialLanguage={language}>
           <UserHeader logoUrl={settings.logoUrl} siteName={settings.siteName} />
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter settings={settings} />

@@ -7,6 +7,7 @@ import { LogOut } from "lucide-react";
 import { ShoppingCartIcon, UserIcon } from "@/components/icons/site-icons";
 import { AuthModalCard } from "@/components/site/AuthModal";
 import { useSiteCart } from "@/components/site/cart/cart-provider";
+import { LanguageSelector } from "@/components/site/language/language-selector";
 import { BrandLogo } from "@/components/site/shared/brand-logo";
 import { Button } from "@/components/ui/button";
 import {
@@ -88,6 +89,9 @@ export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, 
 
           {/* Right: Icons */}
           <div className="flex items-center justify-end gap-4">
+            <div className="hidden text-black sm:block">
+              <LanguageSelector />
+            </div>
             {!user ? (
               <Dialog open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen}>
                 <DialogTrigger asChild>
@@ -175,6 +179,9 @@ export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, 
                 </Dialog>
               </div>
             )}
+            <div className="text-black sm:hidden">
+              <LanguageSelector compact />
+            </div>
           </div>
         </div>
       </div>
