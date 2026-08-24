@@ -350,6 +350,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
     const params = new URLSearchParams(window.location.search);
     const paymentResult = params.get("payment");
     const bookingPaymentResult = params.get("booking_payment");
+    const sessionId = params.get("session_id");
     if (
       paymentResult !== "success" &&
       paymentResult !== "cancelled" &&
@@ -359,13 +360,21 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
     }
     const timer = window.setTimeout(() => {
       if (bookingPaymentResult === "success") {
-        setBookingCheckoutSuccess(true);
+        void (sessionId
+          ? siteAuthenticatedFetch(`/api/payments/${encodeURIComponent(sessionId)}/status`).catch(() => null)
+          : Promise.resolve(null)
+        ).finally(() => setBookingCheckoutSuccess(true));
       } else if (paymentResult === "success") {
-        setItems([]);
-        setCheckoutSuccess({
-          orderCount: 1,
-          serviceBookingCount: 0,
-          totalAmount: null,
+        void (sessionId
+          ? siteAuthenticatedFetch(`/api/payments/${encodeURIComponent(sessionId)}/status`).catch(() => null)
+          : Promise.resolve(null)
+        ).finally(() => {
+          setItems([]);
+          setCheckoutSuccess({
+            orderCount: 1,
+            serviceBookingCount: 0,
+            totalAmount: null,
+          });
         });
       } else {
         toast.info("Payment cancelled. Your cart is still saved.");
