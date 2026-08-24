@@ -6,6 +6,7 @@ import type { BrandLogoProps } from "@/types/site/shared"
 export function BrandLogo({
   href = "/",
   className,
+  logoClassName,
   textClassName,
   accentClassName,
   markClassName,
@@ -29,7 +30,7 @@ export function BrandLogo({
 
       {logoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={logoUrl} alt="AutoParts Pro" className="h-14 max-w-[260px] object-contain" />
+        <img src={logoUrl} alt="AutoParts Pro" className={cn("h-14 max-w-[260px] object-contain", logoClassName)} />
       ) : (
         <span className={cn("text-2xl font-bold text-black", textClassName)}>
           {isDefaultBrand ? <>AutoParts<span className={cn("text-primary", accentClassName)}> Pro</span></> : siteName}

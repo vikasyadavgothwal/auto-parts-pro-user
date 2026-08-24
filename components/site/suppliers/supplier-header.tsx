@@ -21,8 +21,8 @@ export function SupplierHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-brand-surface">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="flex h-20 items-center justify-between">
-          <BrandLogo href="/" showMark textClassName="text-xl" />
+        <div className="flex h-16 items-center justify-between">
+          <BrandLogo href="/" showMark logoClassName="h-16 max-w-[300px]" textClassName="text-3xl" />
 
           <nav className="hidden items-center gap-8 md:flex">
             {navItems.map((item) => (

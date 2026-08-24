@@ -5,8 +5,8 @@ export function MainHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-brand-surface">
       <div className="site-container-wide">
-        <div className="flex h-20 items-center justify-between">
-          <BrandLogo href="/" />
+        <div className="flex h-16 items-center justify-between">
+          <BrandLogo href="/" logoClassName="h-16 max-w-[300px]" textClassName="text-3xl" />
           <Link
             href="/"
             className="text-brand-muted transition-colors hover:text-white"

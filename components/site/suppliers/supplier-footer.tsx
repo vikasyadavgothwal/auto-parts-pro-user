@@ -39,7 +39,7 @@ export function SupplierFooter() {
       <div className="site-container-wide py-16">
         <div className="mb:mb-12 mb-4 grid md:gap-12 gap-8 md:grid-cols-5">
           <div className="md:col-span-2">
-            <BrandLogo href="/" className="mb-4" textClassName="text-2xl" />
+            <BrandLogo href="/" className="mb-4" textClassName="text-4xl" />
 
             <p className="mb-6 leading-relaxed text-brand-muted">
               Your premium B2B marketplace for automotive parts, services, and

@@ -26,7 +26,10 @@ export const SiteFooter = async ({ settings: providedSettings }: { settings?: Ma
       <div className="site-container py-14">
         <div className="grid gap-10 md:grid-cols-[1fr_auto]">
           <div>
-            <BrandLogo href="/" logoUrl={settings.logoUrl} siteName={settings.siteName} textClassName="text-white" />
+            <BrandLogo href="/" logoUrl={settings.logoUrl} siteName={settings.siteName} logoClassName="h-20 max-w-[360px]" textClassName="text-4xl text-white" />
+            <p className="mt-4 max-w-md text-sm leading-6 text-white/70">
+              AutoParts Pro connects customers, suppliers, garages, and fleets through one trusted marketplace for auto parts and vehicle services across the UAE.
+            </p>
           </div>
 
           {/* Right → Links */}

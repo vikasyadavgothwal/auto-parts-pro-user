@@ -12,9 +12,9 @@ export const BusinessHeader = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-brand-surface/80 backdrop-blur-md">
       <div className="site-container-wide">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-12">
-            <BrandLogo href="/" />
+            <BrandLogo href="/" logoClassName="h-16 max-w-[300px]" textClassName="text-3xl" />
             {/* Desktop Nav */}
             <nav className="hidden items-center gap-8 md:flex">
               <Link href="/search" className="text-brand-muted transition-colors hover:text-white">Browse Parts</Link>

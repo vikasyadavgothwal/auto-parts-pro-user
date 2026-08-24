@@ -69,7 +69,7 @@ export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, 
         <div className="grid h-20 grid-cols-[auto_1fr_auto] items-center gap-4">
           {/* Left: Logo */}
           <div className="flex items-center">
-            <BrandLogo href="/" logoUrl={logoUrl} siteName={siteName} textClassName="text-brand-surface" />
+            <BrandLogo href="/" logoUrl={logoUrl} siteName={siteName} logoClassName="h-20 max-w-[360px]" textClassName="text-4xl text-brand-surface" />
           </div>
 
           {/* Center: Nav Links */}

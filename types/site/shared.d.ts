@@ -1,6 +1,7 @@
 export type BrandLogoProps = {
   href?: string
   className?: string
+  logoClassName?: string
   textClassName?: string
   accentClassName?: string
   markClassName?: string
