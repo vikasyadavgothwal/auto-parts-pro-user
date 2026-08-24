@@ -1,6 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 
 import {
   isSiteLanguage,
@@ -317,44 +325,38 @@ export function LanguageProvider({
     typeof window === "undefined" ? initialLanguage : readInitialLanguage(initialLanguage),
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.lang = language;
     document.documentElement.dir = siteLanguageDirection(language);
     window.localStorage.setItem(siteLanguageStorageKey, encodePreference(language));
     setCookie(siteLanguageCookie, language);
     clearGoogleTranslateCookie();
-    const timer = window.setTimeout(() => {
-      if (language === "ar") {
-        applyArabicTranslations();
-      } else {
-        restoreEnglish();
-      }
-    }, 750);
-    return () => window.clearTimeout(timer);
+    if (language === "ar") {
+      applyArabicTranslations();
+    } else {
+      restoreEnglish();
+    }
   }, [language]);
 
   useEffect(() => {
     if (language !== "ar") return;
     let observer: MutationObserver | null = null;
-    const timer = window.setTimeout(() => {
-      observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-          if (mutation.type === "characterData" && mutation.target instanceof Text) {
-            translateTextNode(mutation.target);
-          }
-          for (const node of Array.from(mutation.addedNodes)) {
-            if (node instanceof Text) {
-              translateTextNode(node);
-            } else if (node instanceof Element) {
-              applyArabicTranslations(node);
-            }
+    observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === "characterData" && mutation.target instanceof Text) {
+          translateTextNode(mutation.target);
+        }
+        for (const node of Array.from(mutation.addedNodes)) {
+          if (node instanceof Text) {
+            translateTextNode(node);
+          } else if (node instanceof Element) {
+            applyArabicTranslations(node);
           }
         }
-      });
-      observer.observe(document.body, { characterData: true, childList: true, subtree: true });
-    }, 1000);
+      }
+    });
+    observer.observe(document.body, { characterData: true, childList: true, subtree: true });
     return () => {
-      window.clearTimeout(timer);
       observer?.disconnect();
     };
   }, [language]);

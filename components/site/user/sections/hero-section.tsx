@@ -36,16 +36,17 @@ export function HeroSection({ config }: { config?: HomeBannerConfig }) {
 
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none">
         <div className="absolute inset-0 h-full w-full relative">
           <Image
             src={resolvedBackgroundImage}
             alt=""
             fill
+            quality={78}
             priority
+            fetchPriority="high"
             sizes="100vw"
             className="object-cover"
-            fetchPriority="high"
             unoptimized={!canOptimizeImage}
           />
         </div>

@@ -7,6 +7,16 @@ const OPTIMIZED_REMOTE_IMAGE_PREFIXES = [
   "https://auto-parts-pro.s3.eu-north-1.amazonaws.com/",
 ]
 
+const AWS_SIGNED_QUERY_PARAM_PATTERN = /[?&]x-amz-/i
+
+const isAwsSignedImage = (src: string) => {
+  if (!src.startsWith("https://auto-parts-pro.s3.eu-north-1.amazonaws.com/")) {
+    return false
+  }
+
+  return AWS_SIGNED_QUERY_PARAM_PATTERN.test(src)
+}
+
 export const resolveSiteImageSrc = (
   value: string | null | undefined,
   fallback = DEFAULT_PRODUCT_IMAGE,
@@ -31,4 +41,23 @@ export const resolveSiteImageSrc = (
 
 export const canOptimizeSiteImageSrc = (src: string) =>
   src.startsWith("/") ||
-  OPTIMIZED_REMOTE_IMAGE_PREFIXES.some((prefix) => src.startsWith(prefix))
+  (OPTIMIZED_REMOTE_IMAGE_PREFIXES.some((prefix) => src.startsWith(prefix)) &&
+    !isAwsSignedImage(src))
+
+export const getImageOptimizationSizes = (candidate: "logo" | "card" | "hero") => {
+  if (candidate === "logo") {
+    return "(max-width: 768px) 140px, (max-width: 1280px) 172px, 200px"
+  }
+
+  if (candidate === "hero") {
+    return "100vw"
+  }
+
+  return "(max-width: 768px) 100vw, 50vw"
+}
+
+export const resolveImageCandidate = (value: string | null | undefined, fallback: string) => {
+  const resolved = resolveSiteImageSrc(value, fallback)
+  const isFallback = resolved === fallback
+  return { resolved, isFallback }
+}

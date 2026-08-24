@@ -6,7 +6,12 @@ export function MainHeader() {
     <header className="sticky top-0 z-50 border-b border-border bg-brand-surface">
       <div className="site-container-wide">
         <div className="flex h-16 items-center justify-between">
-          <BrandLogo href="/" logoClassName="h-16 max-w-[300px]" textClassName="text-3xl" />
+          <BrandLogo
+            href="/"
+            logoClassName="h-16 max-w-[300px]"
+            textClassName="text-3xl"
+            isPriority
+          />
           <Link
             href="/"
             className="text-brand-muted transition-colors hover:text-white"

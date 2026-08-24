@@ -1,8 +1,7 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
-
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   FitmentConfirmedIcon,
@@ -13,6 +12,11 @@ import {
 } from "@/components/icons/site-icons";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  canOptimizeSiteImageSrc,
+  getImageOptimizationSizes,
+  resolveSiteImageSrc,
+} from "@/lib/site-image";
 import type {
   SearchProduct,
   SearchProductBadgeType,
@@ -65,6 +69,8 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
   );
   const [imageIndex, setImageIndex] = useState(0);
   const displayImage = imageCandidates[imageIndex] ?? product.image;
+  const resolvedDisplayImage = resolveSiteImageSrc(displayImage, "/home.jpg");
+  const canOptimizeImage = canOptimizeSiteImageSrc(resolvedDisplayImage);
   const ratingValue = product.rating ? Number(product.rating) : null;
   const hasReviews =
     typeof ratingValue === "number" && Number.isFinite(ratingValue) && Boolean(product.reviews);
@@ -87,10 +93,14 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
 
         <Link href={productHref} className="block">
           <div className="relative aspect-square overflow-hidden bg-[#0A0A0A]">
-            <img
-              src={displayImage}
+            <Image
+              src={resolvedDisplayImage}
               alt={product.title}
+              fill
+              quality={78}
+              sizes={getImageOptimizationSizes("card")}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              unoptimized={!canOptimizeImage}
               onError={() => {
                 setImageIndex((currentIndex) =>
                   currentIndex < imageCandidates.length - 1
@@ -152,7 +162,9 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
                 <p className="text-xs text-[#9CA3AF]">{product.shipping}</p>
               </div>
 
-              <span className={cn(buttonVariants(), "rounded-xl px-6 py-5")}>View Details</span>
+              <span className={cn(buttonVariants(), "rounded-xl px-6 py-5")}>
+                View Details
+              </span>
             </div>
           </div>
         </Link>

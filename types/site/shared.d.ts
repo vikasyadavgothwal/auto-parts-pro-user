@@ -8,6 +8,8 @@ export type BrandLogoProps = {
   showMark?: boolean
   logoUrl?: string
   siteName?: string
+  isPriority?: boolean
+  imageFetchPriority?: "auto" | "high" | "low"
 }
 
 export type SectionHeadingProps = {

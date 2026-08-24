@@ -1,6 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
-
 import { AddProductToCartButton } from "@/components/site/cart/add-product-to-cart-button";
+import Image from "next/image";
 import {
   FitmentConfirmedIcon,
   TruckIcon,
@@ -8,6 +7,11 @@ import {
 import { BadgeCheck, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import {
+  canOptimizeSiteImageSrc,
+  getImageOptimizationSizes,
+  resolveSiteImageSrc,
+} from "@/lib/site-image";
 import type { ProductOffer } from "@/types/site/product";
 import { RatingStars } from "./rating-stars";
 import { RequestCustomQuoteButton } from "./request-custom-quote-button";
@@ -16,6 +20,9 @@ type CompareOffersSectionProps = {
   offers: readonly ProductOffer[];
 };
 function OfferCard({ offer }: { offer: ProductOffer }) {
+  const resolvedOfferLogo = resolveSiteImageSrc(offer.logo, "/home.jpg");
+  const canOptimizeOfferLogo = canOptimizeSiteImageSrc(resolvedOfferLogo);
+
   return (
     <Card
       className={cn(
@@ -39,11 +46,16 @@ function OfferCard({ offer }: { offer: ProductOffer }) {
       >
         <div className="grid gap-5 lg:grid-cols-[2.2fr_1fr_1fr_1.2fr_1.2fr] lg:items-center">
           <div className="flex items-center gap-4">
-            <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-[#E5E7EB]">
-              <img
-                src={offer.logo}
+          <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-[#E5E7EB]">
+              <Image
+                src={resolvedOfferLogo}
                 alt={offer.seller}
+                width={64}
+                height={64}
+                quality={75}
                 className="h-full w-full object-cover"
+                sizes={getImageOptimizationSizes("card")}
+                unoptimized={!canOptimizeOfferLogo}
               />
             </div>
 

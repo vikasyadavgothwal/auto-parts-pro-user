@@ -1,10 +1,14 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
-
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
+import {
+  canOptimizeSiteImageSrc,
+  getImageOptimizationSizes,
+  resolveSiteImageSrc,
+} from "@/lib/site-image";
 
 type ProductGalleryProps = {
   images: readonly string[];
@@ -14,14 +18,15 @@ type ProductGalleryProps = {
 export function ProductGallery({ images, title }: ProductGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [failedImages, setFailedImages] = useState<Set<string>>(
-    () => new Set()
+    () => new Set(),
   );
   const visibleImages = images
     .slice(0, 5)
-    .filter((image) => !failedImages.has(image));
+    .filter((image) => !failedImages.has(image))
+    .map((image) => resolveSiteImageSrc(image, "/home.jpg"));
   const safeSelectedImage = Math.min(
     selectedImage,
-    Math.max(visibleImages.length - 1, 0)
+    Math.max(visibleImages.length - 1, 0),
   );
   const primaryImage = visibleImages[safeSelectedImage] ?? visibleImages[0];
 
@@ -42,10 +47,14 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
     <div>
       <Card className="mb-4 overflow-hidden rounded-xl border border-[#2A2A2A] bg-[#1A1A1A]">
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
-          <img
+          <Image
             src={primaryImage}
             alt={title}
+            fill
+            quality={78}
+            sizes={getImageOptimizationSizes("hero")}
             className="h-full w-full object-cover"
+            unoptimized={!canOptimizeSiteImageSrc(primaryImage)}
             onError={() => markImageFailed(primaryImage)}
           />
         </div>
@@ -65,14 +74,18 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
                 "overflow-hidden rounded-xl border-2 transition-all",
                 isActive
                   ? "border-[#DC2626] ring-2 ring-[#DC2626]/20"
-                  : "border-[#2A2A2A] hover:border-[#DC2626]/50"
+                  : "border-[#2A2A2A] hover:border-[#DC2626]/50",
               )}
             >
               <div className="relative aspect-square">
-                <img
+                <Image
                   src={image}
                   alt={`Product view ${index + 1}`}
+                  fill
+                  quality={78}
+                  sizes={getImageOptimizationSizes("card")}
                   className="h-full w-full object-cover"
+                  unoptimized={!canOptimizeSiteImageSrc(image)}
                   onError={() => markImageFailed(image)}
                 />
               </div>

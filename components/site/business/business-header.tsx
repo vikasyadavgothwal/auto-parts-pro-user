@@ -14,7 +14,12 @@ export const BusinessHeader = () => {
       <div className="site-container-wide">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-12">
-            <BrandLogo href="/" logoClassName="h-16 max-w-[300px]" textClassName="text-3xl" />
+            <BrandLogo
+              href="/"
+              logoClassName="h-16 max-w-[300px]"
+              textClassName="text-3xl"
+              isPriority
+            />
             {/* Desktop Nav */}
             <nav className="hidden items-center gap-8 md:flex">
               <Link href="/search" className="text-brand-muted transition-colors hover:text-white">Browse Parts</Link>
