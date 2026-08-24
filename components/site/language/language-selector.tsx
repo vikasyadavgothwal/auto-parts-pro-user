@@ -15,6 +15,8 @@ import { siteLanguages, type SiteLanguage } from "@/lib/language-preference";
 
 export function LanguageSelector({ compact = false }: { compact?: boolean }) {
   const { language, setLanguage } = useLanguage();
+  const nextLanguage = language === "en" ? "Arabic" : "English"
+  const compactLabel = `Switch language to ${nextLanguage}`
 
   if (compact) {
     return (
@@ -24,8 +26,8 @@ export function LanguageSelector({ compact = false }: { compact?: boolean }) {
         data-no-translate="true"
         className="h-10 gap-2 rounded-xl border-border bg-transparent px-3 text-sm text-inherit hover:bg-muted"
         onClick={() => setLanguage(language === "en" ? "ar" : "en")}
-        aria-label="Change language"
-        title="Change language"
+        aria-label={compactLabel}
+        title={compactLabel}
       >
         <Globe2 className="size-4" />
         {language === "en" ? "AR" : "EN"}

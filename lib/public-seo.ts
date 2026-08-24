@@ -15,6 +15,7 @@ const DEFAULT_SITE_NAME = "Auto Parts Pro";
 
 const getPublicSiteUrl = () => {
   const value =
+    process.env.NEXT_PUBLIC_MAIN_WEBSITE_URL?.trim() ||
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
     process.env.SITE_URL?.trim() ||
     "";

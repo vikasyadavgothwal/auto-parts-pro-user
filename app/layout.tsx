@@ -11,7 +11,25 @@ import { isSiteLanguage, siteLanguageCookie, siteLanguageDirection } from "@/lib
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getMainWebsiteSiteSettings();
+  const websiteUrl = [
+    process.env.NEXT_PUBLIC_MAIN_WEBSITE_URL,
+    process.env.NEXT_PUBLIC_SITE_URL,
+    process.env.SITE_URL,
+  ]
+    .find(Boolean)
+    ?.trim();
+  let metadataBase: URL | undefined;
+
+  if (websiteUrl) {
+    try {
+      metadataBase = new URL(websiteUrl.replace(/\/+$/, ""));
+    } catch {
+      metadataBase = undefined
+    }
+  }
+
   return {
+    ...(metadataBase ? { metadataBase } : {}),
     title: settings.seo.title || settings.siteName,
     description: settings.seo.description,
     ...(settings.seo.keywords ? { keywords: settings.seo.keywords.split(",").map((value) => value.trim()).filter(Boolean) } : {}),

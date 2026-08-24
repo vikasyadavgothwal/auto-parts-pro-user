@@ -5,22 +5,24 @@ import {
   getPublicText,
   type HomeBannerConfig,
 } from "@/lib/public-content"
+import {
+  canOptimizeSiteImageSrc,
+  resolveSiteImageSrc,
+} from "@/lib/site-image"
 
 export function HeroSection({ config }: { config?: HomeBannerConfig }) {
   const backgroundImage = getPublicText(config?.backgroundImage) || "/home.jpg"
-  const resolvedBackgroundImage = backgroundImage.startsWith("http")
+  const sanitizedBackgroundImage = backgroundImage.startsWith("http")
     ? backgroundImage
     : backgroundImage.startsWith("/")
       ? backgroundImage
       : `/${backgroundImage}`
+  const resolvedBackgroundImage = resolveSiteImageSrc(sanitizedBackgroundImage, "/home.jpg")
+  const canOptimizeImage = canOptimizeSiteImageSrc(resolvedBackgroundImage)
   const badgeText = getPublicText(config?.badgeText)
   const heading = getPublicText(config?.heading)
   const subheading = getPublicText(config?.subheading)
   const keyPoints = (config?.keyPoints ?? []).map(getPublicText).filter(Boolean)
-  const canOptimizeImage =
-    resolvedBackgroundImage.startsWith("/") ||
-    resolvedBackgroundImage.startsWith("https://images.unsplash.com/") ||
-    resolvedBackgroundImage.startsWith("https://plus.unsplash.com/")
 
   if (
     !backgroundImage &&
