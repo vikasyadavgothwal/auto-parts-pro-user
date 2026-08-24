@@ -43,9 +43,9 @@ export function LanguageSelector({ compact = false }: { compact?: boolean }) {
         <Globe2 className="size-4" />
         <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent data-no-translate="true">
         {siteLanguages.map((item) => (
-          <SelectItem key={item.value} value={item.value}>
+          <SelectItem key={item.value} value={item.value} data-no-translate="true">
             {item.label}
           </SelectItem>
         ))}

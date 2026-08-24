@@ -7,7 +7,6 @@ import { AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { AuthModalCard } from "@/components/site/AuthModal";
 import { BookingActions } from "@/components/site/booking/booking-actions";
-import { BookingConfirmation } from "@/components/site/booking/booking-confirmation";
 import { BOOKING_INITIAL_SELECTION } from "@/components/site/booking/config";
 import { BookingProgress } from "@/components/site/booking/booking-progress";
 import { DateTimeStep } from "@/components/site/booking/steps/date-time-step";
@@ -15,14 +14,6 @@ import { ReviewStep } from "@/components/site/booking/steps/review-step";
 import { ServiceStep } from "@/components/site/booking/steps/service-step";
 import { VehicleStep } from "@/components/site/booking/steps/vehicle-step";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { getCurrentUser, siteAuthenticatedFetch } from "@/lib/current-user";
 import {
   bookingAvailableDates,
@@ -36,7 +27,7 @@ import type {
   BookingSelection,
   BookingService,
   BookingDateOption,
-  BookingStep,
+  BookingActiveStep,
   GarageBookingResult,
 } from "@/types/site/booking";
 import type { UserAuthProfile } from "@/types/api/user-auth";
@@ -173,7 +164,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
     () => getGarageAvailableDates(garage),
     [garage],
   );
-  const [step, setStep] = useState<BookingStep>(
+  const [step, setStep] = useState<BookingActiveStep>(
     initialService ? "vehicle" : "service",
   );
   const [selection, setSelection] = useState<BookingSelection>({
@@ -186,10 +177,6 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   const [vehicles, setVehicles] = useState<UserVehicleRecord[]>([]);
   const [isLoadingVehicles, setIsLoadingVehicles] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [confirmedBooking, setConfirmedBooking] =
-    useState<GarageBookingResult | null>(null);
-  const [pendingConfirmedBooking, setPendingConfirmedBooking] = useState<GarageBookingResult | null>(null);
-  const [paymentReceipt, setPaymentReceipt] = useState<BookingResponse["payment"]>(undefined);
   const [unavailableTimes, setUnavailableTimes] = useState<string[]>([]);
   const [bookingUnavailableMessage, setBookingUnavailableMessage] = useState("");
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
@@ -368,7 +355,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           notes: customerVehicle.notes,
           bookingDate: selection.date,
           bookingTime: selection.time,
-          paymentSuccessUrl: `${window.location.origin}/booking?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+          paymentSuccessUrl: `${window.location.origin}/?booking_payment=success&session_id={CHECKOUT_SESSION_ID}`,
           paymentCancelUrl: `${window.location.origin}/booking?payment=cancelled`,
         }),
       });
@@ -411,20 +398,6 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           </Button>
         </div>
       </div>
-    );
-  }
-
-  if (step === "confirmed") {
-    return (
-      <BookingConfirmation
-        booking={confirmedBooking}
-        garageName={garage.name}
-        selectedDate={selectedDate}
-        selectedService={selectedService}
-        selectedTime={selection.time}
-        customerVehicle={customerVehicle}
-        onBookAnother={() => router.push(`/garage/${garage.id}`)}
-      />
     );
   }
 
@@ -592,25 +565,6 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           />
         )}
       </div>
-      <Dialog open={Boolean(paymentReceipt && pendingConfirmedBooking)} onOpenChange={() => undefined}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Payment Successful</DialogTitle>
-            <DialogDescription>
-              Advance payment of {paymentReceipt?.currency} {paymentReceipt?.amount.toFixed(2)} was successful.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button onClick={() => {
-              toast.success("Payment successful. Your garage booking is confirmed.");
-              setConfirmedBooking(pendingConfirmedBooking);
-              setPendingConfirmedBooking(null);
-              setPaymentReceipt(undefined);
-              setStep("confirmed");
-            }}>OK</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

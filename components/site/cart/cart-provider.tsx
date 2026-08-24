@@ -266,6 +266,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
   });
   const [checkoutSuccess, setCheckoutSuccess] =
     useState<CheckoutSuccessDialog | null>(null);
+  const [bookingCheckoutSuccess, setBookingCheckoutSuccess] = useState(false);
 
   const refreshUser = useCallback(async () => {
     const nextUser = await getCurrentUser();
@@ -348,9 +349,18 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const paymentResult = params.get("payment");
-    if (paymentResult !== "success" && paymentResult !== "cancelled") return;
+    const bookingPaymentResult = params.get("booking_payment");
+    if (
+      paymentResult !== "success" &&
+      paymentResult !== "cancelled" &&
+      bookingPaymentResult !== "success"
+    ) {
+      return;
+    }
     const timer = window.setTimeout(() => {
-      if (paymentResult === "success") {
+      if (bookingPaymentResult === "success") {
+        setBookingCheckoutSuccess(true);
+      } else if (paymentResult === "success") {
         setItems([]);
         setCheckoutSuccess({
           orderCount: 1,
@@ -363,6 +373,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
     }, 0);
     const nextUrl = new URL(window.location.href);
     nextUrl.searchParams.delete("payment");
+    nextUrl.searchParams.delete("booking_payment");
     nextUrl.searchParams.delete("session_id");
     window.history.replaceState(null, "", nextUrl.toString());
     return () => window.clearTimeout(timer);
@@ -714,6 +725,35 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
             <Button
               type="button"
               onClick={() => setCheckoutSuccess(null)}
+              className="w-full hover:bg-brand-primary-hover sm:w-auto"
+            >
+              Continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={bookingCheckoutSuccess}
+        onOpenChange={setBookingCheckoutSuccess}
+      >
+        <DialogContent className="border border-border bg-brand-surface text-white shadow-2xl sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-2 flex size-12 items-center justify-center rounded-full border border-brand-success/25 bg-brand-success/10 text-brand-success">
+              <CheckCircle2 className="size-6" />
+            </div>
+            <DialogTitle className="text-xl text-white">
+              Payment Successful
+            </DialogTitle>
+            <DialogDescription className="text-brand-muted">
+              1 booking created successfully. You can see your booking in your dashboard.
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="bg-transparent sm:justify-center">
+            <Button
+              type="button"
+              onClick={() => setBookingCheckoutSuccess(false)}
               className="w-full hover:bg-brand-primary-hover sm:w-auto"
             >
               Continue
