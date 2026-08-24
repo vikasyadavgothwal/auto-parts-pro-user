@@ -29,7 +29,7 @@ export function BrandLogo({
 
       {logoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={logoUrl} alt="AutoParts Pro" className="h-10 max-w-[220px] object-contain" />
+        <img src={logoUrl} alt="AutoParts Pro" className="h-14 max-w-[260px] object-contain" />
       ) : (
         <span className={cn("text-2xl font-bold text-black", textClassName)}>
           {isDefaultBrand ? <>AutoParts<span className={cn("text-primary", accentClassName)}> Pro</span></> : siteName}

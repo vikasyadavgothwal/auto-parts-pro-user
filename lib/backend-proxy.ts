@@ -73,6 +73,7 @@ const streamBackendRequest = async ({
   const cookie = request.headers.get("cookie")
   const authorization = request.headers.get("authorization")
   const apiKey = request.headers.get("x-api-key")
+  const idempotencyKey = request.headers.get("idempotency-key")
   const userAgent = request.headers.get("user-agent")
   const forwardedFor = request.headers.get("x-forwarded-for")
 
@@ -80,6 +81,7 @@ const streamBackendRequest = async ({
   if (cookie) headers.set("cookie", cookie)
   if (authorization) headers.set("authorization", authorization)
   if (apiKey) headers.set("x-api-key", apiKey)
+  if (idempotencyKey) headers.set("idempotency-key", idempotencyKey)
   if (userAgent) headers.set("user-agent", userAgent)
   if (forwardedFor) headers.set("x-forwarded-for", forwardedFor)
 
