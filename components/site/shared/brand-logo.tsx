@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import {
   canOptimizeSiteImageSrc,
   getImageOptimizationSizes,
+  resolvePublicS3AssetSrc,
   resolveSiteImageSrc,
 } from "@/lib/site-image"
 import type { BrandLogoProps } from "@/types/site/shared"
@@ -24,12 +25,15 @@ export function BrandLogo({
   markClassName,
   showMark = false,
   logoUrl,
+  logoKey,
   siteName = "AutoPartsPro",
   isPriority = false,
   imageFetchPriority = "auto",
 }: BrandLogoProps) {
   const isDefaultBrand = siteName === "AutoPartsPro" || siteName === "AutoParts Pro"
-  const resolvedLogoUrl = logoUrl ? resolveSiteImageSrc(logoUrl) : ""
+  const resolvedLogoUrl = logoUrl || logoKey
+    ? resolvePublicS3AssetSrc(logoKey, logoUrl, "")
+    : ""
   const canOptimizeImage = resolvedLogoUrl
     ? canOptimizeSiteImageSrc(resolvedLogoUrl)
     : false
@@ -47,7 +51,7 @@ export function BrandLogo({
         </span>
       ) : null}
 
-      {logoUrl ? (
+      {resolvedLogoUrl ? (
         <Image
           src={resolvedLogoUrl}
           alt="AutoParts Pro"

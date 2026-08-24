@@ -51,7 +51,7 @@ export default async function RootLayout({
     <html lang={language} dir={siteLanguageDirection(language)} className="h-full bg-background antialiased">
       <body className="flex min-h-screen flex-col bg-background text-foreground selection:bg-primary selection:text-primary-foreground">
         <Providers initialLanguage={language}>
-          <UserHeader logoUrl={settings.logoUrl} siteName={settings.siteName} />
+          <UserHeader logoUrl={settings.logoUrl} logoKey={settings.logoKey} siteName={settings.siteName} />
           <div className="flex flex-1 flex-col">{children}</div>
           <SiteFooter settings={settings} />
           <Toaster

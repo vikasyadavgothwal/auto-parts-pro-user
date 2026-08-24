@@ -7,16 +7,22 @@ import {
 } from "@/lib/public-content"
 import {
   canOptimizeSiteImageSrc,
+  resolvePublicS3AssetSrc,
   resolveSiteImageSrc,
 } from "@/lib/site-image"
 
 export function HeroSection({ config }: { config?: HomeBannerConfig }) {
   const backgroundImage = getPublicText(config?.backgroundImage) || "/home.jpg"
-  const sanitizedBackgroundImage = backgroundImage.startsWith("http")
-    ? backgroundImage
-    : backgroundImage.startsWith("/")
-      ? backgroundImage
-      : `/${backgroundImage}`
+  const publicAssetImage = resolvePublicS3AssetSrc(
+    config?.backgroundImageKey,
+    backgroundImage,
+    "/home.jpg",
+  )
+  const sanitizedBackgroundImage = publicAssetImage.startsWith("http")
+    ? publicAssetImage
+    : publicAssetImage.startsWith("/")
+      ? publicAssetImage
+      : `/${publicAssetImage}`
   const resolvedBackgroundImage = resolveSiteImageSrc(sanitizedBackgroundImage, "/home.jpg")
   const canOptimizeImage = canOptimizeSiteImageSrc(resolvedBackgroundImage)
   const badgeText = getPublicText(config?.badgeText)

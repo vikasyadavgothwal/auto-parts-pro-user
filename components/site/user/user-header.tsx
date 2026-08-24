@@ -34,7 +34,7 @@ const navItems = [
   { label: "For Business", href: "/business" },
 ];
 
-export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, "logoUrl" | "siteName">) {
+export function UserHeader({ logoUrl, logoKey, siteName }: Pick<MainWebsiteSiteSettings, "logoUrl" | "logoKey" | "siteName">) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -72,6 +72,7 @@ export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, 
             <BrandLogo
               href="/"
               logoUrl={logoUrl}
+              logoKey={logoKey}
               siteName={siteName}
               logoClassName="h-20 max-w-[360px]"
               textClassName="text-4xl text-brand-surface"
@@ -125,6 +126,7 @@ export function UserHeader({ logoUrl, siteName }: Pick<MainWebsiteSiteSettings, 
 
                   <AuthModalCard
                     logoUrl={logoUrl}
+                    logoKey={logoKey}
                     siteName={siteName}
                     onAuthenticated={goToActiveDashboard}
                     onClose={() => setIsAuthModalOpen(false)}

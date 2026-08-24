@@ -29,6 +29,7 @@ export const SiteFooter = async ({ settings: providedSettings }: { settings?: Ma
             <BrandLogo
               href="/"
               logoUrl={settings.logoUrl}
+              logoKey={settings.logoKey}
               siteName={settings.siteName}
               logoClassName="h-16 max-w-[240px]"
               textClassName="text-4xl text-white"

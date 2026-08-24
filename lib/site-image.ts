@@ -7,6 +7,12 @@ const OPTIMIZED_REMOTE_IMAGE_PREFIXES = [
   "https://auto-parts-pro.s3.eu-north-1.amazonaws.com/",
 ]
 
+const PUBLIC_S3_ASSET_PREFIXES = [
+  "home/banner/",
+  "site-settings/logo/",
+  "site-settings/favicon/",
+]
+
 const AWS_SIGNED_QUERY_PARAM_PATTERN = /[?&]x-amz-/i
 
 const isAwsSignedImage = (src: string) => {
@@ -43,6 +49,30 @@ export const canOptimizeSiteImageSrc = (src: string) =>
   src.startsWith("/") ||
   (OPTIMIZED_REMOTE_IMAGE_PREFIXES.some((prefix) => src.startsWith(prefix)) &&
     !isAwsSignedImage(src))
+
+export const isPublicS3AssetKey = (key: string) =>
+  Boolean(key) &&
+  !key.includes("..") &&
+  PUBLIC_S3_ASSET_PREFIXES.some((prefix) => key.startsWith(prefix))
+
+export const resolvePublicS3AssetSrc = (
+  key: string | null | undefined,
+  fallback: string | null | undefined,
+  fallbackImage = DEFAULT_PRODUCT_IMAGE,
+) => {
+  const normalizedKey = key?.trim() ?? ""
+  const normalizedFallback = fallback?.trim() ?? ""
+
+  if (isPublicS3AssetKey(normalizedKey)) {
+    return `/api/site-image?key=${encodeURIComponent(normalizedKey)}`
+  }
+
+  if (!normalizedFallback && !fallbackImage.trim()) {
+    return ""
+  }
+
+  return resolveSiteImageSrc(normalizedFallback, fallbackImage)
+}
 
 export const getImageOptimizationSizes = (candidate: "logo" | "card" | "hero") => {
   if (candidate === "logo") {

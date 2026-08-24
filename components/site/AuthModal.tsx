@@ -79,6 +79,7 @@ type AuthModalCardProps = {
   onAuthenticated?: () => void;
   onClose?: () => void;
   logoUrl?: string;
+  logoKey?: string;
   siteName?: string;
 };
 
@@ -184,6 +185,7 @@ export function AuthModalCard({
   onAuthenticated,
   onClose,
   logoUrl,
+  logoKey,
   siteName = "AutoPartsPro",
 }: AuthModalCardProps) {
   const router = useRouter();
@@ -218,7 +220,7 @@ export function AuthModalCard({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
-  const [branding, setBranding] = useState({ logoUrl: logoUrl ?? "", siteName });
+  const [branding, setBranding] = useState({ logoUrl: logoUrl ?? "", logoKey: logoKey ?? "", siteName });
 
   useEffect(() => {
     return () => {
@@ -228,17 +230,17 @@ export function AuthModalCard({
   }, []);
 
   useEffect(() => {
-    if (logoUrl) return;
+    if (logoUrl || logoKey) return;
     void fetch("/api/v1/user/site-settings", { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) return;
-        const payload = (await response.json()) as { ok?: boolean; settings?: { logoUrl?: string; siteName?: string } };
+        const payload = (await response.json()) as { ok?: boolean; settings?: { logoUrl?: string; logoKey?: string; siteName?: string } };
         if (payload.ok && payload.settings) {
-          setBranding({ logoUrl: payload.settings.logoUrl ?? "", siteName: payload.settings.siteName ?? "AutoPartsPro" });
+          setBranding({ logoUrl: payload.settings.logoUrl ?? "", logoKey: payload.settings.logoKey ?? "", siteName: payload.settings.siteName ?? "AutoPartsPro" });
         }
       })
       .catch(() => undefined);
-  }, [logoUrl]);
+  }, [logoKey, logoUrl]);
 
   const clearPhoneRecaptchaVerifier = () => {
     recaptchaVerifier.current?.clear();
@@ -707,7 +709,7 @@ export function AuthModalCard({
         <CardContent className="p-0">
           <div className="border-b border-border/70 bg-gradient-to-b from-primary/10 to-transparent p-5 pb-6 pr-14 sm:p-8 sm:pb-7 sm:pr-14">
             <div className="mb-5 flex justify-center">
-              <BrandLogo href="/" logoUrl={branding.logoUrl} siteName={branding.siteName} className="pointer-events-none" textClassName="text-foreground" />
+              <BrandLogo href="/" logoUrl={branding.logoUrl} logoKey={branding.logoKey} siteName={branding.siteName} className="pointer-events-none" textClassName="text-foreground" />
             </div>
             <div className="mb-6 text-center">
               <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">

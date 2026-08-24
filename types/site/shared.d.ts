@@ -7,6 +7,7 @@ export type BrandLogoProps = {
   markClassName?: string
   showMark?: boolean
   logoUrl?: string
+  logoKey?: string
   siteName?: string
   isPriority?: boolean
   imageFetchPriority?: "auto" | "high" | "low"

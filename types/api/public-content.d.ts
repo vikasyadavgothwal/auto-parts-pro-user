@@ -16,6 +16,7 @@ export type TextPair = {
 
 export type HomeBannerConfig = {
   backgroundImage: string;
+  backgroundImageKey: string;
   badgeText: string;
   heading: string;
   subheading: string;
