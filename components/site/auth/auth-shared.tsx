@@ -1,6 +1,10 @@
 "use client";
 
-import { type FormEvent, type ReactNode, useEffect } from "react";
+import {
+  type FormEvent,
+  type ReactNode,
+  useEffect,
+} from "react";
 import { toast } from "sonner";
 
 import { GoogleBrandIcon } from "@/components/icons/brands";
@@ -413,8 +417,15 @@ export function GoogleButton({
 
 export function AuthFeedback({ error, status }: { error: string; status: string }) {
   useEffect(() => {
-    if (error) toast.error(error);
-    else if (status) toast.success(status);
+    if (error) {
+      toast.error(error, {
+        id: `auth-feedback-error:${error}`,
+      });
+    } else if (status) {
+      toast.success(status, {
+        id: `auth-feedback-status:${status}`,
+      });
+    }
   }, [error, status]);
 
   return null;

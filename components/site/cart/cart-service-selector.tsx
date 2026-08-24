@@ -30,7 +30,7 @@ const fieldClass =
   "h-11 w-full rounded-lg border border-border bg-brand-surface px-3 text-sm text-white outline-none focus:border-primary";
 
 const serviceLabel = (service: PublicGarageService) =>
-  `${service.name} - ${service.currency} ${(service.price / 100).toFixed(2)}`;
+  `${service.name} - ${service.currency} ${Math.round(service.price / 100)}`;
 
 export function CartServiceSelector() {
   const { addItem, serviceItems } = useSiteCart();

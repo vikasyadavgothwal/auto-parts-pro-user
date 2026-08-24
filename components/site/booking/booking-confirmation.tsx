@@ -100,7 +100,7 @@ export function BookingConfirmation({
                     <span className="text-brand-muted">Total</span>
                     <span className="text-xl font-bold text-primary">
                       {selectedService?.currency ?? "AED"}{" "}
-                      {selectedService?.price.toFixed(2)}
+                      {Math.round(selectedService?.price ?? 0)}
                     </span>
                   </div>
                 </div>

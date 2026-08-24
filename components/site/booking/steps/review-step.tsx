@@ -88,7 +88,7 @@ export function ReviewStep({
                 <span className="font-semibold text-foreground">
                   {advanceLabel(advance)}
                 </span>
-                <span className="font-bold text-primary">{selectedService?.currency ?? "AED"} {advanceAmount(selectedService?.price ?? 0, advance).toFixed(2)}</span>
+                <span className="font-bold text-primary">{selectedService?.currency ?? "AED"} {Math.round(advanceAmount(selectedService?.price ?? 0, advance))}</span>
               </div>
             </div>
 
@@ -127,7 +127,7 @@ export function ReviewStep({
                 </span>
                 <span className="text-3xl font-bold text-primary">
                   {selectedService?.currency ?? "AED"}{" "}
-                  {selectedService?.price.toFixed(2)}
+                  {Math.round(selectedService?.price ?? 0)}
                 </span>
               </div>
             </div>

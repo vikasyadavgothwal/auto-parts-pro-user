@@ -58,7 +58,7 @@ export default async function Search({ searchParams }: SearchPageRouteProps) {
     deliveryCity,
     deliveryState,
     deliveryCountry,
-    limit: 24,
+    limit: 100,
   });
   const products = result.products.map((product) =>
     marketplaceProductToSearchProduct(product, {

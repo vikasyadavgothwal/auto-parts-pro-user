@@ -111,7 +111,7 @@ const itemKey = (item: AddCartItemInput) =>
     : `service:${item.garageId}:${item.serviceId}`;
 
 export const formatCartPrice = (amount: number | null, currency: string) =>
-  typeof amount === "number" ? `${currency} ${amount.toFixed(2)}` : "Contact";
+  typeof amount === "number" ? `${currency} ${Math.round(amount)}` : "Contact";
 
 const normalizeQuantity = (value: number) =>
   Math.min(999, Math.max(1, Number.isFinite(value) ? Math.floor(value) : 1));
@@ -716,7 +716,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
             <div className="rounded-xl border border-border bg-background/40 px-4 py-3 text-center">
               <p className="text-xs text-brand-muted">Paid amount</p>
               <p className="mt-1 text-2xl font-semibold text-white">
-                AED {checkoutSuccess.totalAmount.toFixed(2)}
+                AED {Math.round(checkoutSuccess.totalAmount)}
               </p>
             </div>
           ) : null}

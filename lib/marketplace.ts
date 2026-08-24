@@ -51,7 +51,7 @@ const buildBackendUrl = (
 
 export const formatPrice = (price: number | null, currency = "AED") =>
   typeof price === "number"
-    ? `${currency} ${price.toFixed(2)}`
+    ? `${currency} ${Math.round(price)}`
     : "View offers"
 
 const numberWords: Record<string, number> = {

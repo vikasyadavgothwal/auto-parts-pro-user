@@ -2,8 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   FitmentConfirmedIcon,
@@ -12,22 +11,12 @@ import {
   RatingStarIcon,
   SellerPackageIcon,
 } from "@/components/icons/site-icons";
-import { Checkbox } from "@/components/ui/checkbox";
 import { buttonVariants } from "@/components/ui/button";
-import { getCurrentUser, siteAuthenticatedFetch } from "@/lib/current-user";
 import { cn } from "@/lib/utils";
 import type {
   SearchProduct,
   SearchProductBadgeType,
 } from "@/types/site/search";
-
-type SavedStatusPayload = {
-  ok?: boolean;
-  saved?: boolean;
-  watchForPriceDrops?: boolean;
-  watchForStockReturns?: boolean;
-  message?: string;
-};
 
 const badgeClassNames: Record<SearchProductBadgeType, string> = {
   fit: "border-[#10B981]/30 bg-[#10B981] text-white",
@@ -65,15 +54,6 @@ type SearchResultCardProps = {
 };
 
 export function SearchResultCard({ product }: SearchResultCardProps) {
-  const partUid = useMemo(() => {
-    try {
-      const productUrl = new URL(product.href, "https://example.com");
-      const lastSegment = productUrl.pathname.split("/").filter(Boolean).pop();
-      return lastSegment ? decodeURIComponent(lastSegment) : String(product.id);
-    } catch {
-      return String(product.id);
-    }
-  }, [product.href, product.id]);
   const productHref = product.href;
   const BadgeIcon = badgeIcons[product.badgeType];
   const imageCandidates = useMemo(
@@ -88,115 +68,6 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
   const ratingValue = product.rating ? Number(product.rating) : null;
   const hasReviews =
     typeof ratingValue === "number" && Number.isFinite(ratingValue) && Boolean(product.reviews);
-  const [canSave, setCanSave] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [watchForPriceDrops, setWatchForPriceDrops] = useState(false);
-  const [watchForStockReturns, setWatchForStockReturns] = useState(false);
-  const [pending, setPending] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-
-    async function loadSavedStatus() {
-      const user = await getCurrentUser();
-      const isUser = user?.activeRole === "User" && user.roles.includes("User");
-      if (!mounted) return;
-      setCanSave(Boolean(partUid && isUser));
-      if (!partUid || !isUser) return;
-
-      const response = await siteAuthenticatedFetch(
-        `/api/saved-parts?partUid=${encodeURIComponent(partUid)}`,
-        { credentials: "include", cache: "no-store" },
-      );
-      const payload = (await response.json().catch(() => null)) as
-        | SavedStatusPayload
-        | null;
-      if (!mounted || !response.ok || !payload?.ok) return;
-
-      setSaved(Boolean(payload.saved));
-      setWatchForPriceDrops(Boolean(payload.watchForPriceDrops));
-      setWatchForStockReturns(Boolean(payload.watchForStockReturns));
-    }
-
-    void loadSavedStatus();
-    return () => {
-      mounted = false;
-    };
-  }, [partUid]);
-
-  const updateSavedPart = async (
-    nextSaved: boolean,
-    options?: { price?: boolean; stock?: boolean },
-    successMessage?: string,
-  ) => {
-    if (!partUid || pending) return;
-    setPending(true);
-
-    try {
-      if (!nextSaved) {
-        const response = await siteAuthenticatedFetch("/api/saved-parts", {
-          method: "DELETE",
-          credentials: "include",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ partUid }),
-        });
-        const payload = (await response.json().catch(() => null)) as
-          | SavedStatusPayload
-          | null;
-        if (!response.ok || payload?.ok === false) {
-          throw new Error(payload?.message || "Unable to update saved part.");
-        }
-        setSaved(false);
-        setWatchForPriceDrops(false);
-        setWatchForStockReturns(false);
-        toast.success(successMessage ?? "Part removed from saved parts.");
-        return;
-      }
-
-      const response = await siteAuthenticatedFetch("/api/saved-parts", {
-        method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          partUid,
-          watchForPriceDrops: options?.price ?? watchForPriceDrops,
-          watchForStockReturns: options?.stock ?? watchForStockReturns,
-        }),
-      });
-      const payload = (await response.json().catch(() => null)) as
-        | SavedStatusPayload
-        | null;
-      if (!response.ok || !payload?.ok) {
-        throw new Error(payload?.message || "Unable to update saved part.");
-      }
-      setSaved(true);
-      setWatchForPriceDrops(Boolean(payload.watchForPriceDrops));
-      setWatchForStockReturns(Boolean(payload.watchForStockReturns));
-      toast.success(successMessage ?? "Part saved successfully.");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to update saved part.");
-    } finally {
-      setPending(false);
-    }
-  };
-
-  const toggleWatchForPriceDrops = () => {
-    const nextValue = !watchForPriceDrops;
-    void updateSavedPart(true, { price: nextValue, stock: watchForStockReturns },
-      nextValue
-        ? "You will be notified on lower price drops."
-        : "Price watch removed.",
-    );
-  };
-
-  const toggleWatchForStockReturns = () => {
-    const nextValue = !watchForStockReturns;
-    void updateSavedPart(true, { price: watchForPriceDrops, stock: nextValue },
-      nextValue
-        ? "You will be notified when stock returns."
-        : "Stock watch removed.",
-    );
-  };
 
   return (
     <article className="group relative">
@@ -286,36 +157,6 @@ export function SearchResultCard({ product }: SearchResultCardProps) {
           </div>
         </Link>
 
-        {canSave ? (
-          <div className="space-y-2 border-t border-[#2A2A2A] bg-[#1A1A1A] p-4">
-            <button
-              type="button"
-              onClick={() => void updateSavedPart(!saved)}
-              disabled={pending}
-              className="w-full rounded-xl border border-[#2A2A2A] bg-[#0F0F0F] px-4 py-2 text-sm text-white hover:border-[#DC2626] hover:text-[#DC2626]"
-            >
-              {pending ? "Saving..." : saved ? "Saved" : "Save this part"}
-            </button>
-
-            <label className="flex items-center gap-2 text-sm text-[#9CA3AF]">
-              <Checkbox
-                checked={watchForPriceDrops}
-                disabled={!saved || pending}
-                onCheckedChange={() => void toggleWatchForPriceDrops()}
-              />
-              <span>Watch for lower price</span>
-            </label>
-
-            <label className="flex items-center gap-2 text-sm text-[#9CA3AF]">
-              <Checkbox
-                checked={watchForStockReturns}
-                disabled={!saved || pending}
-                onCheckedChange={() => void toggleWatchForStockReturns()}
-              />
-              <span>Watch for stock return</span>
-            </label>
-          </div>
-        ) : null}
       </div>
     </article>
   );

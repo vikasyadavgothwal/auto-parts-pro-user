@@ -222,18 +222,18 @@ export function CartSummary({
         <div className="mt-4 space-y-3 border-b border-border pb-4 text-sm">
           <div className="flex justify-between gap-4 text-brand-muted">
             <span>Products</span>
-            <span className="text-white">AED {productSubtotal.toFixed(2)}</span>
+            <span className="text-white">AED {Math.round(productSubtotal)}</span>
           </div>
           <div className="flex justify-between gap-4 text-brand-muted">
             <span>Garage service advance</span>
-            <span className="text-white">AED {serviceAdvanceSubtotal.toFixed(2)}</span>
+            <span className="text-white">AED {Math.round(serviceAdvanceSubtotal)}</span>
           </div>
           {serviceItemCount ? (
             <p className="rounded-lg bg-brand-surface px-3 py-2 text-xs leading-5 text-brand-muted">
               Service advance is due now
               {garageAdvance.mode === "percentage"
                 ? ` at ${garageAdvance.value}% of service price.`
-                : ` as AED ${garageAdvance.value.toFixed(2)} per service.`}
+                : ` as AED ${Math.round(garageAdvance.value)} per service.`}
             </p>
           ) : null}
         </div>
@@ -242,11 +242,11 @@ export function CartSummary({
           <div>
             <p className="text-sm text-brand-muted">Payable now</p>
             <p className="text-2xl font-bold text-white">
-              AED {payableSubtotal.toFixed(2)}
+              AED {Math.round(payableSubtotal)}
             </p>
           </div>
           <p className="text-right text-xs text-brand-muted">
-            Cart value AED {subtotal.toFixed(2)}
+            Cart value AED {Math.round(subtotal)}
           </p>
         </div>
 

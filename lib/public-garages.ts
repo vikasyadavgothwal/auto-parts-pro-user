@@ -129,5 +129,5 @@ export const formatGaragePrice = (
   currency = "AED",
 ) =>
   typeof price === "number"
-    ? `${currency} ${(price / 100).toFixed(2)}`
+    ? `${currency} ${Math.round(price / 100)}`
     : "Contact garage"
