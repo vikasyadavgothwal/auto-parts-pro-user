@@ -33,6 +33,11 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
+    localPatterns: [
+      {
+        pathname: "/api/site-image",
+      },
+    ],
     remotePatterns: [
       {
         protocol: "https",
