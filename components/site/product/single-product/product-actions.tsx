@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
-import { ShareIcon } from "@/components/icons/site-icons";
+import { HeartIcon, ShareIcon } from "@/components/icons/site-icons";
 import { Button } from "@/components/ui/button";
+import { siteAuthenticatedFetch } from "@/lib/current-user";
 
 type ProductActionsProps = {
   partUid?: string;
@@ -16,6 +17,8 @@ const buttonClass =
 
 export function ProductActions({ partUid, title }: ProductActionsProps) {
   const resolvedPartUid = useMemo(() => partUid?.trim() || "", [partUid]);
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const shareUrl = useMemo(
     () =>
@@ -43,10 +46,64 @@ export function ProductActions({ partUid, title }: ProductActionsProps) {
     }
   };
 
+  useEffect(() => {
+    if (!resolvedPartUid) return;
+    let active = true;
+    void siteAuthenticatedFetch(`/api/saved-parts?partUid=${encodeURIComponent(resolvedPartUid)}`, {
+      cache: "no-store",
+      headers: { accept: "application/json" },
+    })
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload) => {
+        if (active && payload?.saved === true) setSaved(true);
+      })
+      .catch(() => undefined);
+    return () => {
+      active = false;
+    };
+  }, [resolvedPartUid]);
+
+  const toggleSaved = async () => {
+    if (!resolvedPartUid) {
+      toast.error("Product is not available to save.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const response = await siteAuthenticatedFetch("/api/saved-parts", {
+        method: saved ? "DELETE" : "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ partUid: resolvedPartUid }),
+      });
+      if (response.status === 401 || response.status === 403) {
+        toast.error("Sign in with a User account to save parts.");
+        return;
+      }
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || payload?.ok === false || payload?.success === false) {
+        toast.error(payload?.message ?? "Unable to update saved part.");
+        return;
+      }
+      setSaved(!saved);
+      toast.success(saved ? "Part removed from saved parts." : "Part saved.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="space-y-2">
       <div className="flex flex-col gap-3 sm:flex-row">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={toggleSaved}
+          disabled={saving || !resolvedPartUid}
+          className={buttonClass}
+        >
+          <HeartIcon className={`mr-2 h-5 w-5 ${saved ? "fill-[#DC2626] text-[#DC2626]" : ""}`} />
+          {saving ? "Saving..." : saved ? "Saved" : "Save this part"}
+        </Button>
         <Button
           type="button"
           variant="outline"
