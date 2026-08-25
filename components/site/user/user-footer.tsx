@@ -32,9 +32,9 @@ export const SiteFooter = async ({ settings: providedSettings }: { settings?: Ma
               logoKey={settings.logoKey}
               siteName={settings.siteName}
               logoClassName="h-16 max-w-[240px]"
-              textClassName="text-4xl text-white"
+              textClassName="text-5xl text-white"
             />
-            <p className="mt-4 max-w-md text-sm leading-6 text-white/70">
+            <p className="mt-4 max-w-md text-sm leading-6 text-white">
               AutoParts Pro connects customers, suppliers, garages, and fleets through one trusted marketplace for auto parts and vehicle services across the UAE.
             </p>
           </div>
