@@ -49,7 +49,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "auto-parts-pro.s3.eu-north-1.amazonaws.com",
+        hostname: "d138jhvnngk7dx.cloudfront.net",
       },
     ],
     formats: ["image/avif", "image/webp"],

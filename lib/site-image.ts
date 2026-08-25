@@ -4,7 +4,7 @@ const DEFAULT_PRODUCT_IMAGE =
 const OPTIMIZED_REMOTE_IMAGE_PREFIXES = [
   "https://images.unsplash.com/",
   "https://plus.unsplash.com/",
-  "https://auto-parts-pro.s3.eu-north-1.amazonaws.com/",
+  "https://d138jhvnngk7dx.cloudfront.net/",
 ]
 
 const PUBLIC_S3_ASSET_PREFIXES = [
@@ -14,9 +14,30 @@ const PUBLIC_S3_ASSET_PREFIXES = [
 ]
 
 const AWS_SIGNED_QUERY_PARAM_PATTERN = /[?&]x-amz-/i
+const S3_IMAGE_CLOUDFRONT_BASE_URL = "https://d138jhvnngk7dx.cloudfront.net"
+const S3_BUCKET_HOST = "auto-parts-pro.s3.eu-north-1.amazonaws.com"
+
+const encodeS3Path = (path: string) =>
+  path
+    .split("/")
+    .filter(Boolean)
+    .map(encodeURIComponent)
+    .join("/")
+
+const cloudFrontImageSrc = (key: string) =>
+  `${S3_IMAGE_CLOUDFRONT_BASE_URL}/${encodeS3Path(key)}`
+
+const convertS3ImageUrlToCloudFront = (src: string) => {
+  try {
+    const url = new URL(src)
+    return url.host === S3_BUCKET_HOST ? cloudFrontImageSrc(decodeURIComponent(url.pathname).replace(/^\/+/, "")) : src
+  } catch {
+    return src
+  }
+}
 
 const isAwsSignedImage = (src: string) => {
-  if (!src.startsWith("https://auto-parts-pro.s3.eu-north-1.amazonaws.com/")) {
+  if (!src.startsWith(`https://${S3_BUCKET_HOST}/`)) {
     return false
   }
 
@@ -35,7 +56,7 @@ export const resolveSiteImageSrc = (
   }
 
   if (imageSrc.startsWith("http://") || imageSrc.startsWith("https://")) {
-    return imageSrc
+    return convertS3ImageUrlToCloudFront(imageSrc)
   }
 
   if (imageSrc.startsWith("//")) {
@@ -64,7 +85,7 @@ export const resolvePublicS3AssetSrc = (
   const normalizedFallback = fallback?.trim() ?? ""
 
   if (isPublicS3AssetKey(normalizedKey)) {
-    return `/api/site-image?key=${encodeURIComponent(normalizedKey)}`
+    return cloudFrontImageSrc(normalizedKey)
   }
 
   if (!normalizedFallback && !fallbackImage.trim()) {

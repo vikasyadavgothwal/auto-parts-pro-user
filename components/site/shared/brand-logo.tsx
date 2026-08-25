@@ -7,7 +7,6 @@ import {
   canOptimizeSiteImageSrc,
   getImageOptimizationSizes,
   resolvePublicS3AssetSrc,
-  resolveSiteImageSrc,
 } from "@/lib/site-image"
 import type { BrandLogoProps } from "@/types/site/shared"
 
