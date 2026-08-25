@@ -3,7 +3,7 @@ import type {
   UserAuthProfile,
 } from "@/types/api/user-auth";
 import { getFirebaseClientAuth } from "@/lib/firebase/client";
-export { dashboardUrlForRole } from "@/lib/dashboard-url";
+export { dashboardPlansUrlForRole, dashboardUrlForRole } from "@/lib/dashboard-url";
 
 let refreshRequest: Promise<boolean> | null = null;
 

@@ -52,7 +52,7 @@ import {
   establishPasswordApplicationSession,
   verifyBusinessLoginSession,
 } from "@/lib/user-auth";
-import { dashboardUrlForRole } from "@/lib/current-user";
+import { dashboardPlansUrlForRole, dashboardUrlForRole } from "@/lib/current-user";
 import { RequiredMark } from "@/components/site/shared/required-mark";
 import {
   authEmailPasswordSchema,
@@ -76,6 +76,9 @@ const VERIFIED_ACCOUNT_ROLE_REQUIRED_MESSAGE =
   "Choose an account type to finish creating your account";
 
 type AuthModalCardProps = {
+  initialAccountType?: AccountType;
+  initialMode?: AuthMode;
+  businessRedirect?: "dashboard" | "plans";
   onAuthenticated?: () => void;
   onClose?: () => void;
   logoUrl?: string;
@@ -182,6 +185,9 @@ const sanitizeSingleLine = (value: string, maximum: number) =>
   value.replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").slice(0, maximum);
 
 export function AuthModalCard({
+  initialAccountType = "User",
+  initialMode = "signin",
+  businessRedirect = "dashboard",
   onAuthenticated,
   onClose,
   logoUrl,
@@ -190,10 +196,10 @@ export function AuthModalCard({
 }: AuthModalCardProps) {
   const router = useRouter();
   const recaptchaVerifier = useRef<RecaptchaVerifier | null>(null);
-  const [mode, setMode] = useState<AuthMode>("signin");
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [loginMethod, setLoginMethod] = useState<LoginMethod>("email");
   const [showPassword, setShowPassword] = useState(false);
-  const [accountType, setAccountType] = useState<AccountType>("User");
+  const [accountType, setAccountType] = useState<AccountType>(initialAccountType);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -298,7 +304,11 @@ export function AuthModalCard({
     }
     if (session.user.activeRole !== "User") {
       await signOut(getFirebaseClientAuth()).catch(() => undefined);
-      window.location.assign(dashboardUrlForRole(session.user.activeRole));
+      window.location.assign(
+        businessRedirect === "plans"
+          ? dashboardPlansUrlForRole(session.user.activeRole)
+          : dashboardUrlForRole(session.user.activeRole),
+      );
       return;
     }
     await signOut(getFirebaseClientAuth()).catch(() => undefined);
@@ -321,7 +331,11 @@ export function AuthModalCard({
     }
     if (session.user.activeRole !== "User") {
       await signOut(getFirebaseClientAuth()).catch(() => undefined);
-      window.location.assign(dashboardUrlForRole(session.user.activeRole));
+      window.location.assign(
+        businessRedirect === "plans"
+          ? dashboardPlansUrlForRole(session.user.activeRole)
+          : dashboardUrlForRole(session.user.activeRole),
+      );
       return;
     }
     router.refresh();
@@ -646,7 +660,11 @@ export function AuthModalCard({
       await signOut(getFirebaseClientAuth()).catch(() => undefined);
       onAuthenticated?.();
       onClose?.();
-      window.location.assign(dashboardUrlForRole(session.user.activeRole));
+      window.location.assign(
+        businessRedirect === "plans"
+          ? dashboardPlansUrlForRole(session.user.activeRole)
+          : dashboardUrlForRole(session.user.activeRole),
+      );
     });
   };
 

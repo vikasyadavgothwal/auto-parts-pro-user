@@ -36,6 +36,8 @@ import type { PublicGarageDetail } from "@/types/site/garages";
 type BookingPageProps = {
   garage: PublicGarageDetail | null;
   initialServiceId?: string;
+  paymentStatus?: string;
+  paymentSessionId?: string;
 };
 
 type BookingAdvance = {
@@ -143,7 +145,12 @@ const getGarageAvailableDates = (
   });
 };
 
-export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps) {
+export function BookingPage({
+  garage,
+  initialServiceId = "",
+  paymentStatus = "",
+  paymentSessionId = "",
+}: BookingPageProps) {
   const router = useRouter();
   const services = useMemo<BookingService[]>(
     () =>
@@ -263,6 +270,22 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   }, []);
 
   useEffect(() => {
+    if (paymentStatus !== "cancelled" || !paymentSessionId) {
+      return;
+    }
+
+    void siteAuthenticatedFetch(
+      `/api/payments/${encodeURIComponent(paymentSessionId)}/status?payment=cancelled`,
+      {
+        method: "GET",
+        cache: "no-store",
+        credentials: "include",
+        headers: { accept: "application/json" },
+      },
+    ).catch(() => undefined);
+  }, [paymentSessionId, paymentStatus]);
+
+  useEffect(() => {
     if (!garage?.id || !selection.serviceId || !selection.date) {
       return;
     }
@@ -356,7 +379,7 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
           bookingDate: selection.date,
           bookingTime: selection.time,
           paymentSuccessUrl: `${window.location.origin}/?booking_payment=success&session_id={CHECKOUT_SESSION_ID}`,
-          paymentCancelUrl: `${window.location.origin}/booking?payment=cancelled`,
+          paymentCancelUrl: `${window.location.origin}/booking?payment=cancelled&session_id={CHECKOUT_SESSION_ID}`,
         }),
       });
       const payload = (await response.json()) as BookingResponse;
@@ -384,6 +407,24 @@ export function BookingPage({ garage, initialServiceId = "" }: BookingPageProps)
   };
 
   if (!garage) {
+    if (paymentStatus === "cancelled") {
+      return (
+        <div className="flex min-h-full items-center justify-center bg-background p-8">
+          <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-8 text-center">
+            <h1 className="mb-3 text-3xl font-bold text-foreground">
+              Payment cancelled
+            </h1>
+            <p className="mb-6 text-brand-muted">
+              No booking was confirmed because the advance payment was cancelled.
+            </p>
+            <Button asChild className="rounded-xl bg-primary text-primary-foreground">
+              <Link href="/services">Browse Garages</Link>
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="flex min-h-full items-center justify-center bg-background p-8">
         <div className="w-full max-w-xl rounded-2xl border border-border bg-card p-8 text-center">

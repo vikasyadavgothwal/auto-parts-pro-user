@@ -54,7 +54,12 @@ export function PricingActionButton({
             <DialogTitle>Sign in to manage pricing</DialogTitle>
             <DialogDescription>Sign in with your business account to continue.</DialogDescription>
           </DialogHeader>
-          <AuthModalCard onClose={() => setLoginOpen(false)} />
+          <AuthModalCard
+            initialAccountType={role}
+            initialMode="signup"
+            businessRedirect="plans"
+            onClose={() => setLoginOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </>

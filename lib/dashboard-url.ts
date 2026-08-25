@@ -42,3 +42,22 @@ export const dashboardUrlForRole = (
 
   return urls[normalizedRole] ?? urls.User;
 };
+
+export const dashboardPlansUrlForRole = (
+  role: string | null | undefined,
+  hostname = typeof window === "undefined" ? "" : window.location.hostname,
+) => {
+  const dashboardUrl = dashboardUrlForRole(role, hostname);
+  const url = dashboardUrl.startsWith("http")
+    ? new URL(dashboardUrl)
+    : new URL(dashboardUrl, "http://local.test");
+
+  url.pathname = url.pathname.replace(/\/dashboard\/?$/, "/plans");
+  if (!url.pathname.endsWith("/plans")) {
+    url.pathname = `${url.pathname.replace(/\/+$/, "")}/plans`;
+  }
+
+  return dashboardUrl.startsWith("http")
+    ? url.toString()
+    : `${url.pathname}${url.search}`;
+};
