@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { toast } from "sonner";
 
 import { AuthModalCard } from "@/components/site/AuthModal";
 import {
@@ -11,8 +12,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { dashboardPlansUrlForRole, getCurrentUser } from "@/lib/current-user";
 
 type BusinessRole = "Fleet" | "Garage" | "Supplier";
+const businessRoles = new Set<string>(["Fleet", "Garage", "Supplier"]);
 
 export function PricingActionButton({
   role,
@@ -24,39 +27,46 @@ export function PricingActionButton({
   children: ReactNode;
 }) {
   const [loginOpen, setLoginOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(false);
 
   const handleClick = async () => {
-    setLoading(true);
-    const response = await fetch(`/api/business/pricing-redirect?role=${encodeURIComponent(role)}`, {
-      cache: "no-store",
-      credentials: "include",
-    });
-    const payload = (await response.json().catch(() => null)) as
-      | { authenticated?: boolean; url?: string }
-      | null;
-    setLoading(false);
-    if (payload?.authenticated && payload.url) {
-      window.location.assign(payload.url);
-      return;
+    if (checking) return;
+    setChecking(true);
+    try {
+      const user = await getCurrentUser();
+      if (!user) {
+        setLoginOpen(true);
+        return;
+      }
+      if (!businessRoles.has(user.activeRole)) {
+        toast.error("Only Fleet, Supplier, or Garage accounts can access these plans.");
+        return;
+      }
+      window.location.assign(dashboardPlansUrlForRole(user.activeRole));
+    } catch {
+      setLoginOpen(true);
+    } finally {
+      setChecking(false);
     }
-    setLoginOpen(true);
   };
 
   return (
     <>
-      <Button type="button" className={className} onClick={handleClick} disabled={loading}>
-        {loading ? "Checking..." : children}
+      <Button type="button" className={className} onClick={() => void handleClick()} disabled={checking}>
+        {checking ? "Checking account..." : children}
       </Button>
       <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
-        <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto border border-border bg-brand-panel p-0 sm:max-w-xl">
+        <DialogContent
+          showCloseButton={false}
+          className="max-h-[calc(100dvh-2rem)] overflow-y-auto border-0 bg-transparent p-0 ring-0 sm:max-w-xl"
+        >
           <DialogHeader className="sr-only">
             <DialogTitle>Sign in to manage pricing</DialogTitle>
             <DialogDescription>Sign in with your business account to continue.</DialogDescription>
           </DialogHeader>
           <AuthModalCard
             initialAccountType={role}
-            initialMode="signup"
+            initialMode="signin"
             businessRedirect="plans"
             onClose={() => setLoginOpen(false)}
           />

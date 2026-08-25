@@ -12,9 +12,15 @@ type BusinessRole = keyof typeof roleCookies;
 
 export const dynamic = "force-dynamic";
 
+const requestHostname = (request: NextRequest) =>
+  (request.headers.get("x-forwarded-host") || request.headers.get("host") || request.nextUrl.hostname)
+    .split(",")[0]
+    .trim()
+    .replace(/:\d+$/, "") || request.nextUrl.hostname;
+
 export async function GET(request: NextRequest) {
   const requestedRole = request.nextUrl.searchParams.get("role") as BusinessRole | null;
-  const hostname = request.nextUrl.hostname;
+  const hostname = requestHostname(request);
   const roles = requestedRole && requestedRole in roleCookies
     ? [requestedRole, ...Object.keys(roleCookies).filter((role) => role !== requestedRole)]
     : Object.keys(roleCookies);

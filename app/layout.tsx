@@ -11,6 +11,8 @@ import { isSiteLanguage, siteLanguageCookie, siteLanguageDirection } from "@/lib
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getMainWebsiteSiteSettings();
+  const faviconVersion =
+    settings.faviconKey || settings.faviconUrl || "default";
   const websiteUrl = [
     process.env.NEXT_PUBLIC_MAIN_WEBSITE_URL,
     process.env.NEXT_PUBLIC_SITE_URL,
@@ -35,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     ...(settings.seo.keywords ? { keywords: settings.seo.keywords.split(",").map((value) => value.trim()).filter(Boolean) } : {}),
     ...(settings.seo.canonicalUrl ? { alternates: { canonical: settings.seo.canonicalUrl } } : {}),
     robots: { index: !settings.seo.noIndex, follow: !settings.seo.noFollow },
-    icons: { icon: `/api/favicon?v=${encodeURIComponent(settings.faviconKey || "default")}` },
+    icons: { icon: `/api/favicon?v=${encodeURIComponent(faviconVersion)}` },
   };
 }
 
