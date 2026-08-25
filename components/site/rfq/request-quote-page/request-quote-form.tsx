@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 
 import { AuthModalCard } from "@/components/site/AuthModal";
@@ -150,12 +150,14 @@ export function RequestQuoteForm() {
   const [selectedVehicleId, setSelectedVehicleId] = useState("");
   const [isLoadingVehicles, setIsLoadingVehicles] = useState(true);
   const [isImporting, setIsImporting] = useState(false);
+  const [isCheckingVin, setIsCheckingVin] = useState(false);
   const [companyName, setCompanyName] = useState("");
   const [contactName, setContactName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [partsResetKey, setPartsResetKey] = useState(0);
+  const submitLockRef = useRef(false);
 
   const loadAccountVehicles = useCallback(async () => {
     try {
@@ -279,6 +281,7 @@ export function RequestQuoteForm() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending || isCheckingVin || isImporting) return;
     const activeUser = currentUser ?? (await getCurrentUser());
     if (!activeUser) {
       setIsAuthModalOpen(true);
@@ -347,62 +350,82 @@ export function RequestQuoteForm() {
       toast.error(firstZodError(phoneValidation.error));
       return;
     }
+    if (submitLockRef.current) return;
+    submitLockRef.current = true;
 
-    const partVins = Array.from(new Set(parts.map((part) => part.vehicleVin).filter(Boolean)));
-    const batchVins = Array.from(new Set([...partVins, ...(parts.some((part) => !part.vehicleVin) && selectedVin ? [selectedVin] : [])]));
-    const resolvedVehicles: ResolvedVinVehicle[] = [];
-    const lookupPath =
-      source === "fleet"
-        ? "/api/fleet/vehicles/vin-lookup"
-        : "/api/user/vehicles/vin-lookup";
-
-    for (const vinToResolve of partVins) {
-      if (vehicles.some((vehicle) => vehicle.vin.trim().toUpperCase() === vinToResolve)) {
-        continue;
-      }
-      const lookupResponse = await siteAuthenticatedFetch(
-        `${lookupPath}?vin=${encodeURIComponent(vinToResolve)}`,
-        { method: "GET", cache: "no-store", credentials: "include" },
-      );
-      const lookup = (await lookupResponse.json()) as VinLookupResponse;
-      if (!lookupResponse.ok || !lookup.ok) {
-        toast.error(lookup.message ?? `Unable to validate VIN ${vinToResolve}.`);
-        return;
-      }
-      if (!lookup.found || !lookup.vehicle) {
-        toast.error(`VIN ${vinToResolve} was not found. Correct it before submitting.`);
-        return;
-      }
-      resolvedVehicles.push(lookup.vehicle);
-    }
-
-    const primaryVin = batchVins[0];
-    const primarySavedVehicle = vehicles.find((vehicle) => vehicle.vin.trim().toUpperCase() === primaryVin);
-    const primaryResolvedVehicle = resolvedVehicles.find((vehicle) => vehicle.vin === primaryVin);
-    const primaryVehicle = primarySavedVehicle
-      ? {
-          id: primarySavedVehicle.id,
-          year: Number(primarySavedVehicle.year),
-          make: primarySavedVehicle.make,
-          model: primarySavedVehicle.model,
-          trim: primarySavedVehicle.trim ?? "",
-          vin: primarySavedVehicle.vin,
-        }
-      : primaryResolvedVehicle
-        ? {
-            year: primaryResolvedVehicle.year,
-            make: primaryResolvedVehicle.make,
-            model: primaryResolvedVehicle.model,
-            trim: "",
-            vin: primaryResolvedVehicle.vin,
+    try {
+      const partVins = Array.from(new Set(parts.map((part) => part.vehicleVin).filter(Boolean)));
+      const batchVins = Array.from(new Set([...partVins, ...(parts.some((part) => !part.vehicleVin) && selectedVin ? [selectedVin] : [])]));
+      let resolvedVehicles: ResolvedVinVehicle[] = [];
+      let primaryVehicle:
+        | {
+            id?: string;
+            year: number;
+            make: string;
+            model: string;
+            trim: string;
+            vin: string;
           }
-        : null;
-    if (!primaryVehicle) {
-      toast.error(`VIN ${primaryVin} was not found. Correct it before submitting.`);
-      return;
-    }
+        | null = null;
+      const lookupPath =
+        source === "fleet"
+          ? "/api/fleet/vehicles/vin-lookup"
+          : "/api/user/vehicles/vin-lookup";
 
-    const payload = {
+      setIsCheckingVin(true);
+      try {
+        const lookupResults: ResolvedVinVehicle[] = [];
+        for (const vinToResolve of partVins) {
+          if (vehicles.some((vehicle) => vehicle.vin.trim().toUpperCase() === vinToResolve)) {
+            continue;
+          }
+          const lookupResponse = await siteAuthenticatedFetch(
+            `${lookupPath}?vin=${encodeURIComponent(vinToResolve)}`,
+            { method: "GET", cache: "no-store", credentials: "include" },
+          );
+          const lookup = (await lookupResponse.json()) as VinLookupResponse;
+          if (!lookupResponse.ok || !lookup.ok) {
+            toast.error(lookup.message ?? `Unable to validate VIN ${vinToResolve}.`);
+            return;
+          }
+          if (!lookup.found || !lookup.vehicle) {
+            toast.error(`VIN ${vinToResolve} was not found. Correct it before submitting.`);
+            return;
+          }
+          lookupResults.push(lookup.vehicle);
+        }
+        resolvedVehicles = lookupResults;
+
+        const primaryVin = batchVins[0];
+        const primarySavedVehicle = vehicles.find((vehicle) => vehicle.vin.trim().toUpperCase() === primaryVin);
+        const primaryResolvedVehicle = resolvedVehicles.find((vehicle) => vehicle.vin === primaryVin);
+        primaryVehicle = primarySavedVehicle
+          ? {
+              id: primarySavedVehicle.id,
+              year: Number(primarySavedVehicle.year),
+              make: primarySavedVehicle.make,
+              model: primarySavedVehicle.model,
+              trim: primarySavedVehicle.trim ?? "",
+              vin: primarySavedVehicle.vin,
+            }
+          : primaryResolvedVehicle
+            ? {
+                year: primaryResolvedVehicle.year,
+                make: primaryResolvedVehicle.make,
+                model: primaryResolvedVehicle.model,
+                trim: "",
+                vin: primaryResolvedVehicle.vin,
+              }
+            : null;
+        if (!primaryVehicle) {
+          toast.error(`VIN ${primaryVin} was not found. Correct it before submitting.`);
+          return;
+        }
+      } finally {
+        setIsCheckingVin(false);
+      }
+
+      const payload = {
       source,
       ...(batchVins.length === 1 && "id" in primaryVehicle
         ? source === "fleet"
@@ -434,31 +457,34 @@ export function RequestQuoteForm() {
         notes: cleanText(part.notes),
       })),
     };
-    const body = new FormData();
-    body.set("payload", JSON.stringify(payload));
+      const body = new FormData();
+      body.set("payload", JSON.stringify(payload));
 
-    setPending(true);
-    try {
-      const response = await siteAuthenticatedFetch("/api/rfqs", {
-        method: "POST",
-        body,
-        credentials: "include",
-      });
-      const result = await response.json();
-      if (!response.ok || !result.ok) throw new Error(result.message ?? "Unable to submit RFQ");
-      form.reset();
-      setCompanyName("");
-      setContactName("");
-      setEmail("");
-      setPhoneCountryCode("+971");
-      setPhoneNumber("");
-      setSelectedVehicleId("");
-      setPartsResetKey((current) => current + 1);
-      toast.success("Quote request submitted to suppliers successfully.");
-    } catch (submitError) {
-      toast.error(submitError instanceof Error ? submitError.message : "Unable to submit RFQ");
+      setPending(true);
+      try {
+        const response = await siteAuthenticatedFetch("/api/rfqs", {
+          method: "POST",
+          body,
+          credentials: "include",
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.message ?? "Unable to submit RFQ");
+        form.reset();
+        setCompanyName("");
+        setContactName("");
+        setEmail("");
+        setPhoneCountryCode("+971");
+        setPhoneNumber("");
+        setSelectedVehicleId("");
+        setPartsResetKey((current) => current + 1);
+        toast.success("Quote request submitted to suppliers successfully.");
+      } catch (submitError) {
+        toast.error(submitError instanceof Error ? submitError.message : "Unable to submit RFQ");
+      } finally {
+        setPending(false);
+      }
     } finally {
-      setPending(false);
+      submitLockRef.current = false;
     }
   }
 
@@ -491,8 +517,8 @@ export function RequestQuoteForm() {
           onImportFile={importRfqFile}
         />
         <div className="flex justify-center">
-          <Button type="submit" disabled={pending} className="h-12 w-full rounded-full px-6 text-base font-medium hover:bg-brand-primary-hover sm:h-auto sm:w-auto sm:px-8 sm:py-6 sm:text-lg">
-            {pending ? "Submitting..." : "Submit Quote Request"}
+          <Button type="submit" disabled={pending || isCheckingVin || isImporting} className="h-12 w-full rounded-full px-6 text-base font-medium hover:bg-brand-primary-hover sm:h-auto sm:w-auto sm:px-8 sm:py-6 sm:text-lg">
+            {isCheckingVin ? "Checking VIN..." : pending ? "Submitting..." : "Submit Quote Request"}
           </Button>
         </div>
       </form>
