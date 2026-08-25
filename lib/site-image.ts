@@ -27,6 +27,9 @@ const encodeS3Path = (path: string) =>
 const cloudFrontImageSrc = (key: string) =>
   `${S3_IMAGE_CLOUDFRONT_BASE_URL}/${encodeS3Path(key)}`
 
+const publicAssetImageSrc = (key: string) =>
+  `/api/site-image?key=${encodeURIComponent(key)}`
+
 const convertS3ImageUrlToCloudFront = (src: string) => {
   try {
     const url = new URL(src)
@@ -85,7 +88,7 @@ export const resolvePublicS3AssetSrc = (
   const normalizedFallback = fallback?.trim() ?? ""
 
   if (isPublicS3AssetKey(normalizedKey)) {
-    return cloudFrontImageSrc(normalizedKey)
+    return publicAssetImageSrc(normalizedKey)
   }
 
   if (!normalizedFallback && !fallbackImage.trim()) {

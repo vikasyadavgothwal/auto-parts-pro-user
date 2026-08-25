@@ -48,8 +48,8 @@ export function HeroSection({ config }: { config?: HomeBannerConfig }) {
             src={resolvedBackgroundImage}
             alt=""
             fill
-            quality={78}
-            priority
+            quality={60}
+            preload
             fetchPriority="high"
             sizes="100vw"
             className="object-cover"
