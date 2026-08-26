@@ -1,0 +1,12 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Auto parts supplier">
+  <rect width="160" height="160" rx="24" fill="#F8FAFC"/>
+  <rect x="1" y="1" width="158" height="158" rx="23" stroke="#E2E8F0" stroke-width="2"/>
+  <path d="M40 68H120L112 110H48L40 68Z" fill="#0F172A"/>
+  <path d="M50 56C52.4 47.1 60.5 41 69.7 41H90.3C99.5 41 107.6 47.1 110 56L113 68H47L50 56Z" fill="#DC2626"/>
+  <path d="M61 61H99L96.8 53.8C95.7 50.4 92.6 48 89 48H71C67.4 48 64.3 50.4 63.2 53.8L61 61Z" fill="#FFFFFF" fill-opacity="0.92"/>
+  <rect x="56" y="78" width="48" height="7" rx="3.5" fill="#FFFFFF" fill-opacity="0.9"/>
+  <rect x="63" y="92" width="34" height="7" rx="3.5" fill="#FFFFFF" fill-opacity="0.72"/>
+  <circle cx="57" cy="115" r="9" fill="#DC2626"/>
+  <circle cx="103" cy="115" r="9" fill="#DC2626"/>
+  <path d="M43 121H117" stroke="#CBD5E1" stroke-width="4" stroke-linecap="round"/>
+</svg>

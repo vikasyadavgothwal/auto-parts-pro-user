@@ -8,7 +8,7 @@ import type {
 } from "@/types/site/marketplace"
 
 const DEFAULT_SUPPLIER_LOGO =
-  "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&h=200&fit=crop"
+  "/images/supplier-logo-fallback.svg"
 
 const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "")
 

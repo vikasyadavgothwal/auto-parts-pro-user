@@ -19,9 +19,14 @@ import { RequestCustomQuoteButton } from "./request-custom-quote-button";
 type CompareOffersSectionProps = {
   offers: readonly ProductOffer[];
 };
+
+const supplierLogoFallback = "/images/supplier-logo-fallback.svg";
+
 function OfferCard({ offer }: { offer: ProductOffer }) {
-  const resolvedOfferLogo = resolveSiteImageSrc(offer.logo, "/home.jpg");
-  const canOptimizeOfferLogo = canOptimizeSiteImageSrc(resolvedOfferLogo);
+  const resolvedOfferLogo = resolveSiteImageSrc(offer.logo, supplierLogoFallback);
+  const canOptimizeOfferLogo =
+    canOptimizeSiteImageSrc(resolvedOfferLogo) &&
+    !resolvedOfferLogo.endsWith(".svg");
 
   return (
     <Card
