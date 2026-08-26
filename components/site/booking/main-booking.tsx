@@ -594,7 +594,7 @@ export function BookingPage({
 
       <BookingProgress currentStep={step} currentStepIndex={currentStepIndex} />
 
-      <div className="mx-auto max-w-4xl px-8 py-16">
+      <div className="mx-auto max-w-4xl px-8 py-8">
         <AnimatePresence mode="wait">{renderStepContent()}</AnimatePresence>
 
         {step !== "review" && (

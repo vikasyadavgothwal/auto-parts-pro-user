@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   createContext,
@@ -267,6 +267,9 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
   const [checkoutSuccess, setCheckoutSuccess] =
     useState<CheckoutSuccessDialog | null>(null);
   const [bookingCheckoutSuccess, setBookingCheckoutSuccess] = useState(false);
+  const [paymentReturnState, setPaymentReturnState] = useState<
+    "cart" | "booking" | null
+  >(null);
 
   const refreshUser = useCallback(async () => {
     const nextUser = await getCurrentUser();
@@ -360,15 +363,21 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
     }
     const timer = window.setTimeout(() => {
       if (bookingPaymentResult === "success") {
-        void (sessionId
-          ? siteAuthenticatedFetch(`/api/payments/${encodeURIComponent(sessionId)}/status`).catch(() => null)
-          : Promise.resolve(null)
-        ).finally(() => setBookingCheckoutSuccess(true));
-      } else if (paymentResult === "success") {
+        setPaymentReturnState("booking");
         void (sessionId
           ? siteAuthenticatedFetch(`/api/payments/${encodeURIComponent(sessionId)}/status`).catch(() => null)
           : Promise.resolve(null)
         ).finally(() => {
+          setPaymentReturnState(null);
+          setBookingCheckoutSuccess(true);
+        });
+      } else if (paymentResult === "success") {
+        setPaymentReturnState("cart");
+        void (sessionId
+          ? siteAuthenticatedFetch(`/api/payments/${encodeURIComponent(sessionId)}/status`).catch(() => null)
+          : Promise.resolve(null)
+        ).finally(() => {
+          setPaymentReturnState(null);
           setItems([]);
           setCheckoutSuccess({
             orderCount: 1,
@@ -377,6 +386,7 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
           });
         });
       } else {
+        setPaymentReturnState(null);
         toast.info("Payment cancelled. Your cart is still saved.");
       }
     }, 0);
@@ -689,6 +699,24 @@ export function SiteCartProvider({ children }: { children: ReactNode }) {
               View cart
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={Boolean(paymentReturnState)}
+      >
+        <DialogContent showCloseButton={false} className="border border-border bg-brand-surface text-white shadow-2xl sm:max-w-md">
+          <DialogHeader className="items-center text-center">
+            <div className="mb-2 flex size-12 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-primary">
+              <Loader2 className="size-6 animate-spin" />
+            </div>
+            <DialogTitle className="text-xl text-white">
+              Confirming payment
+            </DialogTitle>
+            <DialogDescription className="text-brand-muted">
+              Please wait while we confirm your payment and prepare your {paymentReturnState === "booking" ? "booking" : "order"}.
+            </DialogDescription>
+          </DialogHeader>
         </DialogContent>
       </Dialog>
 

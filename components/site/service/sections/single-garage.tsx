@@ -360,7 +360,7 @@ export function ServiceDetailPage({ garage }: ServiceDetailPageProps) {
                           </div>
 
                           <div className="mb-2 text-sm text-brand-muted">
-                            {review.serviceName} • {review.date}
+                            {review.date}
                           </div>
                         </div>
                       </div>

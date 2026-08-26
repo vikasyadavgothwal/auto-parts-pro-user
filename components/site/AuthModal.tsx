@@ -270,6 +270,19 @@ export function AuthModalCard({
     setStatusMessage("");
   };
 
+  const resetSignupFields = () => {
+    setFullName("");
+    setBusinessName("");
+    setSupplierContactPerson("");
+    setSupplierDesignation("");
+    setSupplierPhoneCountryCode("+971");
+    setSupplierPhoneNumber("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setAcceptedTerms(false);
+  };
+
   const getSupplierSignupDetails = () =>
     normalizeSupplierSignupDetails({
       contactPerson: supplierContactPerson,
@@ -460,7 +473,7 @@ export function AuthModalCard({
       await sendUserEmailVerification(credential.user, accountType);
       setVerificationUser(credential.user);
       setMode("signin");
-      setPassword("");
+      resetSignupFields();
       setStatusMessage(
         "Verification email sent. Open the link in your inbox, then return here.",
       );
@@ -727,7 +740,15 @@ export function AuthModalCard({
         <CardContent className="p-0">
           <div className="border-b border-border/70 bg-gradient-to-b from-primary/10 to-transparent p-5 pb-6 pr-14 sm:p-8 sm:pb-7 sm:pr-14">
             <div className="mb-5 flex justify-center">
-              <BrandLogo href="/" logoUrl={branding.logoUrl} logoKey={branding.logoKey} siteName={branding.siteName} className="pointer-events-none" textClassName="text-foreground" />
+              <BrandLogo
+                href="/"
+                logoUrl={branding.logoUrl}
+                logoKey={branding.logoKey}
+                siteName={branding.siteName}
+                className="pointer-events-none"
+                logoClassName="h-20 max-w-full sm:h-24 sm:max-w-[380px]"
+                textClassName="text-3xl text-foreground sm:text-4xl"
+              />
             </div>
             <div className="mb-6 text-center">
               <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">
