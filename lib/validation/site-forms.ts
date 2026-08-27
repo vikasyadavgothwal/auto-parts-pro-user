@@ -106,7 +106,7 @@ export const rfqPartSchema = z.object({
 })
 
 export const rfqFormSchema = z.object({
-  companyName: requiredText("Company name", 2, 120),
+  companyName: z.string().trim().max(120, "Company name must be 120 characters or fewer.").optional().default(""),
   contactName: requiredText("Contact name", 2, 120),
   email: emailSchema,
   phone: z.string().trim().min(1, "Phone number is required."),
@@ -117,10 +117,18 @@ export const rfqFormSchema = z.object({
   parts: z.array(rfqPartSchema).min(1, "Add at least one part.").max(100, "An RFQ can include up to 100 parts."),
 }).superRefine((value, context) => {
   const hasSelectedVehicle = Boolean(value.selectedVehicleVin)
+  const hasManualVehicle = Boolean(
+    value.selectedVehicleYear ||
+      value.selectedVehicleMake ||
+      value.selectedVehicleModel,
+  )
   if (hasSelectedVehicle && !vinPattern.test(value.selectedVehicleVin)) {
     context.addIssue({ code: "custom", path: ["selectedVehicleVin"], message: "Selected vehicle VIN must contain exactly 17 valid characters." })
   }
-  if (hasSelectedVehicle) {
+  if (hasManualVehicle && !value.selectedVehicleVin) {
+    context.addIssue({ code: "custom", path: ["selectedVehicleVin"], message: "VIN is required when entering a new vehicle." })
+  }
+  if (hasSelectedVehicle || hasManualVehicle) {
     const year = Number(value.selectedVehicleYear)
     if (!Number.isInteger(year) || year < 1886 || year > CURRENT_YEAR + 1) {
       context.addIssue({ code: "custom", path: ["selectedVehicleYear"], message: `Vehicle year must be between 1886 and ${CURRENT_YEAR + 1}.` })
@@ -129,8 +137,8 @@ export const rfqFormSchema = z.object({
     if (!value.selectedVehicleModel) context.addIssue({ code: "custom", path: ["selectedVehicleModel"], message: "Vehicle model is required." })
   }
   for (const [index, part] of value.parts.entries()) {
-    if (!hasSelectedVehicle && !part.vehicleVin) {
-      context.addIssue({ code: "custom", path: ["parts", index, "vehicleVin"], message: "Select a saved vehicle or enter a valid VIN for every part." })
+    if (!hasSelectedVehicle && !hasManualVehicle && !part.vehicleVin) {
+      context.addIssue({ code: "custom", path: ["parts", index, "vehicleVin"], message: "Select a saved vehicle, enter vehicle information, or enter a valid VIN for every part." })
     }
     if (part.vehicleVin && !vinPattern.test(part.vehicleVin)) {
       context.addIssue({ code: "custom", path: ["parts", index, "vehicleVin"], message: "Every VIN must contain exactly 17 valid characters." })

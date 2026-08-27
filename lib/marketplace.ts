@@ -196,7 +196,7 @@ export const marketplaceProductToSearchProduct = (
   shipping: product.offerCount > 0 ? "Compare offers" : "No live offers",
   rating: product.reviewCount ? product.ratingAverage.toFixed(1) : undefined,
   reviews: product.reviewCount ? `(${product.reviewCount})` : undefined,
-  badge: product.badge,
+  badge: product.badge === "Likely Fit" ? "Unconfirmed Fit" : product.badge,
   badgeType: product.badgeType,
   image: product.image,
   images: product.images,

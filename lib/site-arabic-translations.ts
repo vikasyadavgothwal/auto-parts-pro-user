@@ -51,7 +51,7 @@ export const arabicTranslations: Record<string, string> = {
   "Clear all": "مسح الكل",
   "Fitment Status": "حالة التوافق",
   "Confirmed Fit": "توافق مؤكد",
-  "Likely Fit": "توافق محتمل",
+  "Unconfirmed Fit": "توافق غير مؤكد",
   Brand: "العلامة التجارية",
   "Price Range": "نطاق السعر",
   Availability: "التوفر",
@@ -129,7 +129,6 @@ export const arabicTranslations: Record<string, string> = {
   "1 verified supplier": "مورد معتمد واحد",
   "Supplier Network": "شبكة موردين",
   "Fast Fulfillment": "تنفيذ سريع",
-  "Start Shoping Now": "ابدأ التسوق الآن",
   "Start Shopping Now": "ابدأ التسوق الآن",
   "Talk to Support": "تحدث مع الدعم",
   "Ready to Find Your Part?": "جاهز للعثور على قطعتك؟",
@@ -498,8 +497,8 @@ export const arabicTranslations: Record<string, string> = {
   Page: "صفحة",
   "All rights reserved.": "جميع الحقوق محفوظة.",
   "© 2026 AutoPartsPro. All rights reserved.": "© 2026 أوتو بارتس برو. جميع الحقوق محفوظة.",
-  "© 2026 DALEEL MUSAFFAH MARKETING SERVICES - SOLE PROPRIETORSHIP L.L.C.n":
-    "© 2026 خدمات دليل مصفح للتسويق - شركة ذات مسؤولية محدودة - مؤسسة فردية",
+  "© 2026 DALEEL DEALZ ADVERTISING SERVICES - SOLE PROPRIETORSHIP L.L.C.":
+    "© 2026 دليل ديلز لخدمات الإعلان - شركة ذات مسؤولية محدودة - مؤسسة فردية",
   New: "جديد",
   Used: "مستعمل",
   Refurbished: "مجدد",

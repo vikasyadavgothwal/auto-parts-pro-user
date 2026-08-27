@@ -11,6 +11,8 @@ import { BrandLogo } from "@/components/site/shared/brand-logo";
 import { getMainWebsiteSiteSettings } from "@/lib/site-settings";
 import type { MainWebsiteSiteSettings } from "@/types/api/site-settings";
 
+const whatsappHref = (phone: string) => `https://wa.me/${phone.replace(/\D/g, "")}`;
+
 export const SiteFooter = async ({ settings: providedSettings }: { settings?: MainWebsiteSiteSettings }) => {
   const settings = providedSettings ?? (await getMainWebsiteSiteSettings());
   const socialLinks = [
@@ -84,7 +86,7 @@ export const SiteFooter = async ({ settings: providedSettings }: { settings?: Ma
 
               <ul className="space-y-2 text-white">
                 <li>
-                  <a href={`tel:${settings.contact.phone}`} className="hover:text-white">
+                  <a href={settings.contact.phone ? whatsappHref(settings.contact.phone) : "#"} className="hover:text-white" target="_blank" rel="noreferrer">
                     Contact Number: {settings.contact.phone || "Not provided"}
                   </a>
                 </li>

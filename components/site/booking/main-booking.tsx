@@ -80,10 +80,7 @@ type UserVehiclesResponse = {
 const servicePrice = (price: number) => price / 100;
 
 const serviceDuration = (minutes: number) => {
-  if (minutes < 60) return `${minutes} min`;
-  const hours = Math.floor(minutes / 60);
-  const remaining = minutes % 60;
-  return remaining ? `${hours}h ${remaining}m` : `${hours}h`;
+  return `${minutes} minutes`;
 };
 
 const dayFormatter = new Intl.DateTimeFormat("en-US", { weekday: "long" });

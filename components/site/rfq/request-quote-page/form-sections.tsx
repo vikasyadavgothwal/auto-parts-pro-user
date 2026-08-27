@@ -4,6 +4,7 @@ import { useRef, useState, type HTMLInputTypeAttribute } from "react";
 import { CloseIcon, PlusIcon, UploadIcon } from "@/components/icons/site-icons";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -88,7 +89,13 @@ function TextField({
         required={required}
         type={type}
         inputMode={name === "vehicleYear" ? "numeric" : undefined}
-        pattern={name === "vehicleYear" ? "[0-9]{4}" : undefined}
+        pattern={
+          name === "vehicleYear"
+            ? "[0-9]{4}"
+            : name.toLowerCase().includes("vin")
+              ? "[A-HJ-NPR-Z0-9]{17}"
+              : undefined
+        }
         min={min}
         max={max}
         minLength={minLength}
@@ -283,7 +290,7 @@ export function CompanyInformationSection({
       </h2>
 
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-        <TextField name="companyName" label={companyFields[0]?.[0] ?? "Company Name"} placeholder={companyFields[0]?.[1]} required minLength={2} maxLength={RFQ_COMPANY_NAME_MAX_LENGTH} value={companyName} onChange={onCompanyNameChange} />
+        <TextField name="companyName" label={companyFields[0]?.[0] ?? "Company Name"} placeholder={companyFields[0]?.[1]} maxLength={RFQ_COMPANY_NAME_MAX_LENGTH} value={companyName} onChange={onCompanyNameChange} />
         <TextField name="contactName" label={companyFields[1]?.[0] ?? "Contact Name"} placeholder={companyFields[1]?.[1]} required minLength={2} maxLength={RFQ_CONTACT_NAME_MAX_LENGTH} value={contactName} onChange={onContactNameChange} />
         <TextField name="email" label={companyFields[2]?.[0] ?? "Email"} placeholder={companyFields[2]?.[1]} required type="email" maxLength={RFQ_EMAIL_MAX_LENGTH} value={email} onChange={onEmailChange} />
         <CountryPhoneInput
@@ -310,6 +317,8 @@ export function VehicleInformationSection({
   isLoadingVehicles,
   dashboardVehiclesUrl,
   onVehicleChange,
+  saveVehicle,
+  onSaveVehicleChange,
 }: {
   accountRole?: string | null;
   vehicles: RfqVehicleOption[];
@@ -317,9 +326,13 @@ export function VehicleInformationSection({
   isLoadingVehicles: boolean;
   dashboardVehiclesUrl: string;
   onVehicleChange: (vehicleId: string) => void;
+  saveVehicle: boolean;
+  onSaveVehicleChange: (value: boolean) => void;
 }) {
   const selectedVehicle = vehicles.find((vehicle) => vehicle.id === selectedVehicleId);
   const usesSavedVehicles = accountRole === "User" || accountRole === "Fleet";
+  const canSaveManualVehicle = accountRole === "User" && !selectedVehicleId;
+  const requiresManualVehicle = !usesSavedVehicles || !selectedVehicleId;
 
   return (
     <Card className="rounded-2xl p-5 sm:p-6 lg:p-8">
@@ -327,8 +340,9 @@ export function VehicleInformationSection({
         Vehicle Information
       </h2>
 
-      {usesSavedVehicles ? (
-        <div className="space-y-4">
+      <div className="space-y-5">
+        {usesSavedVehicles ? (
+          <div className="space-y-4">
           <div>
             <Label htmlFor="rfq-saved-vehicle" className="mb-2 block text-sm font-medium text-white">
               {accountRole === "Fleet" ? "Fleet Vehicle" : "Saved Vehicle"}
@@ -356,8 +370,8 @@ export function VehicleInformationSection({
               <div className="space-y-3 rounded-xl border border-border bg-brand-surface p-4 text-sm text-brand-muted">
                 <p>
                   {accountRole === "Fleet"
-                    ? "No fleet vehicles are saved yet. You can still enter a valid VIN on each part."
-                    : "No saved vehicles are available yet. You can still enter a valid VIN on each part."}
+                    ? "No fleet vehicles are saved yet. You can still enter vehicle information below."
+                    : "No saved vehicles are available yet. You can still enter vehicle information below."}
                 </p>
                 <a
                   href={dashboardVehiclesUrl}
@@ -380,23 +394,48 @@ export function VehicleInformationSection({
           <p className="text-sm text-brand-muted">
             The selected vehicle applies to every part unless you enter a different VIN on a part. If no vehicle is selected, every part must include a valid VIN.
           </p>
-        </div>
-      ) : (
+          </div>
+        ) : null}
+
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-5">
-          <TextField name="vehicleVin" label="VIN (Optional)" placeholder="1HGBH41JXMN109186" maxLength={VIN_MAX_LENGTH} />
+          <TextField
+            name="vehicleVin"
+            label="VIN"
+            placeholder="1HGBH41JXMN109186"
+            required={requiresManualVehicle}
+            minLength={VIN_MAX_LENGTH}
+            maxLength={VIN_MAX_LENGTH}
+          />
           {vehicleFields.map((field, index) => (
             <TextField
               key={field.label}
               name={["vehicleYear", "vehicleMake", "vehicleModel", "vehicleTrim"][index]}
               label={field.label}
               placeholder={field.placeholder}
-              required={index < 3}
+              required={requiresManualVehicle && index < 3}
               type="text"
               maxLength={index === 0 ? 4 : RFQ_VEHICLE_TEXT_MAX_LENGTH}
             />
           ))}
         </div>
-      )}
+
+        {usesSavedVehicles ? (
+          <p className="text-sm text-brand-muted">
+            To use manual vehicle details, leave Saved Vehicle blank and fill the fields above.
+          </p>
+        ) : null}
+
+        {canSaveManualVehicle ? (
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-brand-surface p-4 text-sm text-brand-muted">
+            <Checkbox
+              checked={saveVehicle}
+              onCheckedChange={(value) => onSaveVehicleChange(value === true)}
+              className="mt-0.5"
+            />
+            <span>Save this vehicle to my profile</span>
+          </label>
+        ) : null}
+      </div>
     </Card>
   );
 }

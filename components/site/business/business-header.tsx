@@ -31,7 +31,9 @@ export const BusinessHeader = () => {
           <div className="hidden items-center gap-4 md:flex">
             <LanguageSelector />
             <Button variant="ghost" className="text-brand-muted hover:text-white">Sign in</Button>
-            <Button className="rounded-xl text-white hover:bg-brand-primary-hover">Get Started</Button>
+            <Button asChild className="rounded-xl text-white hover:bg-brand-primary-hover">
+              <Link href="/business#pricing">Get Started</Link>
+            </Button>
           </div>
           {/* Mobile Menu Toggle */}
           <button 
@@ -51,7 +53,9 @@ export const BusinessHeader = () => {
           <hr className="border-border" />
           <LanguageSelector />
           <Button variant="ghost" className="justify-start">Sign in</Button>
-          <Button>Get Started</Button>
+          <Button asChild>
+            <Link href="/business#pricing">Get Started</Link>
+          </Button>
         </nav>
       )}
     </header>

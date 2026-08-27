@@ -13,7 +13,7 @@ type FilterSectionProps = { title: string; options: readonly FilterOption[]; sel
 const checkboxClassName = "h-4 w-4 data-[state=checked]:border-blue-500 data-[state=checked]:bg-blue-500";
 const fitmentOptions: FilterOption[] = [
   { label: "Confirmed Fit", value: "fit", icon: FitmentConfirmedIcon, iconClassName: "text-[#10B981]" },
-  { label: "Likely Fit", value: "likely", icon: FitmentLikelyIcon, iconClassName: "text-[#F59E0B]" },
+  { label: "Unconfirmed Fit", value: "likely", icon: FitmentLikelyIcon, iconClassName: "text-[#F59E0B]" },
 ];
 const availabilityOptions: FilterOption[] = [{ label: "In Stock Only", value: "in-stock" }];
 

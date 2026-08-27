@@ -49,7 +49,17 @@ export function CategoryTypesSection({ config }: { config?: HomeCategoryConfig }
 
         {bottomHeading ? (
           <p className="mx-auto mt-10 max-w-3xl text-center text-lg font-medium text-white">
-            {bottomHeading}
+            {bottomHeading === "Need a specific category? Use advanced filters to narrow results." ? (
+              <>
+                Need a specific category? Use{" "}
+                <Link href="/search" className="text-primary underline underline-offset-4 hover:text-brand-primary-hover">
+                  advanced filters
+                </Link>{" "}
+                to narrow results.
+              </>
+            ) : (
+              bottomHeading
+            )}
           </p>
         ) : null}
       </div>

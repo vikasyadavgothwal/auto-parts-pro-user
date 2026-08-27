@@ -15,6 +15,13 @@ type BusinessHeroSectionProps = {
   config?: ForBusinessBannerConfig;
 };
 
+const businessButtonLink = (label: string, href: string) => {
+  if (/view\s+pricing/i.test(label)) return "/business#pricing";
+  if (href === "/rfqs" || href === "/rfqs-page") return "/rfq";
+  if (href === "/services-page") return "/services";
+  return href;
+};
+
 export function BusinessHeroSection({ config }: BusinessHeroSectionProps) {
   const badgeText = getPublicText(config?.badgeText);
   const heading = getPublicText(config?.heading);
@@ -81,7 +88,7 @@ export function BusinessHeroSection({ config }: BusinessHeroSectionProps) {
                     asChild
                     className="h-auto rounded-full px-8 py-4 text-lg font-medium hover:bg-brand-primary-hover"
                   >
-                    <Link href={primaryButtonLink}>{primaryButtonText}</Link>
+                    <Link href={businessButtonLink(primaryButtonText, primaryButtonLink)}>{primaryButtonText}</Link>
                   </Button>
                 )
               ) : null}
@@ -102,7 +109,7 @@ export function BusinessHeroSection({ config }: BusinessHeroSectionProps) {
                     variant="outline"
                     className="h-auto rounded-full border-border bg-brand-panel px-8 py-4 text-lg font-medium text-white hover:border-primary hover:bg-transparent"
                   >
-                    <Link href={secondaryButtonLink}>{secondaryButtonText}</Link>
+                    <Link href={businessButtonLink(secondaryButtonText, secondaryButtonLink)}>{secondaryButtonText}</Link>
                   </Button>
                 )
               ) : null}

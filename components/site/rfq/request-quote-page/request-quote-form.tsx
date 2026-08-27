@@ -156,6 +156,7 @@ export function RequestQuoteForm() {
   const [email, setEmail] = useState("");
   const [phoneCountryCode, setPhoneCountryCode] = useState("+971");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [saveVehicle, setSaveVehicle] = useState(false);
   const [partsResetKey, setPartsResetKey] = useState(0);
   const submitLockRef = useRef(false);
 
@@ -307,6 +308,13 @@ export function RequestQuoteForm() {
     }
     const values = new FormData(form);
     const selectedVehicle = vehicles.find((vehicle) => vehicle.id === selectedVehicleId);
+    const manualVehicle = {
+      vin: String(values.get("vehicleVin") ?? "").trim().toUpperCase(),
+      year: String(values.get("vehicleYear") ?? "").trim(),
+      make: String(values.get("vehicleMake") ?? "").trim(),
+      model: String(values.get("vehicleModel") ?? "").trim(),
+      trim: String(values.get("vehicleTrim") ?? "").trim(),
+    };
     const partIds = Array.from(values.keys())
       .map((key) => key.match(/^parts\.(\d+)\.name$/)?.[1])
       .filter((value): value is string => Boolean(value));
@@ -329,16 +337,18 @@ export function RequestQuoteForm() {
     const submittedEmail = String(values.get("email") ?? "").trim().toLowerCase();
     const phone = String(values.get("phone") ?? "").trim();
     const source = activeUser.activeRole === "Fleet" ? "fleet" : "user";
-    const selectedVin = selectedVehicle?.vin.trim().toUpperCase() ?? "";
+    const selectedVin = selectedVehicle
+      ? selectedVehicle.vin.trim().toUpperCase()
+      : manualVehicle.vin;
     const validation = rfqFormSchema.safeParse({
       companyName: submittedCompanyName,
       contactName: submittedContactName,
       email: submittedEmail,
       phone,
       selectedVehicleVin: selectedVin,
-      selectedVehicleYear: selectedVehicle?.year ?? "",
-      selectedVehicleMake: selectedVehicle?.make ?? "",
-      selectedVehicleModel: selectedVehicle?.model ?? "",
+      selectedVehicleYear: selectedVehicle?.year ?? manualVehicle.year,
+      selectedVehicleMake: selectedVehicle?.make ?? manualVehicle.make,
+      selectedVehicleModel: selectedVehicle?.model ?? manualVehicle.model,
       parts,
     });
     if (!validation.success) {
@@ -355,7 +365,6 @@ export function RequestQuoteForm() {
 
     try {
       const partVins = Array.from(new Set(parts.map((part) => part.vehicleVin).filter(Boolean)));
-      const batchVins = Array.from(new Set([...partVins, ...(parts.some((part) => !part.vehicleVin) && selectedVin ? [selectedVin] : [])]));
       let resolvedVehicles: ResolvedVinVehicle[] = [];
       let primaryVehicle:
         | {
@@ -367,10 +376,23 @@ export function RequestQuoteForm() {
             vin: string;
           }
         | null = null;
+      const manualPrimaryVehicle = !selectedVehicle && manualVehicle.year && manualVehicle.make && manualVehicle.model
+        ? {
+            year: Number(manualVehicle.year),
+            make: manualVehicle.make,
+            model: manualVehicle.model,
+            trim: manualVehicle.trim,
+            vin: manualVehicle.vin,
+          }
+        : null;
       const lookupPath =
         source === "fleet"
           ? "/api/fleet/vehicles/vin-lookup"
           : "/api/user/vehicles/vin-lookup";
+      const batchVins = Array.from(new Set([
+        ...partVins,
+        ...(selectedVehicle && parts.some((part) => !part.vehicleVin) && selectedVin ? [selectedVin] : []),
+      ]));
 
       setIsCheckingVin(true);
       try {
@@ -396,7 +418,7 @@ export function RequestQuoteForm() {
         }
         resolvedVehicles = lookupResults;
 
-        const primaryVin = batchVins[0];
+        const primaryVin = batchVins[0] || manualPrimaryVehicle?.vin || "";
         const primarySavedVehicle = vehicles.find((vehicle) => vehicle.vin.trim().toUpperCase() === primaryVin);
         const primaryResolvedVehicle = resolvedVehicles.find((vehicle) => vehicle.vin === primaryVin);
         primaryVehicle = primarySavedVehicle
@@ -416,9 +438,9 @@ export function RequestQuoteForm() {
                 trim: "",
                 vin: primaryResolvedVehicle.vin,
               }
-            : null;
+            : manualPrimaryVehicle;
         if (!primaryVehicle) {
-          toast.error(`VIN ${primaryVin} was not found. Correct it before submitting.`);
+          toast.error("Select a saved vehicle or enter vehicle information before submitting.");
           return;
         }
       } finally {
@@ -427,12 +449,12 @@ export function RequestQuoteForm() {
 
       const payload = {
       source,
-      ...(batchVins.length === 1 && "id" in primaryVehicle
+      ...(selectedVehicle && batchVins.length === 1 && "id" in primaryVehicle
         ? source === "fleet"
           ? { fleetVehicleId: primaryVehicle.id }
           : { userVehicleId: primaryVehicle.id }
         : {}),
-      projectName: `${cleanText(submittedCompanyName)} parts request`,
+      projectName: `${cleanText(submittedCompanyName || submittedContactName || submittedEmail)} parts request`,
       description: "Public website RFQ",
       responseDeadline: deadline.toISOString(),
       deliveryRequirement: "Standard Delivery",
@@ -470,12 +492,27 @@ export function RequestQuoteForm() {
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error(result.message ?? "Unable to submit RFQ");
         form.reset();
+        if (activeUser.activeRole === "User" && saveVehicle && !selectedVehicle && manualPrimaryVehicle) {
+          await siteAuthenticatedFetch("/api/user/vehicles", {
+            method: "POST",
+            credentials: "include",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              year: manualPrimaryVehicle.year,
+              make: manualPrimaryVehicle.make,
+              model: manualPrimaryVehicle.model,
+              vin: manualPrimaryVehicle.vin || null,
+              mileage: 0,
+            }),
+          }).catch(() => undefined);
+        }
         setCompanyName("");
         setContactName("");
         setEmail("");
         setPhoneCountryCode("+971");
         setPhoneNumber("");
         setSelectedVehicleId("");
+        setSaveVehicle(false);
         setPartsResetKey((current) => current + 1);
         toast.success("Quote request submitted to suppliers successfully.");
       } catch (submitError) {
@@ -509,7 +546,12 @@ export function RequestQuoteForm() {
           selectedVehicleId={selectedVehicleId}
           isLoadingVehicles={isLoadingVehicles}
           dashboardVehiclesUrl={`${dashboardUrlForRole(currentUser?.activeRole)}/vehicles`}
-          onVehicleChange={setSelectedVehicleId}
+          onVehicleChange={(vehicleId) => {
+            setSelectedVehicleId(vehicleId);
+            if (vehicleId) setSaveVehicle(false);
+          }}
+          saveVehicle={saveVehicle}
+          onSaveVehicleChange={setSaveVehicle}
         />
         <PartsNeededSection
           key={partsResetKey}

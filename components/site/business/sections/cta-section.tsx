@@ -15,6 +15,13 @@ type BusinessCTASectionProps = {
 const normalizeBrandRepeats = (value: string) =>
   value.replace(/\bAutoPartsPro(?:\s+AutoPartsPro)+\b/g, "AutoPartsPro");
 
+const businessButtonLink = (label: string, href: string) => {
+  if (/view\s+pricing/i.test(label)) return "/business#pricing";
+  if (href === "/rfqs" || href === "/rfqs-page") return "/rfq";
+  if (href === "/services-page") return "/services";
+  return href;
+};
+
 export function BusinessCTASection({ config }: BusinessCTASectionProps) {
   const heading = getPublicText(config?.heading);
   const subheading = normalizeBrandRepeats(getPublicText(config?.subheading));
@@ -67,7 +74,7 @@ export function BusinessCTASection({ config }: BusinessCTASectionProps) {
                     asChild
                     className="h-auto rounded-full bg-white px-8 py-4 text-lg font-medium text-primary hover:bg-gray-100"
                   >
-                    <Link href={primaryButtonLink}>{primaryButtonText}</Link>
+                    <Link href={businessButtonLink(primaryButtonText, primaryButtonLink)}>{primaryButtonText}</Link>
                   </Button>
                 )
               ) : null}
@@ -88,7 +95,7 @@ export function BusinessCTASection({ config }: BusinessCTASectionProps) {
                     variant="outline"
                     className="h-auto rounded-full border-2 border-white bg-transparent px-8 py-4 text-lg font-medium text-white hover:bg-white/10 hover:text-white"
                   >
-                    <Link href={secondaryButtonLink}>{secondaryButtonText}</Link>
+                    <Link href={businessButtonLink(secondaryButtonText, secondaryButtonLink)}>{secondaryButtonText}</Link>
                   </Button>
                 )
               ) : null}

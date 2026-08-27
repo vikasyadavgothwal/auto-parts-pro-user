@@ -21,7 +21,7 @@ export const DEFAULT_MAIN_WEBSITE_SITE_SETTINGS: MainWebsiteSiteSettings = {
     "Disallow: /login",
     "Sitemap: /sitemap.xml",
   ].join("\n"),
-  copyright: "© 2026 DALEEL MUSAFFAH MARKETING SERVICES - SOLE PROPRIETORSHIP L.L.C.",
+  copyright: "© 2026 DALEEL DEALZ ADVERTISING SERVICES - SOLE PROPRIETORSHIP L.L.C.",
   seo: {
     title: "Auto Parts Pro",
     description: "Quality automotive parts, services, and fleet solutions.",
@@ -33,7 +33,7 @@ export const DEFAULT_MAIN_WEBSITE_SITE_SETTINGS: MainWebsiteSiteSettings = {
   social: { facebook: "", instagram: "", x: "", youtube: "", linkedin: "" },
   contact: {
     phone: "+971585008555",
-    email: "info@autoparts.ae",
+    email: "info@daleeldealz.com",
     address: "Abu Dhabi, Abu Dhabi 147712",
   },
 }
